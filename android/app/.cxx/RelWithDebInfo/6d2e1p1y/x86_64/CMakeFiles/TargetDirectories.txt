@@ -1,0 +1,2 @@
+/Users/iitpl/Documents/Flutter/projects/fix_on_me-main/android/app/.cxx/RelWithDebInfo/6d2e1p1y/x86_64/CMakeFiles/edit_cache.dir
+/Users/iitpl/Documents/Flutter/projects/fix_on_me-main/android/app/.cxx/RelWithDebInfo/6d2e1p1y/x86_64/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,552 @@
+import 'package:do_fix/controllers/dashboard_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import '../../../controllers/auth_controller.dart';
+import '../../../model/pages_model.dart';
+import '../../../utils/dimensions.dart';
+import '../../../utils/sizeboxes.dart';
+import '../../../utils/styles.dart';
+import '../../../utils/theme.dart';
+import '../../widgets/custom_button_widget.dart';
+import '../HtmlPage/html_pages.dart';
+
+class AccountScreen extends StatefulWidget {
+  const AccountScreen({super.key});
+
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
+  final authController = Get.find<AuthController>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Call visitChildElements() here
+      Get.find<DashBoardController>().getPagesData();
+
+      bool isGuest = await authController.returnIsGuest();
+      if (isGuest) {
+        Get.find<DashBoardController>().isGuest.value = true;
+      } else {
+        Get.find<DashBoardController>().isGuest.value = false;
+      }
+    });
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete Account"),
+          content:
+              Text("Do you really want to delete your account permanently?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("No"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await Get.find<DashBoardController>().getUserInfo(false);
+                String phoneNumber =
+                    Get.find<DashBoardController>().userModel.phone;
+                Get.find<AuthController>()
+                    .deleteAccount(phoneNumber: phoneNumber);
+              },
+              child: Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<DashBoardController>(builder: (controller) {
+      return SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () async {
+                    final authController = Get.find<AuthController>();
+                    bool isGuest = await authController.returnIsGuest();
+                    if (isGuest) {
+                      authController.checkIfGuest();
+                    } else {
+                      controller.getUserInfo(true);
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: Text(
+                        "Profile Settings",
+                        style: albertSansRegular.copyWith(
+                            fontSize: Dimensions.fontSizeDefault,
+                            fontWeight: FontWeight.w400),
+                      )),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.black, size: 18),
+                    ],
+                  ),
+                ),
+                sizedBox30(),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Expanded(
+                //         child: Text(
+                //       "Ratings",
+                //       style: albertSansRegular.copyWith(
+                //           fontSize: Dimensions.fontSize20),
+                //     )),
+                //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+                //   ],
+                // ),
+                // sizedBox30(),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Expanded(
+                //         child: Text(
+                //       "Manage Addresses",
+                //       style: albertSansRegular.copyWith(
+                //           fontSize: Dimensions.fontSize20),
+                //     )),
+                //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+                //   ],
+                // ),
+                // sizedBox30(),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(() => HtmlContentScreen(
+                        title: "About DoFix",
+                        htmlContent: (controller.apiResponse.content.aboutUs ??
+                                PageInfo(
+                                    id: '',
+                                    key: '',
+                                    value: '',
+                                    type: '',
+                                    isActive: 0,
+                                    createdAt: '',
+                                    updatedAt: '',
+                                    translations: []))
+                            .value));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: Text(
+                        "About DoFix",
+                        style: albertSansRegular.copyWith(
+                            fontSize: Dimensions.fontSizeDefault,
+                            fontWeight: FontWeight.w400),
+                      )),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.black, size: 18),
+                    ],
+                  ),
+                ),
+                sizedBox30(),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(() => HtmlContentScreen(
+                        title: "Privacy Policy",
+                        htmlContent:
+                            (controller.apiResponse.content.privacyPolicy ??
+                                    PageInfo(
+                                        id: '',
+                                        key: '',
+                                        value: '',
+                                        type: '',
+                                        isActive: 0,
+                                        createdAt: '',
+                                        updatedAt: '',
+                                        translations: []))
+                                .value));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: Text(
+                        "Privacy Policy",
+                        style: albertSansRegular.copyWith(
+                            fontSize: Dimensions.fontSizeDefault,
+                            fontWeight: FontWeight.w400),
+                      )),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.black, size: 18),
+                    ],
+                  ),
+                ),
+                sizedBox30(),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(() => HtmlContentScreen(
+                        title: "Terms & Conditions",
+                        htmlContent: (controller
+                                    .apiResponse.content.termsAndConditions ??
+                                PageInfo(
+                                    id: '',
+                                    key: '',
+                                    value: '',
+                                    type: '',
+                                    isActive: 0,
+                                    createdAt: '',
+                                    updatedAt: '',
+                                    translations: []))
+                            .value));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: Text(
+                        "Terms & Conditions",
+                        style: albertSansRegular.copyWith(
+                            fontSize: Dimensions.fontSizeDefault,
+                            fontWeight: FontWeight.w400),
+                      )),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.black, size: 18),
+                    ],
+                  ),
+                ),
+                sizedBox30(),
+                GestureDetector(
+                  onTap: () async {
+                    final authController = Get.find<AuthController>();
+                    bool isGuest = await authController.returnIsGuest();
+                    if (isGuest) {
+                      authController.checkIfGuest();
+                    } else {
+                      _showDeleteAccountDialog(context);
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: Text(
+                        "Delete Account",
+                        style: albertSansRegular.copyWith(
+                            fontSize: Dimensions.fontSizeDefault,
+                            fontWeight: FontWeight.w400),
+                      )),
+                      Icon(Icons.arrow_forward_ios,
+                          color: Colors.black, size: 18),
+                    ],
+                  ),
+                ),
+                // sizedBox30(),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Expanded(
+                //         child: Text(
+                //       "Complaint center",
+                //       style: albertSansRegular.copyWith(
+                //           fontSize: Dimensions.fontSize20),
+                //     )),
+                //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+                //   ],
+                // ),
+
+                Spacer(),
+                Obx(
+                  () => controller.isGuest.value
+                      ? CustomButtonWidget(
+                          buttonText: 'Log In',
+                          onPressed: () {
+                            authController.logout();
+                          },
+                          transparent: true,
+                          borderSideColor: primaryBlue,
+                          textColor: primaryBlue,
+                        )
+                      : CustomButtonWidget(
+                          buttonText: 'Log Out',
+                          onPressed: () {
+                            authController.logout();
+                          },
+                          transparent: true,
+                          borderSideColor: darkRed,
+                          textColor: darkRed,
+                        ),
+                ),
+                sizedBox20(),
+              ],
+            ),
+          ),
+        ),
+      );
+      //   CustomScrollView(
+      //   slivers: <Widget>[
+      //     SliverAppBar(
+      //       automaticallyImplyLeading: false,
+      //       pinned: true,
+      //       backgroundColor: Colors.white,
+      //       expandedHeight: 190.0,
+      //       flexibleSpace: FlexibleSpaceBar(
+      //         background: Padding(
+      //           padding: const EdgeInsets.symmetric(
+      //               horizontal: Dimensions.paddingSizeDefault),
+      //           child: Column(
+      //             children: [
+      //               sizedBox65(),
+      //               Row(
+      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //                 crossAxisAlignment: CrossAxisAlignment.center,
+      //                 children: [
+      //                   Row(
+      //                     children: [
+      //                       Image.asset(
+      //                         Images.iclogo,
+      //                         height: 70,
+      //                         width: 70,
+      //                       ),
+      //                     ],
+      //                   ),
+      //                   CustomNotificationButton(
+      //                     icon: Icons.shopping_cart,
+      //                     tap: () {},
+      //                     color: Theme.of(context).primaryColor,
+      //                   )
+      //                 ],
+      //               ),
+      //               InkWell(
+      //                 onTap: () {},
+      //                 child: Row(
+      //                   mainAxisAlignment: MainAxisAlignment.start,
+      //                   crossAxisAlignment: CrossAxisAlignment.center,
+      //                   children: [
+      //                     Icon(Icons.location_on_sharp,
+      //                         color: Colors.black, size: Dimensions.fontSize18),
+      //                     Expanded(
+      //                         child: Text(
+      //                       controller.address ?? "",
+      //                       maxLines: 1,
+      //                       overflow: TextOverflow.ellipsis,
+      //                       style: albertSansRegular.copyWith(
+      //                           fontSize: Dimensions.fontSize14,
+      //                           color: Theme.of(context).hintColor),
+      //                     )),
+      //                   ],
+      //                 ),
+      //               ),
+      //               SizedBox(height: 20),
+      //               Row(
+      //                 children: [
+      //                   Text("Account",
+      //                       style: albertSansRegular.copyWith(
+      //                           fontSize: Dimensions.fontSize20)),
+      //                 ],
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       ),
+      //       // bottom: PreferredSize(
+      //       //   preferredSize: const Size.fromHeight(40.0),
+      //       //   child: Padding(
+      //       //     padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+      //       //     child: Row(
+      //       //       children: [
+      //       //         Text("Account",
+      //       //             style: albertSansRegular.copyWith(
+      //       //                 fontSize: Dimensions.fontSize20)),
+      //       //       ],
+      //       //     ),
+      //       //   ),
+      //       // ),
+      //     ),
+      //     SliverToBoxAdapter(
+      //       child: Padding(
+      //         padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      //         child: Column(
+      //           children: [
+      //             sizedBox20(),
+      //             // Row(
+      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //             //   children: [
+      //             //     Expanded(
+      //             //         child: Text(
+      //             //       "Profile Settings",
+      //             //       style: albertSansRegular.copyWith(
+      //             //           fontSize: Dimensions.fontSize20),
+      //             //     )),
+      //             //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+      //             //   ],
+      //             // ),
+      //             // sizedBox30(),
+      //             // Row(
+      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //             //   children: [
+      //             //     Expanded(
+      //             //         child: Text(
+      //             //       "Ratings",
+      //             //       style: albertSansRegular.copyWith(
+      //             //           fontSize: Dimensions.fontSize20),
+      //             //     )),
+      //             //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+      //             //   ],
+      //             // ),
+      //             // sizedBox30(),
+      //             // Row(
+      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //             //   children: [
+      //             //     Expanded(
+      //             //         child: Text(
+      //             //       "Manage Addresses",
+      //             //       style: albertSansRegular.copyWith(
+      //             //           fontSize: Dimensions.fontSize20),
+      //             //     )),
+      //             //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+      //             //   ],
+      //             // ),
+      //             // sizedBox30(),
+      //             GestureDetector(
+      //               onTap: () {
+      //                 Get.to(() =>
+      //                   HtmlContentScreen(
+      //                       title: "About FixOn",
+      //                       htmlContent:
+      //                           (controller.apiResponse.content.aboutUs ??
+      //                                   PageInfo(
+      //                                       id: '',
+      //                                       key: '',
+      //                                       value: '',
+      //                                       type: '',
+      //                                       isActive: 0,
+      //                                       createdAt: '',
+      //                                       updatedAt: '',
+      //                                       translations: []))
+      //                               .value));
+      //               },
+      //               child: Row(
+      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //                 children: [
+      //                   Expanded(
+      //                       child: Text(
+      //                     "About FixOn",
+      //                     style: albertSansRegular.copyWith(
+      //                         fontSize: Dimensions.fontSize20),
+      //                   )),
+      //                   Icon(Icons.arrow_forward_ios, color: Colors.black),
+      //                 ],
+      //               ),
+      //             ),
+      //             sizedBox30(),
+      //             GestureDetector(
+      //               onTap: () {
+      //                 Get.to(() =>
+      //                     HtmlContentScreen(
+      //                         title: "Privacy Policy",
+      //                         htmlContent:
+      //                         (controller.apiResponse.content.privacyPolicy ??
+      //                             PageInfo(
+      //                                 id: '',
+      //                                 key: '',
+      //                                 value: '',
+      //                                 type: '',
+      //                                 isActive: 0,
+      //                                 createdAt: '',
+      //                                 updatedAt: '',
+      //                                 translations: []))
+      //                             .value));
+      //               },
+      //               child: Row(
+      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //                 children: [
+      //                   Expanded(
+      //                       child: Text(
+      //                     "Privacy Policy",
+      //                     style: albertSansRegular.copyWith(
+      //                         fontSize: Dimensions.fontSize20),
+      //                   )),
+      //                   Icon(Icons.arrow_forward_ios, color: Colors.black),
+      //                 ],
+      //               ),
+      //             ),
+      //             sizedBox30(),
+      //             GestureDetector(
+      //               onTap: () {
+      //                 Get.to(() =>
+      //                     HtmlContentScreen(
+      //                         title: "Terms & Conditions",
+      //                         htmlContent:
+      //                         (controller.apiResponse.content.termsAndConditions ??
+      //                             PageInfo(
+      //                                 id: '',
+      //                                 key: '',
+      //                                 value: '',
+      //                                 type: '',
+      //                                 isActive: 0,
+      //                                 createdAt: '',
+      //                                 updatedAt: '',
+      //                                 translations: []))
+      //                             .value));
+      //               },
+      //               child: Row(
+      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //                 children: [
+      //                   Expanded(
+      //                       child: Text(
+      //                     "Terms & Conditions",
+      //                     style: albertSansRegular.copyWith(
+      //                         fontSize: Dimensions.fontSize20),
+      //                   )),
+      //                   Icon(Icons.arrow_forward_ios, color: Colors.black),
+      //                 ],
+      //               ),
+      //             ),
+      //             // sizedBox30(),
+      //             // Row(
+      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //             //   children: [
+      //             //     Expanded(
+      //             //         child: Text(
+      //             //       "Complaint center",
+      //             //       style: albertSansRegular.copyWith(
+      //             //           fontSize: Dimensions.fontSize20),
+      //             //     )),
+      //             //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+      //             //   ],
+      //             // ),
+      //             sizedBox50(),
+      //             CustomButtonWidget(
+      //               buttonText: 'Log Out',
+      //               onPressed: () {
+      //                 Get.find<AuthController>().logout();
+      //               },
+      //               transparent: true,
+      //               borderSideColor: Colors.red,
+      //               textColor: Colors.red,
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     )
+      //   ],
+      // );
+    });
+  }
+}
