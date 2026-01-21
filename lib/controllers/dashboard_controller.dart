@@ -432,7 +432,7 @@ class DashBoardController extends GetxController implements GetxService {
   Future<void> getServicesDetails(
     String id,
   ) async {
-    showLoading();
+    // showLoading();
     update();
     try {
       Response response = await authRepo.serviceDetails(id);
@@ -473,7 +473,7 @@ class DashBoardController extends GetxController implements GetxService {
     } finally {
       _isLoginLoading = false;
       // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      hideLoading();
+      // hideLoading();
       // update();
     }
   }
@@ -1737,12 +1737,7 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
-  Future<void> updateProfile(
-    String firstName,
-    String lastName,
-    String email,
-    File? profileImage,
-  ) async {
+  Future<void> updateProfile(String firstName, String lastName, String email, File? profileImage) async {
     ApiClient apiClient = ApiClient(
       appBaseUrl: AppConstants.baseUrl,
       sharedPreferences: sharedPreferences,

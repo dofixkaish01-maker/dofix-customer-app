@@ -17,7 +17,7 @@ class CheckUserModel {
         content:
             json['content'] != null ? Content.fromJson(json['content']) : null,
         errors: json['errors'],
-      );
+  );
 
   Map<String, dynamic> toJson() => {
         'response_code': responseCode,
@@ -25,7 +25,7 @@ class CheckUserModel {
         'content': content?.toJson(),
         'errors': errors,
       };
-}
+  }
 
 class Content {
   final User? user;
@@ -53,7 +53,7 @@ class Content {
         'message': message,
         'profile_completed': profileCompleted,
       };
-}
+  }
 
 class User {
   final String? id;
@@ -201,4 +201,4 @@ class User {
         'identification_image_full_path': identificationImageFullPath,
         'storage': storage,
       };
-}
+  }

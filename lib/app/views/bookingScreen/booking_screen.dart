@@ -786,7 +786,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       // Optionally you can uncomment the rest
                       // Get.back();
                     },
-                    buttonText: 'Save Address',
+                    buttonText: 'Save Address', width:  MediaQuery.of(context).size.width - 40,
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -1040,7 +1040,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           );
                         }
                       },
-                      buttonText: 'Create Booking',
+                      buttonText: 'Create Booking', width:  MediaQuery.of(context).size.width - 40,
                     ),
                   ),
                 ],

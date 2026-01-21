@@ -115,7 +115,7 @@ class AccountSetupScreen extends StatelessWidget {
                                 Get.find<AuthController>().register(_emailController.text, _firstNameController.text, _lastNameController.text, phone);
                       
                               }
-                            },
+                            }, width:  MediaQuery.of(context).size.width - 40,
                           ),
                         
                           sizedBox4(),

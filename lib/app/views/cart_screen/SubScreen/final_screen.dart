@@ -685,7 +685,7 @@ class _BookingSheetState extends State<BookingSheet> {
                       // Optionally you can uncomment the rest
                       // Get.back();
                     },
-                    buttonText: 'Save Address',
+                    buttonText: 'Save Address', width:  MediaQuery.of(context).size.width - 40,
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -1160,13 +1160,12 @@ class _BookingSheetState extends State<BookingSheet> {
                         ),
                       );
                     },
-                    buttonText: 'Book Now',
+                    buttonText: 'Book Now', width:  MediaQuery.of(context).size.width - 40,
                   ),
                 ),
                 const SizedBox(height: 20),
               ],
-            ),
-          ),
+            ),          ),
         ),
       ),
     );

@@ -1,13 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomButtonWidget extends StatelessWidget {
   final VoidCallback? onPressed;
   final String buttonText;
+
   final Color? color;
   final IconData? icon;
   final bool transparent;
   final double? width;
+
+  // 🔹 NEW (for your screen)
+  final Color? borderSideColor;
+  final Color? textColor;
 
   const CustomButtonWidget({
     super.key,
@@ -17,10 +21,20 @@ class CustomButtonWidget extends StatelessWidget {
     this.icon,
     this.transparent = false,
     this.width,
+    this.borderSideColor,
+    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final Color effectiveBorderColor =
+        borderSideColor ?? Theme.of(context).primaryColor;
+
+    final Color effectiveTextColor = textColor ??
+        (transparent
+            ? Theme.of(context).primaryColor
+            : Colors.white);
+
     return SizedBox(
       width: width ?? double.infinity,
       height: 48,
@@ -35,23 +49,18 @@ class CustomButtonWidget extends StatelessWidget {
                 return Colors.transparent;
               }
               if (states.contains(MaterialState.disabled)) {
-                return Colors.grey.shade400; // ✅ disabled gray
+                return Colors.grey.shade400; // ✅ disabled grey
               }
               return color ?? Theme.of(context).primaryColor;
             },
           ),
 
-          foregroundColor: MaterialStateProperty.all(
-            transparent
-                ? Theme.of(context).primaryColor
-                : Colors.white,
-          ),
+          foregroundColor:
+          MaterialStateProperty.all(effectiveTextColor),
 
           side: transparent
               ? MaterialStateProperty.all(
-            BorderSide(
-              color: Theme.of(context).primaryColor,
-            ),
+            BorderSide(color: effectiveBorderColor),
           )
               : null,
         ),
@@ -62,7 +71,10 @@ class CustomButtonWidget extends StatelessWidget {
               Icon(icon, size: 18),
               const SizedBox(width: 8),
             ],
-            Text(buttonText),
+            Text(
+              buttonText,
+              style: TextStyle(color: effectiveTextColor),
+            ),
           ],
         ),
       ),

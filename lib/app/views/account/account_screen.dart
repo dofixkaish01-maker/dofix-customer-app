@@ -23,11 +23,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // Call visitChildElements() here
-      Get.find<DashBoardController>().getPagesData();
+      // Get.find<DashBoardController>().getPagesData();
 
       bool isGuest = await authController.returnIsGuest();
       if (isGuest) {
@@ -37,7 +36,7 @@ class _AccountScreenState extends State<AccountScreen> {
       }
     });
   }
-
+  //Delete Dialog
   void _showDeleteAccountDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -80,6 +79,7 @@ class _AccountScreenState extends State<AccountScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
+                //Profile setting
                 SizedBox(height: 20),
                 GestureDetector(
                   onTap: () async {
@@ -134,20 +134,27 @@ class _AccountScreenState extends State<AccountScreen> {
                 // ),
                 // sizedBox30(),
                 GestureDetector(
-                  onTap: () {
+                  // onTap: () {
+                  //   Get.to(() => HtmlContentScreen(
+                  //       title: "About DoFix",
+                  //       htmlContent: (controller.apiResponse.content.aboutUs ??
+                  //               PageInfo(
+                  //                   id: '',
+                  //                   key: '',
+                  //                   value: '',
+                  //                   type: '',
+                  //                   isActive: 0,
+                  //                   createdAt: '',
+                  //                   updatedAt: '',
+                  //                   translations: []))
+                  //           .value));
+                  // },
+                  onTap: () async {
+                    await controller.getPagesData();
                     Get.to(() => HtmlContentScreen(
-                        title: "About DoFix",
-                        htmlContent: (controller.apiResponse.content.aboutUs ??
-                                PageInfo(
-                                    id: '',
-                                    key: '',
-                                    value: '',
-                                    type: '',
-                                    isActive: 0,
-                                    createdAt: '',
-                                    updatedAt: '',
-                                    translations: []))
-                            .value));
+                      title: "About DoFix",
+                      htmlContent: controller.apiResponse.content.aboutUs?.value ?? "",
+                    ));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,7 +280,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 Spacer(),
                 Obx(
                   () => controller.isGuest.value
-                      ? CustomButtonWidget(
+                      ? NewCustomButtonWidget(
                           buttonText: 'Log In',
                           onPressed: () {
                             authController.logout();
@@ -282,7 +289,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           borderSideColor: primaryBlue,
                           textColor: primaryBlue,
                         )
-                      : CustomButtonWidget(
+                      : NewCustomButtonWidget(
                           buttonText: 'Log Out',
                           onPressed: () {
                             authController.logout();
@@ -548,5 +555,73 @@ class _AccountScreenState extends State<AccountScreen> {
       //   ],
       // );
     });
+  }
+}
+class NewCustomButtonWidget extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final String buttonText;
+  final Color? color;
+  final IconData? icon;
+  final bool transparent;
+  final double? width;
+
+  const NewCustomButtonWidget({
+    super.key,
+    required this.onPressed,
+    required this.buttonText,
+    this.color,
+    this.icon,
+    this.transparent = false,
+    this.width, required Color borderSideColor, required Color textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width ?? double.infinity,
+      height: 48,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ButtonStyle(
+          elevation: MaterialStateProperty.all(transparent ? 0 : 2),
+
+          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                (states) {
+              if (transparent) {
+                return Colors.transparent;
+              }
+              if (states.contains(MaterialState.disabled)) {
+                return Colors.grey.shade400; // ✅ disabled gray
+              }
+              return color ?? Theme.of(context).primaryColor;
+            },
+          ),
+
+          foregroundColor: MaterialStateProperty.all(
+            transparent
+                ? Theme.of(context).primaryColor
+                : Colors.white,
+          ),
+
+          side: transparent
+              ? MaterialStateProperty.all(
+            BorderSide(
+              color: Theme.of(context).primaryColor,
+            ),
+          )
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18),
+              const SizedBox(width: 8),
+            ],
+            Text(buttonText),
+          ],
+        ),
+      ),
+    );
   }
 }

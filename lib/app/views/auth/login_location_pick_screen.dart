@@ -59,7 +59,7 @@ class LoginLocationPickScreen extends StatelessWidget {
                         buttonText: "Continue with Current Location",
                         onPressed: () {
                           Get.offAllNamed(RouteHelper.getDashboardRoute());
-                        },
+                        }, width: null,
                       ),
                       sizedBox10(),
                       CustomButtonWidget(

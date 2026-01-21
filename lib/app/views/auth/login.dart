@@ -6,15 +6,22 @@ import 'package:do_fix/utils/dimensions.dart';
 import 'package:do_fix/utils/images.dart';
 import 'package:do_fix/utils/sizeboxes.dart';
 import 'package:do_fix/utils/styles.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../model/pages_model.dart';
 import '../HtmlPage/html_pages.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool isTermsAccepted = false;
   final _phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -24,8 +31,11 @@ class LoginScreen extends StatelessWidget {
       return Scaffold(
         body: Container(
           decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage(Images.icLoginBg), fit: BoxFit.cover)),
+            image: DecorationImage(
+              image: AssetImage(Images.icLoginBg),
+              fit: BoxFit.cover,
+            ),
+          ),
           child: Form(
             key: _formKey,
             child: Column(
@@ -42,12 +52,15 @@ class LoginScreen extends StatelessWidget {
                   child: Container(
                     width: Get.size.width,
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(Dimensions.radius40))),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(Dimensions.radius40),
+                      ),
+                    ),
                     child: Padding(
-                      padding:
-                          const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                      padding: const EdgeInsets.all(
+                        Dimensions.paddingSizeDefault,
+                      ),
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
@@ -55,15 +68,19 @@ class LoginScreen extends StatelessWidget {
                             Text(
                               "Login",
                               style: albertSansBold.copyWith(
-                                  fontSize: Dimensions.fontSize30),
+                                fontSize: Dimensions.fontSize30,
+                              ),
                             ),
                             sizedBox8(),
                             Text(
                               "Enter your phone number to login",
                               style: albertSansRegular.copyWith(
-                                  fontSize: Dimensions.fontSize12),
+                                fontSize: Dimensions.fontSize15,
+                              ),
                             ),
                             sizedBox30(),
+
+                            /// PHONE FIELD
                             CustomTextField(
                               isNumber: true,
                               inputType: TextInputType.number,
@@ -75,23 +92,138 @@ class LoginScreen extends StatelessWidget {
                                   return 'Please enter your Phone No';
                                 } else if (!RegExp(r'^\d{10}$')
                                     .hasMatch(value)) {
-                                  return 'Please enter a valid 10-digit Phone No';
+                                  return 'Enter valid 10 digit number';
                                 }
                                 return null;
                               },
                             ),
+
+                            sizedBox30(),
+
+                            /// SEND OTP BUTTON (DISABLED UNTIL T&C ACCEPTED)
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Checkbox(
+                                  activeColor:Color(0xff227FA8),
+                                  value: isTermsAccepted,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isTermsAccepted = value ?? false;
+                                    });
+                                  },
+                                ),
+                                Expanded(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                      ),
+                                      children: [
+                                        const TextSpan(
+                                            text: "I agree to the "),
+                                        TextSpan(
+                                          text: "Terms & Conditions",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            decoration:
+                                            TextDecoration.underline,
+                                          ),
+                                          recognizer:
+                                          TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Get.to(
+                                                    () => HtmlContentScreen(
+                                                  title:
+                                                  "Terms & Conditions",
+                                                  htmlContent:
+                                                  (Get.find<
+                                                      DashBoardController>()
+                                                      .apiResponse
+                                                      .content
+                                                      .termsAndConditions ??
+                                                      PageInfo(
+                                                        id: '',
+                                                        key: '',
+                                                        value: '',
+                                                        type: '',
+                                                        isActive: 0,
+                                                        createdAt:
+                                                        '',
+                                                        updatedAt:
+                                                        '',
+                                                        translations:
+                                                        [],
+                                                      ))
+                                                      .value,
+                                                ),
+                                              );
+                                            },
+                                        ),
+                                        const TextSpan(text: " and "),
+                                        TextSpan(
+                                          text: "Privacy Policy",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            decoration:
+                                            TextDecoration.underline,
+                                          ),
+                                          recognizer:
+                                          TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Get.to(
+                                                    () => HtmlContentScreen(
+                                                  title:
+                                                  "Privacy Policy",
+                                                  htmlContent:
+                                                  (Get.find<
+                                                      DashBoardController>()
+                                                      .apiResponse
+                                                      .content
+                                                      .privacyPolicy ??
+                                                      PageInfo(
+                                                        id: '',
+                                                        key: '',
+                                                        value: '',
+                                                        type: '',
+                                                        isActive: 0,
+                                                        createdAt:
+                                                        '',
+                                                        updatedAt:
+                                                        '',
+                                                        translations:
+                                                        [],
+                                                      ))
+                                                      .value,
+                                                ),
+                                              );
+                                            },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
                             sizedBox20(),
+
+                            /// TERMS & CONDITIONS SECTION (BOTTOM)
                             CustomButtonWidget(
                               buttonText: "SEND OTP",
-                              onPressed: () {
-                                // TODO : Firebase and API OTP
-                                // controller.sendOtpApiFirebase(
-                                //     _phoneController.text.trim());
-                                controller.sendOtpApi(
-                                  _phoneController.text.trim(),
-                                );
-                              },
+                              onPressed: isTermsAccepted
+                                  ? () {
+                                if (_formKey.currentState!.validate()) {
+                                  controller.sendOtpApi(
+                                    _phoneController.text.trim(),
+                                  );
+                                }
+                              }
+                              : null, // important for disabling button
+                              color: Theme.of(context).primaryColor, width:  MediaQuery.of(context).size.width - 40,
                             ),
+
                             sizedBox20(),
                             GestureDetector(
                               onTap: () {
@@ -104,84 +236,6 @@ class LoginScreen extends StatelessWidget {
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
-                              ),
-                            ),
-                            sizedBox20(),
-                            const Text(
-                              'By logging in, you agree to our ',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 11),
-                            ),
-                            sizedBox4(),
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Get.to(() => HtmlContentScreen(
-                                          title: "Terms & Conditions",
-                                          htmlContent:
-                                              (Get.find<DashBoardController>()
-                                                          .apiResponse
-                                                          .content
-                                                          .termsAndConditions ??
-                                                      PageInfo(
-                                                          id: '',
-                                                          key: '',
-                                                          value: '',
-                                                          type: '',
-                                                          isActive: 0,
-                                                          createdAt: '',
-                                                          updatedAt: '',
-                                                          translations: []))
-                                                  .value));
-                                    },
-                                    child: Text('Terms & Conditions',
-                                        style: TextStyle(
-                                          overflow: TextOverflow.ellipsis,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: Dimensions.fontSize12,
-                                          color: Colors.black,
-                                        )),
-                                  ),
-                                  const Text(' and ',
-                                      style: TextStyle(
-                                        overflow: TextOverflow.ellipsis,
-                                        color: Colors.black,
-                                        fontSize: Dimensions.fontSize12,
-                                      )),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Get.to(() => HtmlContentScreen(
-                                          title: "Privacy Policy",
-                                          htmlContent:
-                                              (Get.find<DashBoardController>()
-                                                          .apiResponse
-                                                          .content
-                                                          .privacyPolicy ??
-                                                      PageInfo(
-                                                          id: '',
-                                                          key: '',
-                                                          value: '',
-                                                          type: '',
-                                                          isActive: 0,
-                                                          createdAt: '',
-                                                          updatedAt: '',
-                                                          translations: []))
-                                                  .value));
-                                    },
-                                    child: Text(
-                                      ' Privacy Policy',
-                                      style: TextStyle(
-                                        overflow: TextOverflow.ellipsis,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: Dimensions.fontSize12,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
                           ],
@@ -198,3 +252,4 @@ class LoginScreen extends StatelessWidget {
     });
   }
 }
+

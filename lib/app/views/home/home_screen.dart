@@ -22,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final bookingController = Get.find<BookingController>();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
