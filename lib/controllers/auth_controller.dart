@@ -441,15 +441,6 @@ class AuthController extends GetxController implements GetxService {
             init();
             log("INSIDE: dashboard");
             Get.offAllNamed(RouteHelper.getDashboardRoute());
-            Get.snackbar(
-              "Success",
-              "Login Successfully",
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              margin: const EdgeInsets.all(16),
-              duration: const Duration(seconds: 2),
-            );
           }
           // Get.toNamed(RouteHelper.getAccountSetup(phone.trim()));
           update();
@@ -558,18 +549,11 @@ class AuthController extends GetxController implements GetxService {
 
   Future<void> isLoggedIn() async {
     bool value = await authRepo.isLoggedIn();
-    // if (value) {
-    //   Get.toNamed(RouteHelper.getDashboardRoute());
-    // } else {
-    //   Get.toNamed(RouteHelper.getLoginRoute());
-    // }
     if (value) {
-      Get.offNamed(RouteHelper.getDashboardRoute());
-
+      Get.toNamed(RouteHelper.getDashboardRoute());
     } else {
-      Get.offNamed(RouteHelper.getLoginRoute()); // remove splash from stack
+      Get.toNamed(RouteHelper.getLoginRoute());
     }
-
   }
 
   void logout() {
