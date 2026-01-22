@@ -9,7 +9,6 @@ class BottomNavItem extends StatelessWidget {
   final bool isSelected;
   final String title;
 
-
   const BottomNavItem({super.key, required this.img, this.tap, this.isSelected = false, required this.title,});
 
   @override

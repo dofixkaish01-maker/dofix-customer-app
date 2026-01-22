@@ -38,134 +38,150 @@ class _HomeScreenState extends State<HomeScreen> {
       // hideLoading();
     });
   }
+  // ADDED: refresh function for pull to refresh
+// ADDED: pull to refresh handler
+  Future<void> _onRefresh() async {
+    final controller = Get.find<DashBoardController>();
+
+    // ADDED: repeat initial load logic
+    controller.onInit(); // safest & zero error
+
+    controller.update(); // refresh UI
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DashBoardController>(builder: (controller) {
       return Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              InkWell(
-                  onTap: () {
-                    Get.offAll(DashboardScreen(
-                        key: GlobalKey<DashboardScreenState>(), pageIndex: 1));
-                  },
-                  child: Image.asset('assets/images/top_banner_image.png')),
-              CategoryComponents(
-                categoryList:
-                    controller.categoryList ?? CategoryModel(data: []),
-                width: MediaQuery.of(context).size.width / 3 - 18,
-                isShowSeeAll: true,
-              ),
-              BannerComponent(bannerList: controller.banners1
-                  // .map(
-                  //   (e) => BannerItem(
-                  //     imageUrl: e.imageUrl,
-                  //     bannertype: e.bannertype,
-                  //     onTap: () => () {
-                  //       print("onClick: ${e.redirectId}");
-                  //       print('Tapped: ${e.imageUrl}');
-                  //       Get.offAll(
-                  //         DashboardScreen(
-                  //           key: GlobalKey<DashboardScreenState>(),
-                  //           pageIndex: 1,
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // )
-                  // .toList(),
-                  ),
-              Visibility(
+        body: RefreshIndicator(
+          onRefresh: _onRefresh,//for refresh page
+          color: Color(0xff227FA8),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                InkWell(
+                    onTap: () {
+                      Get.offAll(DashboardScreen(
+                          key: GlobalKey<DashboardScreenState>(), pageIndex: 1));
+                    },
+                    child: Image.asset('assets/images/top_banner_image.png')),
+                CategoryComponents(
+                  categoryList:
+                      controller.categoryList ?? CategoryModel(data: []),
+                  width: MediaQuery.of(context).size.width / 3 - 18,
+                  isShowSeeAll: true,
+                ),
+                BannerComponent(bannerList: controller.banners1
+                    // .map(
+                    //   (e) => BannerItem(
+                    //     imageUrl: e.imageUrl,
+                    //     bannertype: e.bannertype,
+                    //     onTap: () => () {
+                    //       print("onClick: ${e.redirectId}");
+                    //       print('Tapped: ${e.imageUrl}');
+                    //       Get.offAll(
+                    //         DashboardScreen(
+                    //           key: GlobalKey<DashboardScreenState>(),
+                    //           pageIndex: 1,
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // )
+                    // .toList(),
+                    ),
+                Visibility(
+                    visible:
+                        ((controller.topRated ?? Services(data: [])).data ?? [])
+                            .isNotEmpty,
+                    child: SizedBox(
+                      height: 20,
+                    )),
+                Visibility(
+                    visible:
+                        ((controller.topRated ?? Services(data: [])).data ?? [])
+                            .isNotEmpty,
+                    child: Container(
+                        decoration: BoxDecoration(color: Colors.white),
+                        padding: EdgeInsets.all(8),
+                        child: HorizontalAnimatedList(
+                          imageHeight: 195,
+                          data: controller.topRated ?? Services(data: []),
+                          heading: 'Top Rated Services',
+                        ))),
+                Visibility(
                   visible:
                       ((controller.topRated ?? Services(data: [])).data ?? [])
                           .isNotEmpty,
                   child: SizedBox(
                     height: 20,
-                  )),
-              Visibility(
+                  ),
+                ),
+                BannerComponent(bannerList: controller.banner2
+                    // .map((e) => BannerItem(
+                    //       bannertype: e.bannertype,
+                    //       imageUrl: e.imageUrl,
+                    //       onTap: () {
+                    //         try {
+                    //           print(
+                    //               "category id: ${e.redirectId}, ${e.bannertype}");
+                    //           if (e.bannertype == "catgory") {
+                    //             Get.find<DashBoardController>()
+                    //                 .getCategoriesToSubCategories(
+                    //                     id: e.redirectId.toString(),
+                    //                     limit: '10',
+                    //                     offset: "1");
+                    //           } else if (e.bannertype == "service") {
+                    //             Get.find<DashBoardController>()
+                    //                 .getServicesDetails(
+                    //                     e.redirectId.toString());
+                    //           } else {
+                    //             // TODO : Handle other types of banners link
+                    //           }
+                    //         } catch (e) {
+                    //           debugPrint("onClick Error: $e");
+                    //         }
+                    //       },
+                    //     ))
+                    // .toList(),
+                    ),
+                Visibility(
+                    visible:
+                        ((controller.quickRepair ?? Services(data: [])).data ??
+                                [])
+                            .isNotEmpty,
+                    child: SizedBox(
+                      height: 20,
+                    )),
+                Visibility(
                   visible:
-                      ((controller.topRated ?? Services(data: [])).data ?? [])
+                      ((controller.quickRepair ?? Services(data: [])).data ?? [])
                           .isNotEmpty,
                   child: Container(
-                      decoration: BoxDecoration(color: Colors.white),
-                      padding: EdgeInsets.all(8),
-                      child: HorizontalAnimatedList(
-                        imageHeight: 195,
-                        data: controller.topRated ?? Services(data: []),
-                        heading: 'Top Rated Services',
-                      ))),
-              Visibility(
-                visible:
-                    ((controller.topRated ?? Services(data: [])).data ?? [])
-                        .isNotEmpty,
-                child: SizedBox(
-                  height: 20,
-                ),
-              ),
-              BannerComponent(bannerList: controller.banner2
-                  // .map((e) => BannerItem(
-                  //       bannertype: e.bannertype,
-                  //       imageUrl: e.imageUrl,
-                  //       onTap: () {
-                  //         try {
-                  //           print(
-                  //               "category id: ${e.redirectId}, ${e.bannertype}");
-                  //           if (e.bannertype == "catgory") {
-                  //             Get.find<DashBoardController>()
-                  //                 .getCategoriesToSubCategories(
-                  //                     id: e.redirectId.toString(),
-                  //                     limit: '10',
-                  //                     offset: "1");
-                  //           } else if (e.bannertype == "service") {
-                  //             Get.find<DashBoardController>()
-                  //                 .getServicesDetails(
-                  //                     e.redirectId.toString());
-                  //           } else {
-                  //             // TODO : Handle other types of banners link
-                  //           }
-                  //         } catch (e) {
-                  //           debugPrint("onClick Error: $e");
-                  //         }
-                  //       },
-                  //     ))
-                  // .toList(),
-                  ),
-              Visibility(
-                  visible:
-                      ((controller.quickRepair ?? Services(data: [])).data ??
-                              [])
-                          .isNotEmpty,
-                  child: SizedBox(
-                    height: 20,
-                  )),
-              Visibility(
-                visible:
-                    ((controller.quickRepair ?? Services(data: [])).data ?? [])
-                        .isNotEmpty,
-                child: Container(
-                  decoration: BoxDecoration(color: Colors.white),
-                  padding: EdgeInsets.all(8),
-                  child: HorizontalAnimatedList(
-                    imageHeight: 177,
-                    data: controller.quickRepair ?? Services(data: []),
-                    heading: 'Quick Repairs',
+                    decoration: BoxDecoration(color: Colors.white),
+                    padding: EdgeInsets.all(8),
+                    child: HorizontalAnimatedList(
+                      imageHeight: 177,
+                      data: controller.quickRepair ?? Services(data: []),
+                      heading: 'Quick Repairs',
+                    ),
                   ),
                 ),
-              ),
-              // TODO : Location widget is hidden
-              // SizedBox(
-              //   height: 10,
-              // ),
-              // CustomMapLocationWidget(),
-              // SizedBox(
-              //   height: 50,
-              // ),
-              SizedBox(
-                height: 100,
-              ),
-            ],
+                // TODO : Location widget is hidden
+                // SizedBox(
+                //   height: 10,
+                // ),
+                // CustomMapLocationWidget(),
+                // SizedBox(
+                //   height: 50,
+                // ),
+                SizedBox(
+                  height: 100,
+                ),
+              ],
+            ),
           ),
         ),
       );

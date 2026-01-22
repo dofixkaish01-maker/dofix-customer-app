@@ -1,14 +1,12 @@
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../model/pages_model.dart';
 import '../../../utils/dimensions.dart';
 import '../../../utils/sizeboxes.dart';
 import '../../../utils/styles.dart';
 import '../../../utils/theme.dart';
-import '../../widgets/custom_button_widget.dart';
 import '../HtmlPage/html_pages.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -66,6 +64,49 @@ class _AccountScreenState extends State<AccountScreen> {
           ],
         );
       },
+    );
+  }
+  //Logout Dialog
+  void showLogoutDialog() {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        title: const Text(
+          'Log Out',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to log out?',
+          style: TextStyle(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back(); //  Cancel
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () {
+              Get.back();
+              authController.logout(); // Logout
+            },
+            child: const Text('Log Out'),
+          ),
+        ],
+      ),
+      barrierDismissible: false, // outside tap disable
     );
   }
 
@@ -279,25 +320,25 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 Spacer(),
                 Obx(
-                  () => controller.isGuest.value
+                      () => controller.isGuest.value
                       ? NewCustomButtonWidget(
-                          buttonText: 'Log In',
-                          onPressed: () {
-                            authController.logout();
-                          },
-                          transparent: true,
-                          borderSideColor: primaryBlue,
-                          textColor: primaryBlue,
-                        )
+                    buttonText: 'Log In',
+                    onPressed: () {
+                      Get.toNamed('/login');
+                    },
+                    transparent: true,
+                    borderSideColor: primaryBlue,
+                    textColor: primaryBlue,
+                  )
                       : NewCustomButtonWidget(
-                          buttonText: 'Log Out',
-                          onPressed: () {
-                            authController.logout();
-                          },
-                          transparent: true,
-                          borderSideColor: darkRed,
-                          textColor: darkRed,
-                        ),
+                    buttonText: 'Log Out',
+                    onPressed: () {
+                      showLogoutDialog(); // 🔥 FIXED
+                    },
+                    transparent: true,
+                    borderSideColor: darkRed,
+                    textColor: darkRed,
+                  ),
                 ),
                 sizedBox20(),
               ],
