@@ -113,38 +113,55 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Images.icHome, 0),
-            _buildNavItem(Images.icServices, 1),
-            _buildNavItem(Images.icBooking, 2),
-            _buildNavItem(Images.icProfile, 3),
+            _buildNavItem(Images.icHome, 0,"Home"),
+            _buildNavItem(Images.icServices, 1,"Service"),
+            _buildNavItem(Images.icBooking, 2,"Booking"),
+            _buildNavItem(Images.icProfile, 3,"Account"),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(String icon, int index) {
+  Widget _buildNavItem(String icon, int index, String label) {
     bool isSelected = widget.currentIndex == index;
 
     return GestureDetector(
       onTap: () => widget.onTap(index),
-      child: isSelected
-          ? Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Color(0xFFF2F5F7)),
-              padding: EdgeInsets.all(14),
-              child: ImageIcon(AssetImage(icon),
-                  size: 24, color: Color(0xfff207FA8)))
-          : Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              padding: EdgeInsets.all(14),
-              child: ImageIcon(AssetImage(icon), size: 24, color: Colors.grey)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? const Color(0xFFF2F5F7) : Colors.transparent,
+            ),
+            padding: const EdgeInsets.all(14),
+            child: ImageIcon(
+              AssetImage(icon),
+              size: 24,
+              color: isSelected
+                  ? const Color(0xff227FA8)
+                  : Colors.grey,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: isSelected
+                  ? const Color(0xff227FA8)
+                  : Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

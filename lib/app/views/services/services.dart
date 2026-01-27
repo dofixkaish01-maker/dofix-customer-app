@@ -34,6 +34,11 @@ class _ServiceScreensState extends State<ServiceScreens> {
 
     _scrollController.addListener(_scrollListener);
   }
+  Future<void> _onRefresh() async {
+    currentOffset = 1;
+    await Get.find<DashBoardController>()
+        .getData("10", currentOffset.toString());
+  }
 
   void _scrollListener() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
@@ -114,85 +119,109 @@ class _ServiceScreensState extends State<ServiceScreens> {
     return Scaffold(
       body: GetBuilder<DashBoardController>(
         builder: (controller) {
-          return Scaffold(
-            body:  CategoryComponents(categoryList: controller.categoryList ?? CategoryModel(data: []),width: MediaQuery.of(context).size.width / 3 - 18, isShowSeeAll: false,),
-
-
-            // Column(
-            //   children: [
-            //     Visibility(
-            //       visible: (controller.categoryList?.data ?? []).isNotEmpty,
-            //       child: Padding(
-            //         padding: const EdgeInsets.only(left: 7.0,top: 10, right: 2),
-            //         child: SizedBox(
-            //           width: double.infinity,
-            //           height: 123,
-            //           child: Wrap(
-            //             alignment: WrapAlignment.start,
-            //             spacing: 13.0,
-            //             runSpacing: 10.0,
-            //             children: List.generate(
-            //               (controller.categoryList?.data ?? []).length,
-            //                   (i) => SizedBox(
-            //                 width: MediaQuery.of(context).size.width / 3 - 15,
-            //                 height: 150,
-            //                 child: GestureDetector(
-            //                   onTap: () {
-            //
-            //                     debugPrint("data:==");
-            //
-            //                     Get.find<DashBoardController>()
-            //                         .getCategoriesToSubCategories(
-            //                         id: (controller.categoryList?.data ?? [])[i]
-            //                             .id.toString(),
-            //                         limit: '10',
-            //                         offset: "1");
-            //                   },
-            //                     child: CustomDecoratedContainer(
-            //
-            //                     borderColor: Theme.of(context).hintColor,
-            //
-            //                     child: Column(
-            //                       mainAxisSize: MainAxisSize.min,
-            //                       children: [
-            //                         CustomNetworkImageWidget(
-            //                           imagePadding: 0,
-            //                           width: Get.size.width,
-            //                           height: 90, image: controller.categoryList?.data?[i].imageFullPath ?? "",
-            //                         ),
-            //                         sizedBox10(),
-            //                         Text(
-            //                           controller.categoryList?.data?[i].name ?? "",
-            //                           maxLines: 2,
-            //                           overflow: TextOverflow.ellipsis,
-            //                           textAlign: TextAlign.center,
-            //                           style: albertSansRegular.copyWith(
-            //                             fontSize: Dimensions.fontSize12,
-            //                             color: Colors.black,
-            //                           ),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     Visibility(
-            //       visible: isLoading,
-            //       child: Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: CircularProgressIndicator(),
-            //       ),
-            //     ),
-            //   ],
-            // ),
+          return RefreshIndicator(
+            color: const Color(0xff227FA8), // 👈 refresh blue color
+            backgroundColor: Colors.white,
+            onRefresh: () async {
+              currentOffset = 1;
+              await Get.find<DashBoardController>()
+                  .getData("10", currentOffset.toString());
+            },
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: CategoryComponents(
+                categoryList:
+                controller.categoryList ?? CategoryModel(data: []),
+                width: MediaQuery.of(context).size.width / 3 - 18,
+                isShowSeeAll: false,
+              ),
+            ),
           );
         },
       ),
+        //i add refresh loader
+      // body: GetBuilder<DashBoardController>(
+      //   builder: (controller) {
+      //     return Scaffold(
+      //       body:  CategoryComponents(categoryList: controller.categoryList ?? CategoryModel(data: []),width: MediaQuery.of(context).size.width / 3 - 18, isShowSeeAll: false,),
+      //
+      //
+      //       // Column(
+      //       //   children: [
+      //       //     Visibility(
+      //       //       visible: (controller.categoryList?.data ?? []).isNotEmpty,
+      //       //       child: Padding(
+      //       //         padding: const EdgeInsets.only(left: 7.0,top: 10, right: 2),
+      //       //         child: SizedBox(
+      //       //           width: double.infinity,
+      //       //           height: 123,
+      //       //           child: Wrap(
+      //       //             alignment: WrapAlignment.start,
+      //       //             spacing: 13.0,
+      //       //             runSpacing: 10.0,
+      //       //             children: List.generate(
+      //       //               (controller.categoryList?.data ?? []).length,
+      //       //                   (i) => SizedBox(
+      //       //                 width: MediaQuery.of(context).size.width / 3 - 15,
+      //       //                 height: 150,
+      //       //                 child: GestureDetector(
+      //       //                   onTap: () {
+      //       //
+      //       //                     debugPrint("data:==");
+      //       //
+      //       //                     Get.find<DashBoardController>()
+      //       //                         .getCategoriesToSubCategories(
+      //       //                         id: (controller.categoryList?.data ?? [])[i]
+      //       //                             .id.toString(),
+      //       //                         limit: '10',
+      //       //                         offset: "1");
+      //       //                   },
+      //       //                     child: CustomDecoratedContainer(
+      //       //
+      //       //                     borderColor: Theme.of(context).hintColor,
+      //       //
+      //       //                     child: Column(
+      //       //                       mainAxisSize: MainAxisSize.min,
+      //       //                       children: [
+      //       //                         CustomNetworkImageWidget(
+      //       //                           imagePadding: 0,
+      //       //                           width: Get.size.width,
+      //       //                           height: 90, image: controller.categoryList?.data?[i].imageFullPath ?? "",
+      //       //                         ),
+      //       //                         sizedBox10(),
+      //       //                         Text(
+      //       //                           controller.categoryList?.data?[i].name ?? "",
+      //       //                           maxLines: 2,
+      //       //                           overflow: TextOverflow.ellipsis,
+      //       //                           textAlign: TextAlign.center,
+      //       //                           style: albertSansRegular.copyWith(
+      //       //                             fontSize: Dimensions.fontSize12,
+      //       //                             color: Colors.black,
+      //       //                           ),
+      //       //                         ),
+      //       //                       ],
+      //       //                     ),
+      //       //                   ),
+      //       //                 ),
+      //       //               ),
+      //       //             ),
+      //       //           ),
+      //       //         ),
+      //       //       ),
+      //       //     ),
+      //       //     Visibility(
+      //       //       visible: isLoading,
+      //       //       child: Padding(
+      //       //         padding: const EdgeInsets.all(8.0),
+      //       //         child: CircularProgressIndicator(),
+      //       //       ),
+      //       //     ),
+      //       //   ],
+      //       // ),
+      //     );
+      //   },
+      // ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: _loadNextPageManually,
       //   child: Icon(Icons.arrow_downward),

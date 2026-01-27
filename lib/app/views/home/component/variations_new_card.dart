@@ -5,6 +5,9 @@ import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/service_model.dart';
 import 'package:do_fix/utils/html_utils.dart';
 
+import '../../../../helper/route_helper.dart';
+import '../../services/extra service/add_extra_service_sheet.dart';
+
 class VariationsNewCard extends StatefulWidget {
   final String serviceVariationName;
   final String serviceRatings;
@@ -299,31 +302,85 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                           ),
                         )
                       : GestureDetector(
-                          onTap: () async {
-                            await addToCart();
+                    onTap: () {
+                      final variations = widget.serviceModel.variations ?? [];
+
+                      /// 🟢 CASE 1: No extra service → normal add to cart
+                      if (variations.isEmpty) {
+                        addToCart(); // tumhara existing method
+                        return;
+                      }
+
+                      /// 🟢 CASE 2: Only ONE extra service → direct add + cart
+                      if (variations.length == 1) {
+                        final v = variations.first;
+
+                        dashboardController.addToCart(
+                          {
+                            "service_id": widget.serviceModel.id,
+                            "category_id": widget.serviceModel.categoryId,
+                            "sub_category_id": widget.serviceModel.subCategoryId,
+                            "quantity": "1",
+                            "extras": [v.toJson()],
                           },
-                          child: Container(
-                            margin: EdgeInsets.only(top: 2),
-                            decoration: BoxDecoration(
-                                color: const Color(0xFF207FA8),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(5))),
-                            child: Center(
-                              child: Text(
-                                "Add",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
+                          [widget.variantKey],
+                        );
+
+                        Get.toNamed(
+                          RouteHelper.getDashboardRoute(),
+                          arguments: {"pageIndex": 2}, // cart tab
+                        );
+                        return;
+                      }
+
+                      /// 🟡 CASE 3: Multiple extra services → open bottom sheet
+                      showAddExtraServiceSheet(
+                        context,
+                        widget.serviceModel,
+                        widget.variantKey,
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 2),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF207FA8),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Add",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
+                      ),
+                    ),
+                  ),
                 );
               })
         ],
       ),
     );
   }
+}
+void showAddExtraServiceSheet(
+    BuildContext context,
+    ServiceModel service,
+    String variantKey,
+    ) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) {
+      return AddExtraServiceSheet(
+        service: service,
+        variantKey: variantKey,
+      );
+    },
+  );
 }

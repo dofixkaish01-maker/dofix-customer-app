@@ -8,6 +8,7 @@ import 'package:do_fix/utils/sizeboxes.dart';
 import 'package:do_fix/utils/styles.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../model/pages_model.dart';
@@ -24,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isTermsAccepted = false;
   final _phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(builder: (controller) {
@@ -34,6 +34,10 @@ class _LoginScreenState extends State<LoginScreen> {
             image: DecorationImage(
               image: AssetImage(Images.icLoginBg),
               fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                Color(0xff227FA8).withOpacity(0.25), // 👈 shadow color
+                BlendMode.srcATop,
+              ),
             ),
           ),
           child: Form(
@@ -44,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Image.asset(
                     Images.iclogoWhite,
                     height: 100,
-                    width: 160,
+                    width: 120,
                   ),
                 ),
                 Expanded(
@@ -69,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               "Login",
                               style: albertSansBold.copyWith(
                                 fontSize: Dimensions.fontSize30,
+                                color: Color(0xff227FA8),
                               ),
                             ),
                             sizedBox8(),
@@ -76,28 +81,94 @@ class _LoginScreenState extends State<LoginScreen> {
                               "Enter your phone number to login",
                               style: albertSansRegular.copyWith(
                                 fontSize: Dimensions.fontSize15,
+                                color: Color(0xff227FA8),
                               ),
                             ),
                             sizedBox30(),
 
-                            /// PHONE FIELD
-                            CustomTextField(
-                              isNumber: true,
-                              inputType: TextInputType.number,
+                            /// PHONE FIELD (LOGIN SCREEN ONLY STYLE)
+                            TextFormField(
                               controller: _phoneController,
-                              isPhone: true,
-                              hintText: "Enter your mobile number",
-                              validation: (value) {
+                              keyboardType: TextInputType.number,
+                              maxLength: 10,
+                              cursorColor: const Color(0xff227FA8),
+                              /// 🔒 INPUT CONTROL (MAIN FIX)
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly, // ❌ -, alphabets block
+                                LengthLimitingTextInputFormatter(10),   // ✅ only 10 digits
+                              ],
+                              style: const TextStyle(
+                                color: Color(0xff227FA8),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+
+                              decoration: InputDecoration(
+                                counterText: "",
+
+                                /// 👇 PHONE ICON
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Text(
+                                    "+91 |",
+                                    style: TextStyle(
+                                      color: Color(0xff227FA8),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+
+
+                                hintText: "Enter your mobile number",
+                                hintStyle: TextStyle(
+                                  color: const Color(0xff227FA8).withOpacity(0.6),
+                                ),
+
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 14,
+                                ),
+
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xff227FA8),
+                                  ),
+                                ),
+
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xff227FA8),
+                                    width: 1.5,
+                                  ),
+                                ),
+
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Colors.red,
+                                  ),
+                                ),
+
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+
+                              validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your Phone No';
-                                } else if (!RegExp(r'^\d{10}$')
-                                    .hasMatch(value)) {
+                                } else if (!RegExp(r'^\d{10}$').hasMatch(value)) {
                                   return 'Enter valid 10 digit number';
                                 }
                                 return null;
                               },
                             ),
-
                             sizedBox30(),
 
                             /// SEND OTP BUTTON (DISABLED UNTIL T&C ACCEPTED)
@@ -105,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Checkbox(
-                                  activeColor:Color(0xff227FA8),
+                                  activeColor: Color(0xff227FA8),
                                   value: isTermsAccepted,
                                   onChanged: (value) {
                                     setState(() {
@@ -117,45 +188,38 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: RichText(
                                     text: TextSpan(
                                       style: const TextStyle(
-                                        color: Colors.black,
+                                        color: Color(0xff227FA8),
                                         fontSize: 12,
                                       ),
                                       children: [
-                                        const TextSpan(
-                                            text: "I agree to the "),
+                                        const TextSpan(text: "I agree to the "),
                                         TextSpan(
                                           text: "Terms & Conditions",
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             decoration:
-                                            TextDecoration.underline,
+                                                TextDecoration.underline,
                                           ),
-                                          recognizer:
-                                          TapGestureRecognizer()
+                                          recognizer: TapGestureRecognizer()
                                             ..onTap = () {
                                               Get.to(
-                                                    () => HtmlContentScreen(
-                                                  title:
-                                                  "Terms & Conditions",
-                                                  htmlContent:
-                                                  (Get.find<
-                                                      DashBoardController>()
-                                                      .apiResponse
-                                                      .content
-                                                      .termsAndConditions ??
-                                                      PageInfo(
-                                                        id: '',
-                                                        key: '',
-                                                        value: '',
-                                                        type: '',
-                                                        isActive: 0,
-                                                        createdAt:
-                                                        '',
-                                                        updatedAt:
-                                                        '',
-                                                        translations:
-                                                        [],
-                                                      ))
+                                                () => HtmlContentScreen(
+                                                  title: "Terms & Conditions",
+                                                  htmlContent: (Get.find<
+                                                                  DashBoardController>()
+                                                              .apiResponse
+                                                              .content
+                                                              .termsAndConditions ??
+                                                          PageInfo(
+                                                            id: '',
+                                                            key: '',
+                                                            value: '',
+                                                            type: '',
+                                                            isActive: 0,
+                                                            createdAt: '',
+                                                            updatedAt: '',
+                                                            translations: [],
+                                                          ))
                                                       .value,
                                                 ),
                                               );
@@ -167,34 +231,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             decoration:
-                                            TextDecoration.underline,
+                                                TextDecoration.underline,
                                           ),
-                                          recognizer:
-                                          TapGestureRecognizer()
+                                          recognizer: TapGestureRecognizer()
                                             ..onTap = () {
                                               Get.to(
-                                                    () => HtmlContentScreen(
-                                                  title:
-                                                  "Privacy Policy",
-                                                  htmlContent:
-                                                  (Get.find<
-                                                      DashBoardController>()
-                                                      .apiResponse
-                                                      .content
-                                                      .privacyPolicy ??
-                                                      PageInfo(
-                                                        id: '',
-                                                        key: '',
-                                                        value: '',
-                                                        type: '',
-                                                        isActive: 0,
-                                                        createdAt:
-                                                        '',
-                                                        updatedAt:
-                                                        '',
-                                                        translations:
-                                                        [],
-                                                      ))
+                                                () => HtmlContentScreen(
+                                                  title: "Privacy Policy",
+                                                  htmlContent: (Get.find<
+                                                                  DashBoardController>()
+                                                              .apiResponse
+                                                              .content
+                                                              .privacyPolicy ??
+                                                          PageInfo(
+                                                            id: '',
+                                                            key: '',
+                                                            value: '',
+                                                            type: '',
+                                                            isActive: 0,
+                                                            createdAt: '',
+                                                            updatedAt: '',
+                                                            translations: [],
+                                                          ))
                                                       .value,
                                                 ),
                                               );
@@ -214,14 +272,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               buttonText: "SEND OTP",
                               onPressed: isTermsAccepted
                                   ? () {
-                                if (_formKey.currentState!.validate()) {
-                                  controller.sendOtpApi(
-                                    _phoneController.text.trim(),
-                                  );
-                                }
-                              }
-                              : null, // important for disabling button
-                              color: Theme.of(context).primaryColor, width:  MediaQuery.of(context).size.width - 40,
+                                      if (_formKey.currentState!.validate()) {
+                                        controller.sendOtpApi(
+                                          _phoneController.text.trim(),
+                                        );
+                                      }
+                                    }
+                                  : null, // important for disabling button
+                              color: Theme.of(context).primaryColor,
+                              width: MediaQuery.of(context).size.width - 40,
                             ),
 
                             sizedBox20(),
@@ -231,10 +290,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: const Text(
                                 'Continue as Guest',
-                                style: TextStyle(
-                                  color: Colors.black,
+                                style: const TextStyle(
+                                  color: Color(0xff227FA8),
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -252,4 +310,3 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 }
-

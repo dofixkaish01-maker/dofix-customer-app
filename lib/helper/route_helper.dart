@@ -20,6 +20,8 @@ class RouteHelper {
   static const String allCategoryRoute = '/allCategoryRoute';
   static const String categoryCoupons = '/category-coupons';
   static const String profile = '/profile';
+  static const String cart = '/cart';
+
 
   /// Routes ==================>
   static String getInitialRoute() => initial;
@@ -48,6 +50,9 @@ class RouteHelper {
       '$categoryCoupons?categoryId=$categoryId';
 
   static String getProfileScreen() => profile;
+
+  static String getCartRoute() => cart;
+
 
   /// Pages ==================>
   static List<GetPage> routes = [

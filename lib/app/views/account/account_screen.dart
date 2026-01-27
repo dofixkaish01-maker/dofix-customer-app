@@ -1,7 +1,7 @@
-import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/auth_controller.dart';
+import '../../../controllers/dashboard_controller.dart';
 import '../../../model/pages_model.dart';
 import '../../../utils/dimensions.dart';
 import '../../../utils/sizeboxes.dart';
@@ -100,7 +100,7 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             onPressed: () {
               Get.back();
-              authController.logout(); // Logout
+              authController.logout(); //                         Logout
             },
             child: const Text('Log Out'),
           ),
@@ -132,6 +132,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       controller.getUserInfo(true);
                     }
                   },
+                  //Profile setting
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -148,6 +149,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 sizedBox30(),
+                //Ratings
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 //   children: [
@@ -161,6 +163,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 //   ],
                 // ),
                 // sizedBox30(),
+                //Manage Addresses
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 //   children: [
@@ -213,6 +216,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 sizedBox30(),
+                //Privacy Policy
                 GestureDetector(
                   onTap: () {
                     Get.to(() => HtmlContentScreen(
@@ -246,6 +250,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 sizedBox30(),
+                //Terms & Conditions
                 GestureDetector(
                   onTap: () {
                     Get.to(() => HtmlContentScreen(
@@ -279,6 +284,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 sizedBox30(),
+                //Delete Account
                 GestureDetector(
                   onTap: () async {
                     final authController = Get.find<AuthController>();
@@ -304,6 +310,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     ],
                   ),
                 ),
+                //Complaint center
                 // sizedBox30(),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -317,7 +324,6 @@ class _AccountScreenState extends State<AccountScreen> {
                 //     Icon(Icons.arrow_forward_ios, color: Colors.black),
                 //   ],
                 // ),
-
                 Spacer(),
                 Obx(
                       () => controller.isGuest.value

@@ -50,8 +50,8 @@ Future<List<File>> pickFiles(BuildContext context) async {
                 allowedExtensions: ['pdf'],
               );
               if (result != null) {
-
-
+                selectedFiles.add(File(result.files.single.path!));
+                Get.back();
               }
             },
           ),

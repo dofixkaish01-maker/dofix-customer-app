@@ -1,7 +1,6 @@
 import 'package:do_fix/app/widgets/custom_button_widget.dart';
 import 'package:do_fix/app/widgets/custom_textfield.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
-import 'package:do_fix/helper/route_helper.dart';
 import 'package:do_fix/utils/dimensions.dart';
 import 'package:do_fix/utils/images.dart';
 import 'package:do_fix/utils/sizeboxes.dart';
@@ -96,7 +95,6 @@ class AccountSetupScreen extends StatelessWidget {
                             showTitle: true,
                         hintText: 'Email',
                         controller: _emailController,
-                      
                         validation: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your email';
@@ -110,16 +108,13 @@ class AccountSetupScreen extends StatelessWidget {
                               CustomButtonWidget(
                             buttonText: "Create",
                             onPressed: () {
-                      
                               if (_formKey.currentState!.validate()) {
                                 Get.find<AuthController>().register(_emailController.text, _firstNameController.text, _lastNameController.text, phone);
                       
                               }
                             }, width:  MediaQuery.of(context).size.width - 40,
                           ),
-                        
                           sizedBox4(),
-                         
                         ],
                       ),
                     ),
