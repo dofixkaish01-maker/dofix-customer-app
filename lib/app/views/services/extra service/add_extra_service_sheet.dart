@@ -158,26 +158,29 @@ class _AddExtraServiceSheetState extends State<AddExtraServiceSheet> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pop(context);
+                    onPressed: isAdding
+                    ? null
+                        : () async {
+                    setState(() => isAdding = true);
 
-                      final dashboardController =
-                          Get.find<DashBoardController>();
+                    final dashboardController = Get.find<DashBoardController>();
 
-                      dashboardController.addToCart(
-                        {
-                          "service_id": widget.service.id,
-                          "category_id": widget.service.categoryId,
-                          "sub_category_id": widget.service.subCategoryId,
-                          "quantity": "1",
-                        },
-                        widget.variantKey != null ? [widget.variantKey!] : [],
-                      );
+                    await dashboardController.addToCart(
+                    {
+                    "service_id": widget.service.id,
+                    "category_id": widget.service.categoryId,
+                    "sub_category_id": widget.service.subCategoryId,
+                    "quantity": "1",
+                    },
+                    widget.variantKey != null ? [widget.variantKey!] : [],
+                    );
 
-                      Get.toNamed(
-                        RouteHelper.getDashboardRoute(),
-                        arguments: {"pageIndex": 2},
-                      );
+                    if (mounted) Navigator.pop(context);
+
+                    Get.offNamed(
+                    RouteHelper.getDashboardRoute(),
+                    arguments: {"pageIndex": 2},
+                    );
                     },
                     child: const Text(
                       "Skip & Continue",
@@ -228,13 +231,10 @@ class _AddExtraServiceSheetState extends State<AddExtraServiceSheet> {
                         widget.variantKey != null ? [widget.variantKey!] : [],
                       );
 
-                      Navigator.pop(context);
-
                       Get.toNamed(
                         RouteHelper.getDashboardRoute(),
                         arguments: {"pageIndex": 2},
                       );
-
                       setState(() => isAdding = false);
                     },
 

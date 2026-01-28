@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../home/component/variations_new_card.dart';
+
 class BookingDetailScreen extends StatefulWidget {
   final String? formattedTime;
   final String? formattedDate;
@@ -172,6 +174,22 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   //   );
   // }
 
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'completed':
+        return Colors.green; // success
+      case 'ongoing':
+        return Colors.blue; // in progress
+      case 'accepted':
+        return Colors.blueAccent; // accepted
+      case 'pending':
+        return Colors.orange; // waiting
+      case 'canceled':
+        return Colors.red; // cancelled
+      default:
+        return Colors.grey;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     log("LIST LENGTH : ${dashBoardController.bookingResponse?.content?.detail?.length}");
@@ -246,8 +264,38 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         },
                         child: CustomCancelledButton()),
                   )
-                : SizedBox.shrink(),
-        appBar: CustomAppBar(
+                : (widget.booking?.bookingStatus == 'ongoing')
+          ? Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+        child: InkWell(
+          onTap: () {
+            // 🔹 TODO: open add extra service bottom sheet / API
+            // showAddExtraServiceSheet(
+            //   context,
+            //   widget.booking!,
+            // );
+          },
+          child: Container(
+            height: 48,
+            decoration: BoxDecoration(
+              color: Color(0xFF207FA8),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                "Add Extra Work",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ),
+      )
+          : SizedBox.shrink(),
+      appBar: CustomAppBar(
           title: 'Booking Details',
           isSearchButtonExist: false,
           isBackButtonExist: true,
@@ -500,12 +548,17 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 ),
                 Text(
                   widget.paymentMethod == "razor_pay"
-                      ? "Paid Online"
-                      : "Pay After Service",
+                      ? (widget.booking?.isPaid == 1
+                      ? "Online Payment (Paid)"
+                      : "Online Payment (Pending)")
+                      : "Cash Payment",
                   style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF000000).withAlpha((0.3 * 255).toInt())),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: widget.booking?.isPaid == 1
+                        ? Colors.green // paid
+                        : Colors.orange, // pending
+                  ),
                 ),
                 SizedBox(
                   height: 16,
@@ -532,15 +585,18 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 6,
                 ),
+                // 🔵🟡🟢🔴 Status wise color handling
                 Text(
-                  widget.booking?.bookingStatus.toLowerCase() == "canceled"
+                  widget.booking?.bookingStatus?.toLowerCase() == "canceled"
                       ? "Cancelled"
                       : capitalizeFirst(widget.booking?.bookingStatus ?? ""),
                   style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF000000).withAlpha((0.3 * 255).toInt())),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: _getStatusColor(widget.booking?.bookingStatus),
+                  ),
                 ),
+
                 SizedBox(
                   height: 16,
                 ),
@@ -569,7 +625,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF207FA8),
+                        color: widget.booking?.isPaid == 1
+                            ? Colors.green
+                            : Color(0xFF207FA8),
                       ),
                     ),
                   ],

@@ -302,44 +302,55 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                           ),
                         )
                       : GestureDetector(
-                    onTap: () {
-                      final variations = widget.serviceModel.variations ?? [];
+                      onTap: () async {
+                        final variations = widget.serviceModel.variations ?? [];
 
-                      /// 🟢 CASE 1: No extra service → normal add to cart
-                      if (variations.isEmpty) {
-                        addToCart(); // tumhara existing method
-                        return;
-                      }
+                        /// 🟢 CASE 1: No extra service
+                        if (variations.isEmpty) {
+                          await addToCart();
 
-                      /// 🟢 CASE 2: Only ONE extra service → direct add + cart
-                      if (variations.length == 1) {
-                        final v = variations.first;
+                          // Get.offNamed(
+                          //   RouteHelper.getDashboardRoute(),
+                          //   arguments: {"pageIndex": 2},
+                          // );
+                          return;
+                        }
 
-                        dashboardController.addToCart(
-                          {
-                            "service_id": widget.serviceModel.id,
-                            "category_id": widget.serviceModel.categoryId,
-                            "sub_category_id": widget.serviceModel.subCategoryId,
-                            "quantity": "1",
-                            "extras": [v.toJson()],
-                          },
-                          [widget.variantKey],
+                        /// 🟢 CASE 2: Only ONE extra service
+                        if (variations.length == 1) {
+                          final v = variations.first;
+
+                          await dashboardController.addToCart(
+                            {
+                              "service_id": widget.serviceModel.id,
+                              "category_id": widget.serviceModel.categoryId,
+                              "sub_category_id": widget.serviceModel.subCategoryId,
+                              "quantity": "1",
+                              "extras": [v.toJson()],
+                            },
+                            [widget.variantKey],
+                          );
+                          //
+                          // Get.offNamed(
+                          //   RouteHelper.getDashboardRoute(),
+                          //   arguments: {"pageIndex": 2},
+                          // );
+                          return;
+                        }
+
+                        /// 🟡 CASE 3: Multiple extras
+                        final added = await showAddExtraServiceSheet(
+                          context,
+                          widget.serviceModel,
+                          widget.variantKey,
                         );
 
-                        Get.toNamed(
-                          RouteHelper.getDashboardRoute(),
-                          arguments: {"pageIndex": 2}, // cart tab
-                        );
-                        return;
-                      }
-
-                      /// 🟡 CASE 3: Multiple extra services → open bottom sheet
-                      showAddExtraServiceSheet(
-                        context,
-                        widget.serviceModel,
-                        widget.variantKey,
-                      );
-                    },
+                        if (added == true) {
+                          setState(() {
+                            isInCart = true;
+                          });
+                        }
+                      },
                     child: Container(
                       margin: const EdgeInsets.only(top: 2),
                       decoration: const BoxDecoration(
@@ -359,18 +370,19 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                     ),
                   ),
                 );
-              })
+              }
+          )
         ],
       ),
     );
   }
 }
-void showAddExtraServiceSheet(
+Future<bool?> showAddExtraServiceSheet(
     BuildContext context,
     ServiceModel service,
     String variantKey,
     ) {
-  showModalBottomSheet(
+  return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
@@ -384,3 +396,4 @@ void showAddExtraServiceSheet(
     },
   );
 }
+
