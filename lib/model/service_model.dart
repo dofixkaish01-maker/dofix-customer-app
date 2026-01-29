@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:do_fix/model/variation_model.dart';
 import 'category_model.dart';
+import 'extra_model.dart';
 
 class ServiceModel {
   final String? id;
@@ -26,6 +27,8 @@ class ServiceModel {
   final Category? category;
   final SubCategory? subCategory;
   final List<Variation>? variations;
+  final List<ExtraModel>? extras;
+
 
   ServiceModel( {
     this.id,
@@ -49,7 +52,7 @@ class ServiceModel {
     this.category,
     this.variations,
     this.subCategory,
-    this.quantity,
+    this.quantity, this.extras,
   });
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
@@ -77,6 +80,11 @@ class ServiceModel {
       subCategory: json['sub_category'] != null ? SubCategory.fromJson(json['sub_category']) : null,
       variations: json['variations'] != null
           ? (json['variations'] as List).map((e) => Variation.fromJson(e)).toList()
+          : [],
+      extras: json['extras'] != null
+          ? (json['extras'] as List)
+          .map((e) => ExtraModel.fromJson(e))
+          .toList()
           : [],
     );
   }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-import '../../../booking/add_more_service_bottom_sheet.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../../model/service_model.dart';
 import '../../widgets/custom_appbar.dart';
@@ -137,38 +136,6 @@ class _CartScreenState extends State<CartScreen> {
                         SizedBox(
                           height: 22,
                         ),
-                        //add more service
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                              ),
-                              builder: (_) {
-                                return AddMoreServiceBottomSheet();
-                              },
-                            );// user ko service list par le jao
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                            child: Row(
-                              children: const [
-                                Icon(Icons.add, color: Color(0xFF207FA7)),
-                                SizedBox(width: 6),
-                                Text(
-                                  "Add more services",
-                                  style: TextStyle(
-                                    color: Color(0xFF207FA7),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Container(
@@ -460,4 +427,47 @@ class _CartScreenState extends State<CartScreen> {
       );
     });
   }
+}
+Widget addressCard() {
+  return Container(
+    margin: const EdgeInsets.all(16),
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(Icons.location_on, color: Color(0xFF207FA7)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                "Service Address",
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 4),
+              Text(
+                "House 24, Sector 10, Noida, UP",
+                style: TextStyle(fontSize: 12, color: Colors.black54),
+              ),
+            ],
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            // TODO: open address selection screen
+          },
+          child: const Text(
+            "Change",
+            style: TextStyle(color: Color(0xFF207FA7)),
+          ),
+        )
+      ],
+    ),
+  );
 }

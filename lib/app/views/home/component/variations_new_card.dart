@@ -1,3 +1,6 @@
+// import 'dart:convert';
+// import 'dart:developer';
+
 import 'package:do_fix/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,8 +8,11 @@ import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/service_model.dart';
 import 'package:do_fix/utils/html_utils.dart';
 
-import '../../../../helper/route_helper.dart';
-import '../../services/extra service/add_extra_service_sheet.dart';
+// import 'package:get/get_connect/http/src/request/request.dart' as http;
+// import '../../../../data/api/api.dart';
+// import '../../../../utils/app_constants.dart';
+// import '../../../../widgets/common_loading.dart';
+// import '../../services/extra service/add_extra_service_sheet.dart';
 
 class VariationsNewCard extends StatefulWidget {
   final String serviceVariationName;
@@ -99,31 +105,108 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
       });
     }
   }
-
+//i comment this code because i remove extra service feature
+  // Future<void>
+  // (
+  //     Map<String, dynamic> body,
+  //     List<String> selectedVariations,
+  //     ) async {
+  //   ApiClient apiClient = ApiClient(
+  //     appBaseUrl: AppConstants.baseUrl,
+  //     sharedPreferences: null,
+  //   );
+  //
+  //
+  //   showLoading();
+  //   update();
+  //
+  //   var headers = {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': apiClient.mainHeaders["Authorization"] ?? "",
+  //     'zoneID': apiClient.mainHeaders["zoneID"] ?? "",
+  //   };
+  //
+  //   var request = http.Request(
+  //     url:
+  //     Uri.parse('https://panel.dofix.in/api/v1/customer/cart/add'),method: 'POST', headers: {
+  //       'Content-Type': 'application/json',
+  //   'Authorization': apiClient.mainHeaders["Authorization"] ?? "",
+  //   },
+  //   );
+  //
+  //   /// ✅ SAFE VARIANT KEY
+  //   dynamic variantKey;
+  //   if (selectedVariations.isNotEmpty) {
+  //     variantKey = jsonDecode(selectedVariations.first);
+  //   }
+  //
+  //   /// ✅ FINAL REQUEST BODY
+  //   Map<String, dynamic> requestBody = {
+  //     "service_id": body["service_id"],
+  //     "category_id": body["category_id"],
+  //     "sub_category_id": body["sub_category_id"],
+  //     "quantity": body["quantity"] ?? "1",
+  //     if (variantKey != null) "variant_key": variantKey,
+  //     if (body["extras"] != null) "extras": body["extras"],
+  //   };
+  //
+  //   log("🛒 Add to cart body: ${jsonEncode(requestBody)}");
+  //
+  //   request.body = jsonEncode(requestBody);
+  //   request.headers.addAll(headers);
+  //
+  //   try {
+  //     final response = await request.send();
+  //     final responseBody = await response.stream.bytesToString();
+  //
+  //     if (response.statusCode == 200) {
+  //       debugPrint("✅ Cart Added: $responseBody");
+  //
+  //       await getCartListing(
+  //         limit: "100",
+  //         offset: "1",
+  //         isRoute: false,
+  //         showLoader: true,
+  //       );
+  //
+  //       update(['cart_total', 'service_container']);
+  //     } else {
+  //       debugPrint("❌ Cart Error ${response.statusCode}");
+  //       debugPrint(responseBody);
+  //     }
+  //   } catch (e, s) {
+  //     debugPrint("❌ Exception: $e");
+  //     debugPrint("📌 Stack: $s");
+  //   } finally {
+  //     hideLoading();
+  //     update();
+  //   }
+  // }
   Future<void> addToCart() async {
     final authController = Get.find<AuthController>();
     bool isGuest = await authController.returnIsGuest();
+
     if (isGuest) {
       authController.checkIfGuest();
-    } else {
-      dashboardController.selectedVariations.clear();
-      dashboardController.addVariation(widget.variantKey);
-
-      dashboardController.addToCart(
-        {
-          "service_id": widget.serviceModel.id,
-          "category_id": widget.serviceModel.categoryId,
-          "sub_category_id": widget.serviceModel.subCategoryId,
-          "quantity": "1",
-        },
-        dashboardController.selectedVariations,
-      );
-
-      setState(() {
-        isInCart = true;
-      });
+      return;
     }
+
+    dashboardController.selectedVariations.clear();
+    dashboardController.addVariation(widget.variantKey);
+
+    await dashboardController.addToCart(
+      {
+        "service_id": widget.serviceModel.id,
+        "category_id": widget.serviceModel.categoryId,
+        "sub_category_id": widget.serviceModel.subCategoryId,
+        "quantity": "1",
+      },
+      dashboardController.selectedVariations,
+    );
+
+    // ❌ NO setState here
   }
+
 
   void removeFromCart() {
     if (dashboardController.cartModel.content?.cart?.data != null) {
@@ -139,7 +222,6 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -302,55 +384,21 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                           ),
                         )
                       : GestureDetector(
-                      onTap: () async {
-                        final variations = widget.serviceModel.variations ?? [];
+                    onTap: () async {
+                      await dashboardController.addToCart(
+                        {
+                          "service_id": widget.serviceModel.id,
+                          "category_id": widget.serviceModel.categoryId,
+                          "sub_category_id": widget.serviceModel.subCategoryId,
+                          "quantity": "1",
+                        },
+                        [widget.variantKey],
+                      );
 
-                        /// 🟢 CASE 1: No extra service
-                        if (variations.isEmpty) {
-                          await addToCart();
-
-                          // Get.offNamed(
-                          //   RouteHelper.getDashboardRoute(),
-                          //   arguments: {"pageIndex": 2},
-                          // );
-                          return;
-                        }
-
-                        /// 🟢 CASE 2: Only ONE extra service
-                        if (variations.length == 1) {
-                          final v = variations.first;
-
-                          await dashboardController.addToCart(
-                            {
-                              "service_id": widget.serviceModel.id,
-                              "category_id": widget.serviceModel.categoryId,
-                              "sub_category_id": widget.serviceModel.subCategoryId,
-                              "quantity": "1",
-                              "extras": [v.toJson()],
-                            },
-                            [widget.variantKey],
-                          );
-                          //
-                          // Get.offNamed(
-                          //   RouteHelper.getDashboardRoute(),
-                          //   arguments: {"pageIndex": 2},
-                          // );
-                          return;
-                        }
-
-                        /// 🟡 CASE 3: Multiple extras
-                        final added = await showAddExtraServiceSheet(
-                          context,
-                          widget.serviceModel,
-                          widget.variantKey,
-                        );
-
-                        if (added == true) {
-                          setState(() {
-                            isInCart = true;
-                          });
-                        }
-                      },
+                      setState(() {
+                        isInCart = true;
+                      });
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(top: 2),
                       decoration: const BoxDecoration(
@@ -377,23 +425,30 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     );
   }
 }
-Future<bool?> showAddExtraServiceSheet(
-    BuildContext context,
-    ServiceModel service,
-    String variantKey,
-    ) {
-  return showModalBottomSheet<bool>(
-    context: context,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (_) {
-      return AddExtraServiceSheet(
-        service: service,
-        variantKey: variantKey,
-      );
-    },
-  );
-}
+// i comment this code because i remove extra service feature
+// Future<bool?> showAddExtraServiceSheet(
+//     BuildContext context,
+//     ServiceModel service,
+//     String variantKey,
+//     ) {
+//   return showModalBottomSheet<bool>(
+//     context: context,
+//     isScrollControlled: true,
+//     isDismissible: false, // 🔴 important
+//     enableDrag: false,    // 🔴 important
+//     shape: const RoundedRectangleBorder(
+//       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+//     ),
+//     builder: (_) {
+//       return WillPopScope(
+//         onWillPop: () async => false, // 🔴 back button disable
+//         child: AddExtraServiceSheet(
+//           service: service,
+//           variantKey: variantKey,
+//         ),
+//       );
+//     },
+//   );
+// }
+
 

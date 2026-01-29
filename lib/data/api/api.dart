@@ -29,6 +29,12 @@ class ApiClient extends GetxController implements GetxService {
 
   late Map<String, String> mainHeaders;
 
+  // ApiClient({required this.appBaseUrl, required this.sharedPreferences}) {
+  //   token = sharedPreferences.getString(AppConstants.token);
+  //   log('Token: $token');
+  //   updateHeader(token, "e8554d44-dcf2-47c7-8cf9-400d05a1340f");
+  // }
+
   ApiClient({required this.appBaseUrl, required this.sharedPreferences}) {
     token = sharedPreferences.getString(AppConstants.token);
     log('Token: $token');

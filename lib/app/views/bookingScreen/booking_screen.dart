@@ -1236,6 +1236,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     ),
                     SizedBox(height: 15),
+
                     CustomTextField(
                       controller:
                           Get.find<DashBoardController>().addressController,

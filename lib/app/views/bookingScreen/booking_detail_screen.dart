@@ -229,7 +229,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     ),
                     Visibility(
                       visible: ((widget.booking?.bookingStatus == 'pending') &&
-                          widget.booking?.isPaid == 0),
+                          widget.booking?.isPaid == 0
+                      ),
                       child: Expanded(
                         child: InkWell(
                           onTap: () async {

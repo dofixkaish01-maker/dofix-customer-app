@@ -429,9 +429,7 @@ class DashBoardController extends GetxController implements GetxService {
 
   List<Variation> variations = [];
 
-  Future<void> getServicesDetails(
-    String id,
-  ) async {
+  Future<void> getServicesDetails(String id,) async {
     // showLoading();
     update();
     try {
@@ -857,75 +855,60 @@ class DashBoardController extends GetxController implements GetxService {
   }
 
   Future<void> addToCart(
-    dynamic body,
-    List<String> selectedVariations,
-  ) async {
-    ApiClient apiClient = ApiClient(
-        appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
+      Map<String, dynamic> body,
+      List<String> selectedVariations,
+      ) async {
 
-    showLoading();
-    update();
-
-    var headers = {
-      'Content-Type': 'application/json',
-      // 'Accept': 'application/json',
-      'Authorization': apiClient.mainHeaders["Authorization"] ?? "",
-      'zoneID': apiClient.mainHeaders["zoneID"] ?? "",
-    };
-
-    var request = http.Request(
-      'POST',
-      Uri.parse('https://panel.dofix.in/api/v1/customer/cart/add'),
+    final apiClient = ApiClient(
+      appBaseUrl: AppConstants.baseUrl,
+      sharedPreferences: sharedPreferences,
     );
 
-    String variationsJson = jsonEncode(selectedVariations[0]);
+    showLoading();
 
-    Map<String, dynamic> requestBody = {
+    final headers = {
+      'Content-Type': 'application/json',
+      ...apiClient.mainHeaders,
+    };
+
+    dynamic variantKey;
+    if (selectedVariations.isNotEmpty) {
+      variantKey = jsonDecode(selectedVariations.first);
+    }
+
+    final requestBody = {
       "service_id": body["service_id"],
       "category_id": body["category_id"],
       "sub_category_id": body["sub_category_id"],
-      "quantity": "1",
-      "variant_key": jsonDecode(variationsJson),
+      "quantity": body["quantity"] ?? "1",
+      if (variantKey != null) "variant_key": variantKey,
     };
-    log("Add to card body : ${requestBody}");
-    request.bodyBytes = utf8.encode(jsonEncode(requestBody));
-    request.headers.addAll(headers);
-
-    debugPrint("Request Body: ${jsonEncode(requestBody)}");
 
     try {
-      http.StreamedResponse response = await request.send();
-      String responseBody = await response.stream.bytesToString();
+      final response = await http.post(
+        Uri.parse('${AppConstants.baseUrl}/api/v1/customer/cart/add'),
+        headers: headers,
+        body: jsonEncode(requestBody),
+      );
 
       if (response.statusCode == 200) {
-        print("✅ Success Response: $responseBody");
-        await Future.delayed(Duration(seconds: 1));
         await getCartListing(
-            limit: "100", offset: "1", isRoute: false, showLoader: true);
-        hideLoading();
-        await Future.delayed(Duration(seconds: 1));
-        // Notify UI that cart has been updated
+          limit: "100",
+          offset: "1",
+          isRoute: false,
+          showLoader: false,
+        );
+
         update(['cart_total', 'service_container']);
-        // Update the specific service item too
-        update(['cart_${body["service_id"]}_${jsonDecode(variationsJson)}']);
-        selectedVariations.clear();
       } else {
-        log("Add to card body : catch : ${response.statusCode} and $responseBody");
-        print("❌ API Error ${response.statusCode}");
-        print("📌 Response Reason: ${response.reasonPhrase}");
-        print("📌 Response Body: $responseBody");
-        print("📌 Headers: ${response.headers}");
+        debugPrint("❌ Cart Error: ${response.body}");
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       debugPrint("❌ Exception: $e");
-      debugPrint("📌 Stack Trace: $stackTrace");
-      log("Add to card body : catch : $e and $stackTrace");
     } finally {
       hideLoading();
-      update();
     }
   }
-
   Future<void> getZone() async {
     ApiClient apiClient = ApiClient(
         appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
