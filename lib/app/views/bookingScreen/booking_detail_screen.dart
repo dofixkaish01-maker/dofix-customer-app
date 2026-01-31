@@ -202,8 +202,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        bottomNavigationBar: (widget.booking?.bookingStatus == 'completed' ||
-                widget.booking?.isPaid == 1)
+        // bottomNavigationBar: (widget.booking?.bookingStatus == 'completed' ||
+        //         widget.booking?.isPaid == 1)
+        bottomNavigationBar: (widget.booking?.bookingStatus == 'completed')
             ? Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
                 child: Row(
@@ -228,43 +229,44 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       child: SizedBox(width: 10),
                       visible: (widget.booking?.bookingStatus == 'pending'),
                     ),
-                    Visibility(
-                      visible: ((widget.booking?.bookingStatus == 'pending') &&
-                          widget.booking?.isPaid == 0),
-                      child: Expanded(
-                        child: InkWell(
-                          onTap: () async {
-                            await bookController
-                                .cancelBookingController(widget.booking?.id);
-                            await Get.find<DashBoardController>()
-                                .getBookingDetails(widget.booking?.id ?? "");
-                            await Get.find<BookingController>()
-                                .getBookingReview(widget.booking?.id ?? "");
-                            Get.back();
-                          },
-                          child: CustomCancelledButton(),
-                        ),
-                      ),
-                    ),
+                    //Cancel btn work stop
+                    // Visibility(
+                    //   visible: ((widget.booking?.bookingStatus == 'pending') &&
+                    //       widget.booking?.isPaid == 0),
+                    //   child: Expanded(
+                    //     child: InkWell(
+                    //       onTap: () async {
+                    //         await bookController
+                    //             .cancelBookingController(widget.booking?.id);
+                    //         await Get.find<DashBoardController>()
+                    //             .getBookingDetails(widget.booking?.id ?? "");
+                    //         await Get.find<BookingController>()
+                    //             .getBookingReview(widget.booking?.id ?? "");
+                    //         Get.back();
+                    //       },
+                    //       child: CustomCancelledButton(),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               )
-            : ((widget.booking?.bookingStatus == 'pending') &&
-                    widget.booking?.isPaid == 0)
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
-                    child: InkWell(
-                        onTap: () async {
-                          await bookController
-                              .cancelBookingController(widget.booking?.id);
-                          await Get.find<DashBoardController>()
-                              .getBookingDetails(widget.booking?.id ?? "");
-                          await Get.find<BookingController>()
-                              .getBookingReview(widget.booking?.id ?? "");
-                          Get.back();
-                        },
-                        child: CustomCancelledButton()),
-                  )
+            // : ((widget.booking?.bookingStatus == 'pending') &&
+            //         widget.booking?.isPaid == 0)
+            //     ? Padding(
+            //         padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+            //         child: InkWell(
+            //             onTap: () async {
+            //               await bookController
+            //                   .cancelBookingController(widget.booking?.id);
+            //               await Get.find<DashBoardController>()
+            //                   .getBookingDetails(widget.booking?.id ?? "");
+            //               await Get.find<BookingController>()
+            //                   .getBookingReview(widget.booking?.id ?? "");
+            //               Get.back();
+            //             },
+            //             child: CustomCancelledButton()),
+            //       )
                 : (widget.booking?.bookingStatus == 'ongoing')
           ? Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
@@ -352,7 +354,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         ],
                       ),
                       SizedBox(
-                        height: 4,
+                        height: 10,
                       ),
                       ListView.builder(
                         shrinkWrap: true,
@@ -408,23 +410,27 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 4,
                 ),
-                Text(
-                  "Scheduled on",
-                  style: TextStyle(
-                    fontSize: Dimensions.fontSizeDefault,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "Scheduled on",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: Dimensions.fontSizeDefault,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: Colors.black.withOpacity(0.15),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 8,
-                ),
-                Divider(
-                  height: 0.5,
-                  color: Colors.black.withAlpha((0.1 * 255).toInt()),
-                ),
-                SizedBox(
-                  height: 10,
                 ),
                 Row(
                   children: [
@@ -444,9 +450,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       width: 0.25,
                       color: Colors.black.withAlpha((0.1 * 255).toInt()),
                     ),
-                    SizedBox(
-                      width: 30,
-                    ),
+                    Spacer(),
                     Text(
                       widget.formattedTime ?? "No Time Found",
                       style: TextStyle(
@@ -486,8 +490,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   widget.locationAddress,
                   style: TextStyle(
                       fontSize: Dimensions.fontSize12,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF000000).withAlpha((0.3 * 255).toInt())),
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF000000).withAlpha((0.8 * 255).toInt())),
                 ),
                 SizedBox(
                   height: 16,
@@ -518,8 +522,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   widget.booking?.message ?? "No Comments found",
                   style: TextStyle(
                       fontSize: Dimensions.fontSize12,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF000000).withAlpha((0.3 * 255).toInt())),
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF000000).withAlpha((0.6 * 255).toInt())),
                   ),
                 SizedBox(
                   height: 16,
@@ -550,9 +554,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Text(
                   widget.paymentMethod == "razor_pay"
                       ? (widget.booking?.isPaid == 1
-                      ? "Online Payment (Pending)"
-                      : "Online Payment (Pending)")
-                      : "Cash Payment (Pending)",
+                      ? "Online Payment"
+                      : "Online Payment")
+                      : "Cash Payment",
                   style: TextStyle(
                     fontSize: Dimensions.fontSize12,
                     fontWeight: FontWeight.w500,
@@ -561,6 +565,40 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         : Colors.orange, // pending
                   ),
                 ),
+                SizedBox(
+                  height: 16,
+                ),
+                SizedBox(height: 10),
+                Row(
+                      children: [
+                        Icon(
+                          Icons.money,
+                          size: 16,
+                        ),
+                        Text(
+                          // "Payment Method",
+                          "Payment Status",
+                          style: TextStyle(
+                            fontSize: Dimensions.fontSize14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF000000),
+                          ),
+                        ),
+                      ],
+                    ),
+                SizedBox(
+                  height: 6,
+                ),
+                Text(
+                      widget.booking?.isPaid == 1 ? "Paid" : "Pending",
+                      style: TextStyle(
+                        fontSize: Dimensions.fontSize12,
+                        fontWeight: FontWeight.w500,
+                        color: widget.booking?.isPaid == 1
+                            ? Colors.green
+                            : Colors.orange,
+                      ),
+                    ),
                 SizedBox(
                   height: 16,
                 ),
@@ -601,9 +639,24 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 16,
                 ),
-                Divider(
-                  color: Colors.black.withAlpha((0.3 * 255).toInt()),
-                  height: 0.75,
+                Row(
+                  children: [
+                    Text(
+                      "Total Amount",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: Dimensions.fontSizeDefault,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: Colors.black.withOpacity(0.15),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 16,
