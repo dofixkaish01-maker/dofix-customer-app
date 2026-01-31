@@ -138,38 +138,38 @@ class _CartScreenState extends State<CartScreen> {
                           height: 22,
                         ),
                         //add more service
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                              ),
-                              builder: (_) {
-                                return AddMoreServiceBottomSheet();
-                              },
-                            );// user ko service list par le jao
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                            child: Row(
-                              children: const [
-                                Icon(Icons.add, color: Color(0xFF207FA7)),
-                                SizedBox(width: 6),
-                                Text(
-                                  "Add more services",
-                                  style: TextStyle(
-                                    color: Color(0xFF207FA7),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     showModalBottomSheet(
+                        //       context: context,
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                        //       ),
+                        //       builder: (_) {
+                        //         return AddMoreServiceBottomSheet();
+                        //       },
+                        //     );// user ko service list par le jao
+                        //   },
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                        //     child: Row(
+                        //       children: const [
+                        //         Icon(Icons.add, color: Color(0xFF207FA7)),
+                        //         SizedBox(width: 6),
+                        //         Text(
+                        //           "Add more services",
+                        //           style: TextStyle(
+                        //             color: Color(0xFF207FA7),
+                        //             fontSize: 14,
+                        //             fontWeight: FontWeight.w500,
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
 
-                        Padding(
+                        Padding 
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Container(
                             width: Get.size.width,

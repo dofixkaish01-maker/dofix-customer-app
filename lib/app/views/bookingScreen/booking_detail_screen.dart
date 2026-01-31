@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../utils/dimensions.dart';
 import '../home/component/variations_new_card.dart';
 
 class BookingDetailScreen extends StatefulWidget {
@@ -107,7 +108,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   //               'Are you sure you want to cancel this booking? You will be charged ${bookController.cancellationChargesPercentage.value}% of the booking amount as cancellation fee.',
   //               textAlign: TextAlign.center,
   //               style: TextStyle(
-  //                 fontSize: 14,
+  //                 fontSize: Dimensions.fontSize14,
   //                 color: Colors.black54,
   //                 height: 1.4,
   //               ),
@@ -286,7 +287,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 "Add Extra Work",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: Dimensions.fontSizeDefault,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -337,7 +338,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             "Main Service",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: Dimensions.fontSizeDefault,
                               color: Colors.black,
                             ),
                           ),
@@ -374,7 +375,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             "Add on Service",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: Dimensions.fontSizeDefault,
                             ),
                           ),
                           SizedBox(width: 8),
@@ -410,7 +411,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Text(
                   "Scheduled on",
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: Dimensions.fontSizeDefault,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
@@ -430,7 +431,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     Text(
                       widget.formattedDate ?? "No Date Found",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: Dimensions.fontSize14,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF227FA8),
                       ),
@@ -449,7 +450,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     Text(
                       widget.formattedTime ?? "No Time Found",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: Dimensions.fontSize14,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF227FA8),
                       ),
@@ -471,7 +472,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     Text(
                       "Location  For Services ",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: Dimensions.fontSize14,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF000000),
                       ),
@@ -484,7 +485,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Text(
                   widget.locationAddress,
                   style: TextStyle(
-                      fontSize: 12,
+                      fontSize: Dimensions.fontSize12,
                       fontWeight: FontWeight.w400,
                       color: Color(0xFF000000).withAlpha((0.3 * 255).toInt())),
                 ),
@@ -503,7 +504,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     Text(
                       "Additional Comment",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: Dimensions.fontSize14,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF000000),
                       ),
@@ -516,10 +517,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Text(
                   widget.booking?.message ?? "No Comments found",
                   style: TextStyle(
-                      fontSize: 12,
+                      fontSize: Dimensions.fontSize12,
                       fontWeight: FontWeight.w400,
                       color: Color(0xFF000000).withAlpha((0.3 * 255).toInt())),
-                ),
+                  ),
                 SizedBox(
                   height: 16,
                 ),
@@ -534,9 +535,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     ),
                     Text(
                       // "Payment Method",
-                      "Booking Type",
+                      "Payment Type",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: Dimensions.fontSize14,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF000000),
                       ),
@@ -549,11 +550,11 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 Text(
                   widget.paymentMethod == "razor_pay"
                       ? (widget.booking?.isPaid == 1
-                      ? "Online Payment (Paid)"
+                      ? "Online Payment (Pending)"
                       : "Online Payment (Pending)")
-                      : "Cash Payment",
+                      : "Cash Payment (Pending)",
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: Dimensions.fontSize12,
                     fontWeight: FontWeight.w500,
                     color: widget.booking?.isPaid == 1
                         ? Colors.green // paid
@@ -575,7 +576,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     Text(
                       "Service Status",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: Dimensions.fontSize14,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF000000),
                       ),
@@ -591,7 +592,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       ? "Cancelled"
                       : capitalizeFirst(widget.booking?.bookingStatus ?? ""),
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: Dimensions.fontSize12,
                     fontWeight: FontWeight.w500,
                     color: _getStatusColor(widget.booking?.bookingStatus),
                   ),
@@ -615,7 +616,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           ? "Amount Paid"
                           : "Amount to Pay",
                       style: TextStyle(
-                          fontSize: 14,
+                          fontSize: Dimensions.fontSize14,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF000000)
                               .withAlpha((0.71 * 255).toInt())),
@@ -623,7 +624,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     Text(
                       "₹${dashBoardController.bookingResponse?.content?.totalBookingAmount.toString() ?? "NIL"}",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: Dimensions.fontSize14,
                         fontWeight: FontWeight.bold,
                         color: widget.booking?.isPaid == 1
                             ? Colors.green
@@ -638,7 +639,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 // Text(
                 //   "Ratings & Review",
                 //   style: TextStyle(
-                //     fontSize: 16,
+                //     fontSize: Dimensions.fontSizeDefault,
                 //     fontWeight: FontWeight.bold,
                 //     color: Color(0xFF000000),
                 //   ),
@@ -656,7 +657,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 // Text(
                 //   "Review  : The Service Was Done Properly",
                 //   style: TextStyle(
-                //     fontSize: 14,
+                //     fontSize: Dimensions.fontSize14,
                 //     fontWeight: FontWeight.normal,
                 //     color: Color(0xFF000000),
                 //   ),
@@ -681,7 +682,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         'Ratings & Review',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 16,
+                          fontSize: Dimensions.fontSizeDefault,
                           fontFamily: 'Albert Sans',
                           fontWeight: FontWeight.bold,
                         ),
@@ -714,7 +715,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                 ? "${bookController.reviewRatingModel.value?.content?[0].reviews?[0].reviewRating} stars"
                                 : "No rating",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: Dimensions.fontSize14,
                               color: Colors.black87,
                               fontWeight: FontWeight.w500,
                             ),
@@ -729,7 +730,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             ? "Review : ${bookController.reviewRatingModel.value?.content?[0].reviews?[0].reviewComment}"
                             : "No review provided.",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: Dimensions.fontSize14,
                           color: Colors.black54,
                         ),
                       ),
@@ -806,7 +807,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                       Text(
                                         'Rate your experience',
                                         style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: Dimensions.fontSize14,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.black87,
                                         ),
@@ -815,7 +816,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                       Text(
                                         'Share your experience with this service',
                                         style: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: Dimensions.fontSize12,
                                           fontWeight: FontWeight.w400,
                                           color: Colors.black54,
                                         ),
