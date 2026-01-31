@@ -1,11 +1,10 @@
 import 'package:do_fix/app/views/bookingScreen/booking_screen.dart';
-import 'package:do_fix/app/views/cart_screen/SubScreen/final_screen.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:do_fix/app/views/cart_screen/SubScreen/final_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+// import 'package:get/get_core/src/get_main.dart';
 
-import '../../../booking/add_more_service_bottom_sheet.dart';
+// import '../../../booking/add_more_service_bottom_sheet.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../../model/service_model.dart';
 import '../../widgets/custom_appbar.dart';
@@ -169,7 +168,7 @@ class _CartScreenState extends State<CartScreen> {
                         //   ),
                         // ),
 
-                        Padding 
+                        Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Container(
                             width: Get.size.width,

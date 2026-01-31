@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../model/booking_model.dart';
+import '../../utils/string_extensions.dart';
 
 class HistoryListItem extends StatefulWidget {
   final Booking? booking;
@@ -23,6 +24,10 @@ class _HistoryListItemState extends State<HistoryListItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      splashColor: Colors.transparent,      // ✅ ADD
+      highlightColor: Colors.transparent,   // ✅ ADD
+      hoverColor: Colors.transparent,       // ✅ ADD
+      focusColor: Colors.transparent,       // ✅ ADD
       onTap: () async {
         await Get.find<DashBoardController>()
             .getBookingDetails(widget.booking?.id ?? "");
@@ -77,7 +82,7 @@ class _HistoryListItemState extends State<HistoryListItem> {
       child: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
         padding: EdgeInsets.symmetric(vertical: 9, horizontal: 9),
-        height: 154,
+        // height: 154,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,6 +167,78 @@ class _HistoryListItemState extends State<HistoryListItem> {
                 ),
               ),
             ]),
+            SizedBox(height: 12),
+            /// 🔵 Service Status
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Service Status :",
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+
+                Spacer(), // GAP HERE
+
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _getServiceStatusColor(widget.booking?.bookingStatus)
+                        .withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    widget.booking?.bookingStatus?.toLowerCase() == "canceled"
+                        ? "Cancelled"
+                        : capitalizeFirst(widget.booking?.bookingStatus ?? ""),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: _getServiceStatusColor(widget.booking?.bookingStatus),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 15),
+
+            /// 💰 Payment Status
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Payment Status :",
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+
+                Spacer(), // GAP HERE
+
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _getPaymentStatusColor(widget.booking?.isPaid)
+                        .withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    widget.booking?.isPaid == 1 ? "Paid" : "Pending",
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: _getPaymentStatusColor(widget.booking?.isPaid),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: 14),
             Divider(
               height: 0.75,
@@ -597,3 +674,25 @@ class _HistoryListItemState extends State<HistoryListItem> {
 //   final Uri url = Uri.parse(urlString);
 //   await launchUrl(url, mode: LaunchMode.externalApplication);
 // }
+
+Color _getServiceStatusColor(String? status) {
+  switch (status?.toLowerCase()) {
+    case 'completed':
+      return Colors.green;
+    case 'ongoing':
+      return Colors.blue;
+    case 'accepted':
+      return Colors.blueAccent;
+    case 'pending':
+      return Colors.orange;
+    case 'canceled':
+    case 'cancelled':
+      return Colors.red;
+    default:
+      return Colors.grey;
+  }
+}
+
+Color _getPaymentStatusColor(int? isPaid) {
+  return isPaid == 1 ? Colors.green : Colors.orange;
+}

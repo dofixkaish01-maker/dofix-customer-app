@@ -167,6 +167,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
           body: Column(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(width: 16),
                   Text(
@@ -179,64 +180,71 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
                     ),
                   ),
                   Spacer(),
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton<int>(
-                      value: _selectedIndex,
-                      elevation: 0,
-                      icon: SizedBox.shrink(),
-                      style: const TextStyle(
-                        color: primaryBlue,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      items: List.generate(
-                        statusList.length,
-                        (index) {
-                          return DropdownMenuItem<int>(
-                            alignment: Alignment.centerRight,
-                            value: index,
-                            child: Text(
-                              statusList[index][0].toUpperCase() +
-                                  statusList[index].substring(1),
-                              style: const TextStyle(
-                                color: primaryBlue,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      selectedItemBuilder: (context) {
-                        return List.generate(
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      hoverColor: Colors.transparent
+                    ),
+                      child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: _selectedIndex,
+                        elevation: 0,dropdownColor: Colors.grey.shade100,
+                        icon: SizedBox.shrink(),
+                        style: const TextStyle(
+                          color: primaryBlue,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        items: List.generate(
                           statusList.length,
-                          (index) => Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
+                          (index) {
+                            return DropdownMenuItem<int>(
+                              alignment: Alignment.centerLeft,
+                              value: index,
+                              child: Text(
                                 statusList[index][0].toUpperCase() +
                                     statusList[index].substring(1),
                                 style: const TextStyle(
                                   color: primaryBlue,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: primaryBlue,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      onChanged: (int? newIndex) {
-                        if (newIndex != null) {
-                          setState(() {
-                            _selectedIndex = newIndex;
-                          });
-                          fetchDataForTab(statusList[newIndex]);
-                        }
-                      },
+                            );
+                          },
+                        ),
+                        selectedItemBuilder: (context) {
+                          return List.generate(
+                            statusList.length,
+                            (index) => Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  statusList[index][0].toUpperCase() +
+                                      statusList[index].substring(1),
+                                  style: const TextStyle(
+                                    color: primaryBlue,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: primaryBlue,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        onChanged: (int? newIndex) {
+                          if (newIndex != null) {
+                            setState(() {
+                              _selectedIndex = newIndex;
+                            });
+                            fetchDataForTab(statusList[newIndex]);
+                          }
+                        },
+                      ),
                     ),
                   ),
                   // DropdownButton<int>(
