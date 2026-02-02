@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:do_fix/app/views/cart_screen/cart_screen.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
-import 'package:do_fix/widgets/search_screen.dart';
+import 'package:do_fix/app/views/bookingScreen/widgets/search_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

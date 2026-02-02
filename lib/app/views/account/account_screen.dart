@@ -48,7 +48,7 @@ class _AccountScreenState extends State<AccountScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("No"),
+              child: Text("No",style: TextStyle(color: Colors.red),),
             ),
             TextButton(
               onPressed: () async {

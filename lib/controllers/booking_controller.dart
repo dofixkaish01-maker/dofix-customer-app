@@ -12,7 +12,6 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widgets/common_loading.dart';
-import '../widgets/custom_snackbar.dart' hide showCustomSnackBar;
 
 class BookingController extends GetxController implements GetxService {
   final BookingRepo bookingRepo;

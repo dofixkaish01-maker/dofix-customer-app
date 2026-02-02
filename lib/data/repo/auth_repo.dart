@@ -234,16 +234,27 @@ class AuthRepo {
     );
   }
 
-  Future<Response> searchList(Map<String, dynamic> body) async {
-    debugPrint("Body: $body");
+  // Future<Response> searchList(Map<String, dynamic> body) async {
+  //   debugPrint("Body: $body");
+  //   return await apiClient.getData(
+  //     AppConstants.search,
+  //     query: {
+  //       "limit": "10",
+  //       "offset": "1",
+  //     },
+  //     body: body,
+  //     method: "POST",
+  //   );
+  // }
+
+  Future<Response> searchList(String searchText) async {
     return await apiClient.getData(
       AppConstants.search,
       query: {
         "limit": "10",
         "offset": "1",
+        "search": searchText,
       },
-      body: body,
-      method: "POST",
     );
   }
 

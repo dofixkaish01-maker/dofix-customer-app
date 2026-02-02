@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:do_fix/widgets/app_snackbar.dart';
 import 'package:do_fix/widgets/common_loading.dart';
 import 'package:do_fix/widgets/custom_snack_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+// import 'package:flutter/services.dart';
+// import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -1149,7 +1150,7 @@ class _BookingSheetState extends State<BookingSheet> {
                                       "service_preference": servicePreference
                                     }, dashController.selectedVariations,
                                         showLoader: true);
-                                  },
+                                  }, isPartial: 0,
                                 );
                               },
                             ),
@@ -1192,94 +1193,139 @@ bool _validateAllFields({
       "All fields: $name, $mobile, $email, $address, $city, $postalCode, $country, $street, $addressType");
 
   if (!GetUtils.isEmail(email)) {
-    Get.snackbar("Invalid Email", "Please enter a valid email address.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Invalid Email",
+        message: "Please enter a valid email address.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
 
   if (!RegExp(r'^[6-9]\d{9}$').hasMatch(mobile)) {
-    Get.snackbar("Invalid Mobile", "Enter a valid 10-digit mobile number.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Invalid Mobile",
+        message: "Enter a valid 10-digit mobile number.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
 
   if (selectedLatLng == null) {
-    Get.snackbar("Location Required", "Please select a location on the map.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Location Required",
+        message: "Please select a location on the map.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
 
   if (zoneId == null || zoneId.isEmpty) {
     zoneId = "e8554d44-dcf2-47c7-8cf9-400d05a1340f";
     // TODO : publishing -> handle zoneID
-    // Get.snackbar("Zone Error", "Zone ID is missing. Try restarting the app.",
-    //     backgroundColor: Colors.red, colorText: Colors.white);
-    // return false;
+    // AppSnackBar.show(
+    //     title: "Zone Error",
+    //     message: "Zone ID is missing. Try restarting the app.",
+    //     backgroundColor: Colors.red, textColor: Colors.white
+    // );
+    return false;
   }
 
   if (selectedDate == null) {
-    Get.snackbar("Date Missing", "Please select a booking date.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Date Missing",
+        message: "Please select a booking date.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
 
   if (selectedTime == null) {
-    Get.snackbar("Time Missing", "Please select a booking time.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Time Missing",
+        message: "Please select a booking time.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
 
   if (name.isEmpty) {
-    Get.snackbar("Name Required", "Please enter your name.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Name Required",
+        message: "Please enter your name.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
   if (mobile.isEmpty) {
-    Get.snackbar("Mobile Required", "Please enter your mobile number.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+   AppSnackBar.show(
+       title: "Mobile Required",
+       message: "Please enter your mobile number.",
+        backgroundColor: Colors.red, textColor: Colors.white
+   );
     return false;
   }
   if (email.isEmpty) {
-    Get.snackbar("Email Required", "Please enter your email address.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Email Required",
+        message: "Please enter your email address.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
   if (address.isEmpty) {
-    Get.snackbar("Address Required", "Please enter your address.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Address Required",
+        message: "Please enter your address.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
   if (city == null || city.isEmpty) {
     city = "Default City";
     // TODO : publishing -> handle city
-    // Get.snackbar("City Required", "Please enter your city.",
-    //     backgroundColor: Colors.red, colorText: Colors.white);
-    // return false;
+   // AppSnackBar.show(
+   //    title:  "City Required",
+   //     message: "Please enter your city.",
+   //      backgroundColor: Colors.red, textColor: Colors.white
+   // );
+    return false;
   }
   if (postalCode == null || postalCode.isEmpty) {
     postalCode = "000000";
     // TODO : publishing -> handle postal code
-    // Get.snackbar("Postal Code Required", "Please enter your postal code.",
-    //     backgroundColor: Colors.red, colorText: Colors.white);
-    // return false;
+    // AppSnackBar.show(
+    //     title: "Postal Code Required",
+    //     message: "Please enter your postal code.",
+    //     backgroundColor: Colors.red, textColor: Colors.white
+    // );
+    return false;
   }
   if (country == null || country.isEmpty) {
     country = "Default Country";
     // TODO : publishing -> handle country
-    // Get.snackbar("Country Required", "Please enter your country.",
-    //     backgroundColor: Colors.red, colorText: Colors.white);
-    // return false;
+    // AppSnackBar.show(
+    //     title: "Country Required",
+    //     message: "Please enter your country.",
+    //     backgroundColor: Colors.red, textColor: Colors.white
+    // );
+    return false;
   }
   if (street == null || street.isEmpty) {
     street = "Default Street";
     // TODO : publishing -> handle street
-    // Get.snackbar("Street Required", "Please enter your street.",
-    //     backgroundColor: Colors.red, colorText: Colors.white);
-    // return false;
+    // AppSnackBar.show(
+    //     title: "Street Required",
+    //     message: "Please enter your street.",
+    //     backgroundColor: Colors.red, textColor: Colors.white
+    // );
+    return false;
   }
   if (addressType == null) {
-    Get.snackbar("Address Type Required", "Please select address type.",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Address Type Required",
+        message: "Please select address type.",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
   print(
@@ -1298,8 +1344,11 @@ bool _validateAllFields({
       street == null ||
       street.isEmpty ||
       addressType == null) {
-    Get.snackbar("Error", "Please fill in all required fields!",
-        backgroundColor: Colors.red, colorText: Colors.white);
+    AppSnackBar.show(
+        title: "Error",
+        message: "Please fill in all required fields!",
+        backgroundColor: Colors.red, textColor: Colors.white
+    );
     return false;
   }
 
@@ -1309,7 +1358,7 @@ bool _validateAllFields({
 makeDigitalPayment(
     {required String bookingId,
     required Function? onPressed,
-    required Map<String, dynamic> data}) async {
+    required Map<String, dynamic> data, required int isPartial}) async {
   String url = '';
   await Get.find<DashBoardController>().getUserInfo(false);
   SharedPreferences preferences = await SharedPreferences.getInstance();

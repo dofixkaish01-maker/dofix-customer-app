@@ -12,6 +12,7 @@ import '../../../model/service_model.dart';
 import 'component/horizontal_view.dart';
 
 class HomeScreen extends StatefulWidget {
+
   HomeScreen({super.key});
 
   @override
@@ -20,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final bookingController = Get.find<BookingController>();
+
   @override
   void initState() {
     super.initState();

@@ -1,3 +1,4 @@
+// import 'package:do_fix/widgets/app_snackbar.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import '../../../controllers/dashboard_controller.dart';
@@ -177,9 +178,9 @@
 //                         controller.getCartList();
 //
 //                         // Optional: show snackbar
-//                         Get.snackbar(
-//                           "Service Added",
-//                           "${service.name} added to cart",
+//                         AppSnackBar.show(
+//                           title: "Service Added",
+//                           message: "${service.name} added to cart",
 //                           snackPosition: SnackPosition.BOTTOM,
 //                         );
 //                       },

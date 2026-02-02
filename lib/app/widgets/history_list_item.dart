@@ -24,10 +24,10 @@ class _HistoryListItemState extends State<HistoryListItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      splashColor: Colors.transparent,      // ✅ ADD
-      highlightColor: Colors.transparent,   // ✅ ADD
-      hoverColor: Colors.transparent,       // ✅ ADD
-      focusColor: Colors.transparent,       // ✅ ADD
+      splashColor: Colors.transparent,      // ADD
+      highlightColor: Colors.transparent,   // ADD
+      hoverColor: Colors.transparent,       // ADD
+      focusColor: Colors.transparent,       // ADD
       onTap: () async {
         await Get.find<DashBoardController>()
             .getBookingDetails(widget.booking?.id ?? "");

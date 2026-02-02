@@ -88,8 +88,18 @@ class DashBoardController extends GetxController implements GetxService {
   void onInit() {
     super.onInit();
 
-    getCartListing(limit: "100", offset: "1", isRoute: false, showLoader: true);
+    // CART
+    getCartListing(
+      limit: "100",
+      offset: "1",
+      isRoute: false,
+      showLoader: true,
+    );
+
+    // CATEGORY LIST (YE MISSING THA)
+    getFeaturedCategories("10", "1", false);
   }
+
 
   void updateLatLong(String lat, String long) {
     if (kDebugMode) {
@@ -1423,54 +1433,46 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
-  Future<void> getSearchList(Map<String, dynamic> body) async {
-    _isLoginLoading = true;
-    serviceModelSearchList.value = [];
-    update();
+  Future<void> getSearchList(String searchText) async {
     try {
-      Response response = await authRepo.searchList(body);
-      await Future.delayed(Duration(seconds: 15));
-      var responseData = response.body;
+      _isLoginLoading = true;
+      serviceModelSearchList.clear();
+      update();
 
-      if (responseData == null) {
-        throw Exception("Response data is null");
+      final Response response =
+      await authRepo.searchList(searchText);
+
+      final responseData = response.body;
+
+      log("FULL SEARCH RESPONSE => $responseData");
+
+      if (responseData is! Map) {
+        showCustomSnackBar("Server unavailable. Try again.");
+        return;
       }
-      log("Response data: $responseData");
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          responseData['content']['services']['data'].forEach((element) {
-            serviceModelSearchList.add(sv.ServiceModel.fromJson(element));
-          });
-          _isLoginLoading = false;
-          update();
-        } else {
-          _isLoginLoading = false;
+      if (response.statusCode == 200 &&
+          responseData['message']
+              ?.toString()
+              .contains("Successfully data fetched") == true) {
 
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
-          update();
+        final List list =
+            responseData['content']?['services']?['data'] ?? [];
+
+        for (var element in list) {
+          serviceModelSearchList.add(
+            sv.ServiceModel.fromJson(element),
+          );
         }
       } else {
-        _isLoginLoading = false;
-
-        closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
+        showCustomSnackBar(responseData['message'] ?? "No result");
       }
     } catch (e) {
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
-      debugPrint("Error fetching categories:14 $e");
-
-      closeSnackBarIfActive();
-      _isLoginLoading = false;
+      debugPrint("Search Error => $e");
+      showCustomSnackBar("Search failed");
     } finally {
       _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      // hideLoading();
-      // update();
+      update();
     }
   }
 

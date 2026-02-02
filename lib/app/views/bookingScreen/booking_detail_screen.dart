@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:do_fix/app/views/bookingScreen/widgets/custom_cancel_button.dart';
+// import 'package:do_fix/app/views/bookingScreen/widgets/custom_cancel_button.dart';
 import 'package:do_fix/app/views/bookingScreen/widgets/custom_invoide_button.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:do_fix/app/widgets/custom_booking_details_items.dart';
@@ -9,13 +9,18 @@ import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/booking_model.dart';
 import 'package:do_fix/utils/app_constants.dart';
 import 'package:do_fix/utils/string_extensions.dart';
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+// import 'package:do_fix/app/widgets/custom_payment_method_widget.dart';
+import '../../../utils/date_converter.dart';
 import '../../../utils/dimensions.dart';
-import '../home/component/variations_new_card.dart';
+import '../cart_screen/SubScreen/final_screen.dart';
+// import '../home/component/variations_new_card.dart';
+import '../services/service_details_screen.dart';
+
+//use for open razor pay payment getway
 
 class BookingDetailScreen extends StatefulWidget {
   final String? formattedTime;
@@ -42,8 +47,9 @@ class BookingDetailScreen extends StatefulWidget {
 class _BookingDetailScreenState extends State<BookingDetailScreen> {
   final dashBoardController = Get.find<DashBoardController>();
   final bookController = Get.find<BookingController>();
-
-  void _showReviewDialog() {
+  DateTime selectedDate = DateTime.now();
+  TimeOfDay? selectedTime;
+ _showReviewDialog() {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -202,103 +208,120 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        // bottomNavigationBar: (widget.booking?.bookingStatus == 'completed' ||
-        //         widget.booking?.isPaid == 1)
-        bottomNavigationBar: (widget.booking?.bookingStatus == 'completed')
-            ? Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          String uri = "";
-                          uri =
-                              "${AppConstants.baseUrl}${AppConstants.regularBookingInvoiceUrl}${widget.booking?.id}";
+        bottomNavigationBar:
+        // ❌ CANCELLED → NOTHING
+        (widget.booking?.bookingStatus == 'canceled')
+            ? const SizedBox.shrink()
 
-                          if (kDebugMode) {
-                            print("Uri : $uri");
-                          }
-                          _launchUrl(uri);
-                        },
-                        child: CustomInvoiceButton(),
-                      ),
-                    ),
-                    Visibility(
-                      child: SizedBox(width: 10),
-                      visible: (widget.booking?.bookingStatus == 'pending'),
-                    ),
-                    //Cancel btn work stop
-                    // Visibility(
-                    //   visible: ((widget.booking?.bookingStatus == 'pending') &&
-                    //       widget.booking?.isPaid == 0),
-                    //   child: Expanded(
-                    //     child: InkWell(
-                    //       onTap: () async {
-                    //         await bookController
-                    //             .cancelBookingController(widget.booking?.id);
-                    //         await Get.find<DashBoardController>()
-                    //             .getBookingDetails(widget.booking?.id ?? "");
-                    //         await Get.find<BookingController>()
-                    //             .getBookingReview(widget.booking?.id ?? "");
-                    //         Get.back();
-                    //       },
-                    //       child: CustomCancelledButton(),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
-              )
-            // : ((widget.booking?.bookingStatus == 'pending') &&
-            //         widget.booking?.isPaid == 0)
-            //     ? Padding(
-            //         padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
-            //         child: InkWell(
-            //             onTap: () async {
-            //               await bookController
-            //                   .cancelBookingController(widget.booking?.id);
-            //               await Get.find<DashBoardController>()
-            //                   .getBookingDetails(widget.booking?.id ?? "");
-            //               await Get.find<BookingController>()
-            //                   .getBookingReview(widget.booking?.id ?? "");
-            //               Get.back();
-            //             },
-            //             child: CustomCancelledButton()),
-            //       )
-                : (widget.booking?.bookingStatus == 'ongoing')
-          ? Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
-        child: InkWell(
-          onTap: () {
-            // 🔹 TODO: open add extra service bottom sheet / API
-            // showAddExtraServiceSheet(
-            //   context,
-            //   widget.booking!,
-            // );
-          },
-          child: Container(
-            height: 48,
-            decoration: BoxDecoration(
-              color: Color(0xFF207FA8),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Text(
-                "Add Extra Work",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: Dimensions.fontSizeDefault,
-                  fontWeight: FontWeight.w600,
+        // 🔴 PAYMENT NOT DONE → PAY NOW
+            : (widget.booking?.isPaid == 0 && widget.booking?.paymentMethod=='razor_pay')
+            ? Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+          child: InkWell(
+            onTap: () async {
+
+              final booking = widget.booking!;
+              final dashController = Get.find<DashBoardController>();
+
+              log("BOOKING ID : ${booking.id}");
+              log("IS PAID : ${booking.isPaid}");
+
+              await makeDigitalPayment(
+                bookingId: booking.id!, // 🔴 IMPORTANT
+                isPartial: 0,
+                data: {
+                  "name":
+                  "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+                  "mobile_number": dashController
+                      .userModel.phone
+                      .replaceFirst("+91", ""),
+                  "email": dashController.userModel.email,
+                  "address_label": "service",
+                  "address": widget.locationAddress,
+                  "lat": booking.serviceAddress?.lat,
+                  "lng": booking.serviceAddress?.lon,
+                  "zone_id": booking.zoneId,
+                  "message": booking.message ?? "",
+                  "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+                  "time": formatTimeOfDay24Hour(
+                    selectedTime ?? TimeOfDay.now(),
+                  ).toString(),
+                  "city": booking.serviceAddress?.city,
+                  "zip_code": booking.serviceAddress?.zipCode,
+                  "country": booking.serviceAddress?.country,
+                  "street": booking.serviceAddress?.street,
+                  "house": booking.serviceAddress?.house,
+                  "floor": booking.serviceAddress?.floor,
+                },
+                onPressed: () async {
+                  await dashController
+                      .getBookingDetails(booking.id!);
+                  setState(() {});
+                },
+              );
+            },
+            child: Container(
+              height: 48,
+              decoration: BoxDecoration(
+                color: const Color(0xFF207FA8),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Text(
+                  "Pay Now",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: Dimensions.fontSizeDefault,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      )
-          : SizedBox.shrink(),
-      appBar: CustomAppBar(
+        )
+        /// 🟢 CASE 2: PAYMENT DONE + SERVICE COMPLETED → SHOW INVOICE
+            : (widget.booking?.isPaid == 1 &&
+            widget.booking?.bookingStatus == 'completed')
+            ? Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+          child: Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    final uri =
+                        "${AppConstants.baseUrl}${AppConstants.regularBookingInvoiceUrl}${widget.booking?.id}";
+                    _launchUrl(uri);
+                  },
+                  child: CustomInvoiceButton(),
+                ),
+              ),
+              // ---- Cancel button (COMMENTED as requested) ----
+              // Visibility(
+              //   visible: ((widget.booking?.bookingStatus == 'pending') &&
+              //       widget.booking?.isPaid == 0),
+              //   child: Expanded(
+              //     child: InkWell(
+              //       onTap: () async {
+              //         await bookController
+              //             .cancelBookingController(widget.booking?.id);
+              //         await Get.find<DashBoardController>()
+              //             .getBookingDetails(widget.booking?.id ?? "");
+              //         await Get.find<BookingController>()
+              //             .getBookingReview(widget.booking?.id ?? "");
+              //         Get.back();
+              //       },
+              //       child: CustomCancelledButton(),
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+        )
+
+        /// ⚪ ELSE → NOTHING
+            : const SizedBox.shrink(),
+        appBar: CustomAppBar(
           title: 'Booking Details',
           isSearchButtonExist: false,
           isBackButtonExist: true,
@@ -565,15 +588,15 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         : Colors.orange, // pending
                   ),
                 ),
-                SizedBox(
-                  height: 16,
-                ),
                 SizedBox(height: 10),
                 Row(
                       children: [
                         Icon(
-                          Icons.money,
+                          Icons.payments_outlined,
                           size: 16,
+                        ),
+                        SizedBox(
+                          width: 3,
                         ),
                         Text(
                           // "Payment Method",
@@ -600,7 +623,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       ),
                     ),
                 SizedBox(
-                  height: 16,
+                  height: 10,
                 ),
                 Row(
                   children: [

@@ -246,6 +246,12 @@ class ApiClient extends GetxController implements GetxService {
     //log('====> API Response: [${response0.statusCode}] $uri\n${response.body}');
     return response0;
   }
+  //
+  // Future<dynamic> getTrendingService() async {
+  //
+  // }
+  //
+  // Future<dynamic> getCategoryList() async {}
 }
 
 class MultipartBody {

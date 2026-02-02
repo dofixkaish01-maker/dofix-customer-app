@@ -1,131 +1,118 @@
-import 'package:do_fix/app/views/dashboard/dashboard_screen.dart';
-import 'package:do_fix/controllers/dashboard_controller.dart';
-import 'package:do_fix/model/category_model.dart';
-import 'package:do_fix/utils/dimensions.dart';
-import 'package:do_fix/utils/sizeboxes.dart';
-import 'package:do_fix/utils/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+
+import '../../../../controllers/dashboard_controller.dart';
+import '../../../../model/category_model.dart';
+import '../../../../utils/dimensions.dart';
+import '../../../../utils/styles.dart';
 import '../../../../widgets/custom_image_viewer.dart';
+import '../../dashboard/dashboard_screen.dart';
 
 class CategoryComponents extends StatelessWidget {
-  CategoryModel? categoryList = CategoryModel(data: []);
-  bool? isShowSeeAll;
-  double? width;
-  CategoryComponents(
-      {super.key, this.categoryList, this.isShowSeeAll = true, this.width});
+  const CategoryComponents({
+    super.key,
+    required this.categoryList,
+    this.isShowSeeAll = true,
+    required this.width,
+  });
+
+  final CategoryModel categoryList;
+  final bool isShowSeeAll;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
+    final list = categoryList.data;
+
+    if (list == null || list.isEmpty) {
+      return const SizedBox();
+    }
+
     return Padding(
       padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Visibility(
-              visible: isShowSeeAll!,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Explore Service",
-                    style: albertSansRegular.copyWith(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                    ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (isShowSeeAll)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Explore Service",
+                  style: albertSansRegular.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Get.offAll(DashboardScreen(
-                          key: GlobalKey<DashboardScreenState>(),
-                          pageIndex: 1));
-                    },
-                    child: Text(
-                      "See All",
-                      style: albertSansRegular.copyWith(
-                        fontSize: Dimensions.fontSize13,
-                        color: Theme.of(context).hintColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Visibility(
-              visible: (categoryList?.data ?? []).isNotEmpty,
-              child: SizedBox(
-                width: double.infinity,
-                child: Wrap(
-                  spacing: 10.0, // Horizontal spacing
-                  runSpacing: 8.0, // Vertical spacing
-                  children:
-                      List.generate((categoryList?.data ?? []).length, (i) {
-                    return SizedBox(
-                      width: width,
-                      height: 115,
-                      child: GestureDetector(
-                        onTap: () {
-                          debugPrint(
-                              "Category ID: ${(categoryList?.data ?? [])[i].id}");
-                          print(
-                              'Selected ID: ${(categoryList?.data ?? [])[i].id}');
-                          Get.find<DashBoardController>()
-                              .getCategoriesToSubCategories(
-                                  id: (categoryList?.data ?? [])[i]
-                                      .id
-                                      .toString(),
-                                  limit: '10',
-                                  offset: "1");
-                          //eb69594b-df12-4519-adc5-01ef73e5eae2
-                        },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            sizedBox10(),
-                            CustomNetworkImageWidget(
-                              fit: BoxFit.cover,
-                              imagePadding: 0,
-                              width: width,
-                              height: 70,
-                              image: categoryList?.data?[i].imageFullPath ?? "",
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                              ),
-                              child: Text(
-                                textAlign: TextAlign.center,
-                                categoryList?.data?[i].name ?? "",
-                                maxLines: 2,
-                                style: albertSansRegular.copyWith(
-                                  fontSize: 11,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )
-                          ],
-                        ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Get.offAll(
+                      DashboardScreen(
+                        key: GlobalKey<DashboardScreenState>(),
+                        pageIndex: 1,
                       ),
                     );
-                  }),
+                  },
+                  child: Text(
+                    "See All",
+                    style: albertSansRegular.copyWith(
+                      fontSize: Dimensions.fontSize13,
+                      color: Theme.of(context).hintColor,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-            // Visibility(
-            //     visible: (categoryList?.data ?? []).isEmpty,
-            //     child: Center(
-            //       child: CircularProgressIndicator(),
-            //     )),
-          ],
-        ),
+
+          const SizedBox(height: 8),
+
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            children: List.generate(list.length, (i) {
+              final cat = list[i];
+
+              return SizedBox(
+                width: width,
+                height: 115,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.find<DashBoardController>()
+                        .getCategoriesToSubCategories(
+                      id: cat.id.toString(),
+                      limit: '10',
+                      offset: "1",
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      CustomNetworkImageWidget(
+                        fit: BoxFit.cover,
+                        width: width,
+                        height: 70,
+                        image: cat.imageFullPath ?? "",
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        cat.name ?? "",
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        style: albertSansRegular.copyWith(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }

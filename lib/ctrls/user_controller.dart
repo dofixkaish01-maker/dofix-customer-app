@@ -1,4 +1,5 @@
 // import 'dart:io';
+// import 'package:do_fix/widgets/app_snackbar.dart';
 // import 'package:get/get.dart';
 // import 'package:http/http.dart' as http;
 //
@@ -45,7 +46,9 @@
 //
 //     http.StreamedResponse response = await request.send();
 //     if (response.statusCode == 200) {
-//       Get.snackbar("Success", "Profile updated successfully");
+//       AppSnackBar.show(
+//           title:"Success",
+//           message: "Profile updated successfully");
 //     } else {
 //       print("Failed to update profile: ${response.statusCode}");
 //     }

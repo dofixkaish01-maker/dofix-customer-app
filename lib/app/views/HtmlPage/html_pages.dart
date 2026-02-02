@@ -16,6 +16,7 @@ class HtmlContentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor:Color(0xFF207FA8),
         title: Text(title),
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -25,7 +26,25 @@ class HtmlContentScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Html(data: htmlContent),
+        child: Html(
+          data: htmlContent,
+          style: {
+            "hr": Style(
+              margin: Margins.symmetric(vertical: 8),
+            ),
+            "p": Style(
+              margin: Margins.only(bottom: 8, top: 4),
+            ),
+            "div": Style(
+              margin: Margins.zero,
+              padding: HtmlPaddings.zero,
+            ),
+            "body": Style(
+              margin: Margins.zero,
+              padding: HtmlPaddings.zero,
+            ),
+          },
+        ),
       ),
     );
   }
