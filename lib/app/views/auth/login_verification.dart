@@ -5,7 +5,6 @@ import 'package:do_fix/utils/dimensions.dart';
 import 'package:do_fix/utils/images.dart';
 import 'package:do_fix/utils/sizeboxes.dart';
 import 'package:do_fix/utils/styles.dart';
-import 'package:do_fix/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';

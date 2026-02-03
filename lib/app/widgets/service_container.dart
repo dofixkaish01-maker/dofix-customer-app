@@ -150,10 +150,20 @@ class LoadingDialog {
       barrierDismissible: false,
     );
   }
-
+  //
+  // static void hideLoading() {
+  //   Get.back();
+  // }
   static void hideLoading() {
-    Get.back();
+    if (Get.isDialogOpen == true) {
+      Get.back();
+    }
+
+    if (Get.isSnackbarOpen) {
+      Get.closeAllSnackbars();
+    }
   }
+
 }
 
 class BookingContainer extends StatefulWidget {

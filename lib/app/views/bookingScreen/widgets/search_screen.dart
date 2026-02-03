@@ -27,7 +27,7 @@ class SearchScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: SizedBox(
             height: 42,
-            child: TextField(
+            child: Obx(() => TextField(
               onChanged: controller.onSearchChanged,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
@@ -37,9 +37,7 @@ class SearchScreen extends StatelessWidget {
                 suffixIcon: controller.searchText.value.isNotEmpty
                     ? IconButton(
                   icon: const Icon(Icons.close, color: Colors.grey),
-                  onPressed: () {
-                    controller.clearSearch();
-                  },
+                  onPressed: controller.clearSearch,
                 )
                     : null,
                 filled: true,
@@ -50,7 +48,7 @@ class SearchScreen extends StatelessWidget {
                   borderSide: BorderSide.none,
                 ),
               ),
-            ),
+            )),
           ),
         ),
       ),

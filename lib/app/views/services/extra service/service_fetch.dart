@@ -6,14 +6,26 @@ Future<ServiceModel> fetchService(String serviceId) async {
   final response = await http.get(
     Uri.parse('https://panel.dofix.in/api/v1/service/$serviceId'),
     headers: {
-      'Authorization': 'Bearer <your_token_here>', // agar token chahiye
+      'Authorization': 'Bearer <your_token_here>',
     },
   );
 
-  if (response.statusCode == 200) {
-    final jsonData = json.decode(response.body);
-    return ServiceModel.fromJson(jsonData['data']);
-  } else {
-    throw Exception('Failed to load service');
+  // status code check
+  if (response.statusCode != 200) {
+    throw Exception('Server error: ${response.statusCode}');
   }
+
+  // response JSON hai ya nahi
+  if (!response.headers['content-type']!.contains('application/json')) {
+    throw Exception('Invalid response format');
+  }
+
+  final jsonData = json.decode(response.body);
+
+  // data null safety
+  if (jsonData['data'] == null) {
+    throw Exception('Service data missing');
+  }
+
+  return ServiceModel.fromJson(jsonData['data']);
 }

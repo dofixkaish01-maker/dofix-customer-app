@@ -1454,10 +1454,11 @@ class DashBoardController extends GetxController implements GetxService {
       if (response.statusCode == 200 &&
           responseData['message']
               ?.toString()
-              .contains("Successfully data fetched") == true) {
+              .contains("Successfully data fetched") ==
+              true) {
 
-        final List list =
-            responseData['content']?['services']?['data'] ?? [];
+        /// FIX HERE
+        final List list = responseData['content'] ?? [];
 
         for (var element in list) {
           serviceModelSearchList.add(

@@ -253,10 +253,12 @@ class AuthRepo {
       query: {
         "limit": "10",
         "offset": "1",
-        "search": searchText,
+        "search": searchText, // ✅ query param
       },
+      method: "POST",
     );
   }
+
 
   Future<Response> userInfo() async {
     return await apiClient.getData(AppConstants.user, method: "GET");

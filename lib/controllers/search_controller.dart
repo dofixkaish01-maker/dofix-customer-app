@@ -42,8 +42,9 @@ class SearchController extends GetxController {
   }
   void clearSearch() {
     searchText.value = '';
-    Get.find<DashBoardController>().serviceModelSearchList.clear();
-    update();
+    Get.find<DashBoardController>()
+        .serviceModelSearchList
+        .clear();
   }
 
 
