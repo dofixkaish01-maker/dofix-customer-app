@@ -204,7 +204,46 @@ class _HistoryListItemState extends State<HistoryListItem> {
               ],
             ),
 
-            SizedBox(height: 15),
+            SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, // ✅ Spacer ki zarurat nahi
+            children: [
+              const Text(
+                "Payment Type:",
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+              ),
+
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getPaymentChipColor(
+                    widget.booking?.paymentMethod,
+                    widget.booking?.isPaid,
+                  ).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  _getPaymentText(
+                    widget.booking?.paymentMethod,
+                    widget.booking?.isPaid,
+                  ),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: _getPaymentChipColor(
+                      widget.booking?.paymentMethod,
+                      widget.booking?.isPaid,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+            SizedBox(height: 12),
 
             /// 💰 Payment Status
             Row(
@@ -239,7 +278,7 @@ class _HistoryListItemState extends State<HistoryListItem> {
                 ),
               ],
             ),
-            SizedBox(height: 14),
+            SizedBox(height: 12),
             Divider(
               height: 0.75,
               color: Color(0xFFCECECE),
@@ -695,4 +734,17 @@ Color _getServiceStatusColor(String? status) {
 
 Color _getPaymentStatusColor(int? isPaid) {
   return isPaid == 1 ? Colors.green : Colors.orange;
+}
+String _getPaymentText(String? method, int? isPaid) {
+  if (method == "razor_pay") {
+    return isPaid == 1 ? "Online • Paid" : "Online • Unpaid";
+  }
+  return "Cash on Service";
+}
+
+Color _getPaymentChipColor(String? method, int? isPaid) {
+  if (method == "razor_pay") {
+    return isPaid == 1 ? Colors.green : Colors.orange;
+  }
+  return Colors.blueGrey;
 }

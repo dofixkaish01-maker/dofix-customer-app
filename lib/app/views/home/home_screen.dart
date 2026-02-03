@@ -42,13 +42,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   // ADDED: refresh function for pull to refresh
 // ADDED: pull to refresh handler
+//   Future<void> _onRefresh() async {
+//     final controller = Get.find<DashBoardController>();
+//
+//     // ADDED: repeat initial load logic
+//     controller.onInit(); // safest & zero error
+//
+//     controller.update(); // refresh UI
+//   }
   Future<void> _onRefresh() async {
     final controller = Get.find<DashBoardController>();
 
-    // ADDED: repeat initial load logic
-    controller.onInit(); // safest & zero error
+    await controller.getFeaturedCategories("6", "1");
+    await controller.getTopRated("10", "1", false);
+    await controller.getQuickRepair("10", "1", false);
+    await controller.getBanners();
 
-    controller.update(); // refresh UI
+    controller.update();
   }
 
 

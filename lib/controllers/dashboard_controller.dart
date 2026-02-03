@@ -98,6 +98,27 @@ class DashBoardController extends GetxController implements GetxService {
 
     // CATEGORY LIST (YE MISSING THA)
     getFeaturedCategories("10", "1", false);
+
+    // 🛒 CART
+    getCartListing(
+      limit: "100",
+      offset: "1",
+      isRoute: false,
+      showLoader: true,
+    );
+
+
+    // 📂 CATEGORIES
+    getFeaturedCategories("10", "1", false);
+
+    // ⭐ TOP RATED
+    getTopRated("10", "1", false);
+
+    // ⚡ QUICK REPAIR
+    getQuickRepair("10", "1", false);
+
+    // 🖼️ BANNERS
+    getBanners();
   }
 
 
