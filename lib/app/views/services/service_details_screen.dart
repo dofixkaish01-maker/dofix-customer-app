@@ -39,14 +39,23 @@ class _ServiceDetailsState extends State<ServiceDetails>
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Get service review and details after the build is complete
-      final dashboardController = Get.find<DashBoardController>();
-      final serviceId = dashboardController.serviceModel.id ?? "";
+    @override
+    void initState() {
+      super.initState();
 
-      Get.find<BookingController>().getServiceReview(serviceId: serviceId);
-      dashboardController.getServicesDetails(serviceId);
-    });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final dashboardController = Get.find<DashBoardController>();
+        final args = Get.arguments;
+
+        final serviceId = args?["service_id"];
+
+        if (serviceId != null) {
+          dashboardController.getServicesDetails(serviceId);
+          Get.find<BookingController>()
+              .getServiceReview(serviceId: serviceId);
+        }
+      });
+    }
 
     _controller = AnimationController(
       duration: Duration(milliseconds: 500), // faster

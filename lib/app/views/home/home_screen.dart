@@ -4,9 +4,7 @@ import 'package:do_fix/app/views/home/component/category_components.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/category_model.dart';
-import 'package:do_fix/widgets/common_loading.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import '../../../model/service_model.dart';
 import 'component/horizontal_view.dart';
@@ -23,32 +21,56 @@ class _HomeScreenState extends State<HomeScreen> {
   final bookingController = Get.find<BookingController>();
 
   @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //     // showLoading();
+  //     // Call visitChildElements() here
+  //     // Get.find<DashBoardController>().handleLocationPermission(context);
+  //     // final permission = await Geolocator.checkPermission();
+  //
+  //     // TODO : Unneccesarry call
+  //     // if (permission == LocationPermission.always ||
+  //     //     permission == LocationPermission.whileInUse) {
+  //     //   Get.find<DashBoardController>().getFeaturedCategories("6", "1");
+  //     // }
+  //     // hideLoading();
+  //   });
+  // }
+  @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // showLoading();
-      // Call visitChildElements() here
-      // Get.find<DashBoardController>().handleLocationPermission(context);
-      // final permission = await Geolocator.checkPermission();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = Get.find<DashBoardController>();
 
-      // TODO : Unneccesarry call
-      // if (permission == LocationPermission.always ||
-      //     permission == LocationPermission.whileInUse) {
-      //   Get.find<DashBoardController>().getFeaturedCategories("6", "1");
-      // }
-      // hideLoading();
+      controller.getFeaturedCategories("6", "1");
+      controller.getTopRated("10", "1", false);
+      controller.getQuickRepair("10", "1", false);
+      controller.getBanners();
     });
   }
+
   // ADDED: refresh function for pull to refresh
 // ADDED: pull to refresh handler
+//   Future<void> _onRefresh() async {
+//     final controller = Get.find<DashBoardController>();
+//
+//     // ADDED: repeat initial load logic
+//     controller.onInit(); // safest & zero error
+//
+//     controller.update(); // refresh UI
+//   }
   Future<void> _onRefresh() async {
     final controller = Get.find<DashBoardController>();
 
-    // ADDED: repeat initial load logic
-    controller.onInit(); // safest & zero error
+    await controller.getFeaturedCategories("6", "1");
+    await controller.getTopRated("10", "1", false);
+    await controller.getQuickRepair("10", "1", false);
+    await controller.getBanners();
 
-    controller.update(); // refresh UI
+    controller.update();
   }
 
 

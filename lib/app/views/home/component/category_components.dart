@@ -60,7 +60,7 @@ class CategoryComponents extends StatelessWidget {
                     "See All",
                     style: albertSansRegular.copyWith(
                       fontSize: Dimensions.fontSize13,
-                      color: Theme.of(context).hintColor,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),

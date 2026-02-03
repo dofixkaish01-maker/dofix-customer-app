@@ -99,12 +99,74 @@ class SearchScreen extends StatelessWidget {
                     itemBuilder: (_, index) {
                       final item = dashboard.serviceModelSearchList[index];
                       return InkWell(
-                        onTap: () {
-                          dashboard.serviceModel = item;
-                          dashboard.update();
-                          Get.to(() => ServiceDetails());
-                        },
-                        child: ServiceContainer(serviceModel: item),
+                          onTap: () {
+                            dashboard.getServicesDetails(item.id ?? "");
+                            Get.to(() => ServiceDetails());
+                          },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              /// IMAGE
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: SizedBox(
+                                  width: 70,
+                                  height: 70,
+                                  child: NetworkImageWithShimmer(
+                                    imageUrl: item.coverImageFullPath ?? "",
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+
+                              /// TEXT
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    /// NAME
+                                    Text(
+                                      item.name ?? "",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 4),
+
+                                    /// DESCRIPTION
+                                    Text(
+                                      item.shortDescription ?? "",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   );
