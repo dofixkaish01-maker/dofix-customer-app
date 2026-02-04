@@ -1,6 +1,7 @@
 import 'package:do_fix/helper/route_helper.dart';
 import 'package:do_fix/utils/app_constants.dart';
 import 'package:do_fix/utils/theme.dart';
+import 'package:do_fix/widgets/common_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -40,7 +41,12 @@ class MyApp extends StatelessWidget {
       builder: (BuildContext context, widget) {
         return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-            child: widget!);
+          child: Stack(
+          children: [
+          widget!,        // app screens
+          GlobalLoader(), //global loader overlay
+          ],
+        ),);
       },
     );
   }
