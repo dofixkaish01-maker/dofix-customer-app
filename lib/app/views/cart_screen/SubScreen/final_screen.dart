@@ -1132,8 +1132,7 @@ class _BookingSheetState extends State<BookingSheet> {
                                       "address": address,
                                       "lat": _selectedLatLng.latitude,
                                       "lng": _selectedLatLng.longitude,
-                                      "zone_id":
-                                          dashController.zoneIdForBooking,
+                                      "zone_id": dashController.zoneIdForBooking,
                                       "message": message,
                                       // can be empty or null
                                       "date": DateConverter.dateTimeForCoupon(

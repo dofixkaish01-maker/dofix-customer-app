@@ -741,11 +741,11 @@ class DashBoardController extends GetxController implements GetxService {
     log("Starting postOrder request...");
     ApiClient apiClient = ApiClient(
         appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
-
-    if (showLoader) {
-      showLoading();
-      update();
-    }
+    //
+    // if (showLoader) {
+    //   showLoading();
+    //   update();
+    // }
 
     var headers = {
       'Content-Type': 'application/json',
@@ -817,14 +817,14 @@ class DashBoardController extends GetxController implements GetxService {
 
           if (flag != 'failed') {
             // Success case
-            hideLoading();
-            update();
+            // hideLoading();
+            // update();
             Get.offAll(() => SuccessFullScreen());
             print("✅ Success Response: $responseBody");
           } else {
             // API returned failed flag
-            hideLoading();
-            update();
+            // hideLoading();
+            // update();
             print("❌ API returned failed flag: $message");
             showCustomSnackBar(
                 message.isNotEmpty
@@ -842,8 +842,8 @@ class DashBoardController extends GetxController implements GetxService {
               isError: true);
         }
       } else {
-        hideLoading();
-        update();
+        // hideLoading();
+        // update();
         print("❌ API Error ${response.statusCode}");
         print("📌 Response Reason: ${response.reasonPhrase}");
         print("📌 Response Body: $responseBody");
@@ -857,8 +857,8 @@ class DashBoardController extends GetxController implements GetxService {
       }
     } catch (e, stackTrace) {
       log("❌ Booking request failed with exception: $e");
-      hideLoading();
-      update();
+      // hideLoading();
+      // update();
       debugPrint("❌ Exception: $e");
       debugPrint("📌 Stack Trace: $stackTrace");
 
