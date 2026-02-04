@@ -99,11 +99,10 @@ class SearchScreen extends StatelessWidget {
                     itemBuilder: (_, index) {
                       final item = dashboard.serviceModelSearchList[index];
                       return InkWell(
-                          onTap: () {
-                            dashboard.getServicesDetails(item.id ?? "");
-                            Get.to(() => ServiceDetails());
+                          onTap: () async {
+                            await dashboard.getServicesDetails(item.id ?? "");
                           },
-                        child: Container(
+                          child: Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
