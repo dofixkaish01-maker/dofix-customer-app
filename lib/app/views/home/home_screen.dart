@@ -1,6 +1,7 @@
 import 'package:do_fix/app/views/dashboard/dashboard_screen.dart';
 import 'package:do_fix/app/views/home/component/banner_widget.dart';
 import 'package:do_fix/app/views/home/component/category_components.dart';
+import 'package:do_fix/app/views/home/refer%20screen/refer_earn_screen.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/category_model.dart';
@@ -81,10 +82,11 @@ class _HomeScreenState extends State<HomeScreen> {
         body: RefreshIndicator(
           onRefresh: _onRefresh,//for refresh page
           color: Color(0xff227FA8),
-          child: SingleChildScrollView(
+          child:SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 80),
             child: Column(
-              children: [
+            children: [
                 InkWell(
                     onTap: () {
                       Get.offAll(DashboardScreen(
@@ -201,9 +203,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 // SizedBox(
                 //   height: 50,
                 // ),
-                SizedBox(
-                  height: 100,
+                // 🔥 Refer & Earn Card (LAST ITEM)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.to(() => ReferEarnScreen());
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xff227FA8), Color(0xff34A9C7)],
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.card_giftcard, color: Colors.white, size: 32),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'Refer & Earn ₹150',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Invite friends & earn ₹150 when they book',
+                                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios,
+                              color: Colors.white, size: 16),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
+
               ],
             ),
           ),

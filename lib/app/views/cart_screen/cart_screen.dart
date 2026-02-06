@@ -1,4 +1,5 @@
 import 'package:do_fix/app/views/bookingScreen/booking_screen.dart';
+import 'package:do_fix/app/views/home/home_screen.dart';
 // import 'package:do_fix/app/views/cart_screen/SubScreen/final_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -85,49 +86,102 @@ class _CartScreenState extends State<CartScreen> {
             isCartButtonExist: false,
           ),
           body: _items.isEmpty
-              ? Container(
-                  height: Get.size.height,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _isLoading
-                          ? Center(
-                              child: SizedBox(
-                                height: 300,
-                                width: 300,
-                                child: Column(
-                                  children: [
-                                    CircularProgressIndicator(
-                                      color: Color(0xFF207FA7),
-                                    ),
-                                    SizedBox(height: 16),
-                                    Text(
-                                      "Loading cart...",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Cart is Empty!",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black),
-                                ),
-                              ],
-                            ),
-                    ],
-                  ),
+              ? SizedBox(
+            height: Get.size.height,
+            width: Get.size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _isLoading
+                    ? Column(
+                  children: const [
+                    CircularProgressIndicator(
+                      color: Color(0xFF207FA7),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      "Loading cart...",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 )
+                    : Column(
+                  children: [
+                    /// 🔥 LOTTIE ANIMATION
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 24),
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F8FB),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 90,
+                            width: 90,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.shopping_cart_outlined,
+                              size: 50,
+                              color: Color(0xFF207FA7),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            "Your cart is empty",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          const Text(
+                            "Looks like you haven’t added any service yet",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    /// 👉 ADD SERVICE BUTTON
+                    GestureDetector(
+                      onTap: () {
+                        /// Dashboard ka home tab
+                        Get.to(()=>HomeScreen());
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF207FA7),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          "Add Service",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
               : Visibility(
                   visible: _items.isNotEmpty,
                   child: SingleChildScrollView(
