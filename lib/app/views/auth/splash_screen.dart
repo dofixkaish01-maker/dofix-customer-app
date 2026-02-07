@@ -47,6 +47,8 @@ class _SplashScreenState extends State<SplashScreen> {
           padding: EdgeInsets.all(Dimensions.paddingSize100),
           child: Center(
             child: Image.asset(
+              width: 110,
+              height: 110,
               Images.iclogo,
             ),
           ),

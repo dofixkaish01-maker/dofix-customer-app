@@ -112,11 +112,35 @@ class Services {
   Services({this.data});
 
   factory Services.fromJson(Map<String, dynamic> json) {
-    return Services(
-      data: json['data'] != null
-          ? (json['data'] as List).map((e) => ServiceModel.fromJson(e)).toList()
-          : null,
-    );
+    try {
+      print("RAW JSON RECEIVED => $json");
+
+      var rawData = json['data'];
+
+      //  CASE 1: Agar data ke andar fir se data ho
+      if (rawData is Map<String, dynamic> && rawData['data'] is List) {
+        print("Nested data found -> data['data']");
+        rawData = rawData['data'];
+      }
+
+      //  CASE 2: Normal list ho
+      if (rawData is List) {
+        return Services(
+          data: rawData.map((e) {
+            print("PARSING ITEM => $e");
+            return ServiceModel.fromJson(e);
+          }).toList(),
+        );
+      }
+
+      print("DATA FORMAT WRONG => ${rawData.runtimeType}");
+      return Services(data: []);
+
+    } catch (e, stack) {
+      print("SERVICES MODEL ERROR => $e");
+      print(stack);
+      return Services(data: []);
+    }
   }
 
   Map<String, dynamic> toJson() {

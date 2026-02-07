@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:do_fix/model/address_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../model/notification_model.dart';
 import '../../utils/app_constants.dart';
 import '../api/api.dart';
 
@@ -11,6 +15,38 @@ class AuthRepo {
   final SharedPreferences sharedPreferences;
 
   AuthRepo({required this.apiClient, required this.sharedPreferences});
+
+
+  static const String _baseUrl =
+      'https://panel.dofix.in/api/v1/customer/get-notifications';
+  static Future<NotificationModel> fetchNotifications({
+    required String token,
+    required String userId,
+    required String userType,
+  }) async {
+    final uri = Uri.parse(_baseUrl).replace(
+      queryParameters: {
+        'user_id': userId,
+        'user_type': userType,
+      },
+    );
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return NotificationModel('', '', []).convertToModel(data);
+    } else {
+      throw Exception(
+        'Failed to load notifications (${response.statusCode})',
+      );
+    }
+  }
+
 
   Future<bool> saveUserToken(
     String token,

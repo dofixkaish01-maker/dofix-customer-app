@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../app/views/services/notification/fcm_service.dart';
 import '../data/api/api.dart';
 import '../data/repo/auth_repo.dart';
 import '../helper/route_helper.dart';
@@ -392,98 +393,193 @@ class AuthController extends GetxController implements GetxService {
 
   Future<void> VerifyOtp(String phone, String otp) async {
     ApiClient apiClient = ApiClient(
-        appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
+      appBaseUrl: AppConstants.baseUrl,
+      sharedPreferences: sharedPreferences,
+    );
+
     if (otp.length != 4) {
       showCustomSnackBar("Please enter a valid 4-digit OTP", isError: true);
       return;
     }
+
     showLoading();
     update();
+
     try {
+      ///  STEP 1: Get FCM Token
+      String? fcmToken = await FcmService.getToken();
+      debugPrint("FCM Token while verify: $fcmToken");
+
+      /// STEP 2: Verify OTP API (FCM token ke sath)
       Response response =
-          await authRepo.verifyOtp(phone.trim(), otp.trim(), "");
+      await authRepo.verifyOtp(phone.trim(), otp.trim(), fcmToken ?? "");
 
       var responseData = jsonDecode(response.body);
-      debugPrint("Response: $responseData");
+      debugPrint("Verify OTP Response: $responseData");
+
+      /// ❌ Invalid / Expired OTP
       if (responseData['error'] != null &&
+          (responseData['error']
+              .toString()
+              .toLowerCase()
+              .contains('invalid') ||
               responseData['error']
                   .toString()
                   .toLowerCase()
-                  .contains('invalid') ||
-          responseData['error'].toString().toLowerCase().contains('expired')) {
+                  .contains('expired'))) {
         hideLoading();
         update();
-        log("INSIDE: Invalid or expired OTP");
         showCustomSnackBar("Invalid or expired OTP", isError: true);
-
-        update();
         return;
       }
+
+      /// SUCCESS
       if (response.statusCode == 200) {
-        log("INSIDE: 200");
-        debugPrint(" ${responseData.toString()}");
         if (responseData["message"]
             .toString()
             .contains("Successfully registered")) {
-          log("INSIDE: Successfully registered");
           hideLoading();
-          await Future.delayed(Duration(seconds: 1), () {});
-          // showCustomSnackBar(responseData['message'],
-          //     isError: false, isSuccess: true);
+
+          ///  STEP 3: FCM Token Refresh Listener (IMPORTANT)
+          FcmService.onTokenRefresh((newToken) {
+            debugPrint("FCM Token refreshed: $newToken");
+            authRepo.verifyOtp(
+              phone.trim(),
+              otp.trim(),
+              newToken,
+            );
+          });
+
+          /// 🟢 STEP 4: Registration flow
           if (responseData['content']['RegisterComplete'] == 0) {
             token = responseData['content']['token'];
             update();
-            log("INSIDE: Setup account");
             Get.offAllNamed(RouteHelper.getAccountSetup(phone.trim()));
           } else {
-            authRepo.saveUserToken(responseData['content']['token']);
-            apiClient.updateHeader(responseData['content']['token']);
+            await authRepo.saveUserToken(responseData['content']['token']);
+             apiClient.updateHeader(responseData['content']['token']);
             init();
-            log("INSIDE: dashboard");
             Get.offAllNamed(RouteHelper.getDashboardRoute());
           }
-          // Get.toNamed(RouteHelper.getAccountSetup(phone.trim()));
+
           update();
         } else {
-          update();
-          closeSnackBarIfActive();
           hideLoading();
-          if (responseData['error'] != null &&
-                  responseData['error']
-                      .toString()
-                      .toLowerCase()
-                      .contains('invalid') ||
-              responseData['error']
-                  .toString()
-                  .toLowerCase()
-                  .contains('expired')) {
-            showCustomSnackBar("Invalid or expired OTP", isError: true);
-          } else {
-            showCustomSnackBar("Something went wrong please try again later",
-                isError: true);
-          }
+          showCustomSnackBar(
+            "Something went wrong please try again later",
+            isError: true,
+          );
         }
       } else {
-        closeSnackBarIfActive();
         hideLoading();
-        if (response.hasError) {
-          showCustomSnackBar("Invalid OTP", isError: true);
-        } else {
-          showCustomSnackBar("Something went wrong", isError: true);
-        }
-        showCustomSnackBar("${response.hasError}", isError: true);
-        update();
+        showCustomSnackBar("Invalid OTP", isError: true);
       }
     } catch (e) {
-      print("Error sending OTP: 3 $e");
-      closeSnackBarIfActive();
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
       hideLoading();
+      showCustomSnackBar(
+        "Something went wrong. Please try again. $e",
+        isError: true,
+      );
     } finally {
       update();
     }
   }
+
+
+  // Future<void> VerifyOtp(String phone, String otp) async {
+  //   ApiClient apiClient = ApiClient(
+  //       appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
+  //   if (otp.length != 4) {
+  //     showCustomSnackBar("Please enter a valid 4-digit OTP", isError: true);
+  //     return;
+  //   }
+  //   showLoading();
+  //   update();
+  //   try {
+  //     Response response =
+  //         await authRepo.verifyOtp(phone.trim(), otp.trim(), "");
+  //
+  //     var responseData = jsonDecode(response.body);
+  //     debugPrint("Response: $responseData");
+  //     if (responseData['error'] != null &&
+  //             responseData['error']
+  //                 .toString()
+  //                 .toLowerCase()
+  //                 .contains('invalid') ||
+  //         responseData['error'].toString().toLowerCase().contains('expired')) {
+  //       hideLoading();
+  //       update();
+  //       log("INSIDE: Invalid or expired OTP");
+  //       showCustomSnackBar("Invalid or expired OTP", isError: true);
+  //
+  //       update();
+  //       return;
+  //     }
+  //     if (response.statusCode == 200) {
+  //       log("INSIDE: 200");
+  //       debugPrint(" ${responseData.toString()}");
+  //       if (responseData["message"]
+  //           .toString()
+  //           .contains("Successfully registered")) {
+  //         log("INSIDE: Successfully registered");
+  //         hideLoading();
+  //         await Future.delayed(Duration(seconds: 1), () {});
+  //         // showCustomSnackBar(responseData['message'],
+  //         //     isError: false, isSuccess: true);
+  //         if (responseData['content']['RegisterComplete'] == 0) {
+  //           token = responseData['content']['token'];
+  //           update();
+  //           log("INSIDE: Setup account");
+  //           Get.offAllNamed(RouteHelper.getAccountSetup(phone.trim()));
+  //         } else {
+  //           authRepo.saveUserToken(responseData['content']['token']);
+  //           apiClient.updateHeader(responseData['content']['token']);
+  //           init();
+  //           log("INSIDE: dashboard");
+  //           Get.offAllNamed(RouteHelper.getDashboardRoute());
+  //         }
+  //         // Get.toNamed(RouteHelper.getAccountSetup(phone.trim()));
+  //         update();
+  //       } else {
+  //         update();
+  //         closeSnackBarIfActive();
+  //         hideLoading();
+  //         if (responseData['error'] != null &&
+  //                 responseData['error']
+  //                     .toString()
+  //                     .toLowerCase()
+  //                     .contains('invalid') ||
+  //             responseData['error']
+  //                 .toString()
+  //                 .toLowerCase()
+  //                 .contains('expired')) {
+  //           showCustomSnackBar("Invalid or expired OTP", isError: true);
+  //         } else {
+  //           showCustomSnackBar("Something went wrong please try again later",
+  //               isError: true);
+  //         }
+  //       }
+  //     } else {
+  //       closeSnackBarIfActive();
+  //       hideLoading();
+  //       if (response.hasError) {
+  //         showCustomSnackBar("Invalid OTP", isError: true);
+  //       } else {
+  //         showCustomSnackBar("Something went wrong", isError: true);
+  //       }
+  //       showCustomSnackBar("${response.hasError}", isError: true);
+  //       update();
+  //     }
+  //   } catch (e) {
+  //     print("Error sending OTP: 3 $e");
+  //     closeSnackBarIfActive();
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     hideLoading();
+  //   } finally {
+  //     update();
+  //   }
+  // }
 
   Future<void> register(
       String email, String firstName, String lastName, String phone) async {

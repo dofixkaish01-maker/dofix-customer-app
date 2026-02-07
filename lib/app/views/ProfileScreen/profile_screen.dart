@@ -175,6 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           isBackButtonExist: true,
           isSearchButtonExist: false,
           isCartButtonExist: false,
+          showNotificationIcon: false,
         ),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),

@@ -99,6 +99,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: MediaQuery.of(context).size.width / 3 - 18,
                   isShowSeeAll: true,
                 ),
+
+              Padding(
+                padding: const EdgeInsets.only(left: 14.0),
+                child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text("Our Features",style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500),)),
+              ),
                 BannerComponent(bannerList: controller.banners1
                     // .map(
                     //   (e) => BannerItem(

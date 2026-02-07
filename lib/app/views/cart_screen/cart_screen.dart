@@ -84,6 +84,7 @@ class _CartScreenState extends State<CartScreen> {
             isBackButtonExist: true,
             isSearchButtonExist: false,
             isCartButtonExist: false,
+            showNotificationIcon: false,
           ),
           body: _items.isEmpty
               ? SizedBox(

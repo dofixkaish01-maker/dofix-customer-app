@@ -34,6 +34,7 @@ import '../data/repo/auth_repo.dart';
 import '../helper/gi_dart.dart';
 import '../model/address_model.dart';
 import '../model/booking_response.dart';
+import '../model/notification_model.dart';
 import '../model/pages_model.dart';
 import '../model/pop_model.dart';
 import '../model/service_model.dart' as sv;
@@ -119,6 +120,33 @@ class DashBoardController extends GetxController implements GetxService {
 
     // 🖼️ BANNERS
     getBanners();
+  }
+
+
+  var isNotificationLoading = false.obs;
+  var notificationModel = NotificationModel(null, null, []).obs;
+// normally ye auth / storage se aata hai
+  late String? token=authRepo.apiClient.token;
+final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
+  final String userType = 'customer';
+  Future<void> fetchNotifications() async {
+    try {
+      isNotificationLoading.value = true;
+      final String? token = authRepo.apiClient.token;
+      if (token == null || token.isEmpty) {
+        throw Exception('Token not found');
+      }
+      final result = await AuthRepo.fetchNotifications(
+        token: token,
+        userId: userId,
+        userType: userType,
+      );
+      notificationModel.value = result;
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
+      isNotificationLoading.value = false;
+    }
   }
 
 

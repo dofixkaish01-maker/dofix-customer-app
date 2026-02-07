@@ -13,12 +13,14 @@ import '../../utils/dimensions.dart';
 import '../../utils/sizeboxes.dart';
 import '../../utils/styles.dart';
 import '../../utils/theme.dart';
+import '../views/notification/notification_screen.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final bool isBackButtonExist;
   final bool isCartButtonExist;
   final bool? isSearchButtonExist;
+  final bool showNotificationIcon;
   final bool showTitle;
   final Function? onBackPressed;
   final Widget? menuWidget;
@@ -33,6 +35,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.isBackButtonExist = false,
     this.isCartButtonExist = true,
+    this.showNotificationIcon = true,
     this.menuWidget,
     this.drawerButton,
     this.bgColor,
@@ -92,10 +95,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  if (onBackPressed != null) {
-                    onBackPressed!();
-                  } else {
-                    Get.back();
+                  try {
+                    if (onBackPressed != null) {
+                      onBackPressed!();
+                    }
+
+                    // Har condition me back hona chahiye
+                    if (Get.key.currentState?.canPop() ?? false) {
+                      Get.back();
+                    } else {
+                      Navigator.of(context).maybePop();
+                    }
+
+                  } catch (e) {
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Padding(
@@ -282,6 +295,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: showNotificationIcon,
+                          child: IconButton(
+                            tooltip: "Notifications",
+                            onPressed: () async {
+                              final authController = Get.find<AuthController>();
+                              bool isGuest = await authController.returnIsGuest();
+
+                              if (isGuest) {
+                                authController.checkIfGuest();
+                              } else {
+                                Get.to(() => NotificationScreen());
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.notifications_active,
+                              color: Colors.white,
                             ),
                           ),
                         ),
