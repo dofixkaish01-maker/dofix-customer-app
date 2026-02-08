@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "280606418822",
+    "project_id": "dofix-tech",
+    "storage_bucket": "dofix-tech.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280606418822:android:800c7614ab611cf89dee07",
+        "android_client_info": {
+          "package_name": "com.dofix.appcustomer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwn5nGDWNjd_YZuvDHka-__FQ1MhdYulQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280606418822:android:74d98a7c1d0be7159dee07",
+        "android_client_info": {
+          "package_name": "com.dofix.apptechnician"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwn5nGDWNjd_YZuvDHka-__FQ1MhdYulQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
