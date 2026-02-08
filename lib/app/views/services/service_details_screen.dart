@@ -139,21 +139,6 @@ class _ServiceDetailsState extends State<ServiceDetails>
                     title: controller.serviceModel.name ?? "",
                     isSearchButtonExist: false,
                     isBackButtonExist: true,
-                    onBackPressed: () async {
-                      // Reverse all item animations
-                      for (final itemController in _itemControllers) {
-                        itemController.reverse();
-                      }
-
-                      // Reverse the main slide animation
-                      await _controller.reverse();
-                      setState(() {
-                        _visible = false;
-                      });
-                      // Delay a bit for smoother transition before popping
-                      await Future.delayed(Duration(milliseconds: 300));
-                      Get.back();
-                    },
                   ),
                   body: Stack(
                     children: [

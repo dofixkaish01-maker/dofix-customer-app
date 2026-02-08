@@ -64,62 +64,63 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
     });
   }
 
-  Future<void> fetchDataForTab(String status) async {
+  Future<void> fetchDataForTab(String status, {bool isRefresh = false}) async {
     if (status.toLowerCase() == "cancelled") {
       status = "canceled";
     }
-    setState(() => _isLoading = true);
+
     final controller = Get.find<DashBoardController>();
 
-    int toggle = 0;
-    for (int i = _items.length - 1; i >= 0; i--) {
-      final removedItem = _items.removeAt(i);
-      final removeToRight = toggle % 2 == 0;
-      toggle++;
+    if (isRefresh) {
+      // 🔥 FAST refresh – no animation drama
+      _items.clear();
+      _listKeys[_tabController.index].currentState?.setState(() {});
+    } else {
+      // 👇 normal tab change animation (as it is)
+      int toggle = 0;
+      for (int i = _items.length - 1; i >= 0; i--) {
+        final removedItem = _items.removeAt(i);
+        final removeToRight = toggle % 2 == 0;
+        toggle++;
 
-      _listKeys[_tabController.index].currentState?.removeItem(
-            i,
-            (context, animation) => SlideTransition(
-              position: Tween<Offset>(
-                begin: Offset.zero,
-                end: Offset(removeToRight ? 1.0 : -1.0, 0.0),
-              ).animate(CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeIn,
-              )),
-              child: BookingContainer(booking: removedItem),
-            ),
-            duration: const Duration(milliseconds: 300),
-          );
-      await Future.delayed(const Duration(milliseconds: 50));
+        _listKeys[_tabController.index].currentState?.removeItem(
+          i,
+              (context, animation) => SlideTransition(
+            position: Tween<Offset>(
+              begin: Offset.zero,
+              end: Offset(removeToRight ? 1.0 : -1.0, 0.0),
+            ).animate(animation),
+            child: BookingContainer(booking: removedItem),
+          ),
+          duration: const Duration(milliseconds: 200), // ⬅ shorter
+        );
+      }
     }
-    controller.lastStatus.value = status;
-    await controller.getBooking(
-      {
-        "limit": "100",
-        "offset": "1",
-        "booking_status": status,
-        "service_type": "all"
-      },
-    );
+
+    await controller.getBooking({
+      "limit": "100",
+      "offset": "1",
+      "booking_status": status,
+      "service_type": "all"
+    });
 
     final data = controller.bookingModel.data ?? [];
+
     for (int i = 0; i < data.length; i++) {
       _items.insert(i, data[i]);
-      _listKeys[_tabController.index].currentState?.insertItem(i);
-      await Future.delayed(const Duration(milliseconds: 100));
+      _listKeys[_tabController.index].currentState?.insertItem(
+        i,
+        duration: const Duration(milliseconds: 150), // ⬅ faster
+      );
     }
-
-    setState(() => _isLoading = false);
   }
 
   Widget buildListView(int tabIndex) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     if (_items.isEmpty) {
-      return const Center(child: Text("Oops! No Booking is there"));
+      return const Padding(
+        padding: EdgeInsets.only(top: 120),
+        child: Center(child: Text("Oops! No Booking is there")),
+      );
     }
 
     return AnimatedList(
@@ -130,30 +131,26 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
       itemBuilder: (context, index, animation) {
         return SlideTransition(
           position: Tween<Offset>(
-            begin: const Offset(1.0, 0.0), // from right
+            begin: const Offset(1.0, 0.0),
             end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOut,
-          )),
+          ).animate(animation),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black.withOpacity(0.18),
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Card(
+              elevation: 4,
+              shadowColor: Colors.black.withOpacity(0.15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
                 child: BookingContainer(
                   booking: _items[index],
                 ),
               ),
             ),
           ),
+
         );
       },
     );
@@ -285,14 +282,28 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
                   //     }
                   //   },
                   // ),
-                  const SizedBox(width: 16),
                 ],
               ),
+              Divider(
+                height: 1,
+                thickness: 1,
+                color: Colors.black.withOpacity(0.12),
+              ),
+              const SizedBox(height: 8),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: buildListView(_selectedIndex),
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await fetchDataForTab(
+                      statusList[_selectedIndex],
+                      isRefresh: true,
+                    );
+                  },
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: buildListView(_selectedIndex),
+                    ),
                   ),
                 ),
               ),

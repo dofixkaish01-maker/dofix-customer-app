@@ -115,8 +115,8 @@ class AuthRepo {
   }
 
   Future<Response> categories(
-    String? limit,
-    String? offset,
+    int? limit,
+    int? offset,
   ) async {
     return await apiClient.getData(AppConstants.category,
         query: {

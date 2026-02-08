@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/api/api.dart';
-import '../model/service_model.dart';
 import 'dashboard_controller.dart';
 
 class SearchController extends GetxController {
@@ -12,10 +12,11 @@ class SearchController extends GetxController {
   /// SEARCH TEXT
   RxString searchText = "".obs;
 
-  /// LOADING
-  RxBool isLoading = false.obs;
+  /// STATES
+  RxBool isSearching = false.obs;
+  RxBool isSearchCompleted = false.obs;
 
-  /// STATIC TRENDING SEARCH (NO API)
+  /// STATIC TRENDING SEARCH
   RxList<String> trendingSearches = <String>[
     "AC Repair",
     "Plumber",
@@ -27,27 +28,24 @@ class SearchController extends GetxController {
     "Refrigerator Repair",
   ].obs;
 
-  /// SEARCH RESULT (API)
-  RxList<ServiceModel> searchResults = <ServiceModel>[].obs;
-
   /// RECENT SEARCH
   RxList<String> recentSearches = <String>[].obs;
 
   Timer? _debounce;
+  final textController = TextEditingController();
 
   @override
   void onInit() {
     super.onInit();
-    loadRecentSearches(); // ✅ only this
+    loadRecentSearches();
   }
+
   void clearSearch() {
     searchText.value = '';
-    Get.find<DashBoardController>()
-        .serviceModelSearchList
-        .clear();
+    isSearching.value = false;
+    isSearchCompleted.value = false;
+    Get.find<DashBoardController>().serviceModelSearchList.clear();
   }
-
-
 
   // ================= SEARCH =================
   void onSearchChanged(String value) {
@@ -58,17 +56,32 @@ class SearchController extends GetxController {
       _debounce!.cancel();
     }
 
-    _debounce = Timer(const Duration(milliseconds: 600), () {
+    _debounce = Timer(const Duration(milliseconds: 600), () async {
       final dashboard = Get.find<DashBoardController>();
 
       if (query.isNotEmpty) {
-        print("SEARCH QUERY => $query");
-        dashboard.getSearchList(query); // ✅ ONLY STRING
+        isSearching.value = true;
+        isSearchCompleted.value = false;
+
+        await dashboard.getSearchList(query);
+
+        isSearching.value = false;
+        isSearchCompleted.value = true;
+
+
         addRecentSearch(query);
       } else {
         dashboard.serviceModelSearchList.clear();
+        isSearchCompleted.value = false;
       }
     });
+  }
+  void setSearchFromChip(String value) {
+    textController.text = value;
+    textController.selection = TextSelection.fromPosition(
+      TextPosition(offset: value.length),
+    );
+    onSearchChanged(value);
   }
 
   // ================= RECENT SEARCH =================
@@ -81,7 +94,6 @@ class SearchController extends GetxController {
     if (value.isEmpty) return;
 
     final prefs = await SharedPreferences.getInstance();
-
     recentSearches.remove(value);
     recentSearches.insert(0, value);
 

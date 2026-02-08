@@ -143,7 +143,7 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
                               albertSansBold.copyWith(
                                 fontSize:
                                 Dimensions.fontSize12,
-                                color: primaryBlue,
+                                color: Colors.black,
                               ),
                             ),
 
@@ -158,7 +158,7 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
                               enableActiveFill: true,
 
                               textStyle: const TextStyle(
-                                color: primaryBlue,
+                                color: Colors.black,
                                 fontWeight: FontWeight.w600,
                               ),
 
@@ -207,7 +207,7 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
                                   albertSansBold.copyWith(
                                   fontSize:
                                   Dimensions.fontSize12,
-                                  color: primaryBlue,
+                                  color: Colors.black,
                                 ),
                               ),
                                     TextSpan(

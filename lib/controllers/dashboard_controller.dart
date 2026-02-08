@@ -78,6 +78,7 @@ class DashBoardController extends GetxController implements GetxService {
   String zoneIdForBooking = "";
   RxBool isGuest = true.obs;
   RxBool createBookingLoader = false.obs;
+  bool isFetchingCategories = false;
 
   ApiResponse apiResponse = ApiResponse(
       responseCode: '',
@@ -339,50 +340,39 @@ final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
     }
   }
 
-  Future<void> getData(String limit, String offset,
-      [bool? isShowLoading]) async {
-    if (isShowLoading ?? false) {
-      showLoading();
-    }
+  Future<void> getData(int limit, int offset, [bool isShowLoading = false]) async {
 
-    categoryList?.data?.clear();
-    update();
+    if (isFetchingCategories) return;
+    isFetchingCategories = true;
+
+    if (isShowLoading) showLoading();
 
     try {
       Response response = await authRepo.categories(limit, offset);
       var responseData = response.body;
 
-      if (responseData == null) {
-        throw Exception("Response data is null");
-      }
-      debugPrint("Category Listing===>:getdata:: $responseData");
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          categoryList = CategoryModel.fromJson(responseData['content']);
-          hideLoading();
-          update();
+        final newData = CategoryModel.fromJson(responseData['content']);
+
+        // YAHI MAIN FIX HAI
+        if (offset == 1) {
+          categoryList?.data?.clear(); // OLD DATA CLEAR
+          categoryList = newData;      // NEW DATA SET
         } else {
-          hideLoading();
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
+          categoryList?.data?.addAll(newData.data ?? []);
         }
-      } else {
-        closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
+
+        update();
       }
-    } catch (e) {
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
-      debugPrint("Error fetching categories:4 $e");
-      closeSnackBarIfActive();
+    } catch (_) {
+      showCustomSnackBar("Something went wrong", isError: true);
     } finally {
-      _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+      isFetchingCategories = false;
       hideLoading();
-      // update();
     }
   }
 

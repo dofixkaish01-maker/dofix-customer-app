@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               "Enter your phone number to login",
                               style: albertSansRegular.copyWith(
                                 fontSize: Dimensions.fontSize15,
-                                color: Color(0xff227FA8),
+                                color: Colors.black,
                               ),
                             ),
                             sizedBox30(),
@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 LengthLimitingTextInputFormatter(10),   // ✅ only 10 digits
                               ],
                               style: const TextStyle(
-                                color: Color(0xff227FA8),
+                                // color: Color(0xff227FA8),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                 hintText: "Enter your mobile number",
                                 hintStyle: TextStyle(
-                                  color: const Color(0xff227FA8).withOpacity(0.6),
+                                  // color: const Color(0xff227FA8).withOpacity(0.6),
                                 ),
 
                                 contentPadding: const EdgeInsets.symmetric(
@@ -188,7 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: RichText(
                                     text: TextSpan(
                                       style: const TextStyle(
-                                        color: Color(0xff227FA8),
+                                        color: Colors.black,
+                                        // color: Color(0xff227FA8),
                                         fontSize: 12,
                                       ),
                                       children: [
@@ -197,6 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           text: "Terms & Conditions",
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w600,
+                                            color: Color(0xff227FA8),
                                             decoration:
                                                 TextDecoration.underline,
                                           ),
@@ -229,7 +231,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         TextSpan(
                                           text: "Privacy Policy",
                                           style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xff227FA8),
+                                          fontWeight: FontWeight.w600,
                                             decoration:
                                                 TextDecoration.underline,
                                           ),

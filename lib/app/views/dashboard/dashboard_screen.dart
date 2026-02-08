@@ -122,7 +122,7 @@ class DashboardScreenState extends State<DashboardScreen> {
     //   print("PageIndex setPage: ---------------------------$pageIndex");
     // }
     if (pageIndex == 1) {
-      Get.find<DashBoardController>().getData("12", "1", true);
+      Get.find<DashBoardController>().getData(12, 1, true);
       Get.find<DashBoardController>().getTopRated("20", "1", true);
       Get.find<DashBoardController>().getQuickRepair("20", "1", true);
     }

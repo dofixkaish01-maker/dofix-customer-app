@@ -80,7 +80,7 @@ class NotificationCard extends StatelessWidget {
               ),
               child: const Icon(
                 Icons.notifications_rounded,
-                color: Colors.blue,
+                color: Color(0xff227FA8),
                 size: 22,
               ),
             ),

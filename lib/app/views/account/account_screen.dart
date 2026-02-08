@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../../model/pages_model.dart';
@@ -309,6 +310,28 @@ class _AccountScreenState extends State<AccountScreen> {
                       )),
                       Icon(Icons.arrow_forward_ios,
                           color: Colors.black, size: 18),
+                    ],
+                  ),
+                ),
+                sizedBox30(),
+
+                GestureDetector(
+                  onTap: () {
+                    _showAccountHelpBottomSheet();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Help & Support",
+                          style: albertSansRegular.copyWith(
+                            fontSize: Dimensions.fontSizeDefault,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Colors.black, size: 18),
                     ],
                   ),
                 ),
@@ -692,6 +715,104 @@ class _AccountScreenState extends State<AccountScreen> {
       // );
     });
   }
+  void _showAccountHelpBottomSheet() {
+    const supportNumber = "8383849293";
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // drag handle
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            const Text(
+              "Help & Support",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 6),
+
+            const Text(
+              "Need help with your account or services?\nWe’re here to help you.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.black54,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Call Support
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Color(0xFFE8F5E9),
+                child: Icon(Icons.call, color: Colors.green),
+              ),
+              title: const Text(
+                "Call Support",
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              subtitle: const Text("Talk directly with our support team"),
+              onTap: () async {
+                final uri = Uri.parse("tel:+91$supportNumber");
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
+                }
+              },
+            ),
+
+            const SizedBox(height: 8),
+
+            // WhatsApp Support
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Color(0xFFE0F2F1),
+                child: Icon(Icons.chat, color: Colors.teal),
+              ),
+              title: const Text(
+                "WhatsApp Support",
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              subtitle: const Text("Chat with us on WhatsApp"),
+              onTap: () async {
+                final uri = Uri.parse(
+                  "https://wa.me/91$supportNumber?text="
+                      "Hi, I need some assistance with my account. Could you please let me know how you can help me?",
+                );
+
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(
+                    uri,
+                    mode: LaunchMode.externalApplication,
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
 }
 class NewCustomButtonWidget extends StatelessWidget {
   final VoidCallback? onPressed;

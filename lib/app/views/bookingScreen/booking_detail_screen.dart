@@ -16,9 +16,12 @@ import 'package:url_launcher/url_launcher.dart';
 // import 'package:do_fix/app/widgets/custom_payment_method_widget.dart';
 import '../../../utils/date_converter.dart';
 import '../../../utils/dimensions.dart';
+import '../../../utils/theme.dart';
 import '../cart_screen/SubScreen/final_screen.dart';
 // import '../home/component/variations_new_card.dart';
 import '../services/service_details_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 //use for open razor pay payment getway
 
@@ -49,7 +52,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   final bookController = Get.find<BookingController>();
   DateTime selectedDate = DateTime.now();
   TimeOfDay? selectedTime;
- _showReviewDialog() {
+  final bookingController = Get.find<BookingController>();
+
+  _showReviewDialog() {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -259,6 +264,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   setState(() {});
                 },
               );
+              log("🔥 makeDigitalPayment CALLED");
             },
             child: Container(
               height: 48,
@@ -911,11 +917,132 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         )
                       : const SizedBox.shrink();
                 }),
+                SizedBox(height: 20),
+
+                GestureDetector(
+                  onTap: () {
+                    _showHelpBottomSheet();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: primaryBlue.withOpacity(0.3),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.support_agent, color: primaryBlue),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            "Need help regarding this service?",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios, size: 16),
+                      ],
+                    ),
+                  ),
+                ),
+
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+  void _showHelpBottomSheet() {
+    const supportNumber = "8383849293";
+    final bookingId = widget.booking?.id ?? "N/A";
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ---- Title ----
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            const Text(
+              "Service Support",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ---- Call Support ----
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Color(0xFFE8F5E9),
+                child: Icon(Icons.call, color: Colors.green),
+              ),
+              title: const Text(
+                "Call Support",
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              subtitle: const Text("Talk directly with our support team"),
+              onTap: () async {
+                final Uri uri = Uri.parse("tel:+91$supportNumber");
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
+                }
+              },
+            ),
+
+            const SizedBox(height: 8),
+
+            // ---- WhatsApp Support ----
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Color(0xFFE0F2F1),
+                child: Icon(Icons.chat, color: Colors.teal),
+              ),
+              title: const Text(
+                "WhatsApp Support",
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              subtitle: const Text("Chat with us on WhatsApp"),
+              onTap: () async {
+                final Uri uri = Uri.parse(
+                  "https://wa.me/91$supportNumber?text="
+                      "Hi, I need help with booking ID: $bookingId",
+                );
+
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(
+                    uri,
+                    mode: LaunchMode.externalApplication,
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
     );
   }
 }

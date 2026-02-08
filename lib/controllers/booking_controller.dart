@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/booking_model.dart';
 import '../widgets/common_loading.dart';
 
 class BookingController extends GetxController implements GetxService {
@@ -30,7 +31,7 @@ class BookingController extends GetxController implements GetxService {
   String bookingId = '';
   String serviceId = '';
   Rxn<ReviewRatingModel> reviewRatingModel = Rxn<ReviewRatingModel>();
-
+  List<BookingModel> bookingList = [];
   Rxn<ServiceReviewsModel>? serviceReviewsModel = Rxn<ServiceReviewsModel>();
 
   int? selectedRating;

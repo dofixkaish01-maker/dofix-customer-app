@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import '../../../../../controllers/search_controller.dart';
 import '../../../../../controllers/dashboard_controller.dart';
 import '../../../../widgets/networkimg_summerize/network_Image_with_shimmer.dart';
-import '../../services/service_details_screen.dart';
-import '../../../widgets/service_container.dart';
+
 
 class SearchScreen extends StatelessWidget {
   SearchScreen({Key? key}) : super(key: key);
@@ -28,6 +27,7 @@ class SearchScreen extends StatelessWidget {
           child: SizedBox(
             height: 42,
             child: Obx(() => TextField(
+              controller: controller.textController,
               onChanged: controller.onSearchChanged,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
@@ -56,53 +56,57 @@ class SearchScreen extends StatelessWidget {
         children: [
           /// CONTENT
           Expanded(
-            child: Obx(() {
-              /// EMPTY SEARCH (SearchController → Rx ✔)
-              if (controller.searchText.value.isEmpty) {
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _title("Trending Searches"),
-                      _trendingList(),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await dashboard.getFeaturedCategories("10", "1", false); // categories refresh
+                controller.clearSearch();          // search reset
+              },
+              child: Obx(() {
+                /// EMPTY SEARCH
+                if (controller.searchText.value.isEmpty) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _title("Trending Searches"),
+                        _trendingList(),
 
-                      if (controller.recentSearches.isNotEmpty) ...[
-                        _title("Recent Searches"),
-                        _recentSearch(),
+                        if (controller.recentSearches.isNotEmpty) ...[
+                          _title("Recent Searches"),
+                          _recentSearch(),
+                        ],
+
+                        _title("Browse Categories"),
+
+                        GetBuilder<DashBoardController>(
+                          builder: (dashboard) => _categoryGrid(dashboard),
+                        ),
                       ],
+                    ),
+                  );
+                }
 
-                      _title("Browse Categories"),
+                /// SEARCH RESULT AREA
+                return GetBuilder<DashBoardController>(
+                  builder: (dashboard) {
+                    if (dashboard.isLoginLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                      /// 👇 DashboardController → GetBuilder
-                      GetBuilder<DashBoardController>(
-                        builder: (dashboard) => _categoryGrid(dashboard),
-                      ),
-                    ],
-                  ),
-                );
-              }
+                    if (controller.isSearchCompleted.value &&
+                        dashboard.serviceModelSearchList.isEmpty) {
+                      return const Center(child: Text("No service found"));
+                    }
 
-              /// SEARCH RESULT AREA (DashboardController)
-              return GetBuilder<DashBoardController>(
-                builder: (dashboard) {
-                  if (dashboard.isLoginLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                    return ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: dashboard.serviceModelSearchList.length,
+                      itemBuilder: (_, index) {
+                        final item = dashboard.serviceModelSearchList[index];
 
-                  if (dashboard.serviceModelSearchList.isEmpty) {
-                    return const Center(child: Text("No service found"));
-                  }
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: dashboard.serviceModelSearchList.length,
-                    itemBuilder: (_, index) {
-                      final item = dashboard.serviceModelSearchList[index];
-                      return InkWell(
-                          onTap: () async {
-                            await dashboard.getServicesDetails(item.id ?? "");
-                          },
-                          child: Container(
+                        return Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -137,7 +141,6 @@ class SearchScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    /// NAME
                                     Text(
                                       item.name ?? "",
                                       maxLines: 2,
@@ -147,10 +150,7 @@ class SearchScreen extends StatelessWidget {
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-
                                     const SizedBox(height: 4),
-
-                                    /// DESCRIPTION
                                     Text(
                                       item.shortDescription ?? "",
                                       maxLines: 2,
@@ -163,15 +163,29 @@ class SearchScreen extends StatelessWidget {
                                   ],
                                 ),
                               ),
+
+                              /// VIEW BUTTON
+                              TextButton(
+                                onPressed: () async {
+                                  await dashboard.getServicesDetails(item.id ?? "");
+                                },
+                                child: const Text(
+                                  "View",
+                                  style: TextStyle(
+                                    color: Color(0xFF207FA8),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              );
-            }),
+                        );
+                      },
+                    );
+                  },
+                );
+              }),
+            ),
           ),
         ],
       ),
@@ -215,8 +229,7 @@ class SearchScreen extends StatelessWidget {
               ),
             ],
           ),
-          onPressed: () =>
-              controller.onSearchChanged(text),
+          onPressed: () => controller.setSearchFromChip(text),
         );
       },
     )),
@@ -233,8 +246,7 @@ class SearchScreen extends StatelessWidget {
           size: 18,
         ),
         label: Text(e),
-        onPressed: () =>
-            controller.onSearchChanged(e),
+        onPressed: () => controller.setSearchFromChip(e),
       ))
           .toList(),
     )),

@@ -7,7 +7,10 @@ import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../controllers/auth_controller.dart';
 import '../../../model/service_model.dart';
+import '../../../utils/dimensions.dart';
+import '../../../utils/styles.dart';
 import 'component/horizontal_view.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -210,55 +213,96 @@ class _HomeScreenState extends State<HomeScreen> {
                 // SizedBox(
                 //   height: 50,
                 // ),
-                // 🔥 Refer & Earn Card (LAST ITEM)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: GestureDetector(
-                    onTap: () {
+              //Refer & Earn
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: GestureDetector(
+                  onTap: () async {
+                    final authController = Get.find<AuthController>();
+                    bool isGuest = await authController.returnIsGuest();
+
+                    if (isGuest) {
+                      authController.checkIfGuest();
+                    } else {
                       Get.to(() => ReferEarnScreen());
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xff227FA8), Color(0xff34A9C7)],
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.card_giftcard, color: Colors.white, size: 32),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  'Refer & Earn ₹150',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Invite friends & earn ₹150 when they book',
-                                  style: TextStyle(color: Colors.white70, fontSize: 13),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Icon(Icons.arrow_forward_ios,
-                              color: Colors.white, size: 16),
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xff266a8a), // dark blue-teal
+                          Color(0xff125778), // deeper shade
                         ],
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(.25),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        /// ICON
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(.15),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.card_giftcard,
+                            color: Colors.white,
+                            size: 26,
+                          ),
+                        ),
+
+                        const SizedBox(width: 14),
+
+                        /// 📝 TEXT
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Refer & Earn ₹150",
+                                style: albertSansRegular.copyWith(
+                                  fontSize: Dimensions.fontSize15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                "Invite friends & earn rewards on every booking",
+                                style: albertSansRegular.copyWith(
+                                  fontSize: Dimensions.fontSize12,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        /// ARROW
+                        const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.white70,
+                          size: 18,
+                        ),
+                      ],
                     ),
                   ),
                 ),
+              ),
 
-              ],
+            ],
             ),
           ),
         ),
