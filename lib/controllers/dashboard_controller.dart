@@ -110,16 +110,16 @@ class DashBoardController extends GetxController implements GetxService {
     );
 
 
-    // 📂 CATEGORIES
+    // CATEGORIES
     getFeaturedCategories("10", "1", false);
 
-    // ⭐ TOP RATED
+    // TOP RATED
     getTopRated("10", "1", false);
 
-    // ⚡ QUICK REPAIR
+    // QUICK REPAIR
     getQuickRepair("10", "1", false);
 
-    // 🖼️ BANNERS
+    //  BANNERS
     getBanners();
   }
 
@@ -1357,6 +1357,9 @@ final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
 
   Future<void> getBanners() async {
     try {
+      banners1.clear();
+      banner2.clear();
+      update();
       Response response = await authRepo.banners();
       var responseData = response.body;
 

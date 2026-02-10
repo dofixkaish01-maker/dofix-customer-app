@@ -92,7 +92,7 @@ class CategoryComponents extends StatelessWidget {
                       CustomNetworkImageWidget(
                         fit: BoxFit.cover,
                         width: width,
-                        height: 70,
+                        height: 80,
                         image: cat.imageFullPath ?? "",
                       ),
                       const SizedBox(height: 8),

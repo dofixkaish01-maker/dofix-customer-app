@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 
 class BannerComponent extends StatefulWidget {
   final List<BannerItem> bannerList;
-  BannerComponent({
+
+  const BannerComponent({
     super.key,
     required this.bannerList,
   });
 
   @override
-  _BannerComponentState createState() => _BannerComponentState();
+  State<BannerComponent> createState() => _BannerComponentState();
 }
 
 class _BannerComponentState extends State<BannerComponent> {
@@ -17,94 +18,63 @@ class _BannerComponentState extends State<BannerComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.bannerList.length == 1
-        ? InkWell(
-            onTap: widget.bannerList.first.onTap,
-            child: Container(
-              height: 150,
-              margin: EdgeInsets.all(
-                8.0,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                  10,
-                ),
-                image: DecorationImage(
-                  image: NetworkImage(
-                    widget.bannerList.first.imageUrl.toString(),
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          )
-        : Column(
-            children: [
-              CarouselSlider(
-                options: CarouselOptions(
-                  scrollPhysics: widget.bannerList.length.toInt() > 1
-                      ? null
-                      : NeverScrollableScrollPhysics(),
-                  height: 160,
-                  autoPlay: true,
-                  aspectRatio: 16 / 9,
-                  viewportFraction: 0.9,
-                  autoPlayInterval: Duration(seconds: 3),
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
-                ),
-                items: widget.bannerList.map((imagePath) {
-                  return InkWell(
-                    onTap: imagePath.onTap,
-                    child: Container(
-                      margin: EdgeInsets.all(
-                        8.0,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          10,
-                        ),
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            imagePath.imageUrl.toString(),
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+    if (widget.bannerList.isEmpty) return const SizedBox();
 
-              // Custom Indicator
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: widget.bannerList.asMap().entries.map((
-                  entry,
-                ) {
-                  int index = entry.key;
-                  return Container(
-                    width: _currentIndex == index
-                        ? 20
-                        : 8, // Active indicator is wider
-                    height: 8,
-                    margin: EdgeInsets.symmetric(horizontal: 1),
-                    decoration: BoxDecoration(
-                      color:
-                          _currentIndex == index ? Colors.black : Colors.grey,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          );
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Column(
+        children: [
+          CarouselSlider(
+            options: CarouselOptions(
+              height: 160,
+              viewportFraction: 1,
+              autoPlay: widget.bannerList.length > 1,
+              autoPlayInterval: const Duration(seconds: 3),
+              enableInfiniteScroll: widget.bannerList.length > 1,
+              onPageChanged: (index, reason) {
+                setState(() => _currentIndex = index);
+              },
+            ),
+            items: widget.bannerList.map((item) {
+              return InkWell(
+                onTap: item.onTap,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Image.network(
+                    item.imageUrl,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+
+          const SizedBox(height: 6),
+
+          // Indicator
+          if (widget.bannerList.length > 1)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(widget.bannerList.length, (index) {
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: _currentIndex == index ? 18 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: _currentIndex == index
+                        ? Colors.black
+                        : Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                );
+              }),
+            ),
+        ],
+      ),
+    );
   }
 }
-
 class BannerItem {
   final String imageUrl;
   final VoidCallback onTap;
