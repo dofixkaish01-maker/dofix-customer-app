@@ -47,14 +47,37 @@ class CategoryComponents extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
+                // TextButton(
+                //   onPressed: () {
+                //     Get.offAll(
+                //       DashboardScreen(
+                //         key: GlobalKey<DashboardScreenState>(),
+                //         pageIndex: 1,
+                //       ),
+                //     );
+                //   },
+                //   child: Text(
+                //     "See All",
+                //     style: albertSansRegular.copyWith(
+                //       fontSize: Dimensions.fontSize13,
+                //       color: Theme.of(context).primaryColor,
+                //     ),
+                //   ),
+                // ),
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    // Navigate and fetch fresh data before screen opens
+                    final controller = Get.find<DashBoardController>();
+
+                    // Reset data
+                    controller.categoryList?.data?.clear();
+
                     Get.offAll(
-                      DashboardScreen(
-                        key: GlobalKey<DashboardScreenState>(),
-                        pageIndex: 1,
-                      ),
-                    );
+                            DashboardScreen(
+                              key: GlobalKey<DashboardScreenState>(),
+                              pageIndex: 1,
+                            ),
+                          );
                   },
                   child: Text(
                     "See All",
@@ -64,6 +87,7 @@ class CategoryComponents extends StatelessWidget {
                     ),
                   ),
                 ),
+
               ],
             ),
 

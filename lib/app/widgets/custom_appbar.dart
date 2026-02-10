@@ -100,15 +100,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       onBackPressed!();
                     }
 
-                    // Har condition me back hona chahiye
-                    if (Get.key.currentState?.canPop() ?? false) {
-                      Get.back();
-                    } else {
-                      Navigator.of(context).maybePop();
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
                     }
-
                   } catch (e) {
-                    Navigator.of(context).pop();
+                    debugPrint("Back error: $e");
                   }
                 },
                 child: Padding(

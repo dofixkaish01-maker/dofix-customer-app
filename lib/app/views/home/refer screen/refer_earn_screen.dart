@@ -95,15 +95,18 @@ class ReferEarnScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            /// 📤 Share Button
+            /// Share Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xff227FA8))),
                 onPressed: () {
+                  final box = context.findRenderObject() as RenderBox?;
+
                   Share.share(
                     "Hey! Try DoFix for home services. "
-                        "Use my referral link and get a discount 👇\n$referralLink",
+                        "Use my referral link and get a discount \n$referralLink",
+                    sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
                   );
                 },
                 icon: const Icon(Icons.share),

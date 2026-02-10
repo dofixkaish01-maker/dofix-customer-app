@@ -111,7 +111,7 @@ class _CartScreenState extends State<CartScreen> {
                 )
                     : Column(
                   children: [
-                    /// 🔥 LOTTIE ANIMATION
+                    ///  LOTTIE ANIMATION
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 24),
                       padding: const EdgeInsets.all(24),
@@ -155,11 +155,11 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    /// 👉 ADD SERVICE BUTTON
+                    ///  ADD SERVICE BUTTON
                     GestureDetector(
                       onTap: () {
                         /// Dashboard ka home tab
-                        Get.to(()=>HomeScreen());
+                        Get.to(() => HomeScreen());
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(

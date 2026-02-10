@@ -16,7 +16,6 @@ class _ServiceScreensState extends State<ServiceScreens> {
   bool isLoading = false; // To prevent multiple API calls
   final DashBoardController dashboard = Get.find<DashBoardController>();
   @override
-  @override
   void initState() {
     super.initState();
 
