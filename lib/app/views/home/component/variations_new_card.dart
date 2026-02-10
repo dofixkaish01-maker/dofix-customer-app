@@ -37,8 +37,7 @@
   }
   
   class _VariationsNewCardState extends State<VariationsNewCard> {
-    final DashBoardController dashboardController =
-        Get.find<DashBoardController>();
+    final DashBoardController dashboardController = Get.find<DashBoardController>();
     bool isInCart = false;
   
     // Format duration from "18:30" to "18 Hours 30 Mins"
@@ -164,14 +163,37 @@
       child: IntrinsicHeight(
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// ================= LEFT CONTENT =================
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            /// LEFT CONTENT
+            Expanded(
+              flex: 3,
+              child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-          
-                    /// 🔹 Service Name
+                    const SizedBox(width: 10),
+
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        widget.serviceModel.coverImageFullPath ?? "",
+                        // widget.serviceModel.coverImageFullPath ?? "",
+                        // widget.serviceModel.coverImage ?? "",
+                        // widget.serviceModel.thumbnailFullPath ?? "",
+                        // widget.serviceModel.thumbnail ?? "",
+                        height: 90,
+                        width: 90,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          height: 90,
+                          width: 90,
+                          color: Colors.grey.shade200,
+                          child: const Icon(Icons.image, size: 30),
+                        ),
+                      ),
+                    ),
+
+                    /// Service Name
                     Text(
                       widget.serviceVariationName,
                       style: const TextStyle(
@@ -181,7 +203,7 @@
                       ),
                     ),
           
-                    /// 🔹 Rating
+                    /// Rating
                     if (widget.serviceRatings != "0.0") ...[
                       const SizedBox(height: Dimensions.paddingSize5),
                       Row(
@@ -212,7 +234,7 @@
           
                     const SizedBox(height: Dimensions.paddingSize7),
           
-                    /// 🔹 Price Row
+                    /// Price Row
                     Wrap(
                       spacing: 8,
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -250,15 +272,16 @@
           
                     const SizedBox(height: Dimensions.paddingSize7),
           
-                    /// 🔹 Description
+                    /// Description
                     SizedBox(
                       height: 42, // 👈 fixed height (3 lines ke approx)
                       child: Text(
                         HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        softWrap: true,
+                        overflow: TextOverflow.fade,
                         style: TextStyle(
-                          fontSize: Dimensions.fontSize10,
+                          fontSize: Dimensions.fontSize12,
                           height: 1.4,
                           color: Colors.black.withAlpha((0.55 * 255).toInt()),
                         ),
@@ -267,7 +290,7 @@
           
                     const SizedBox(height: Dimensions.paddingSize5),
           
-                    /// 🔹 Rate Card Link
+                    /// Rate Card Link
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -341,7 +364,7 @@
                         ),
                       ),
                       Spacer(),
-                      /// 🔹 VIEW LINK (Add ke niche)
+                      /// VIEW LINK (Add ke niche)
                       GestureDetector(
                         onTap: () {
                           Get.to(() => GetRateCardScreen(

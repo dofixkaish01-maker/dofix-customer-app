@@ -70,6 +70,7 @@ class BookingController extends GetxController implements GetxService {
         log("Booking review content: ${response.body}");
         reviewRatingModel.value = ReviewRatingModel.fromJson(response.body);
         hideLoading();
+        print("FULL API RESPONSE => ${response.body}");
       } else {
         showCustomSnackBar("Failed to fetch review", isError: true);
       }

@@ -30,255 +30,259 @@ class _HeaderComponentState extends State<HeaderComponent> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DashBoardController>(builder: (controller) {
-      return Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  // Align items at the top
-                  children: [
-                    CustomNetworkImageWidget(
-                      image: widget.serviceModel?.category?.imageFullPath ?? "",
-                      height: 60.0, // Fixed height instead of double.infinity
-                      width: 69.0,
-                    ),
-                    const SizedBox(width: 10),
-                    // Add spacing between image and text
-                    Flexible(
-                      // Prevents Row layout error
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        // Avoids unnecessary expansion
-                        children: [
-                          Text(
-                            widget.serviceModel?.category?.name ?? "",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                            ),
-                          ),
-                          // const SizedBox(height: 5),
-                          const SizedBox(height: 5),
-                          Text(
-                            widget.serviceModel?.variantKey ?? "N/A",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          const SizedBox(height: 3),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "₹${(double.tryParse((widget.serviceModel?.serviceCost ?? "0").toString())?.toInt() ?? 0)}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF207FA7),
-                                ),
-                              ),
-                              // SizedBox(
-                              //   width: 5,
-                              // ),
-                              // Text(
-                              //   "₹${(double.tryParse((widget.serviceModel?.discountAmount ?? "0").toString())?.toInt() ?? 0)}",
-                              //   style: TextStyle(
-                              //     fontSize: 12,
-                              //     fontWeight: FontWeight.w400,
-                              //     decoration: TextDecoration.lineThrough,
-                              //     color: Colors.black
-                              //         .withAlpha((0.53 * 255).toInt()),
-                              //   ),
-                              // ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 6,vertical: 2),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: const Color(0xFF207FA7).withOpacity(0.5), // primary color, thoda halki shade
+            width: 1.2,
+          ),
+          boxShadow: [
+            // main shadow
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12), // thoda zyada visible shadow
+              blurRadius: 12, // spread out blur
+              spreadRadius: 1,
+              offset: const Offset(0, 6), // bottom shadow
+            ),
+            // light top highlight
+            BoxShadow(
+              color: Colors.white.withOpacity(0.7),
+              blurRadius: 6,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
 
-                          const SizedBox(height: 5),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Expanded(
-                          //       child: Text(
-                          //         "Tax",
-                          //         maxLines: 1,
-                          //         overflow: TextOverflow.ellipsis,
-                          //         style: const TextStyle(fontSize: 14),
-                          //       ),
-                          //     ),
-                          //     Text(
-                          //       "(+) ₹ ${(double.tryParse((widget.serviceModel?.taxAmount ?? "0").toString())?.toInt() ?? 0)}",
-                          //       style: const TextStyle(
-                          //         fontSize: 14,
-                          //         fontWeight: FontWeight.bold,
-                          //         color: Color(0xFF207FA7),
-                          //       ),
-                          //     ),
-                          //     SizedBox(
-                          //       width: 10,
-                          //     )
-                          //   ],
-                          // ),
-                          // const SizedBox(height: 5),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Expanded(
-                          //       child: Text(
-                          //         "Total Price",
-                          //         maxLines: 1,
-                          //         overflow: TextOverflow.ellipsis,
-                          //         style: const TextStyle(fontSize: 14),
-                          //       ),
-                          //     ),
-                          //     Text(
-                          //       "₹ ${(double.tryParse((widget.serviceModel?.totalCost ?? "0").toString())?.toInt() ?? 0)}",
-                          //       style: const TextStyle(
-                          //         fontSize: 14,
-                          //         fontWeight: FontWeight.bold,
-                          //         color: Color(0xFF207FA7),
-                          //       ),
-                          //     ),
-                          //     SizedBox(
-                          //       width: 10,
-                          //     )
-                          //   ],
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+
+
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// IMAGE
+            Container(
+              height: 80,
+              width: 80,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6), // soft grey
+                borderRadius: BorderRadius.circular(12),
               ),
-              Container(
-                padding: EdgeInsets.all(8),
-                height: 30,
-                decoration: ShapeDecoration(
-                  color: const Color(0x19207FA7),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          // Handle decrement action
-                          if (widget.serviceModel?.quantity != null &&
-                              quantity > 1) {
-                            setState(() {
-                              quantity = quantity - 1;
-                            });
-                            Get.find<DashBoardController>().updateQuantity(
-                              quantity.toString(),
-                              widget.serviceModel?.id ?? "",
-                            );
-                          } else {
-                            Get.dialog(
-                              AlertDialog(
-                                titlePadding: const EdgeInsets.all(15),
-                                title: const Text("Are you sure?"),
-                                content: const Text(
-                                    "Do you want to remove this item?"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Get.back(), // Cancel
-                                    child: const Text("Cancel"),
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors
-                                          .red, // Change to match your theme
+              child: CustomNetworkImageWidget(
+                image: widget.serviceModel?.category?.imageFullPath ?? "",
+                fit: BoxFit.cover,
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            /// DETAILS
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.serviceModel?.category?.name ?? "",
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    widget.serviceModel?.variantKey ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "₹${(double.tryParse((widget.serviceModel?.serviceCost ?? "0").toString())?.toInt() ?? 0)}",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF207FA7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            /// QUANTITY CONTROLLER (BIG & CLICKABLE)
+            Container(
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5FAFD),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFF207FA7)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _circleButton(
+                    icon: Icons.remove,
+                    onTap: () {
+                      if (widget.serviceModel?.quantity != null && quantity > 1) {
+                        setState(() => quantity--);
+                        Get.find<DashBoardController>().updateQuantity(
+                          quantity.toString(),
+                          widget.serviceModel?.id ?? "",
+                        );
+                      } else {
+                        Get.dialog(
+                          Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 10,
+                            backgroundColor: Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    "Remove Item?",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                    onPressed: () {
-                                      Get.back(); // Close the dialog first
-                                      Get.find<DashBoardController>()
-                                          .removeItem(
-                                              widget.serviceModel?.id ?? "");
-                                      widget.function(
-                                          widget.serviceModel?.id ?? "");
-                                    },
-                                    child: const Text("Remove",
-                                        style: TextStyle(color: Colors.white)),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    "Do you want to remove this item from your cart?",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            // Close the dialog safely
+                                            Navigator.of(context, rootNavigator: true).pop();
+                                          }, // Cancel
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(color: Colors.grey),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(vertical: 12),
+                                          ),
+                                          child: const Text(
+                                            "Cancel",
+                                            style: TextStyle(color: Colors.black87),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            // 1️⃣ Close dialog safely
+                                            Navigator.of(context, rootNavigator: true).pop();
+
+                                            // 2️⃣ Remove item from controller
+                                            Get.find<DashBoardController>()
+                                                .removeItem(widget.serviceModel?.id ?? "");
+
+                                            // 3️⃣ Trigger parent function for AnimatedList remove
+                                            widget.function(null);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(vertical: 12),
+                                          ),
+                                          child: const Text(
+                                            "Remove",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                              barrierDismissible: false,
-                            );
-                          }
-                        },
-                        child: Icon(
-                          size: 12,
-                          quantity == 1 ? Icons.remove : Icons.remove,
-                          color: quantity == 1
-                              ? Color(0xFF207FA7)
-                              : Color(0xFF207FA7),
-                        )),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 400),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) {
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0.0, 0.5),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: FadeTransition(
-                            opacity: animation,
-                            child: child,
+                            ),
                           ),
+                          barrierDismissible: false,
                         );
-                      },
-                      child: Text(
-                        "$quantity",
-                        key: ValueKey(
-                            quantity), // Trigger reanimation when quantity changes
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF207FA7),
-                        ),
+
+                      }
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: Text(
+                      "$quantity",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF207FA7),
                       ),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    InkWell(
-                        onTap: () {
-                          if (quantity < 100) {
-                            setState(() {
-                              quantity = quantity + 1;
-                            });
-                            Get.find<DashBoardController>().updateQuantity(
-                              quantity.toString(),
-                              widget.serviceModel?.id ?? "",
-                            );
-                          }
-                        },
-                        child: Icon(
-                          size: 12,
-                          Icons.add,
-                          color: Color(0xFF207FA7),
-                        )),
-                  ],
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-        ],
+                  ),
+                  _circleButton(
+                    icon: Icons.add,
+                    onTap: () {
+                      if (quantity < 100) {
+                        setState(() => quantity++);
+                        Get.find<DashBoardController>().updateQuantity(
+                          quantity.toString(),
+                          widget.serviceModel?.id ?? "",
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+
+          ],
+        ),
       );
     });
   }
+  Widget _circleButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: onTap,
+      child: Container(
+        height: 32,
+        width: 32,
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          color: Color(0xFF207FA7),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          size: 18,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
 }

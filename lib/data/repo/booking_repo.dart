@@ -14,12 +14,17 @@ class BookingRepo {
   });
 
   Future<Response> fetchBookingReview({required String bookingId}) async {
-    return await apiClient.getData(AppConstants.getCustomerBookingReview,
-        query: {
-          "booking_id": bookingId,
-        },
-        method: "GET");
+    Response res = await apiClient.getData(
+      AppConstants.getCustomerBookingReview,
+      query: { "booking_id": bookingId },
+      method: "GET",
+    );
+
+    print("BOOKING REVIEW RESPONSE => ${res.body}");
+
+    return res;
   }
+
 
   Future<Response> getBookingSetupRepo() async {
     return await apiClient.getData(AppConstants.getBookingSetupApi,

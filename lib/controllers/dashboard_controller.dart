@@ -168,6 +168,17 @@ final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
     update();
   }
 
+  Future<void> reloadFeaturedProperly() async {
+
+    categoryList?.data?.clear();
+    update();
+
+    await getFeaturedCategories("50", "1");
+
+    update();
+  }
+
+
   Future<void> getFeaturedCategories(String limit, String offset,
       [bool? isShowLoading]) async {
     log("Inside 22222");

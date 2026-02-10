@@ -56,12 +56,15 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = Get.find<DashBoardController>();
 
+      // 🔥 IMPORTANT FIX – 6 ki jagah FULL DATA
       controller.getFeaturedCategories("6", "1");
+
       controller.getTopRated("10", "1", false);
       controller.getQuickRepair("10", "1", false);
       controller.getBanners();
     });
   }
+
 
   // ADDED: refresh function for pull to refresh
 // ADDED: pull to refresh handler
@@ -73,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //
 //     controller.update(); // refresh UI
 //   }
+
   Future<void> _onRefresh() async {
     final controller = Get.find<DashBoardController>();
 
@@ -108,12 +112,31 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   InkWell(
-                      onTap: () {
-                        Get.offAll(DashboardScreen(
-                            key: GlobalKey<DashboardScreenState>(), pageIndex: 1));
+                      onTap: () async {
+                        final dash = Get.find<DashBoardController>();
+
+                        await dash.getFeaturedCategories("50", "1", true);
+
+                        Get.offAll(
+                          DashboardScreen(
+                            key: GlobalKey<DashboardScreenState>(),
+                            pageIndex: 1,
+                          ),
+                        );
+                        InkWell(
+                          onTap: () {
+                            Get.offAll(
+                              DashboardScreen(
+                                key: GlobalKey<DashboardScreenState>(),
+                                pageIndex: 1,
+                              ),
+                            );
+                          },
+                          child: Image.asset('assets/images/Instant Repairs at Your Fingertips! (2).PNG'),
+                        );
                       },
-                      child: Image.asset('assets/images/top_banner_image.png')),
-                  /// 🔹 Pinned / All Categories
+                      child: Image.asset('assets/images/Instant Repairs at Your Fingertips! (2).PNG')),
+                  /// Pinned / All Categories
                   if (allCategories.isNotEmpty)
               CategoryComponents(
             categoryList: CategoryModel(
@@ -125,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
             isShowSeeAll: true,
           ),
 
-                  /// 🔹 Our Features
+                  /// Our Features
                   const Padding(
                     padding: EdgeInsets.only(left: 14, top: 8),
                     child: Align(
@@ -141,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  /// 🔹 Best Offers (Banner Slider inside Card)
+                  /// Our features (Banner Slider inside Card)
                   if (controller.banners1.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -160,21 +183,32 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                  /// 🔹 Top Rated Services
-                  if ((controller.topRated?.data ?? []).isNotEmpty) ...[
-                    const SizedBox(height: 10),
-                    Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.all(8),
-                      child: HorizontalAnimatedList(
-                        imageHeight: 195,
-                        data: controller.topRated!,
-                        heading: 'Top Rated Services',
+                  ///  Top Rated Services
+                  if ((controller.topRated?.data ?? []).isNotEmpty)
+                    buildHomeSection(
+                      title: "Top Rated Services",
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: HorizontalAnimatedList(
+                          imageHeight: 190,
+                          data: controller.topRated!,
+                          heading: '',
+                        ),
                       ),
                     ),
-                  ],
 
-                  /// 🔹 Second Banner
+                  ///  Second Banner
                   if (controller.banner2.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -183,102 +217,113 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                  /// 🔹 Quick Repairs
-                  if ((controller.quickRepair?.data ?? []).isNotEmpty) ...[
-                    const SizedBox(height: 10),
-                    Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.all(8),
-                      child: HorizontalAnimatedList(
-                        imageHeight: 177,
-                        data: controller.quickRepair!,
-                        heading: 'Quick Repairs',
-                      ),
-                    ),
-                  ],
-
-                  /// 🔹 Refer & Earn
-                  Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: GestureDetector(
-                      onTap: () async {
-                        final authController = Get.find<AuthController>();
-                        bool isGuest = await authController.returnIsGuest();
-
-                        if (isGuest) {
-                          authController.checkIfGuest();
-                        } else {
-                          Get.to(() => ReferEarnScreen());
-                        }
-                      },
+                  ///  Quick Repairs
+                  if ((controller.quickRepair?.data ?? []).isNotEmpty)
+                    buildHomeSection(
+                      title: "Quick Repairs",
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xff266a8a),
-                              Color(0xff125778),
-                            ],
-                          ),
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(.25),
+                              color: Colors.black.withOpacity(0.05),
                               blurRadius: 10,
-                              offset: Offset(0, 4),
+                              offset: const Offset(0, 5),
                             ),
                           ],
                         ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(.15),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(
-                                Icons.card_giftcard,
-                                color: Colors.white,
-                                size: 26,
-                              ),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Refer & Earn ₹150",
-                                    style: albertSansRegular.copyWith(
-                                      fontSize: Dimensions.fontSize15,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    "Invite friends & earn rewards on every booking",
-                                    style: albertSansRegular.copyWith(
-                                      fontSize: Dimensions.fontSize12,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: Colors.white70,
-                              size: 18,
-                            ),
-                          ],
+                        padding: const EdgeInsets.all(12),
+                        child: HorizontalAnimatedList(
+                          imageHeight: 170,
+                          data: controller.quickRepair!,
+                          heading: '',
                         ),
                       ),
                     ),
-                  ),
+
+                  // /// Refer & Earn
+                  // Padding(
+                  //   padding: const EdgeInsets.all(15),
+                  //   child: GestureDetector(
+                  //     onTap: () async {
+                  //       final authController = Get.find<AuthController>();
+                  //       bool isGuest = await authController.returnIsGuest();
+                  //
+                  //       if (isGuest) {
+                  //         authController.checkIfGuest();
+                  //       } else {
+                  //         Get.to(() => ReferEarnScreen());
+                  //       }
+                  //     },
+                  //     child: Container(
+                  //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  //       decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(14),
+                  //         gradient: const LinearGradient(
+                  //           begin: Alignment.topLeft,
+                  //           end: Alignment.bottomRight,
+                  //           colors: [
+                  //             Color(0xff266a8a),
+                  //             Color(0xff125778),
+                  //           ],
+                  //         ),
+                  //         boxShadow: [
+                  //           BoxShadow(
+                  //             color: Colors.black.withOpacity(.25),
+                  //             blurRadius: 10,
+                  //             offset: Offset(0, 4),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //       child: Row(
+                  //         children: [
+                  //           Container(
+                  //             padding: const EdgeInsets.all(10),
+                  //             decoration: BoxDecoration(
+                  //               color: Colors.white.withOpacity(.15),
+                  //               borderRadius: BorderRadius.circular(10),
+                  //             ),
+                  //             child: const Icon(
+                  //               Icons.card_giftcard,
+                  //               color: Colors.white,
+                  //               size: 26,
+                  //             ),
+                  //           ),
+                  //           const SizedBox(width: 14),
+                  //           Expanded(
+                  //             child: Column(
+                  //               crossAxisAlignment: CrossAxisAlignment.start,
+                  //               children: [
+                  //                 Text(
+                  //                   "Refer & Earn ₹150",
+                  //                   style: albertSansRegular.copyWith(
+                  //                     fontSize: Dimensions.fontSize15,
+                  //                     fontWeight: FontWeight.w600,
+                  //                     color: Colors.white,
+                  //                   ),
+                  //                 ),
+                  //                 const SizedBox(height: 6),
+                  //                 Text(
+                  //                   "Invite friends & earn rewards on every booking",
+                  //                   style: albertSansRegular.copyWith(
+                  //                     fontSize: Dimensions.fontSize12,
+                  //                     color: Colors.white70,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //           const Icon(
+                  //             Icons.arrow_forward_ios_rounded,
+                  //             color: Colors.white70,
+                  //             size: 18,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
 
                   const SizedBox(height: 20),
                 ],
@@ -287,4 +332,51 @@ class _HomeScreenState extends State<HomeScreen> {
         );
     });
   }
+}
+
+Widget buildHomeSection({
+  required String title,
+  required Widget child,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+
+        /// Heading
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                const SizedBox(width: 6),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            // const Text(
+            //   "See All",
+            //   style: TextStyle(
+            //     fontSize: 14,
+            //     color: Colors.blue,
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            // ),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        /// Section Body
+        child,
+      ],
+    ),
+  );
 }

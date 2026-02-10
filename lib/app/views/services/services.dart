@@ -16,24 +16,23 @@ class _ServiceScreensState extends State<ServiceScreens> {
   bool isLoading = false; // To prevent multiple API calls
   final DashBoardController dashboard = Get.find<DashBoardController>();
   @override
-  @override
   void initState() {
     super.initState();
 
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final dashboardController = Get.find<DashBoardController>();
 
-      // MAIN FIX — PURANA DATA UDAO
-      dashboardController.categoryList?.data?.clear();
+      // 🔥 MAIN FIX
+      await dashboardController.reloadFeaturedProperly();
 
-      currentOffset++;
-      dashboardController.getData(10, currentOffset);
-
+      currentOffset = 1;
+      await dashboardController.getData(10, currentOffset);
     });
   }
+
 
   Future<void> onRefresh() async {
     currentOffset = 1;
@@ -125,7 +124,7 @@ class _ServiceScreensState extends State<ServiceScreens> {
             color: const Color(0xff227FA8), //  refresh blue color
             backgroundColor: Colors.white,
             onRefresh: () async {
-              await dashboard.getFeaturedCategories("10", "1", false); // categories refresh// search reset
+              await dashboard.getFeaturedCategories("50", "1", false); // categories refresh// search reset
             },
             child: SingleChildScrollView(
               controller: _scrollController,

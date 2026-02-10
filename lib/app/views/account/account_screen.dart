@@ -337,90 +337,90 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 SizedBox(height: 40,),
                 ///  Refer & Earn
-                GestureDetector(
-                  onTap: () async {
-                    final authController = Get.find<AuthController>();
-                    bool isGuest = await authController.returnIsGuest();
-
-                    if (isGuest) {
-                      authController.checkIfGuest();
-                    } else {
-                      Get.to(() => ReferEarnScreen());
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xff266a8a), // dark blue-teal
-                          Color(0xff125778), // deeper shade
-                        ],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(.25),
-                          blurRadius: 10,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        /// 🎁 ICON
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(.15),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.card_giftcard,
-                            color: Colors.white,
-                            size: 26,
-                          ),
-                        ),
-
-                        const SizedBox(width: 14),
-
-                        /// 📝 TEXT
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Refer & Earn ₹150",
-                                style: albertSansRegular.copyWith(
-                                  fontSize: Dimensions.fontSize15,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                "Invite friends & earn rewards on every booking",
-                                style: albertSansRegular.copyWith(
-                                  fontSize: Dimensions.fontSize12,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        /// ➡️ ARROW
-                        const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          color: Colors.white70,
-                          size: 18,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: () async {
+                //     final authController = Get.find<AuthController>();
+                //     bool isGuest = await authController.returnIsGuest();
+                //
+                //     if (isGuest) {
+                //       authController.checkIfGuest();
+                //     } else {
+                //       Get.to(() => ReferEarnScreen());
+                //     }
+                //   },
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(14),
+                //       gradient: const LinearGradient(
+                //         begin: Alignment.topLeft,
+                //         end: Alignment.bottomRight,
+                //         colors: [
+                //           Color(0xff266a8a), // dark blue-teal
+                //           Color(0xff125778), // deeper shade
+                //         ],
+                //       ),
+                //       boxShadow: [
+                //         BoxShadow(
+                //           color: Colors.black.withOpacity(.25),
+                //           blurRadius: 10,
+                //           offset: Offset(0, 4),
+                //         ),
+                //       ],
+                //     ),
+                //     child: Row(
+                //       children: [
+                //         /// 🎁 ICON
+                //         Container(
+                //           padding: const EdgeInsets.all(10),
+                //           decoration: BoxDecoration(
+                //             color: Colors.white.withOpacity(.15),
+                //             borderRadius: BorderRadius.circular(10),
+                //           ),
+                //           child: const Icon(
+                //             Icons.card_giftcard,
+                //             color: Colors.white,
+                //             size: 26,
+                //           ),
+                //         ),
+                //
+                //         const SizedBox(width: 14),
+                //
+                //         /// 📝 TEXT
+                //         Expanded(
+                //           child: Column(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: [
+                //               Text(
+                //                 "Refer & Earn ₹150",
+                //                 style: albertSansRegular.copyWith(
+                //                   fontSize: Dimensions.fontSize15,
+                //                   fontWeight: FontWeight.w600,
+                //                   color: Colors.white,
+                //                 ),
+                //               ),
+                //               const SizedBox(height: 6),
+                //               Text(
+                //                 "Invite friends & earn rewards on every booking",
+                //                 style: albertSansRegular.copyWith(
+                //                   fontSize: Dimensions.fontSize12,
+                //                   color: Colors.white70,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //
+                //         /// ➡️ ARROW
+                //         const Icon(
+                //           Icons.arrow_forward_ios_rounded,
+                //           color: Colors.white70,
+                //           size: 18,
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
 
                 //Complaint center
                 // sizedBox30(),
