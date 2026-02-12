@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = Get.find<DashBoardController>();
 
-      // 🔥 IMPORTANT FIX – 6 ki jagah FULL DATA
+      // IMPORTANT FIX – 6 ki jagah FULL DATA
       controller.getFeaturedCategories("6", "1");
 
       controller.getTopRated("10", "1", false);

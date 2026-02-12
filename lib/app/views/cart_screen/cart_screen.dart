@@ -1,13 +1,7 @@
 import 'package:do_fix/app/views/bookingScreen/booking_screen.dart';
-import 'package:do_fix/app/views/home/home_screen.dart';
-// import 'package:do_fix/app/views/cart_screen/SubScreen/final_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import 'package:get/get_core/src/get_main.dart';
-
-// import '../../../booking/add_more_service_bottom_sheet.dart';
 import '../../../controllers/dashboard_controller.dart';
-import '../../../model/service_model.dart';
 import '../../widgets/custom_appbar.dart';
 import 'SubScreen/header_component.dart';
 
@@ -19,62 +13,147 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  List<CartItem?> _items = [];
-  bool _isLoading = true;
+  // final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  // List<CartItem?> _items = [];
+  // bool isCartLoading = true;
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final controller = Get.find<DashBoardController>();
+  //
+  //     final data =
+  //         controller.cartModel.content?.cart?.data ?? [];
+  //
+  //     if (!mounted) return;
+  //
+  //     setState(() {
+  //       _items.clear();
+  //       isCartLoading = false; // Loader immediately off (no fake delay)
+  //     });
+  //
+  //     for (int i = 0; i < data.length; i++) {
+  //       _items.add(data[i]);
+  //       _listKey.currentState?.insertItem(i,
+  //           duration: const Duration(milliseconds: 300));
+  //     }
+  //   });
+  // }
+  //
+  // void removeItem(int index) {
+  //   final removedItem = _items[index];
+  //   _items.removeAt(index);
+  //   _listKey.currentState?.removeItem(
+  //     index,
+  //     (context, animation) => SlideTransition(
+  //       position: Tween<Offset>(
+  //         begin: Offset.zero,
+  //         end: const Offset(1.0, 0.0), // slide out to right
+  //       ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+  //       child: FadeTransition(
+  //         opacity: animation,
+  //         child: HeaderComponent(
+  //           serviceModel: removedItem,
+  //           function: (index) {},
+  //         ),
+  //       ),
+  //     ),
+  //     duration: const Duration(milliseconds: 400),
+  //   );
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(milliseconds: 200), () {
-      final data =
-          Get.find<DashBoardController>().cartModel.content?.cart?.data ?? [];
-      setState(() {
-        _items = [];
-      });
-      for (int i = 0; i < data.length; i++) {
-        Future.delayed(Duration(milliseconds: 150 * i), () {
-          _items.insert(i, data[i]);
-          _listKey.currentState?.insertItem(i);
-        });
-      }
+  Widget priceDetailsSection(DashBoardController controller) {
 
-      // Show loader for 3 seconds before showing empty cart message
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      });
-    });
+    final subTotal = controller.subTotal;
+    final discount = controller.discount;
+    final tax = controller.vat;
+    final total = controller.cartModel.content?.totalCost ?? 0.0;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          const Text(
+            "PRICE DETAILS",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey,
+            ),
+          ),
+
+          const SizedBox(height: 15),
+
+          _priceRow("Price", subTotal),
+          const SizedBox(height: 8),
+
+          _priceRow("Discount", -discount, isDiscount: true),
+          const SizedBox(height: 8),
+
+          _priceRow("Tax", tax),
+          const SizedBox(height: 12),
+
+          const Divider(),
+
+          const SizedBox(height: 10),
+
+          _priceRow("Total Amount", total, isBold: true),
+
+          if (discount > 0) ...[
+            const SizedBox(height: 8),
+            Text(
+              "You saved ₹${discount.toStringAsFixed(2)}",
+              style: const TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ]
+        ],
+      ),
+    );
   }
-
-  void removeItem(int index) {
-    final removedItem = _items[index];
-    _items.removeAt(index);
-    _listKey.currentState?.removeItem(
-      index,
-      (context, animation) => SlideTransition(
-        position: Tween<Offset>(
-          begin: Offset.zero,
-          end: const Offset(1.0, 0.0), // slide out to right
-        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-        child: FadeTransition(
-          opacity: animation,
-          child: HeaderComponent(
-            serviceModel: removedItem,
-            function: (index) {},
+  Widget _priceRow(
+      String title,
+      double value, {
+        bool isDiscount = false,
+        bool isBold = false,
+      }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
           ),
         ),
-      ),
-      duration: const Duration(milliseconds: 400),
+        Text(
+          "${value < 0 ? "- " : ""}₹ ${value.abs().toStringAsFixed(2)}",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+            color: isDiscount ? Colors.green : Colors.black,
+          ),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DashBoardController>(builder: (controller) {
+    final controller = Get.find<DashBoardController>();
+    final cartItems = controller.cartModel.content?.cart?.data ?? [];
       return SafeArea(
         top: false,
         child: Scaffold(
@@ -86,188 +165,33 @@ class _CartScreenState extends State<CartScreen> {
             isCartButtonExist: false,
             showNotificationIcon: false,
           ),
-          body: _items.isEmpty
-              ? SizedBox(
-            height: Get.size.height,
-            width: Get.size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _isLoading
-                    ? Column(
-                  children: const [
-                    CircularProgressIndicator(
-                      color: Color(0xFF207FA7),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      "Loading cart...",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                )
-                    : Column(
-                  children: [
-                    ///  LOTTIE ANIMATION
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24),
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF4F8FB),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 90,
-                            width: 90,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.shopping_cart_outlined,
-                              size: 50,
-                              color: Color(0xFF207FA7),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            "Your cart is empty",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            "Looks like you haven’t added any service yet",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ///  ADD SERVICE BUTTON
-                    GestureDetector(
-                      onTap: () {
-                        /// Dashboard ka home tab
-                        Get.to(() => HomeScreen());
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF207FA7),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          "Add Service",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
-              : Visibility(
-                  visible: _items.isNotEmpty,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 22,
-                        ),
-                        //add more service
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     showModalBottomSheet(
-                        //       context: context,
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                        //       ),
-                        //       builder: (_) {
-                        //         return AddMoreServiceBottomSheet();
-                        //       },
-                        //     );// user ko service list par le jao
-                        //   },
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                        //     child: Row(
-                        //       children: const [
-                        //         Icon(Icons.add, color: Color(0xFF207FA7)),
-                        //         SizedBox(width: 6),
-                        //         Text(
-                        //           "Add more services",
-                        //           style: TextStyle(
-                        //             color: Color(0xFF207FA7),
-                        //             fontSize: 14,
-                        //             fontWeight: FontWeight.w500,
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
+          body: cartItems.isEmpty
+              ? _buildEmptyCart()
+              : ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: cartItems.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: HeaderComponent(
+                  serviceModel: cartItems[index],
+                  // function: (i) {
+                  //   controller.removeItem(
+                  //     cartItems[index].id.toString(),
+                  //   );
+                  // },
+                  function: (i) async {
+                    final id = cartItems[index].id;
+                    if (id != null) {
+                      await controller.removeItem(id.toString());
+                    }
+                  },
 
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                            width: Get.size.width,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: AnimatedList(
-                                key: _listKey,
-                                initialItemCount: _items.length,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder: (context, index, animation) {
-                                  return Column(
-                                    children: [
-                                      SlideTransition(
-                                        position: Tween<Offset>(
-                                          begin: const Offset(1.0, 0.0),
-                                          end: Offset.zero,
-                                        ).animate(CurvedAnimation(
-                                          parent: animation,
-                                          curve: Curves.easeOut,
-                                        )),
-                                        child: HeaderComponent(
-                                          serviceModel: _items[index],
-                                          function: (i) {
-                                            removeItem(index);
-                                          }, // trigger removal
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
                 ),
-          bottomNavigationBar: _items.isNotEmpty
+              );
+            },
+          ),
+          bottomNavigationBar: cartItems.isNotEmpty
               ? GetBuilder<DashBoardController>(
                   builder: (controller) {
                     return Container(
@@ -281,7 +205,7 @@ class _CartScreenState extends State<CartScreen> {
                             topLeft: Radius.circular(40),
                             topRight: Radius.circular(40),
                           ),
-                          border: BoxBorder.all(
+                          border: Border.all(
                             color: Color(0xFFB8B8B8),
                             width: 1,
                           )),
@@ -311,7 +235,7 @@ class _CartScreenState extends State<CartScreen> {
                           //           ).animate(animation),
                           //           child: FadeTransition(
                           //             opacity: animation,
-                          //             child: child,
+                          //             child: child,F
                           //           ),
                           //         );
                           //       },
@@ -413,9 +337,6 @@ class _CartScreenState extends State<CartScreen> {
                           //     const SizedBox(width: 20),
                           //   ],
                           // ),
-                          // Divider(
-                          //   thickness: 3,
-                          // ),
                           Row(
                             children: [
                               const SizedBox(width: 20),
@@ -445,7 +366,7 @@ class _CartScreenState extends State<CartScreen> {
                                   );
                                 },
                                 child: Text(
-                                  "₹ ${controller.cartModel.content?.totalCost}",
+                                  "₹ ${(controller.cartModel.content?.totalCost ?? 0).toStringAsFixed(2)}",
                                   key: ValueKey(
                                       controller.cartModel.content?.totalCost),
                                   style: const TextStyle(
@@ -469,12 +390,8 @@ class _CartScreenState extends State<CartScreen> {
                                     onTap: () {
                                       debugPrint("Continue");
                                       Get.to(BookingScreen(
-                                        cartTotalPrice: double.tryParse(
-                                                controller.cartModel.content
-                                                        ?.totalCost
-                                                        .toString() ??
-                                                    "0.0") ??
-                                            0.0,
+                                        cartTotalPrice:
+                                        controller.cartModel.content?.totalCost ?? 0.0,
                                       ));
                                       // showBookingSheet(context);
                                     },
@@ -512,6 +429,21 @@ class _CartScreenState extends State<CartScreen> {
               : null,
         ),
       );
-    });
+    }
   }
+Widget _buildEmptyCart() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.shopping_cart_outlined,
+            size: 70, color: Color(0xFF207FA7)),
+        const SizedBox(height: 16),
+        const Text(
+          "Your cart is empty",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+      ],
+    ),
+  );
 }
