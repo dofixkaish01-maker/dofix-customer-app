@@ -174,21 +174,32 @@ class DashBoardController extends GetxController implements GetxService {
   var notificationModel = NotificationModel(null, null, []).obs;
 // normally ye auth / storage se aata hai
   late String? token=authRepo.apiClient.token;
-final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
+// final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
+  String get customerId {
+    return cartModel.content?.cart?.data?.isNotEmpty == true
+        ? cartModel.content!.cart!.data!.first.customerId ?? ""
+        : "";
+  }
   final String userType = 'customer';
+
+
   Future<void> fetchNotifications() async {
     try {
       isNotificationLoading.value = true;
+
       final String? token = authRepo.apiClient.token;
       if (token == null || token.isEmpty) {
         throw Exception('Token not found');
       }
+
       final result = await AuthRepo.fetchNotifications(
         token: token,
-        userId: userId,
+        userId: customerId, // getter call ho raha hai
         userType: userType,
       );
+
       notificationModel.value = result;
+
     } catch (e) {
       Get.snackbar('Error', e.toString());
     } finally {

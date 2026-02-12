@@ -42,7 +42,7 @@ class _BannerComponentState extends State<BannerComponent> {
                   width: double.infinity,
                   child: Image.network(
                     item.imageUrl,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                   ),
                 ),
               );
