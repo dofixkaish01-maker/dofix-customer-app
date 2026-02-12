@@ -36,60 +36,60 @@ class CategoryComponents extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (isShowSeeAll)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Explore Service",
-                  style: albertSansRegular.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                // TextButton(
-                //   onPressed: () {
-                //     Get.offAll(
-                //       DashboardScreen(
-                //         key: GlobalKey<DashboardScreenState>(),
-                //         pageIndex: 1,
-                //       ),
-                //     );
-                //   },
-                //   child: Text(
-                //     "See All",
-                //     style: albertSansRegular.copyWith(
-                //       fontSize: Dimensions.fontSize13,
-                //       color: Theme.of(context).primaryColor,
-                //     ),
-                //   ),
-                // ),
-                TextButton(
-                  onPressed: () async {
-                    // Navigate and fetch fresh data before screen opens
-                    final controller = Get.find<DashBoardController>();
-
-                    // Reset data
-                    controller.categoryList?.data?.clear();
-
-                    Get.offAll(
-                            DashboardScreen(
-                              key: GlobalKey<DashboardScreenState>(),
-                              pageIndex: 1,
-                            ),
-                          );
-                  },
-                  child: Text(
-                    "See All",
-                    style: albertSansRegular.copyWith(
-                      fontSize: Dimensions.fontSize13,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-
-              ],
-            ),
+          // if (isShowSeeAll)
+          //   Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       Text(
+          //         "Explore Service",
+          //         style: albertSansRegular.copyWith(
+          //           fontSize: 16,
+          //           fontWeight: FontWeight.w500,
+          //         ),
+          //       ),
+          //       // TextButton(
+          //       //   onPressed: () {
+          //       //     Get.offAll(
+          //       //       DashboardScreen(
+          //       //         key: GlobalKey<DashboardScreenState>(),
+          //       //         pageIndex: 1,
+          //       //       ),
+          //       //     );
+          //       //   },
+          //       //   child: Text(
+          //       //     "See All",
+          //       //     style: albertSansRegular.copyWith(
+          //       //       fontSize: Dimensions.fontSize13,
+          //       //       color: Theme.of(context).primaryColor,
+          //       //     ),
+          //       //   ),
+          //       // ),
+          //       // TextButton(
+          //       //   onPressed: () async {
+          //       //     // Navigate and fetch fresh data before screen opens
+          //       //     final controller = Get.find<DashBoardController>();
+          //       //
+          //       //     // Reset data
+          //       //     controller.categoryList?.data?.clear();
+          //       //
+          //       //     Get.offAll(
+          //       //             DashboardScreen(
+          //       //               key: GlobalKey<DashboardScreenState>(),
+          //       //               pageIndex: 1,
+          //       //             ),
+          //       //           );
+          //       //   },
+          //       //   child: Text(
+          //       //     "See All",
+          //       //     style: albertSansRegular.copyWith(
+          //       //       fontSize: Dimensions.fontSize13,
+          //       //       color: Theme.of(context).primaryColor,
+          //       //     ),
+          //       //   ),
+          //       // ),
+          //
+          //     ],
+          //   ),
 
           const SizedBox(height: 8),
 

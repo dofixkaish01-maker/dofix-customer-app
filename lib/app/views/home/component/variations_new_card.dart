@@ -1,4 +1,5 @@
-  import 'package:do_fix/controllers/auth_controller.dart';
+  import 'package:do_fix/app/views/services/details_screen.dart';
+import 'package:do_fix/controllers/auth_controller.dart';
   import 'package:flutter/material.dart';
   import 'package:get/get.dart';
   import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -138,257 +139,273 @@
         }
       }
     }
-  
+
     @override
     Widget build(BuildContext context) {
-      return Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(vertical: Dimensions.paddingSize7),
-        padding: const EdgeInsets.all(Dimensions.paddingSize10),
-        decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(Dimensions.radius10),
-        border: Border.all(
-          color: Colors.black.withAlpha((0.08 * 255).toInt()), // 🔹 lighter border
-          width: 0.6,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha((0.06 * 255).toInt()),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+      return GestureDetector(
+        onTap: () {
+          Get.to(() => DetailsScreen(
+            serviceModel: widget.serviceModel,
+            variationName: widget.serviceVariationName,
+            rating: widget.serviceRatings,
+            reviewCount: widget.serviceReviewCount,
+            mrpPrice: widget.serviceMrpPrice,
+            discountedPrice: widget.serviceDiscountedPrice,
+            duration: widget.serviceTimeDuration,
+            description: widget.serviceDescription,
+            variantKey: widget.variantKey,
+          ));
+        },
+
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(vertical: Dimensions.paddingSize7),
+          padding: const EdgeInsets.all(Dimensions.paddingSize10),
+          decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(Dimensions.radius10),
+          border: Border.all(
+            color: Colors.black.withAlpha((0.08 * 255).toInt()), // 🔹 lighter border
+            width: 0.6,
           ),
-        ],
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            /// LEFT CONTENT
-            Expanded(
-              flex: 3,
-              child: Column(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha((0.06 * 255).toInt()),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: IntrinsicHeight(
+          child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(width: 10),
+            children: [
 
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        widget.serviceModel.coverImageFullPath ?? "",
-                        // widget.serviceModel.coverImageFullPath ?? "",
-                        // widget.serviceModel.coverImage ?? "",
-                        // widget.serviceModel.thumbnailFullPath ?? "",
-                        // widget.serviceModel.thumbnail ?? "",
-                        height: 90,
-                        width: 90,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+              /// LEFT CONTENT
+              Expanded(
+                flex: 3,
+                child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(width: 10),
+
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          widget.serviceModel.coverImageFullPath ?? "",
+                          // widget.serviceModel.coverImageFullPath ?? "",
+                          // widget.serviceModel.coverImage ?? "",
+                          // widget.serviceModel.thumbnailFullPath ?? "",
+                          // widget.serviceModel.thumbnail ?? "",
                           height: 90,
                           width: 90,
-                          color: Colors.grey.shade200,
-                          child: const Icon(Icons.image, size: 30),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            height: 90,
+                            width: 90,
+                            color: Colors.grey.shade200,
+                            child: const Icon(Icons.image, size: 30),
+                          ),
                         ),
                       ),
-                    ),
 
-                    /// Service Name
-                    Text(
-                      widget.serviceVariationName,
-                      style: const TextStyle(
-                        fontSize: Dimensions.fontSize14,
-                        fontWeight: FontWeight.w600,
-                        height: 1.3,
-                      ),
-                    ),
-          
-                    /// Rating
-                    if (widget.serviceRatings != "0.0") ...[
-                      const SizedBox(height: Dimensions.paddingSize5),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            size: 14,
-                            color: Color(0xFFFFAC33),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            widget.serviceRatings,
-                            style: const TextStyle(
-                              fontSize: Dimensions.fontSize12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            " (${widget.serviceReviewCount} Reviews)",
-                            style: TextStyle(
-                              fontSize: Dimensions.fontSize10,
-                              color: Colors.black.withAlpha((0.45 * 255).toInt()),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-          
-                    const SizedBox(height: Dimensions.paddingSize7),
-          
-                    /// Price Row
-                    Wrap(
-                      spacing: 8,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Text(
-                          "₹${widget.serviceDiscountedPrice}",
-                          style: const TextStyle(
-                            fontSize: Dimensions.fontSize15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-          
-                        if (widget.serviceMrpPrice != "0.0" &&
-                            widget.serviceMrpPrice != "null" &&
-                            widget.serviceMrpPrice != "0")
-                          Text(
-                            "₹${widget.serviceMrpPrice}",
-                            style: TextStyle(
-                              fontSize: Dimensions.fontSize10,
-                              decoration: TextDecoration.lineThrough,
-                              color: Colors.black.withAlpha((0.5 * 255).toInt()),
-                            ),
-                          ),
-          
-                        if (widget.serviceTimeDuration != "null")
-                          Text(
-                            _formatDuration(widget.serviceTimeDuration),
-                            style: TextStyle(
-                              fontSize: Dimensions.fontSize10,
-                              color: Colors.black.withAlpha((0.7 * 255).toInt()),
-                            ),
-                          ),
-                      ],
-                    ),
-          
-                    const SizedBox(height: Dimensions.paddingSize7),
-          
-                    /// Description
-                    SizedBox(
-                      height: 42, // 👈 fixed height (3 lines ke approx)
-                      child: Text(
-                        HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
-                        maxLines: 2,
-                        softWrap: true,
-                        overflow: TextOverflow.fade,
-                        style: TextStyle(
-                          fontSize: Dimensions.fontSize12,
-                          height: 1.4,
-                          color: Colors.black.withAlpha((0.55 * 255).toInt()),
+                      /// Service Name
+                      Text(
+                        widget.serviceVariationName,
+                        style: const TextStyle(
+                          fontSize: Dimensions.fontSize14,
+                          fontWeight: FontWeight.w600,
+                          height: 1.3,
                         ),
                       ),
-                    ),
-          
-                    const SizedBox(height: Dimensions.paddingSize5),
-          
-                    /// Rate Card Link
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "The Dofix Rate Card",
-                        style: GoogleFonts.gulzar(
-                          fontSize: Dimensions.fontSize12,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.amber,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          
-              /// ================= ADD / REMOVE BUTTON =================
-              GetBuilder<DashBoardController>(
-                id: 'cart_${widget.serviceModel.id}_${widget.variantKey}',
-                builder: (controller) {
-          
-                  bool itemFoundInCart = false;
-                  if (controller.cartModel.content?.cart?.data != null) {
-                    for (var item in controller.cartModel.content!.cart!.data!) {
-                      if (item.serviceId == widget.serviceModel.id &&
-                          item.variantKey == widget.variantKey) {
-                        itemFoundInCart = true;
-                        break;
-                      }
-                    }
-                  }
-                  isInCart = itemFoundInCart;
-          
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    verticalDirection: VerticalDirection.down,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        height: 32,
-                        width: 75,
-                        child: GestureDetector(
-                          onTap: isInCart ? removeFromCart : () async {
-                            await dashboardController.addToCart(
-                              {
-                                "service_id": widget.serviceModel.id,
-                                "category_id": widget.serviceModel.categoryId,
-                                "sub_category_id": widget.serviceModel.subCategoryId,
-                                "quantity": "1",
-                                "extras": [],
-                              },
-                              [widget.variantKey],
-                            );
-                            setState(() => isInCart = true);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: isInCart ? Colors.red : const Color(0xFF207FA8),
-                              borderRadius: BorderRadius.circular(Dimensions.radius5),
+
+                      /// Rating
+                      if (widget.serviceRatings != "0.0") ...[
+                        const SizedBox(height: Dimensions.paddingSize5),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              size: 14,
+                              color: Color(0xFFFFAC33),
                             ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              isInCart ? "Remove" : "Add",
+                            const SizedBox(width: 4),
+                            Text(
+                              widget.serviceRatings,
                               style: const TextStyle(
                                 fontSize: Dimensions.fontSize12,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              " (${widget.serviceReviewCount} Reviews)",
+                              style: TextStyle(
+                                fontSize: Dimensions.fontSize10,
+                                color: Colors.black.withAlpha((0.45 * 255).toInt()),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+
+                      const SizedBox(height: Dimensions.paddingSize7),
+
+                      /// Price Row
+                      Wrap(
+                        spacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            "₹${widget.serviceDiscountedPrice}",
+                            style: const TextStyle(
+                              fontSize: Dimensions.fontSize15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+
+                          if (widget.serviceMrpPrice != "0.0" &&
+                              widget.serviceMrpPrice != "null" &&
+                              widget.serviceMrpPrice != "0")
+                            Text(
+                              "₹${widget.serviceMrpPrice}",
+                              style: TextStyle(
+                                fontSize: Dimensions.fontSize10,
+                                decoration: TextDecoration.lineThrough,
+                                color: Colors.black.withAlpha((0.5 * 255).toInt()),
+                              ),
+                            ),
+
+                          if (widget.serviceTimeDuration != "null")
+                            Text(
+                              _formatDuration(widget.serviceTimeDuration),
+                              style: TextStyle(
+                                fontSize: Dimensions.fontSize10,
+                                color: Colors.black.withAlpha((0.7 * 255).toInt()),
+                              ),
+                            ),
+                        ],
+                      ),
+
+                      const SizedBox(height: Dimensions.paddingSize7),
+
+                      /// Description
+                      SizedBox(
+                        height: 42, // 👈 fixed height (3 lines ke approx)
+                        child: Text(
+                          HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
+                          maxLines: 2,
+                          softWrap: true,
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                            fontSize: Dimensions.fontSize12,
+                            height: 1.4,
+                            color: Colors.black.withAlpha((0.55 * 255).toInt()),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: Dimensions.paddingSize5),
+
+                      /// Rate Card Link
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "The Dofix Rate Card",
+                          style: GoogleFonts.gulzar(
+                            fontSize: Dimensions.fontSize12,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.amber,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// ================= ADD / REMOVE BUTTON =================
+                GetBuilder<DashBoardController>(
+                  id: 'cart_${widget.serviceModel.id}_${widget.variantKey}',
+                  builder: (controller) {
+
+                    bool itemFoundInCart = false;
+                    if (controller.cartModel.content?.cart?.data != null) {
+                      for (var item in controller.cartModel.content!.cart!.data!) {
+                        if (item.serviceId == widget.serviceModel.id &&
+                            item.variantKey == widget.variantKey) {
+                          itemFoundInCart = true;
+                          break;
+                        }
+                      }
+                    }
+                    isInCart = itemFoundInCart;
+
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      verticalDirection: VerticalDirection.down,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          height: 32,
+                          width: 75,
+                          child: GestureDetector(
+                            onTap: isInCart ? removeFromCart : () async {
+                              await dashboardController.addToCart(
+                                {
+                                  "service_id": widget.serviceModel.id,
+                                  "category_id": widget.serviceModel.categoryId,
+                                  "sub_category_id": widget.serviceModel.subCategoryId,
+                                  "quantity": "1",
+                                  "extras": [],
+                                },
+                                [widget.variantKey],
+                              );
+                              setState(() => isInCart = true);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: isInCart ? Colors.red : const Color(0xFF207FA8),
+                                borderRadius: BorderRadius.circular(Dimensions.radius5),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                isInCart ? "Remove" : "Add",
+                                style: const TextStyle(
+                                  fontSize: Dimensions.fontSize12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Spacer(),
-                      /// VIEW LINK (Add ke niche)
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(() => GetRateCardScreen(
-                            categoryId: widget.serviceModel.categoryId ?? "",
-                          ));
-                        },
-                        child: Text(
-                          "View",
-                          style: TextStyle(
-                            fontSize: Dimensions.fontSize12,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF2B7EA5),
-                            decoration: TextDecoration.underline,
+                        Spacer(),
+                        /// VIEW LINK (Add ke niche)
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(() => GetRateCardScreen(
+                              categoryId: widget.serviceModel.categoryId ?? "",
+                            ));
+                          },
+                          child: Text(
+                            "View",
+                            style: TextStyle(
+                              fontSize: Dimensions.fontSize12,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF2B7EA5),
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(width: Dimensions.paddingSize10),
-            ],
-          ),
-      ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(width: Dimensions.paddingSize10),
+              ],
+            ),
+        ),
+        ),
       );
     }
   }

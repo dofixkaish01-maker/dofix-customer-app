@@ -54,7 +54,7 @@ class _GetRateCardScreenState extends State<GetRateCardScreen> {
             columnWidths: const {
               0: FixedColumnWidth(60),
               1: FlexColumnWidth(),
-              2: FixedColumnWidth(80),
+              // 2: FixedColumnWidth(80),
             },
             children: [
               /// 🔹 HEADER
@@ -65,7 +65,7 @@ class _GetRateCardScreenState extends State<GetRateCardScreen> {
                 children: const [
                   _TableHeader(text: "Sr. No."),
                   _TableHeader(text: "Description"),
-                  _TableHeader(text: "Rate"),
+                  // _TableHeader(text: "Rate"),
                 ],
               ),
 
@@ -78,7 +78,7 @@ class _GetRateCardScreenState extends State<GetRateCardScreen> {
                     children: [
                       _TableCell(text: "${index + 1}"),
                       _TableCell(text: item.name),
-                      _TableCell(text: "₹${item.price}"),
+                      // _TableCell(text: "₹${item.price}"),
                     ],
                   );
                 },

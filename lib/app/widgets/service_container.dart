@@ -28,108 +28,138 @@ class ServiceContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: GestureDetector(
-        onTap: () {},
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 500),
+      tween: Tween(begin: 0.95, end: 1),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: value,
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: Material(
+        color: Colors.transparent,
         child: Container(
-          padding: const EdgeInsets.all(10), // Added padding for better spacing
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomNetworkImageWidget(
-                    image: serviceModel?.thumbnailFullPath ?? "",
-                    height: 91.0, // Fixed height instead of double.infinity
-                    width: 91.0,
-                  ),
-                  const SizedBox(width: 10),
-                  // Add spacing between image and text
-                  Flexible(
-                    // Prevents Row layout error
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
 
-                      mainAxisSize: MainAxisSize.min,
-                      // Avoids unnecessary expansion
-                      children: [
-                        Text(
-                          serviceModel?.name ?? "",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                          ),
-                        ),
-                        // const SizedBox(height: 5),
-                        // Visibility(
-                        //   visible: serviceModel?.ratingCount != 0,
-                        //   child: Row(
-                        //     children: [
-                        //       Text(
-                        //         serviceModel?.ratingCount?.toString() ?? "0",
-                        //         style: const TextStyle(fontSize: 14),
-                        //       ),
-                        //       const SizedBox(width: 5),
-                        //       // const Icon(Icons.star,
-                        //       //     color: Colors.yellow, size: 13),
-                        //       Text(
-                        //         serviceModel?.ratingCount?.toString() == "1"
-                        //             ? "Review"
-                        //             : "Reviews",
-                        //         style: const TextStyle(fontSize: 14),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-                        const SizedBox(height: 5),
-                        Text(
-                          serviceModel?.category?.name ?? "N/A",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black.withOpacity(0.50)),
-                        ),
-                        const SizedBox(height: 8),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     Text(
-                        //       "₹ ${(double.tryParse(serviceModel?.minBiddingPrice ?? "0")?.toInt() ?? 0)}",
-                        //       style: const TextStyle(
-                        //         fontSize: 16,
-                        //         fontWeight: FontWeight.w700,
-                        //         color: Color(0xFF207FA7),
-                        //       ),
-                        //     ),
-                        //     if (isButtonShow ?? false)
-                        //       CustomButtonWidget(
-                        //         height: 30,
-                        //         width: 80,
-                        //         onPressed: () {
-                        //           ShowAddToCartSheet(
-                        //             context,
-                        //             serviceModel!,
-                        //           );
-                        //         },
-                        //         buttonText: "Add",
-                        //         transparent: false,
-                        //         fontSize: 12,
-                        //         textColor: Colors.white,
-                        //         fontWeight: FontWeight.w600,
-                        //         borderSideColor: const Color(0xFF207FA7),
-                        //       ),
-                        //   ],
-                        // ),
-                        // const SizedBox(height: 5),
-                      ],
-                    ),
-                  ),
-                ],
+            // 🔥 Premium Layered Shadow
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 25,
+                offset: const Offset(0, 12),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                /// 🔥 IMAGE SECTION WITH GRADIENT OVERLAY
+                Stack(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.23,
+                      child: CustomNetworkImageWidget(
+                        image: serviceModel?.thumbnailFullPath ?? "",
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        imagePadding: 0,
+                      ),
+                    ),
+
+                    /// 🔥 Soft Gradient for Premium Feel
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.23,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.35),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    /// 🔥 Service Name on Image
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      right: 16,
+                      child: Text(
+                        serviceModel?.name ?? "",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                /// 🔥 CONTENT SECTION
+                Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      /// Category
+                      Row(
+                        children: [
+                          Icon(Icons.category_rounded,
+                              size: 16,
+                              color: Colors.grey.shade600),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              serviceModel?.category?.name ?? "N/A",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      /// Optional Divider
+                      Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: Colors.grey.shade200,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

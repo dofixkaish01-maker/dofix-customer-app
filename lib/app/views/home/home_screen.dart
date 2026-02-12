@@ -56,8 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = Get.find<DashBoardController>();
 
-      // 🔥 IMPORTANT FIX – 6 ki jagah FULL DATA
-      controller.getFeaturedCategories("6", "1");
+      // IMPORTANT FIX – 6 ki jagah FULL DATA
+      controller.getFeaturedCategories(limit: "6", offset: "1", isShowLoading: true);
 
       controller.getTopRated("10", "1", false);
       controller.getQuickRepair("10", "1", false);
@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final controller = Get.find<DashBoardController>();
 
     await Future.wait([
-      controller.getFeaturedCategories("6", "1"),
+      controller.getFeaturedCategories(limit: "6", offset: "1"),
       controller.getTopRated("10", "1", false),
       controller.getQuickRepair("10", "1", false),
       controller.getBanners(),
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () async {
                         final dash = Get.find<DashBoardController>();
 
-                        await dash.getFeaturedCategories("50", "1", true);
+                        await dash.getFeaturedCategories(limit: "50", offset: "1", isShowLoading: false);
 
                         Get.offAll(
                           DashboardScreen(
@@ -123,17 +123,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             pageIndex: 1,
                           ),
                         );
-                        InkWell(
-                          onTap: () {
-                            Get.offAll(
-                              DashboardScreen(
-                                key: GlobalKey<DashboardScreenState>(),
-                                pageIndex: 1,
-                              ),
-                            );
-                          },
-                          child: Image.asset('assets/images/Instant Repairs at Your Fingertips! (2).PNG'),
-                        );
+                        // InkWell(
+                        //   onTap: () {
+                        //     Get.offAll(
+                        //       DashboardScreen(
+                        //         key: GlobalKey<DashboardScreenState>(),
+                        //         pageIndex: 1,
+                        //       ),
+                        //     );
+                        //   },
+                        //   child: Image.asset('assets/images/Instant Repairs at Your Fingertips! (2).PNG'),
+                        // );
                       },
                       child: Image.asset('assets/images/Instant Repairs at Your Fingertips! (2).PNG')),
                   /// Pinned / All Categories

@@ -55,6 +55,7 @@ class DashBoardController extends GetxController implements GetxService {
 
   bool get isLoginLoading => _isLoginLoading;
   CategoryModel? categoryList = CategoryModel(data: []);
+  CategoryModel? allCategories = CategoryModel(data: []); // For ServiceScreens
   sv.Services? topRated = sv.Services(data: []);
   sv.Services? quickRepair = sv.Services(data: []);
   sv.Services? servicesListing = sv.Services(data: []);
@@ -86,42 +87,87 @@ class DashBoardController extends GetxController implements GetxService {
       content: ContentData(images: PolicyImages()),
       errors: []);
 
+
+
   @override
   void onInit() {
     super.onInit();
 
-    // CART
-    getCartListing(
-      limit: "100",
-      offset: "1",
-      isRoute: false,
-      showLoader: true,
-    );
-
-    // CATEGORY LIST (YE MISSING THA)
-    getFeaturedCategories("10", "1", false);
-
-    // 🛒 CART
-    getCartListing(
-      limit: "100",
-      offset: "1",
-      isRoute: false,
-      showLoader: true,
-    );
-
-
-    // CATEGORIES
-    getFeaturedCategories("10", "1", false);
-
-    // TOP RATED
+    // Initial calls for Dashboard
+    getFeaturedCategories(limit: "50", offset: "1", forDashboard: true); // Only 6 for dashboard
     getTopRated("10", "1", false);
-
-    // QUICK REPAIR
     getQuickRepair("10", "1", false);
-
-    //  BANNERS
-    getBanners();
   }
+
+  Future<void> getFeaturedCategories({
+    required String limit,
+    required String offset,
+    bool forDashboard = true, // default true
+    bool? isShowLoading,
+  }) async {
+    if (isShowLoading ?? false) showLoading();
+
+    try {
+      Response response = await authRepo.featuredCategories(limit, offset);
+      var responseData = response.body;
+
+      if (response.statusCode == 200 &&
+          responseData['message'].toString().contains("Successfully data fetched")) {
+        if (forDashboard) {
+          categoryList = CategoryModel.fromJson(responseData['content']); // 6 for dashboard
+        } else {
+          allCategories = CategoryModel.fromJson(responseData['content']); // 50+ for services
+          print("ALL CATEGORIES COUNT: ${allCategories?.data?.length}");
+        }
+        update();
+      } else {
+        showCustomSnackBar(responseData['message'], isError: true);
+      }
+    } catch (e) {
+      showCustomSnackBar("Something went wrong: $e", isError: true);
+    } finally {
+      hideLoading();
+    }
+  }
+
+
+
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //
+  //   // CART
+  //   getCartListing(
+  //     limit: "100",
+  //     offset: "1",
+  //     isRoute: false,
+  //     showLoader: true,
+  //   );
+  //
+  //   // CATEGORY LIST (YE MISSING THA)
+  //   getFeaturedCategories("10", "1", false);
+  //
+  //   // 🛒 CART
+  //   getCartListing(
+  //     limit: "100",
+  //     offset: "1",
+  //     isRoute: false,
+  //     showLoader: true,
+  //   );
+  //
+  //
+  //   // CATEGORIES
+  //   getFeaturedCategories("10", "1", false);
+  //
+  //   // TOP RATED
+  //   getTopRated("10", "1", false);
+  //
+  //   // QUICK REPAIR
+  //   getQuickRepair("10", "1", false);
+  //
+  //   //  BANNERS
+  //   getBanners();
+  // }
 
 
   var isNotificationLoading = false.obs;
@@ -173,57 +219,57 @@ final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
     categoryList?.data?.clear();
     update();
 
-    await getFeaturedCategories("50", "1");
+    await getFeaturedCategories( limit: '50', offset: '1');
 
     update();
   }
 
 
-  Future<void> getFeaturedCategories(String limit, String offset,
-      [bool? isShowLoading]) async {
-    log("Inside 22222");
-    if (isShowLoading ?? false) {
-      showLoading();
-    }
-    categoryList?.data?.clear();
-    update();
-    try {
-      Response response = await authRepo.featuredCategories(limit, offset);
-      var responseData = response.body;
-
-      if (responseData == null) {
-        throw Exception("Response data is null");
-      }
-      debugPrint("Category Listing===>:featuredcategory:: $responseData");
-
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          categoryList = CategoryModel.fromJson(responseData['content']);
-          update();
-          await getTopRated("20", "1");
-          await getQuickRepair("20", "1");
-        } else {
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
-        }
-      } else {
-        closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
-      }
-    } catch (e) {
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
-      debugPrint("Error fetching categories:1 $e");
-      closeSnackBarIfActive();
-    } finally {
-      _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      hideLoading();
-      // update();
-    }
-  }
+  // Future<void> getFeaturedCategories(String limit, String offset,
+  //     [bool? isShowLoading]) async {
+  //   log("Inside 22222");
+  //   if (isShowLoading ?? false) {
+  //     showLoading();
+  //   }
+  //   categoryList?.data?.clear();
+  //   update();
+  //   try {
+  //     Response response = await authRepo.featuredCategories(limit, offset);
+  //     var responseData = response.body;
+  //
+  //     if (responseData == null) {
+  //       throw Exception("Response data is null");
+  //     }
+  //     debugPrint("Category Listing===>:featuredcategory:: $responseData");
+  //
+  //     if (response.statusCode == 200) {
+  //       if (responseData['message']
+  //           .toString()
+  //           .contains("Successfully data fetched")) {
+  //         categoryList = CategoryModel.fromJson(responseData['content']);
+  //         update();
+  //         await getTopRated("20", "1");
+  //         await getQuickRepair("20", "1");
+  //       } else {
+  //         closeSnackBarIfActive();
+  //         showCustomSnackBar(responseData['message'], isError: true);
+  //       }
+  //     } else {
+  //       closeSnackBarIfActive();
+  //       showCustomSnackBar(responseData['message'], isError: true);
+  //     }
+  //   } catch (e) {
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     debugPrint("Error fetching categories:1 $e");
+  //     closeSnackBarIfActive();
+  //   } finally {
+  //     _isLoginLoading = false;
+  //     // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+  //     hideLoading();
+  //     // update();
+  //   }
+  // }
 
   static double calculateDiscount(
       {required List<sv.CartItem> cartList,
@@ -352,7 +398,6 @@ final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
   }
 
   Future<void> getData(int limit, int offset, [bool isShowLoading = false]) async {
-
     if (isFetchingCategories) return;
     isFetchingCategories = true;
 
@@ -913,6 +958,24 @@ final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
       showCustomSnackBar(errorMessage, isError: true);
     }
   }
+
+  Future<void> removeFromCart(
+      String serviceId,
+      String variantKey,
+      ) async {
+
+    if (cartModel.content?.cart?.data != null) {
+
+      cartModel.content!.cart!.data!.removeWhere(
+            (item) =>
+        item.serviceId == serviceId &&
+            item.variantKey == variantKey,
+      );
+
+      update(); // UI refresh
+    }
+  }
+
 
   Future<void> addToCart(
     dynamic body,
@@ -1598,26 +1661,47 @@ final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
 
   List<String> selectedVariations = [];
   final bookingController = Get.find<BookingController>();
+
   Future<void> handleLocationPermission(BuildContext context) async {
     LocationPermission permission = await Geolocator.checkPermission();
-    log("22222 Permission: $permission");
-    if (permission == LocationPermission.always ||
-        permission == LocationPermission.whileInUse) {
-      showLoading();
-      await fetchUserLocation();
-      await Get.find<DashBoardController>().getFeaturedCategories("6", "1");
-      await bookingController.getBookingSetup();
-      await Get.find<DashBoardController>().getBanners();
-      hideLoading();
-    } else {
-      await showLocationPermissionDialog(context);
-      showLoading();
-      await Get.find<DashBoardController>().getFeaturedCategories("6", "1");
-      await bookingController.getBookingSetup();
-      await Get.find<DashBoardController>().getBanners();
-      hideLoading();
-    }
+
+    showLoading();
+    await fetchUserLocation();
+
+    // 🔥 Fetch Dashboard data separately
+    await Get.find<DashBoardController>()
+        .getFeaturedCategories(limit: "6", offset: "1", forDashboard: true);
+
+    // 🔥 Fetch ALL categories for ServiceScreens
+    await Get.find<DashBoardController>()
+        .getFeaturedCategories(limit: "50", offset: "1", forDashboard: false);
+
+    await bookingController.getBookingSetup();
+    await Get.find<DashBoardController>().getBanners();
+    hideLoading();
   }
+
+
+  // Future<void> handleLocationPermission(BuildContext context) async {
+  //   LocationPermission permission = await Geolocator.checkPermission();
+  //   log("22222 Permission: $permission");
+  //   if (permission == LocationPermission.always ||
+  //       permission == LocationPermission.whileInUse) {
+  //     showLoading();
+  //     await fetchUserLocation();
+  //     await Get.find<DashBoardController>().getFeaturedCategories(limit: "50",offset:  "1");
+  //     await bookingController.getBookingSetup();
+  //     await Get.find<DashBoardController>().getBanners();
+  //     hideLoading();
+  //   } else {
+  //     await showLocationPermissionDialog(context);
+  //     showLoading();
+  //     await Get.find<DashBoardController>().getFeaturedCategories(limit: "50", offset: "1");
+  //     await bookingController.getBookingSetup();
+  //     await Get.find<DashBoardController>().getBanners();
+  //     hideLoading();
+  //   }
+  // }
 
   Future<void> showLocationPermissionDialog(BuildContext context) async {
     return showDialog(

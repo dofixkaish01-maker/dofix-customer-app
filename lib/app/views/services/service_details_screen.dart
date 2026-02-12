@@ -7,6 +7,7 @@ import 'package:do_fix/controllers/auth_controller.dart';
 import 'package:do_fix/model/service_model.dart';
 import 'package:do_fix/model/service_reviews_model.dart';
 import 'package:do_fix/utils/html_utils.dart';
+import 'package:do_fix/utils/sizeboxes.dart';
 import 'package:do_fix/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -146,6 +147,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                         child: Column(
                           children: [
                             const SizedBox(height: 25),
+                            // image
                             AnimatedBuilder(
                               animation: _slideAnimation,
                               builder: (context, child) {
@@ -156,18 +158,15 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                     duration: const Duration(milliseconds: 400),
                                     opacity: _visible ? 1.0 : 0.0,
                                     child: Container(
-                                      width: Get.size.width,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                      ),
+                                      width: double.infinity,
+                                      color: Colors.white,
                                       child: GetBuilder<DashBoardController>(
                                         id: 'service_container',
                                         builder: (dashController) {
                                           return ServiceContainer(
                                             showReviews: true,
                                             isButtonShow: true,
-                                            serviceModel:
-                                                controller.serviceModel,
+                                            serviceModel: controller.serviceModel,
                                           );
                                         },
                                       ),
@@ -176,6 +175,38 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                 );
                               },
                             ),
+
+
+                            // AnimatedBuilder(
+                            //   animation: _slideAnimation,
+                            //   builder: (context, child) {
+                            //     return AnimatedSlide(
+                            //       offset: _slideAnimation.value,
+                            //       duration: const Duration(milliseconds: 600),
+                            //       child: AnimatedOpacity(
+                            //         duration: const Duration(milliseconds: 400),
+                            //         opacity: _visible ? 1.0 : 0.0,
+                            //         child: Container(
+                            //           width: Get.size.width,
+                            //           decoration: BoxDecoration(
+                            //             color: Colors.white,
+                            //           ),
+                            //           child: GetBuilder<DashBoardController>(
+                            //             id: 'service_container',
+                            //             builder: (dashController) {
+                            //               return ServiceContainer(
+                            //                 showReviews: true,
+                            //                 isButtonShow: true,
+                            //                 serviceModel:
+                            //                     controller.serviceModel,
+                            //               );
+                            //             },
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
                             const SizedBox(height: 5),
                             AnimatedOpacity(
                               duration: Duration(milliseconds: 300),
@@ -186,11 +217,11 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    'About the Service',
+                                    'About the Service:-',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w800,
                                     ),
                                   ),
                                 ),
@@ -236,12 +267,15 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w800,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
+                            /// Available Services
+
+                            //******* working ********
                             AnimatedOpacity(
                               duration: Duration(milliseconds: 300),
                               opacity: _visible ? 1.0 : 0.0,
@@ -426,6 +460,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                                 ),
                                               ),
                                             ),
+                                    sizedBox65()
                                   ],
                                 ),
                               );

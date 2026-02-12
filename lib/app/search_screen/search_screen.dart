@@ -58,7 +58,7 @@ class SearchScreen extends StatelessWidget {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
-                await dashboard.getFeaturedCategories("10", "1", false); // categories refresh
+                await dashboard.getFeaturedCategories(limit: "10",offset:  "1", forDashboard: false); // categories refresh
                 controller.clearSearch();          // search reset
               },
               child: Obx(() {

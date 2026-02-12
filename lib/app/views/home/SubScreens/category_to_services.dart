@@ -1,4 +1,3 @@
-import 'package:do_fix/app/views/home/component/variations_new_card.dart';
 import 'package:do_fix/app/widgets/custom_floating_cart_widget.dart';
 import 'package:do_fix/model/service_model.dart';
 import 'package:do_fix/utils/sizeboxes.dart';
@@ -6,12 +5,14 @@ import 'package:do_fix/widgets/custom_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../controllers/dashboard_controller.dart';
+import '../../../../model/category_model.dart';
 import '../../../../utils/dimensions.dart';
 import '../../../../utils/styles.dart';
 import '../../../widgets/custom_appbar.dart';
 
 class CategoryToServices extends StatelessWidget {
-  const CategoryToServices({super.key});
+   CategoryToServices({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,150 +48,219 @@ class CategoryToServices extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 16),
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              width: 0,
-                              color: Colors.white,
-                              // color:Color(0xFF207FA7)
-                            ),
-                            borderRadius: BorderRadius.circular(0),
-                          ),
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
                         width: Get.size.width,
-                        height: 150,
-                        child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemBuilder: (context, i) {
-                              debugPrint(((controller.subCategoryModelListing ??
-                                                  SubCategoryModel(data: []))
-                                              .data ??
-                                          [])[i]
-                                      .thumbnailFullPath ??
-                                  "");
-                              return GestureDetector(
+                        child: Wrap(
+                          spacing: 10, // Horizontal gap between items
+                          runSpacing: 10, // Vertical gap between rows
+                          children: ((controller.subCategoryModelListing ??
+                              SubCategoryModel(data: []))
+                              .data ??
+                              [])
+                              .map((subCategory) {
+                            return SizedBox(
+                              width: (Get.size.width - 16 * 2 - 10 * 2) / 3, // Fixed 3 items per row
+                              child: GestureDetector(
                                 onTap: () {
                                   controller.getCategoriesToServices(
-                                      id: ((controller.subCategoryModelListing ??
-                                                      SubCategoryModel(data: []))
-                                                  .data ??
-                                              [])[i]
-                                          .id
-                                          .toString(),
+                                      id: subCategory.id.toString(),
                                       limit: '10',
                                       offset: "1",
                                       isLoading: true);
                                   controller.selectedSubCategories.clear();
-                                  controller.selectedSubCategories.add(
-                                      ((controller.subCategoryModelListing ??
-                                                  SubCategoryModel(data: []))
-                                              .data ??
-                                          [])[i]);
+                                  controller.selectedSubCategories.add(subCategory);
                                 },
-                                child: Container(
-                                  width: 106,
-                                  height: 114,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0,
-                                        ),
-                                        child: Container(
-                                          width: 106,
-                                          height: 90,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                width: 3,
-                                                color: controller
-                                                        .selectedSubCategories
-                                                        .contains(((controller
-                                                                        .subCategoryModelListing ??
-                                                                    SubCategoryModel(
-                                                                        data: []))
-                                                                .data ??
-                                                            [])[i])
-                                                    ? Color(0xFF207FA7)
-                                                    : Colors.white),
-                                            borderRadius:
-                                                BorderRadius.circular(7),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            child: Image.network(
-                                              ((controller.subCategoryModelListing ??
-                                                                  SubCategoryModel(
-                                                                      data: []))
-                                                              .data ??
-                                                          [])[i]
-                                                      .thumbnailFullPath ??
-                                                  "",
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      height: 90,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            width: 3,
+                                            color: controller.selectedSubCategories
+                                                .contains(subCategory)
+                                                ? Color(0xFF207FA7)
+                                                : Colors.white),
+                                        borderRadius: BorderRadius.circular(7),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(7),
+                                        child: Image.network(
+                                          subCategory.thumbnailFullPath ?? "",
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: 2,
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      subCategory.name ?? "",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: albertSansRegular.copyWith(
+                                        fontSize: Dimensions.fontSize12,
+                                        color: controller.selectedSubCategories
+                                            .contains(subCategory)
+                                            ? Color(0xFF207FA7)
+                                            : Colors.black,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        child: Text(
-                                          ((controller.subCategoryModelListing ??
-                                                              SubCategoryModel(
-                                                                  data: []))
-                                                          .data ??
-                                                      [])[i]
-                                                  .name ??
-                                              "",
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
-                                          style: albertSansRegular.copyWith(
-                                              fontSize: Dimensions.fontSize12,
-                                              decoration: TextDecoration.none,
-                                              color: controller
-                                                      .selectedSubCategories
-                                                      .contains(((controller
-                                                                      .subCategoryModelListing ??
-                                                                  SubCategoryModel(
-                                                                      data: []))
-                                                              .data ??
-                                                          [])[i])
-                                                  ? Color(0xFF207FA7)
-                                                  : Colors.grey),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
-                            separatorBuilder: (context, i) {
-                              return SizedBox(
-                                width: 10,
-                              );
-                            },
-                            itemCount: ((controller.subCategoryModelListing ??
-                                            SubCategoryModel(data: []))
-                                        .data ??
-                                    [])
-                                .length),
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
+
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       vertical: 15, horizontal: 16),
+                      //   decoration: ShapeDecoration(
+                      //     color: Colors.white,
+                      //     shape: RoundedRectangleBorder(
+                      //       side: BorderSide(
+                      //         width: 0,
+                      //         color: Colors.white,
+                      //         // color:Color(0xFF207FA7)
+                      //       ),
+                      //       borderRadius: BorderRadius.circular(0),
+                      //     ),
+                      //   ),
+                      //   width: Get.size.width,
+                      //   height: 150,
+                      //   child: ListView.separated(
+                      //       scrollDirection: Axis.horizontal,
+                      //       shrinkWrap: true,
+                      //       itemBuilder: (context, i) {
+                      //         debugPrint(((controller.subCategoryModelListing ??
+                      //                             SubCategoryModel(data: []))
+                      //                         .data ??
+                      //                     [])[i]
+                      //                 .thumbnailFullPath ??
+                      //             "");
+                      //         return GestureDetector(
+                      //           onTap: () {
+                      //             controller.getCategoriesToServices(
+                      //                 id: ((controller.subCategoryModelListing ??
+                      //                                 SubCategoryModel(data: []))
+                      //                             .data ??
+                      //                         [])[i]
+                      //                     .id
+                      //                     .toString(),
+                      //                 limit: '10',
+                      //                 offset: "1",
+                      //                 isLoading: true);
+                      //             controller.selectedSubCategories.clear();
+                      //             controller.selectedSubCategories.add(
+                      //                 ((controller.subCategoryModelListing ??
+                      //                             SubCategoryModel(data: []))
+                      //                         .data ??
+                      //                     [])[i]);
+                      //           },
+                      //           child: Container(
+                      //             width: 106,
+                      //             height: 114,
+                      //             decoration: BoxDecoration(
+                      //               borderRadius: BorderRadius.circular(4),
+                      //             ),
+                      //             child: Column(
+                      //               mainAxisAlignment: MainAxisAlignment.center,
+                      //               crossAxisAlignment: CrossAxisAlignment.center,
+                      //               children: [
+                      //                 Padding(
+                      //                   padding: const EdgeInsets.symmetric(
+                      //                     horizontal: 8.0,
+                      //                   ),
+                      //                   child: Container(
+                      //                     width: 106,
+                      //                     height: 90,
+                      //                     decoration: BoxDecoration(
+                      //                       border: Border.all(
+                      //                           width: 3,
+                      //                           color: controller
+                      //                                   .selectedSubCategories
+                      //                                   .contains(((controller
+                      //                                                   .subCategoryModelListing ??
+                      //                                               SubCategoryModel(
+                      //                                                   data: []))
+                      //                                           .data ??
+                      //                                       [])[i])
+                      //                               ? Color(0xFF207FA7)
+                      //                               : Colors.white),
+                      //                       borderRadius:
+                      //                           BorderRadius.circular(7),
+                      //                     ),
+                      //                     child: ClipRRect(
+                      //                       borderRadius:
+                      //                           BorderRadius.circular(4),
+                      //                       child: Image.network(
+                      //                         ((controller.subCategoryModelListing ??
+                      //                                             SubCategoryModel(
+                      //                                                 data: []))
+                      //                                         .data ??
+                      //                                     [])[i]
+                      //                                 .thumbnailFullPath ??
+                      //                             "",
+                      //                         fit: BoxFit.cover,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //                 SizedBox(
+                      //                   height: 2,
+                      //                 ),
+                      //                 Padding(
+                      //                   padding: const EdgeInsets.symmetric(
+                      //                       horizontal: 8.0),
+                      //                   child: Text(
+                      //                     ((controller.subCategoryModelListing ??
+                      //                                         SubCategoryModel(
+                      //                                             data: []))
+                      //                                     .data ??
+                      //                                 [])[i]
+                      //                             .name ??
+                      //                         "",
+                      //                     maxLines: 2,
+                      //                     overflow: TextOverflow.ellipsis,
+                      //                     textAlign: TextAlign.center,
+                      //                     style: albertSansRegular.copyWith(
+                      //                         fontSize: Dimensions.fontSize12,
+                      //                         decoration: TextDecoration.none,
+                      //                         color: controller
+                      //                                 .selectedSubCategories
+                      //                                 .contains(((controller
+                      //                                                 .subCategoryModelListing ??
+                      //                                             SubCategoryModel(
+                      //                                                 data: []))
+                      //                                         .data ??
+                      //                                     [])[i])
+                      //                             ? Color(0xFF207FA7)
+                      //                             : Colors.grey),
+                      //                   ),
+                      //                 )
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         );
+                      //       },
+                      //       separatorBuilder: (context, i) {
+                      //         return SizedBox(
+                      //           width: 10,
+                      //         );
+                      //       },
+                      //       itemCount: ((controller.subCategoryModelListing ??
+                      //                       SubCategoryModel(data: []))
+                      //                   .data ??
+                      //               [])
+                      //           .length),
+                      // ),
+
                       // SelectableButtonList(options: ((controller.subCategoryModelListing ?? SubCategoryModel(data: [])).data ?? []).map((looking) => looking.name).toList(), elementsPerRow: 0, onTap: (String ) {  }, buttonWidth: 87,buttonHeight: 89,),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Row(
                           children: [
                             Text(
@@ -198,251 +268,290 @@ class CategoryToServices extends StatelessWidget {
                                   ? "${controller.selectedSubCategories[0].name} Services"
                                   : "Services",
                               style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
                             ),
                           ],
                         ),
                       ),
+
+
+                      sizedBox10(),
+
+                      //
+                      // bathroom
                       Container(
                         color: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         width: Get.size.width,
-                        // height: Get.size.height,
-                        child: ((controller.categoriesToServiceListing ??
-                                            Services(data: []))
-                                        .data ??
-                                    [])
-                                .isNotEmpty
-                            ? SizedBox(
-                                width: double.infinity,
-                                child: Wrap(
-                                  spacing: 10.0, // Horizontal spacing
-                                  runSpacing: 8.0, // Vertical spacing
-                                  children: List.generate(
-                                      ((controller.categoriesToServiceListing ??
-                                                      Services(data: []))
-                                                  .data ??
-                                              [])
-                                          .length, (i) {
-                                    return SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width / 3 -
-                                              20,
-                                      height: 115,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          ServiceModel serviceModel =
-                                              ((controller.categoriesToServiceListing ??
-                                                          Services(data: []))
-                                                      .data ??
-                                                  [])[i];
+                        child: Builder(
+                          builder: (context) {
 
-                                          Get.find<DashBoardController>()
-                                              .getServicesDetails(
-                                                  serviceModel.id ?? "");
-                                        },
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            sizedBox10(),
-                                            CustomNetworkImageWidget(
-                                              fit: BoxFit.cover,
-                                              imagePadding: 0,
-                                              width: 90,
-                                              height: 70,
-                                              image:
-                                                  (controller.categoriesToServiceListing
-                                                                  ?.data ??
-                                                              [])[i]
-                                                          .thumbnailFullPath ??
-                                                      "",
-                                            ),
-                                            SizedBox(
-                                              height: 8,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 5,
-                                              ),
-                                              child: Text(
-                                                textAlign: TextAlign.center,
-                                                controller
-                                                        .categoriesToServiceListing
-                                                        ?.data?[i]
-                                                        .name ??
-                                                    "",
-                                                maxLines: 2,
-                                                style: albertSansRegular.copyWith(
-                                                  fontSize: Dimensions.fontSize10,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }),
+                            final services =
+                                (controller.categoriesToServiceListing ?? Services(data: []))
+                                    .data ??
+                                    [];
+
+                            final totalServices = services.length;
+
+                            return services.isNotEmpty
+                                ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+
+                                /// 🔢 Total Services Count Badge
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 15),
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF207FA7).withOpacity(0.08),
+                                    borderRadius: BorderRadius.circular(25),
+                                    border: Border.all(
+                                      color: const Color(0xFF207FA7).withOpacity(0.2),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "$totalServices Services Available",
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF207FA7),
+                                    ),
+                                  ),
                                 ),
-                              )
-                            : Column(
-                                children: [
-                                  SizedBox(
-                                    height: 150,
-                                  ),
-                                  Text(
-                                    // "No Service Available",
-                                    "",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: albertSansRegular.copyWith(
-                                        fontSize: Dimensions.fontSize12,
-                                        decoration: TextDecoration.none,
-                                        color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Popular Service",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
 
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        color: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        width: Get.size.width,
-                        child: ((controller.categoriesToServiceListing ??
-                                            Services(data: []))
-                                        .data ??
-                                    [])
-                                .isNotEmpty
-                            ? SizedBox(
-                                width: double.infinity,
-                                child: ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount:
-                                      ((controller.categoriesToServiceListing ??
-                                                      Services(data: []))
-                                                  .data ??
-                                              [])
-                                          .length,
-                                  separatorBuilder: (context, i) =>
-                                      SizedBox(height: 0),
-                                  itemBuilder: (context, i) {
-                                    final service =
-                                        ((controller.categoriesToServiceListing ??
-                                                    Services(data: []))
-                                                .data ??
-                                            [])[i];
-                                    return Container(
-                                      margin: EdgeInsets.only(bottom: 5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          if (service.variations != null &&
-                                              service.variations!.isNotEmpty) ...[
-                                            ...service.variations!
-                                                .map((variation) =>
-                                                    VariationsNewCard(
-                                                      serviceVariationName:
-                                                          variation.variant,
-                                                      serviceRatings: service
-                                                              .avgRating
-                                                              ?.toStringAsFixed(
-                                                                  1) ??
-                                                          "0.0",
-                                                      serviceReviewCount: service
-                                                              .ratingCount
-                                                              ?.toString() ??
-                                                          "0",
-                                                      serviceMrpPrice:
-                                                          (variation.mrpPrice)
-                                                              .toInt()
-                                                              .toString(),
-                                                      serviceDiscountedPrice:
-                                                          variation.price
-                                                              .toInt()
-                                                              .toString(),
-                                                      serviceTimeDuration: (variation
-                                                                      .durationHour !=
-                                                                  "0" &&
-                                                              variation
-                                                                      .durationMinute !=
-                                                                  "0" &&
-                                                              variation
-                                                                      .durationHour !=
-                                                                  null &&
-                                                              variation
-                                                                      .durationMinute !=
-                                                                  null)
-                                                          ? "${variation.durationHour}:${variation.durationMinute}"
-                                                          : "",
-                                                      serviceDescription: (variation
-                                                                      .varDescription !=
-                                                                  "0" &&
-                                                              variation
-                                                                      .varDescription !=
-                                                                  null)
-                                                          ? variation
-                                                              .varDescription
-                                                          : service
-                                                                  .shortDescription ??
-                                                              "Quality service provided by professionals",
-                                                      variantKey:
-                                                          variation.variantKey,
-                                                      serviceModel: service,
-                                                    ))
-                                                .toList(),
-                                            // SizedBox(height: 15),
-                                          ],
-                                        ],
+                                /// 🔥 Services List
+                                ...List.generate(
+                                  services.length,
+                                      (i) {
+                                    final service = services[i];
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Get.find<DashBoardController>()
+                                            .getServicesDetails(service.id ?? "");
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(bottom: 12),
+                                        child: LayoutBuilder(
+                                          builder: (context, constraints) {
+                                            return Container(
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  colors: [
+                                                    Colors.white,
+                                                    Colors.grey.shade50,
+                                                  ],
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                ),
+                                                borderRadius: BorderRadius.circular(18),
+                                                border: Border.all(
+                                                  color: Colors.grey.shade200,
+                                                  width: 1.2,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black.withOpacity(0.08),
+                                                    blurRadius: 20,
+                                                    spreadRadius: 2,
+                                                    offset: const Offset(0, 10),
+                                                  ),
+                                                  BoxShadow(
+                                                    color: Colors.black.withOpacity(0.04),
+                                                    blurRadius: 8,
+                                                    spreadRadius: 1,
+                                                    offset: const Offset(0, 4),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                children: [
+
+                                                  /// 🔥 Stylish Image
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(16),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black
+                                                              .withOpacity(0.12),
+                                                          blurRadius: 12,
+                                                          offset:
+                                                          const Offset(0, 6),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                      BorderRadius.circular(12),
+                                                      child: CustomNetworkImageWidget(
+                                                        fit: BoxFit.cover,
+                                                        imagePadding: 0,
+                                                        width: constraints.maxWidth * 0.28,
+                                                        height: 110,
+                                                        image: service
+                                                            .thumbnailFullPath ??
+                                                            "",
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  const SizedBox(width: 16),
+
+                                                  /// 🔥 Right Side Content
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                      children: [
+
+                                                        /// Service Name
+                                                        Text(
+                                                          service.name ?? "",
+                                                          maxLines: 2,
+                                                          overflow:
+                                                          TextOverflow.ellipsis,
+                                                          style:
+                                                          albertSansRegular.copyWith(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                            FontWeight.w700,
+                                                            color: Colors.black87,
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(height: 10),
+
+                                                        /// Rating Row
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.star_rounded,
+                                                              size: 18,
+                                                              color: Colors
+                                                                  .amber.shade600,
+                                                            ),
+                                                            const SizedBox(width: 4),
+                                                            Text(
+                                                              "${service.avgRating?.toStringAsFixed(1) ?? "0.0"}",
+                                                              style:
+                                                              const TextStyle(
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                FontWeight.w600,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(width: 4),
+                                                            Text(
+                                                              "(${service.ratingCount ?? 0})",
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .grey.shade600,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(height: 4),
+
+                                                        if ((service.variations?.length ?? 0) > 0)
+                                                          Container(
+                                                            margin: const EdgeInsets.only(top: 6),
+                                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                                            decoration: BoxDecoration(
+                                                              color: const Color(
+                                                                  0xFF91A4AF).withOpacity(0.08),
+                                                              borderRadius: BorderRadius.circular(20),
+                                                              border: Border.all(
+                                                                color: const Color(
+                                                                    0xFF217A9F).withOpacity(0.2),
+                                                              ),
+                                                            ),
+                                                            child: Text(
+                                                              "${service.variations?.length ?? 0} Options Available",
+                                                              style: const TextStyle(
+                                                                fontSize: 11,
+                                                                fontWeight: FontWeight.w600,
+                                                                color: Color(0xFF207FA7),
+                                                              ),
+                                                            ),
+                                                          ),
+
+
+                                                        const SizedBox(height: 4),
+
+                                                        /// CTA Row
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                          children: [
+
+                                                            Text(
+                                                              "View Details",
+                                                              style: TextStyle(
+                                                                fontSize: 13,
+                                                                color: const Color(
+                                                                    0xFF207FA7),
+                                                                fontWeight:
+                                                                FontWeight.w600,
+                                                              ),
+                                                            ),
+
+                                                            /// 🔥 Circular Arrow
+                                                            Container(
+                                                              padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                              decoration:
+                                                              BoxDecoration(
+                                                                color: const Color(
+                                                                    0xFF207FA7)
+                                                                    .withOpacity(
+                                                                    0.12),
+                                                                shape:
+                                                                BoxShape.circle,
+                                                              ),
+                                                              child:
+                                                              const Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios_rounded,
+                                                                size: 14,
+                                                                color: Color(
+                                                                    0xFF207FA7),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
                                     );
                                   },
                                 ),
-                              )
-                            : Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 20.0),
-                                  child: Text(
-                                    "No services available",
-                                    style: albertSansRegular.copyWith(
-                                      fontSize: Dimensions.fontSize14,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              ],
+                            )
+                                : const SizedBox(
+                              height: 150,
+                            );
+                          },
+                        ),
                       ),
-                      // Add padding at the bottom for the floating cart
+
                       const SizedBox(height: 80),
                     ],
                   ),

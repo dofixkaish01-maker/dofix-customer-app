@@ -15,6 +15,7 @@ class _ServiceScreensState extends State<ServiceScreens> {
   int currentOffset = 1; // Pagination offset
   bool isLoading = false; // To prevent multiple API calls
   final DashBoardController dashboard = Get.find<DashBoardController>();
+
   @override
   void initState() {
     super.initState();
@@ -25,11 +26,15 @@ class _ServiceScreensState extends State<ServiceScreens> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final dashboardController = Get.find<DashBoardController>();
 
-      // 🔥 MAIN FIX
-      await dashboardController.reloadFeaturedProperly();
+      // Load all categories for ServiceScreens
+      await dashboardController.getFeaturedCategories(
+        limit: "50", // Fetch all
+        offset: "1",
+        forDashboard: false,
+      );
 
-      currentOffset = 1;
-      await dashboardController.getData(10, currentOffset);
+      // Fetch first page of services
+      await dashboardController.getData(10, 1);
     });
   }
 
@@ -41,7 +46,8 @@ class _ServiceScreensState extends State<ServiceScreens> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       _loadMoreData();
     }
   }
@@ -121,19 +127,22 @@ class _ServiceScreensState extends State<ServiceScreens> {
       body: GetBuilder<DashBoardController>(
         builder: (controller) {
           return RefreshIndicator(
-            color: const Color(0xff227FA8), //  refresh blue color
-            backgroundColor: Colors.white,
             onRefresh: () async {
-              await dashboard.getFeaturedCategories("50", "1", false); // categories refresh// search reset
+              await controller.getFeaturedCategories(
+                  limit: "50", offset: "1", forDashboard: false);
+              await controller.getData(10, 1);
             },
             child: SingleChildScrollView(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               child: CategoryComponents(
-                categoryList:
-                controller.categoryList ?? CategoryModel(data: []),
-                width: MediaQuery.of(context).size.width / 3 - 18,
-                isShowSeeAll: false,
+                categoryList: controller.allCategories ??
+                    CategoryModel(data: []),
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width / 3 - 18,
+                isShowSeeAll: true,
               ),
             ),
           );
