@@ -103,7 +103,7 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             onPressed: () {
               Get.back();
-              authController.logout(); //                         Logout
+              authController.logout();
             },
             child: const Text('Log Out'),
           ),
@@ -370,7 +370,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 //     ),
                 //     child: Row(
                 //       children: [
-                //         /// 🎁 ICON
+                //         /// ICON
                 //         Container(
                 //           padding: const EdgeInsets.all(10),
                 //           decoration: BoxDecoration(
