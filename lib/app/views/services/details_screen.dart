@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../widgets/custom_appbar.dart';
@@ -33,7 +34,7 @@ class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    /// 🔥 Percentage Calculation
+    /// Percentage Calculation
     double mrp = double.tryParse(mrpPrice) ?? 0;
     double discountPrice = double.tryParse(discountedPrice) ?? 0;
 
@@ -56,14 +57,14 @@ class DetailsScreen extends StatelessWidget {
       body: Stack(
         children: [
 
-          /// 🔥 MAIN SCROLL AREA
+          /// MAIN SCROLL AREA
           SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 110),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                /// 🔥 PREMIUM IMAGE HEADER
+                /// PREMIUM IMAGE HEADER
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Container(
@@ -132,7 +133,7 @@ class DetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
-                      /// 🔥 PREMIUM RATING CARD
+                      /// PREMIUM RATING CARD
                       if (rating != "0")
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -204,9 +205,9 @@ class DetailsScreen extends StatelessWidget {
                           ),
                         ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
 
-                      /// 🔥 PREMIUM PRICE CARD
+                      /// PREMIUM PRICE CARD
                       Container(
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
@@ -315,7 +316,7 @@ class DetailsScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 25),
+                      const SizedBox(height: 20),
 
                       const Text(
                         "About Service",
@@ -343,7 +344,7 @@ class DetailsScreen extends StatelessWidget {
             ),
           ),
 
-          /// 🔥 BOTTOM ADD / REMOVE BUTTON
+          /// BOTTOM ADD / REMOVE BUTTON
           Positioned(
             bottom: 0,
             left: 0,
@@ -379,7 +380,7 @@ class DetailsScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
 
-                      /// 🔥 ADD / REMOVE BUTTON
+                      /// ADD / REMOVE BUTTON
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -393,32 +394,44 @@ class DetailsScreen extends StatelessWidget {
                             ),
                           ),
                           onPressed: () async {
-
                             if (isInCart) {
-                              /// 🔥 REMOVE
+                              /// REMOVE
                               await controller.removeFromCart(
                                 serviceModel.id,
                                 variantKey,
                               );
 
-                            } else {
+                              Get.snackbar(
+                                "Cart Update",
+                                "Item removed from cart",
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.redAccent,
+                                colorText: Colors.white,
+                              );
 
-                              /// 🔥 ADD
+                            } else {
+                              /// ADD
                               await controller.addToCart(
                                 {
                                   "service_id": serviceModel.id,
                                   "category_id": serviceModel.categoryId,
-                                  "sub_category_id":
-                                  serviceModel.subCategoryId,
+                                  "sub_category_id": serviceModel.subCategoryId,
                                   "quantity": "1",
                                   "extras": [],
                                 },
                                 [variantKey],
                               );
+
+                              Get.snackbar(
+                                "Cart Update",
+                                "Item added to cart",
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white,
+                              );
                             }
 
-                            controller.update(
-                                ['cart_${serviceModel.id}_$variantKey']);
+                            controller.update(['cart_${serviceModel.id}_$variantKey']);
                           },
                           child: Text(
                             isInCart ? "Remove from Cart" : "Add to Cart",

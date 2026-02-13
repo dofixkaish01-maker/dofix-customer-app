@@ -47,26 +47,43 @@ class CategoryToServices extends StatelessWidget {
                 SingleChildScrollView(
                   child: Column(
                     children: [
+                      // Selected Sub-category Name
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            controller.selectedSubCategories.isNotEmpty
+                                ? controller.selectedSubCategories[0].name ?? "Category"
+                                : "Category",
+                            style: albertSansRegular.copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Sub-categories Grid
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
                         width: Get.size.width,
                         child: Wrap(
-                          spacing: 10, // Horizontal gap between items
-                          runSpacing: 10, // Vertical gap between rows
-                          children: ((controller.subCategoryModelListing ??
-                              SubCategoryModel(data: []))
-                              .data ??
-                              [])
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: ((controller.subCategoryModelListing ?? SubCategoryModel(data: [])).data ?? [])
                               .map((subCategory) {
                             return SizedBox(
-                              width: (Get.size.width - 16 * 2 - 10 * 2) / 3, // Fixed 3 items per row
+                              width: (Get.size.width - 16 * 2 - 10 * 2) / 3,
                               child: GestureDetector(
                                 onTap: () {
                                   controller.getCategoriesToServices(
-                                      id: subCategory.id.toString(),
-                                      limit: '10',
-                                      offset: "1",
-                                      isLoading: true);
+                                    id: subCategory.id.toString(),
+                                    limit: '10',
+                                    offset: "1",
+                                    isLoading: true,
+                                  );
                                   controller.selectedSubCategories.clear();
                                   controller.selectedSubCategories.add(subCategory);
                                 },
@@ -78,11 +95,11 @@ class CategoryToServices extends StatelessWidget {
                                       height: 90,
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                            width: 3,
-                                            color: controller.selectedSubCategories
-                                                .contains(subCategory)
-                                                ? Color(0xFF207FA7)
-                                                : Colors.white),
+                                          width: 3,
+                                          color: controller.selectedSubCategories.contains(subCategory)
+                                              ? const Color(0xFF207FA7)
+                                              : Colors.white,
+                                        ),
                                         borderRadius: BorderRadius.circular(7),
                                       ),
                                       child: ClipRRect(
@@ -93,7 +110,7 @@ class CategoryToServices extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                     Text(
                                       subCategory.name ?? "",
                                       maxLines: 2,
@@ -101,9 +118,8 @@ class CategoryToServices extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                       style: albertSansRegular.copyWith(
                                         fontSize: Dimensions.fontSize12,
-                                        color: controller.selectedSubCategories
-                                            .contains(subCategory)
-                                            ? Color(0xFF207FA7)
+                                        color: controller.selectedSubCategories.contains(subCategory)
+                                            ? const Color(0xFF207FA7)
                                             : Colors.black,
                                       ),
                                     ),
@@ -114,6 +130,40 @@ class CategoryToServices extends StatelessWidget {
                           }).toList(),
                         ),
                       ),
+                      sizedBox10(),
+
+            // Services List or Placeholder
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Builder(builder: (context) {
+                  final services = (controller.categoriesToServiceListing ?? Services(data: [])).data ?? [];
+
+                  if (services.isEmpty) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 50),
+                        Icon(
+                          Icons.info_outline,
+                          size: 60,
+                          color: Colors.grey.shade400,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          "No services available for this sub-category.",
+                          style: albertSansRegular.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                })),
+
 
                       // Container(
                       //   padding: const EdgeInsets.symmetric(
@@ -261,26 +311,31 @@ class CategoryToServices extends StatelessWidget {
                       // SelectableButtonList(options: ((controller.subCategoryModelListing ?? SubCategoryModel(data: [])).data ?? []).map((looking) => looking.name).toList(), elementsPerRow: 0, onTap: (String ) {  }, buttonWidth: 87,buttonHeight: 89,),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              controller.selectedSubCategories.isNotEmpty
-                                  ? "${controller.selectedSubCategories[0].name} Services"
-                                  : "Services",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: Builder(builder: (_) {
+                          final services = (controller.categoriesToServiceListing ?? Services(data: [])).data ?? [];
+
+                          // Agar services available hain, tab hi name dikhao
+                          if (services.isNotEmpty) {
+                            return Row(
+                              children: [
+                                Text(
+                                  controller.selectedSubCategories.isNotEmpty
+                                      ? "${controller.selectedSubCategories[0].name} Services"
+                                      : "Services",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return const SizedBox.shrink(); // Name hide
+                          }
+                        }),
                       ),
 
-
-                      sizedBox10(),
-
-                      //
                       // bathroom
                       Container(
                         color: Colors.white,
@@ -301,7 +356,7 @@ class CategoryToServices extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
 
-                                /// 🔢 Total Services Count Badge
+                                /// Total Services Count Badge
                                 Container(
                                   margin: const EdgeInsets.only(bottom: 15),
                                   padding:
@@ -323,7 +378,7 @@ class CategoryToServices extends StatelessWidget {
                                   ),
                                 ),
 
-                                /// 🔥 Services List
+                                /// Services List
                                 ...List.generate(
                                   services.length,
                                       (i) {

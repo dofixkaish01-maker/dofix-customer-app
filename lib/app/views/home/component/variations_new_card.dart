@@ -1,5 +1,6 @@
   import 'package:do_fix/app/views/services/details_screen.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
+import 'package:do_fix/utils/sizeboxes.dart';
   import 'package:flutter/material.dart';
   import 'package:get/get.dart';
   import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -198,7 +199,7 @@ import 'package:do_fix/controllers/auth_controller.dart';
                           // widget.serviceModel.thumbnailFullPath ?? "",
                           // widget.serviceModel.thumbnail ?? "",
                           height: 90,
-                          width: 90,
+                          width: 160,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
                             height: 90,
@@ -209,6 +210,7 @@ import 'package:do_fix/controllers/auth_controller.dart';
                         ),
                       ),
 
+                      sizedBox8(),
                       /// Service Name
                       Text(
                         widget.serviceVariationName,
@@ -269,7 +271,7 @@ import 'package:do_fix/controllers/auth_controller.dart';
                             Text(
                               "₹${widget.serviceMrpPrice}",
                               style: TextStyle(
-                                fontSize: Dimensions.fontSize10,
+                                fontSize: Dimensions.fontSize12,
                                 decoration: TextDecoration.lineThrough,
                                 color: Colors.black.withAlpha((0.5 * 255).toInt()),
                               ),
@@ -388,7 +390,7 @@ import 'package:do_fix/controllers/auth_controller.dart';
                             ));
                           },
                           child: Text(
-                            "View",
+                            "View Rate Card",
                             style: TextStyle(
                               fontSize: Dimensions.fontSize12,
                               fontWeight: FontWeight.bold,
