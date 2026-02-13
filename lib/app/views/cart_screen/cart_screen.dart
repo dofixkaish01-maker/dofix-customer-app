@@ -269,249 +269,268 @@ class _CartScreenState extends State<CartScreen> {
                 ),
           bottomNavigationBar: _items.isNotEmpty
               ? GetBuilder<DashBoardController>(
-                  builder: (controller) {
-                    return Container(
-                      width: double.infinity,
-                      height: 130,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 16),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(40),
-                            topRight: Radius.circular(40),
+            builder: (controller) {
+              final cartModel = controller.cartModel;
+              final content = cartModel.content;
+              final cart = content?.cart;
+
+              double itemTotal = 0.0;
+              double discount = 0.0;
+              double couponDiscount = 0.0;
+              double tax = 0.0;
+
+              if (cart != null && cart.data != null && cart.data!.isNotEmpty) {
+                final items = cart.data!;
+
+                for (var item in items) {
+                  itemTotal += (item.serviceCost.toDouble() *
+                      item.quantity?.toDouble());
+
+                  discount += item.discountAmount.toDouble();
+                  couponDiscount += item.couponDiscount.toDouble();
+                  tax += item.taxAmount.toDouble();
+                }
+              }
+
+              final double grandTotal =
+              (content?.totalCost ?? 0).toDouble();
+
+              final double wallet =
+              (content?.walletBalance ?? 0).toDouble();
+
+              final double referral =
+              (content?.referralAmount ?? 0).toDouble();
+
+              Widget priceRow(String title, double amount,
+                  {bool isBold = false, Color? color}) {
+                return Padding(
+                  padding:
+                  const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
+                  child: Row(
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight:
+                          isBold ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        "₹ ${amount.toStringAsFixed(0)}",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight:
+                          isBold ? FontWeight.bold : FontWeight.normal,
+                          color: color ?? Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return Container(
+                width: double.infinity,
+                padding:
+                const EdgeInsets.symmetric(horizontal: 5, vertical: 16),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    priceRow("Item Total", itemTotal),
+                    priceRow("Discount", -discount),
+                    priceRow("Coupon Discount", -couponDiscount),
+                    priceRow("Tax", tax),
+
+                    const Divider(thickness: 1),
+
+                    priceRow("Total Amount", grandTotal, isBold: true),
+
+                    if (wallet > 0)
+                      priceRow("Wallet Used", -wallet, color: Colors.green),
+
+                    if (referral > 0)
+                      priceRow("Referral Used", -referral, color: Colors.green),
+
+                    const SizedBox(height: 6),
+
+                    Text(
+                      "You saved ₹${(discount + couponDiscount).toStringAsFixed(0)}",
+                      style: const TextStyle(color: Colors.green),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Row(
+                      children: [
+                        const SizedBox(width: 20),
+                        const Text(
+                          'Amount to Pay',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
-                          border: BoxBorder.all(
-                            color: Color(0xFFB8B8B8),
-                            width: 1,
-                          )),
-                      child: Column(
-                        children: [
-                          // Row(
-                          //   children: [
-                          //     const SizedBox(width: 20),
-                          //     Text(
-                          //       'Discount',
-                          //       style: TextStyle(
-                          //         color: Colors.black.withAlpha(128),
-                          //         fontSize: 12,
-                          //         fontFamily: 'Albert Sans',
-                          //         fontWeight: FontWeight.w500,
-                          //       ),
-                          //     ),
-                          //     const Spacer(),
-                          //     AnimatedSwitcher(
-                          //       duration: const Duration(milliseconds: 400),
-                          //       transitionBuilder: (Widget child,
-                          //           Animation<double> animation) {
-                          //         return SlideTransition(
-                          //           position: Tween<Offset>(
-                          //             begin: const Offset(0.0, 0.5),
-                          //             end: Offset.zero,
-                          //           ).animate(animation),
-                          //           child: FadeTransition(
-                          //             opacity: animation,
-                          //             child: child,
-                          //           ),
-                          //         );
-                          //       },
-                          //       child: Text(
-                          //         "(-) ₹ ${controller.discount}",
-                          //         key: ValueKey(controller
-                          //             .discount), // Trigger reanimation when quantity changes
-                          //         style: const TextStyle(
-                          //           fontSize: 14,
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Color(0xFF207FA7),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     const SizedBox(width: 20),
-                          //   ],
-                          // ),
-                          // Row(
-                          //   children: [
-                          //     const SizedBox(width: 20),
-                          //     Text(
-                          //       'Tax',
-                          //       style: TextStyle(
-                          //         color: Colors.black.withAlpha(128),
-                          //         fontSize: 12,
-                          //         fontFamily: 'Albert Sans',
-                          //         fontWeight: FontWeight.w500,
-                          //       ),
-                          //     ),
-                          //     const Spacer(),
-                          //     AnimatedSwitcher(
-                          //       duration: const Duration(milliseconds: 400),
-                          //       transitionBuilder: (Widget child,
-                          //           Animation<double> animation) {
-                          //         return SlideTransition(
-                          //           position: Tween<Offset>(
-                          //             begin: const Offset(0.0, 0.5),
-                          //             end: Offset.zero,
-                          //           ).animate(animation),
-                          //           child: FadeTransition(
-                          //             opacity: animation,
-                          //             child: child,
-                          //           ),
-                          //         );
-                          //       },
-                          //       child: Text(
-                          //         "(+) ₹ ${controller.vat}",
-                          //         key: ValueKey(controller
-                          //             .vat), // Trigger reanimation when quantity changes
-                          //         style: const TextStyle(
-                          //           fontSize: 14,
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Color(0xFF207FA7),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     const SizedBox(width: 20),
-                          //   ],
-                          // ),
-                          // Row(
-                          //   children: [
-                          //     const SizedBox(width: 20),
-                          //     Text(
-                          //       'Sub Total:',
-                          //       style: TextStyle(
-                          //         color: Colors.black.withAlpha(128),
-                          //         fontSize: 12,
-                          //         fontFamily: 'Albert Sans',
-                          //         fontWeight: FontWeight.w500,
-                          //       ),
-                          //     ),
-                          //     const Spacer(),
-                          //     AnimatedSwitcher(
-                          //       duration: const Duration(milliseconds: 400),
-                          //       transitionBuilder: (Widget child,
-                          //           Animation<double> animation) {
-                          //         return SlideTransition(
-                          //           position: Tween<Offset>(
-                          //             begin: const Offset(0.0, 0.5),
-                          //             end: Offset.zero,
-                          //           ).animate(animation),
-                          //           child: FadeTransition(
-                          //             opacity: animation,
-                          //             child: child,
-                          //           ),
-                          //         );
-                          //       },
-                          //       child: Text(
-                          //         "₹ ${controller.subTotal}",
-                          //         key: ValueKey(controller
-                          //             .subTotal), // Trigger reanimation when quantity changes
-                          //         style: const TextStyle(
-                          //           fontSize: 14,
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Color(0xFF207FA7),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     const SizedBox(width: 20),
-                          //   ],
-                          // ),
-                          // Divider(
-                          //   thickness: 3,
-                          // ),
-                          Row(
-                            children: [
-                              const SizedBox(width: 20),
-                              Text(
-                                'Amount to Pay',
-                                style: TextStyle(
-                                  color: Colors.black.withAlpha(128),
-                                  fontSize: 14,
-                                  fontFamily: 'Albert Sans',
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const Spacer(),
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 400),
-                                transitionBuilder: (Widget child,
-                                    Animation<double> animation) {
-                                  return SlideTransition(
-                                    position: Tween<Offset>(
-                                      begin: const Offset(0.0, 0.5),
-                                      end: Offset.zero,
-                                    ).animate(animation),
-                                    child: FadeTransition(
-                                      opacity: animation,
-                                      child: child,
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "₹ ${controller.cartModel.content?.totalCost}",
-                                  key: ValueKey(
-                                      controller.cartModel.content?.totalCost),
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF207FA7),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                            ],
+                        ),
+                        const Spacer(),
+                        Text(
+                          "₹ ${grandTotal.toStringAsFixed(0)}",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF207FA7),
                           ),
-                          const SizedBox(height: 16),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      debugPrint("Continue");
-                                      Get.to(BookingScreen(
-                                        cartTotalPrice: double.tryParse(
-                                                controller.cartModel.content
-                                                        ?.totalCost
-                                                        .toString() ??
-                                                    "0.0") ??
-                                            0.0,
-                                      ));
-                                      // showBookingSheet(context);
-                                    },
-                                    child: Container(
-                                      height: 50,
-                                      decoration: ShapeDecoration(
-                                        color: const Color(0xFF207FA7),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          'Continue',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontFamily: 'Albert Sans',
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
+                        ),
+                        const SizedBox(width: 20),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(BookingScreen(
+                            cartTotalPrice: grandTotal,
+                          ));
+                        },
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF207FA7),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Continue',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    );
-                  },
-                )
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
               : null,
+
         ),
       );
     });
   }
+}
+
+
+
+Widget flipkartSummaryCard(DashBoardController controller) {
+  final cartModel = controller.cartModel;
+  final content = cartModel.content;
+  final cart = content?.cart;
+
+  double itemTotal = 0.0;
+  double discount = 0.0;
+  double couponDiscount = 0.0;
+  double tax = 0.0;
+  double mrpTotal = 0.0;
+
+  if (cart != null && cart.data != null && cart.data!.isNotEmpty) {
+    for (var item in cart.data!) {
+      double price = item.serviceCost.toDouble();
+      double qty = item.quantity!.toDouble();
+
+      // double mrp = (item.mrpPrice ?? item.serviceCost).toDouble();
+
+      itemTotal += price * qty;
+      // mrpTotal += mrp * qty;
+
+      discount += item.discountAmount.toDouble();
+      couponDiscount += item.couponDiscount.toDouble();
+      tax += item.taxAmount.toDouble();
+    }
+  }
+
+  double totalSaved = (mrpTotal - itemTotal) + couponDiscount;
+
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      boxShadow: [
+        BoxShadow(color: Colors.grey.shade200, blurRadius: 6)
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+
+        const Text(
+          "Price Details",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+
+        const Divider(),
+
+        _row("MRP Total", mrpTotal),
+        _row("Selling Price", itemTotal),
+        _row("Product Discount", -(mrpTotal - itemTotal)),
+        _row("Coupon Discount", -couponDiscount),
+        _row("Tax", tax),
+
+        const Divider(),
+
+        _row("Total Payable", content?.totalCost?.toDouble() ?? 0,
+            isBold: true),
+
+        const SizedBox(height: 6),
+
+        Text(
+          "🎉 You saved ₹${totalSaved.toStringAsFixed(0)} on this order",
+          style: const TextStyle(
+              color: Colors.green, fontWeight: FontWeight.w600),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _row(String title, double amount,
+    {bool isBold = false, Color? color}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 3),
+    child: Row(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        const Spacer(),
+        Text(
+          "₹ ${amount.toStringAsFixed(0)}",
+          style: TextStyle(
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            color: color ?? Colors.black,
+          ),
+        ),
+      ],
+    ),
+  );
 }
