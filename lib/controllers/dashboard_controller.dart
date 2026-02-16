@@ -71,6 +71,7 @@ class DashBoardController extends GetxController implements GetxService {
   List<BannerItem> banners1 = [];
   List<BannerItem> banner2 = [];
   List<sv.SubCategory> selectedSubCategories = [];
+  List<sv.SubCategory> homeSubCategoryList = [];
   TextEditingController addressController = TextEditingController();
   AddressResponse addressResponse = AddressResponse(data: []);
   List<AddressData> selectedAddressLists = [];
@@ -1296,6 +1297,42 @@ class DashBoardController extends GetxController implements GetxService {
       // update();
     }
   }
+
+  Future<void> getHomeSubCategories({
+    required String id,
+    required String limit,
+    required String offset,
+  }) async {
+    homeSubCategoryList.clear();
+    update();
+
+    try {
+      Response response =
+      await authRepo.categoriesToSubCategories(id, limit, offset);
+
+      var responseData = response.body;
+
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
+
+        final model =
+        sv.SubCategoryModel.fromJson(responseData['content']);
+
+        homeSubCategoryList = model.data ?? [];
+
+        update();
+
+      } else {
+        showCustomSnackBar(responseData['message'] ?? "Error",
+            isError: true);
+      }
+    } catch (e) {
+      showCustomSnackBar("Something went wrong $e", isError: true);
+    }
+  }
+
 
   Future<void> getCategoriesToSubCategories(
       {required String id,

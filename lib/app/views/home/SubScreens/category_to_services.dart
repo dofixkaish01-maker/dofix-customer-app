@@ -377,7 +377,6 @@ class CategoryToServices extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-
                                 /// Services List
                                 ...List.generate(
                                   services.length,

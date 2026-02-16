@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../../model/service_model.dart';
 import '../../widgets/custom_appbar.dart';
+import '../dashboard/dashboard_screen.dart';
 import 'SubScreen/header_component.dart';
 
 class CartScreen extends StatefulWidget {
@@ -159,7 +160,7 @@ class _CartScreenState extends State<CartScreen> {
                     GestureDetector(
                       onTap: () {
                         /// Dashboard ka home tab
-                        Get.to(() => HomeScreen());
+                        Get.to(() => DashboardScreen(pageIndex: 0,));
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(

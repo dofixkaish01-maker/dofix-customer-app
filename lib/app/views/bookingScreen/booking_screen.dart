@@ -98,10 +98,14 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   String getPaymentMethodForApi() {
-    return _paymentMethod == PaymentMethod.cash_after_service
-        ? "cash_after_service"
-        : "razor_pay";
+    if (_paymentMethod == PaymentMethod.cash_after_service) {
+      return "cash_after_service";
+    } else if (_paymentMethod == PaymentMethod.razor_pay) {
+      return "razor_pay";
+    }
+    return "cash_after_service"; // default fallback
   }
+
 
   // void _handlePaymentSuccess(PaymentSuccessResponse response) {
   //   // Payment successful
@@ -909,7 +913,8 @@ class _BookingScreenState extends State<BookingScreen> {
                             "time": formatTimeOfDay24Hour(
                                 selectedTime ?? TimeOfDay.now())
                                 .toString(),
-                            "payment_method": "cash_after_service",
+                            // "payment_method": "cash_after_service",
+                            "payment_method": getPaymentMethodForApi(),
                             "city": city,
                             "zip_code": postalCode,
                             "country": country,

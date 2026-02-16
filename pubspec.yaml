@@ -100,6 +100,7 @@ flutter:
       - assets/icons/
       - assets/img/vice/
       - assets/img/logo/
+      - assets/banner/
 
   fonts:
     - family: Jost

@@ -197,8 +197,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/images/header_bg.png',
-            fit: BoxFit.cover,
+            'assets/images/header_bg2.png',
+            fit: BoxFit.values[2],
           ),
           GetBuilder<DashBoardController>(builder: (controller) {
             log("Address value in Appbar : ${controller.address} ");
