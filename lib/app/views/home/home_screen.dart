@@ -34,12 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
     "11", // Pest Control
   ];
   final List<String> staticBanners = [
-    'assets/banner/AC Installation & Repair.png',
-    'assets/banner/Home Appliances Repair.png',
-    'assets/banner/Home Interior & Renovation.png',
-    'assets/banner/Home Painting.png',
-    'assets/banner/Electrician Services.png',
-    'assets/banner/Cleaning Services.png',
+    'assets/banner/ac.png',
+    'assets/banner/home_ap.png',
+    'assets/banner/home.png',
+    'assets/banner/home_panting.png',
+    'assets/banner/electric.png',
+    'assets/banner/cleaning.png',
   ];
 
 
@@ -262,6 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   ),
 
                   // carousel slider images
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     child: Card(
@@ -273,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       clipBehavior: Clip.antiAlias,
 
                       child: Padding(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(6),
 
                         child: Column(
                           children: [
@@ -291,10 +292,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       /// 🖼️ ZOOM IMAGE EFFECT
                                       Positioned.fill(
                                         child: Transform.scale(
-                                          scale: 1.1, // 🔥 zoom feel
+                                          scale: 1.15, // 🔥 zoom feel
                                           child: Image.asset(
                                             staticBanners[index],
-                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
@@ -324,20 +324,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
 
-                                            Text(
-                                              staticBanners[index]
-                                                  .split('/')
-                                                  .last
-                                                  .replaceAll('.png', ''),
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-
-                                            const SizedBox(height: 4),
-
                                             Container(
                                               padding: const EdgeInsets.symmetric(
                                                   horizontal: 10, vertical: 4),
@@ -362,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
 
                               options: CarouselOptions(
-                                height: 165,
+                                height: 200,
                                 autoPlay: true,
                                 autoPlayInterval: const Duration(seconds: 3),
                                 autoPlayAnimationDuration: const Duration(milliseconds: 700),
@@ -547,14 +533,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
 
-                  ///  Second Banner
-                  if (controller.banner2.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      child: BannerComponent(
-                        bannerList: controller.banner2,
-                      ),
-                    ),
+                  // ///  Second Banner
+                  // if (controller.banner2.isNotEmpty)
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  //     child: BannerComponent(
+                  //       bannerList: controller.banner2,
+                  //     ),
+                  //   ),
 
                   // ///  Quick Repairs
                   // if ((controller.quickRepair?.data ?? []).isNotEmpty)
@@ -664,7 +650,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   ),
                   // ),
 
-                  const SizedBox(height: 20),
+                  buildDoFixFooter(),
                 ],
               ),
             ),
@@ -719,3 +705,148 @@ Widget buildHomeSection({
     ),
   );
 }
+
+Widget buildDoFixFooter() {
+  return Container(
+    width: double.infinity,
+    margin: const EdgeInsets.only(top: 14),
+    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color(0xFFF4FBFF),
+          Color(0xFFEAF6FB),
+        ],
+      ),
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(28),
+        topRight: Radius.circular(28),
+      ),
+
+      boxShadow: [
+        /// 🔥 main floating shadow
+        BoxShadow(
+          color: Colors.black.withOpacity(0.12),
+          blurRadius: 22,
+          spreadRadius: 2,
+          offset: const Offset(0, -6),
+        ),
+
+        /// 🔥 soft light highlight
+        BoxShadow(
+          color: Colors.white.withOpacity(0.8),
+          blurRadius: 12,
+          offset: const Offset(0, -2),
+        ),
+      ],
+
+      border: Border.all(
+        color: const Color(0xFF207FA7).withOpacity(0.12),
+        width: 1,
+      ),
+    ),
+
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+
+        /// 🔷 LOGO CIRCLE WITH SOFT GLOW
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFF207FA7).withOpacity(0.18),
+                const Color(0xFF207FA7).withOpacity(0.05),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF207FA7).withOpacity(0.25),
+                blurRadius: 12,
+                spreadRadius: 1,
+              )
+            ],
+          ),
+          child: Image.asset(
+            "assets/icons/ic_logo.png",
+            height: 36,
+            width: 36,
+          ),
+        ),
+
+        const SizedBox(height: 14),
+
+        /// 🔹 TITLE
+        const Text(
+          "Trusted Hands for Every Home",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Color(0xFF0E2A35),
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.3,
+          ),
+        ),
+
+        const SizedBox(height: 6),
+
+        /// 🔹 POWERED BY
+        const Text(
+          "Powered by DoFix",
+          style: TextStyle(
+            color: Color(0xFF207FA7),
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        /// 🔹 DESCRIPTION
+        const Text(
+          "Our vision is to simplify home services by connecting customers with verified professionals, ensuring quality, affordability, and convenience at your doorstep.",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Color(0xFF5A6B72),
+            fontSize: 12.5,
+            height: 1.5,
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        /// 🔹 GRADIENT LINE
+        Container(
+          height: 4,
+          width: 60,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF207FA7),
+                Color(0xFF125778),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        /// 🔹 COPYRIGHT
+        const Text(
+          "© 2026 DoFix. All rights reserved.",
+          style: TextStyle(
+            fontSize: 11,
+            color: Color(0xFF8A9AA1),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
