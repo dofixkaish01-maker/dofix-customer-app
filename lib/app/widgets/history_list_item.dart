@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:do_fix/app/views/bookingScreen/booking_detail_screen.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -62,6 +64,9 @@ class _HistoryListItemState extends State<HistoryListItem> {
             paymentMethod: booking.paymentMethod ?? "No Payment Method",
             booking: widget.booking,
           ));
+          log("Booking Service Address: ${booking.serviceAddress}");
+          log("Lat: ${booking.serviceAddress?.lat}");
+          log("Lng: ${booking.serviceAddress?.lon}");
 
           // If result contains refresh request, trigger a refresh
           if (result != null && result is Map && result['refresh'] == true) {

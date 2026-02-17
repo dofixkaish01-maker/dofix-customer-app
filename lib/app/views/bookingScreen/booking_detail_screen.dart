@@ -224,7 +224,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
           child: InkWell(
             onTap: () async {
-
               final booking = widget.booking!;
               final dashController = Get.find<DashBoardController>();
 
@@ -258,7 +257,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   "house": booking.serviceAddress?.house,
                   "floor": booking.serviceAddress?.floor,
                 },
-                onPressed: () async {
+                  onPressed: () async {
                   await dashController
                       .getBookingDetails(booking.id!);
                   setState(() {});
