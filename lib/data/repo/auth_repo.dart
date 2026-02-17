@@ -138,19 +138,44 @@ class AuthRepo {
         method: "GET");
   }
 
+  // Future<Response> getToprated(
+  //   String? limit,
+  //   String? offset,
+  // ) async {
+  //   return await apiClient.getData(AppConstants.topRated, method: "GET");
+  // }
   Future<Response> getToprated(
-    String? limit,
-    String? offset,
-  ) async {
-    return await apiClient.getData(AppConstants.topRated, method: "GET");
+      String? limit,
+      String? offset,
+      ) async {
+
+    String url = "${AppConstants.topRated}?limit=$limit&offset=$offset";
+
+    print("Top Rated URL: $url");   // 👈 YAHAA ADD KARNA HAI
+    print("Top Rated URL: ${AppConstants.topRated}?limit=$limit&offset=$offset");
+
+    return await apiClient.getData(
+      url,
+      method: "GET",
+    );
   }
 
   Future<Response> getQuickRepair(
-    String? limit,
-    String? offset,
-  ) async {
-    return await apiClient.getData(AppConstants.quickRepair, method: "GET");
+      String? limit,
+      String? offset,
+      ) async {
+    return await apiClient.getData(
+      "${AppConstants.quickRepair}?limit=$limit&offset=$offset",
+      method: "GET",
+    );
   }
+
+  // Future<Response> getQuickRepair(
+  //   String? limit,
+  //   String? offset,
+  // ) async {
+  //   return await apiClient.getData(AppConstants.quickRepair, method: "GET");
+  // }
 
   Future<Response> cart(
     String? limit,

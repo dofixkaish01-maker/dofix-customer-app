@@ -1,15 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:do_fix/app/views/home/component/banner_widget.dart';
 import 'package:do_fix/app/views/home/component/category_components.dart';
-import 'package:do_fix/app/views/home/refer%20screen/refer_earn_screen.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../controllers/auth_controller.dart';
-import '../../../utils/dimensions.dart';
-import '../../../utils/styles.dart';
 import '../dashboard/dashboard_screen.dart';
 import 'component/horizontal_view.dart';
 
@@ -22,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0; // class level pe rakhna (State me)
+  int _currentIndex = 0;
 
   final bookingController = Get.find<BookingController>();
   List<String> pinnedCategoryIds = [
@@ -41,8 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/banner/electric.png',
     'assets/banner/cleaning.png',
   ];
-
-
 
   @override
   // void initState() {
@@ -88,19 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
-
-  // ADDED: refresh function for pull to refresh
-// ADDED: pull to refresh handler
-//   Future<void> _onRefresh() async {
-//     final controller = Get.find<DashBoardController>();
-//
-//     // ADDED: repeat initial load logic
-//     controller.onInit(); // safest & zero error
-//
-//     controller.update(); // refresh UI
-//   }
-
   Future<void> _onRefresh() async {
     final controller = Get.find<DashBoardController>();
 
@@ -124,9 +104,6 @@ class _HomeScreenState extends State<HomeScreen> {
           final pinnedCategories = allCategories
               .where((cat) => pinnedCategoryIds.contains(cat.id.toString()))
               .toList();
-
-
-
           print("ALL CATEGORIES COUNT: ${allCategories.length}");
           print("PINNED COUNT: ${pinnedCategories.length}");
 
@@ -148,21 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             pageIndex: 1,
                           ),
                         );
-                        // InkWell(
-                        //   onTap: () {
-                        //     Get.offAll(
-                        //       DashboardScreen(
-                        //         key: GlobalKey<DashboardScreenState>(),
-                        //         pageIndex: 1,
-                        //       ),
-                        //     );
-                        //   },
-                        //   child: Image.asset('assets/images/Instant Repairs at Your Fingertips! (2).PNG'),
-                        // );
                       },
                       child: Image.asset('assets/images/instant_repairs.png',fit: BoxFit.contain,),),
                   const SizedBox(height: 15),
-
 
                   /// Heading Row
                   Padding(
@@ -182,8 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-
-                        /// Yaha tumhara SEE button add ho gaya
                         GestureDetector(
                           onTap: () async {
                             final dash = Get.find<DashBoardController>();
@@ -279,27 +242,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           children: [
 
-                            /// 🔥 CAROUSEL INSIDE CARD
+                            /// CAROUSEL INSIDE CARD
                             CarouselSlider.builder(
                               itemCount: staticBanners.length,
                               itemBuilder: (context, index, realIndex) {
 
                                 return ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(5),
                                   child: Stack(
                                     children: [
 
-                                      /// 🖼️ ZOOM IMAGE EFFECT
+                                      /// ZOOM IMAGE EFFECT
                                       Positioned.fill(
                                         child: Transform.scale(
-                                          scale: 1.15, // 🔥 zoom feel
+                                          scale: 1.15,
                                           child: Image.asset(
                                             staticBanners[index],
                                           ),
                                         ),
                                       ),
 
-                                      /// 🌑 SOFT GRADIENT
+                                      /// SOFT GRADIENT
                                       Positioned.fill(
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -315,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
 
-                                      /// 🏷️ TEXT AREA
+                                      /// ️ TEXT AREA
                                       Positioned(
                                         left: 14,
                                         right: 14,
@@ -323,7 +286,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-
                                             Container(
                                               padding: const EdgeInsets.symmetric(
                                                   horizontal: 10, vertical: 4),
@@ -353,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 autoPlayInterval: const Duration(seconds: 3),
                                 autoPlayAnimationDuration: const Duration(milliseconds: 700),
                                 enlargeCenterPage: true,
-                                viewportFraction: 1, // 🔥 full width inside card
+                                viewportFraction: 1,
                                 onPageChanged: (index, reason) {
                                   setState(() {
                                     _currentIndex = index;
@@ -364,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             const SizedBox(height: 10),
 
-                            /// 🔵 DOTS INSIDE CARD
+                            /// DOTS INSIDE CARD
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: List.generate(staticBanners.length, (index) {
@@ -390,30 +352,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  // ///  Top Rated Services
-                  // if ((controller.topRated?.data ?? []).isNotEmpty)
-                  //   buildHomeSection(
-                  //     title: "Top Rated Services",
-                  //     child: Container(
-                  //       decoration: BoxDecoration(
-                  //         color: Colors.grey.shade50,
-                  //         borderRadius: BorderRadius.circular(16),
-                  //         boxShadow: [
-                  //           BoxShadow(
-                  //             color: Colors.black.withOpacity(0.05),
-                  //             blurRadius: 10,
-                  //             offset: const Offset(0, 5),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       padding: const EdgeInsets.all(12),
-                  //       child: HorizontalAnimatedList(
-                  //         imageHeight: 190,
-                  //         data: controller.topRated!,
-                  //         heading: '',
-                  //       ),
-                  //     ),
-                  //   ),
+                  ///  Top Rated Services
+                  if ((controller.topRated?.data ?? []).isNotEmpty)
+                    buildHomeSection(
+                      title: "Top Rated Services",
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: HorizontalAnimatedList(
+                          imageHeight: 190,
+                          data: controller.topRated!,
+                          heading: '',
+                        ),
+                      ),
+                    ),
 
                   //******* working ***********
                   if ((controller.subCategoryModelListing?.data ?? []).isNotEmpty)
@@ -448,8 +410,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 250),
                               curve: Curves.easeInOut,
-
-                              ///  SCREEN WIDTH ka half - spacing adjust
                               width: (Get.size.width - 16 * 2 - 14) / 2,
 
                               decoration: BoxDecoration(
@@ -481,8 +441,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-
-                                    /// Image
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
                                       child: Image.network(
@@ -531,8 +489,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-
-
                   // ///  Second Banner
                   // if (controller.banner2.isNotEmpty)
                   //   Padding(
@@ -542,31 +498,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   //     ),
                   //   ),
 
-                  // ///  Quick Repairs
-                  // if ((controller.quickRepair?.data ?? []).isNotEmpty)
-                  //   buildHomeSection(
-                  //     title: "Quick Repairs",
-                  //     child: Container(
-                  //       decoration: BoxDecoration(
-                  //         color: Colors.grey.shade50,
-                  //         borderRadius: BorderRadius.circular(16),
-                  //         boxShadow: [
-                  //           BoxShadow(
-                  //             color: Colors.black.withOpacity(0.05),
-                  //             blurRadius: 10,
-                  //             offset: const Offset(0, 5),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       padding: const EdgeInsets.all(12),
-                  //       child: HorizontalAnimatedList(
-                  //         imageHeight: 170,
-                  //         data: controller.quickRepair!,
-                  //         heading: '',
-                  //       ),
-                  //     ),
-                  //   ),
-
+                  ///  Quick Repairs
+                  if ((controller.quickRepair?.data ?? []).isNotEmpty)
+                    buildHomeSection(
+                      title: "Quick Repairs",
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: HorizontalAnimatedList(
+                          imageHeight: 170,
+                          data: controller.quickRepair!,
+                          heading: '',
+                        ),
+                      ),
+                    ),
                   // /// Refer & Earn
                   // Padding(
                   //   padding: const EdgeInsets.all(15),
@@ -649,7 +604,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   //     ),
                   //   ),
                   // ),
-
                   buildDoFixFooter(),
                 ],
               ),
@@ -696,11 +650,7 @@ Widget buildHomeSection({
             // ),
           ],
         ),
-
         const SizedBox(height: 12),
-
-        /// Section Body
-        child,
       ],
     ),
   );

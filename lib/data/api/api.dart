@@ -61,21 +61,26 @@ class ApiClient extends GetxController implements GetxService {
   // }
 
   Future<Response> getData(
-    String uri, {
-    Map<String, dynamic>? query,
-    Map<String, String>? headers,
-    String method = 'POST', // Default method
-    dynamic body,
-  }) async {
+      String uri, {
+        Map<String, dynamic>? query,
+        Map<String, String>? headers,
+        String method = 'POST',
+        dynamic body,
+      }) async {
     try {
-      debugPrint("Inside getData method ===> $uri");
-      debugPrint("Inside getData method ===> $query");
-      debugPrint(
-          "Inside getData method ===> ${Uri.parse('$appBaseUrl$uri').replace(queryParameters: (query))}");
       final uriWithQuery = query != null
-          ? Uri.parse('$appBaseUrl$uri').replace(queryParameters: (query))
+          ? Uri.parse('$appBaseUrl$uri').replace(queryParameters: query)
           : Uri.parse('$appBaseUrl$uri');
-      log('====> API Call: $uriWithQuery\nHeader: ${headers ?? mainHeaders}');
+
+      log("==================================================");
+      log("🌍 API REQUEST START");
+      log("➡️ METHOD: ${method.toUpperCase()}");
+      log("➡️ URL: $uriWithQuery");
+      log("➡️ HEADERS: ${headers ?? mainHeaders}");
+      if (body != null) {
+        log("➡️ BODY: $body");
+      }
+      log("==================================================");
 
       http.Response response;
 
@@ -85,28 +90,51 @@ class ApiClient extends GetxController implements GetxService {
               .get(uriWithQuery, headers: headers ?? mainHeaders)
               .timeout(Duration(seconds: timeoutInSeconds));
           break;
+
         case 'POST':
           response = await http
-              .post(uriWithQuery, headers: headers ?? mainHeaders, body: body)
+              .post(uriWithQuery,
+              headers: headers ?? mainHeaders, body: body)
               .timeout(Duration(seconds: timeoutInSeconds));
           break;
+
         case 'PUT':
           response = await http
-              .put(uriWithQuery, headers: headers ?? mainHeaders, body: body)
+              .put(uriWithQuery,
+              headers: headers ?? mainHeaders, body: body)
               .timeout(Duration(seconds: timeoutInSeconds));
           break;
+
         case 'DELETE':
           response = await http
               .delete(uriWithQuery, headers: headers ?? mainHeaders)
               .timeout(Duration(seconds: timeoutInSeconds));
           break;
+
         default:
           throw UnsupportedError('HTTP method not supported');
       }
-      // debugPrint('====> API Response: ${response.body}');
+
+      log("==================================================");
+      log("✅ API RESPONSE RECEIVED");
+      log("⬅️ STATUS CODE: ${response.statusCode}");
+      log("⬅️ RESPONSE BODY: ${response.body}");
+      log("==================================================");
+
       return handleResponse(response, uri);
-    } catch (e) {
-      return const Response(statusCode: 1, statusText: noInternetMessage);
+
+    } catch (e, stackTrace) {
+
+      log("==================================================");
+      log("❌ API ERROR OCCURRED");
+      log("Error: $e");
+      log("StackTrace: $stackTrace");
+      log("==================================================");
+
+      return const Response(
+        statusCode: 1,
+        statusText: noInternetMessage,
+      );
     }
   }
 
