@@ -93,12 +93,17 @@ class HorizontalComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Get.find<DashBoardController>().serviceModel = category;
-        Get.find<DashBoardController>().update();
-        Future.delayed(Duration(milliseconds: 1));
-        Get.to(() => ServiceDetails());
+      // onTap: () {
+      //   Get.find<DashBoardController>().serviceModel = category;
+      //   Get.find<DashBoardController>().update();
+      //   Future.delayed(Duration(milliseconds: 1));
+      //   Get.to(() => ServiceDetails());
+      // },
+      onTap: () async {
+        await Get.find<DashBoardController>()
+            .getServicesDetails(category.id.toString());
       },
+
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

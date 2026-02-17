@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:do_fix/model/address_model.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -137,45 +136,35 @@ class AuthRepo {
         },
         method: "GET");
   }
-
-  // Future<Response> getToprated(
-  //   String? limit,
-  //   String? offset,
-  // ) async {
-  //   return await apiClient.getData(AppConstants.topRated, method: "GET");
-  // }
+  //
   Future<Response> getToprated(
       String? limit,
       String? offset,
       ) async {
-
-    String url = "${AppConstants.topRated}?limit=$limit&offset=$offset";
-
-    print("Top Rated URL: $url");   // 👈 YAHAA ADD KARNA HAI
-    print("Top Rated URL: ${AppConstants.topRated}?limit=$limit&offset=$offset");
-
-    return await apiClient.getData(
-      url,
-      method: "GET",
-    );
+    return await apiClient.getData(AppConstants.topRated, method: "GET");
   }
+  // Future<Response> getToprated(
+  //     String? limit,
+  //     String? offset,
+  //     ) async {
+  //
+  //   String url = "${AppConstants.topRated}?limit=$limit&offset=$offset";
+  //
+  //   print("Top Rated URL: $url");   // 👈 YAHAA ADD KARNA HAI
+  //   print("Top Rated URL: ${AppConstants.topRated}?limit=$limit&offset=$offset");
+  //
+  //   return await apiClient.getData(
+  //     url,
+  //     method: "GET",
+  //   );
+  // }
 
   Future<Response> getQuickRepair(
       String? limit,
       String? offset,
       ) async {
-    return await apiClient.getData(
-      "${AppConstants.quickRepair}?limit=$limit&offset=$offset",
-      method: "GET",
-    );
+    return await apiClient.getData(AppConstants.quickRepair, method: "GET");
   }
-
-  // Future<Response> getQuickRepair(
-  //   String? limit,
-  //   String? offset,
-  // ) async {
-  //   return await apiClient.getData(AppConstants.quickRepair, method: "GET");
-  // }
 
   Future<Response> cart(
     String? limit,

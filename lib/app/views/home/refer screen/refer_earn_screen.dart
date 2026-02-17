@@ -102,7 +102,6 @@ class ReferEarnScreen extends StatelessWidget {
                 style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xff227FA8))),
                 onPressed: () {
                   final box = context.findRenderObject() as RenderBox?;
-
                   Share.share(
                     "Hey! Try DoFix for home services. "
                         "Use my referral link and get a discount \n$referralLink",

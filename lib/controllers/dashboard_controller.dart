@@ -50,6 +50,7 @@ class DashBoardController extends GetxController implements GetxService {
     required this.authRepo,
     required this.sharedPreferences,
   });
+  final ApiClient apiClient = Get.find<ApiClient>();
 
   bool _isLoginLoading = false;
 
@@ -65,7 +66,7 @@ class DashBoardController extends GetxController implements GetxService {
   RxList<sv.ServiceModel> serviceModelSearchList = <sv.ServiceModel>[].obs;
   BookingModel bookingModel = BookingModel(data: []);
   sv.CartResponseModel cartModel = sv.CartResponseModel();
-
+  sv.Services? acServices;
   String? address = "";
   RxString shortAddress = ''.obs;
   List<BannerItem> banners1 = [];
@@ -130,47 +131,6 @@ class DashBoardController extends GetxController implements GetxService {
       hideLoading();
     }
   }
-
-
-
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //
-  //   // CART
-  //   getCartListing(
-  //     limit: "100",
-  //     offset: "1",
-  //     isRoute: false,
-  //     showLoader: true,
-  //   );
-  //
-  //   // CATEGORY LIST (YE MISSING THA)
-  //   getFeaturedCategories("10", "1", false);
-  //
-  //   // 🛒 CART
-  //   getCartListing(
-  //     limit: "100",
-  //     offset: "1",
-  //     isRoute: false,
-  //     showLoader: true,
-  //   );
-  //
-  //
-  //   // CATEGORIES
-  //   getFeaturedCategories("10", "1", false);
-  //
-  //   // TOP RATED
-  //   getTopRated("10", "1", false);
-  //
-  //   // QUICK REPAIR
-  //   getQuickRepair("10", "1", false);
-  //
-  //   //  BANNERS
-  //   getBanners();
-  // }
-
-
   var isNotificationLoading = false.obs;
   var notificationModel = NotificationModel(null, null, []).obs;
 // normally ye auth / storage se aata hai
@@ -319,6 +279,28 @@ class DashBoardController extends GetxController implements GetxService {
           ((cartModel.serviceCost * cartModel.quantity) * daysCount);
     }
     return subTotalPrice;
+  }
+//my new function to replace top rated service with ac service
+  Future<void> getACServices() async {
+    try {
+      Response response = await apiClient.getData(
+        AppConstants.service,
+        query: {
+          "category_id": "40dfb6c2-df7b-4708-acc0-e096a1e0ff8e"
+        },
+        method: 'GET',
+      );
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Full Response AC: ${response.body}");
+
+      if (response.statusCode == 200) {
+        acServices = sv.Services.fromJson(response.body['content']);
+        debugPrint("Parsed Data Length: ${acServices?.data?.length}");
+        update();
+      }
+    } catch (e) {
+      debugPrint("AC Service Error: $e");
+    }
   }
 
   Future<void> getTopRated(String limit, String offset,
@@ -592,7 +574,6 @@ class DashBoardController extends GetxController implements GetxService {
       // update();
     }
   }
-
   Future<void> getAddressLists() async {
     showLoading();
     update();
