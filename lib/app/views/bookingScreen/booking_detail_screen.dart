@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/date_converter.dart';
 import '../../../utils/dimensions.dart';
 import '../../../utils/theme.dart';
+import '../PaymentScreen/payment_Screen.dart';
 import '../cart_screen/SubScreen/final_screen.dart';
 // import '../home/component/variations_new_card.dart';
 import '../services/service_details_screen.dart';
@@ -209,36 +210,109 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     final details = dashBoardController.bookingResponse?.content?.detail ?? [];
     final mainServices = details.where((d) => d.isAddOn == 0).toList();
     final addOnServices = details.where((d) => d.isAddOn == 1).toList();
+    // final bookingDetails = dashBoardController.bookingResponse?.content;
+    // "log lat: ${bookingDetails?.serviceAddress?.lat}";
+    // "log lng: ${bookingDetails?.serviceAddress?.lon}";
+    // "log address id: ${bookingDetails?.serviceAddress?.id}";
+    // final bookingDetails = dashBoardController.bookingResponse?.content;
+    //
+    // log("ADDRESS ID: ${bookingDetails?.serviceAddress?.id}");
+    // log("LAT: ${bookingDetails?.serviceAddress?.lat}");
+    // log("LNG: ${bookingDetails?.serviceAddress?.lon}");
 
     return SafeArea(
       top: false,
       child: Scaffold(
         bottomNavigationBar:
-        // ❌ CANCELLED → NOTHING
+        // CANCELLED → NOTHING
         (widget.booking?.bookingStatus == 'canceled')
             ? const SizedBox.shrink()
 
-        // 🔴 PAYMENT NOT DONE → PAY NOW
+        // PAYMENT NOT DONE → PAY NOW
             : (widget.booking?.isPaid == 0 && widget.booking?.paymentMethod=='razor_pay')
             ? Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
           child: InkWell(
+            // onTap: () async {
+            //   final booking = widget.booking!;
+            //   final dashController = Get.find<DashBoardController>();
+            //
+            //   log("BOOKING ID : ${booking.id}");
+            //   log("IS PAID : ${booking.isPaid}");
+            //
+            //   await makeDigitalPayment(
+            //     bookingId: booking.id!, // 🔴 IMPORTANT
+            //     isPartial: 0,
+            //     data: {
+            //       "name":
+            //       "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+            //       "mobile_number": dashController
+            //           .userModel.phone
+            //           .replaceFirst("+91", ""),
+            //       "email": dashController.userModel.email,
+            //       "address_label": "service",
+            //       "address": widget.locationAddress,
+            //       "lat": booking.serviceAddress?.lat,
+            //       "lng": booking.serviceAddress?.lon,
+            //       "zone_id": booking.zoneId,
+            //       "message": booking.message ?? "",
+            //       "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+            //       "time": formatTimeOfDay24Hour(
+            //         selectedTime ?? TimeOfDay.now(),
+            //       ).toString(),
+            //       "city": booking.serviceAddress?.city,
+            //       "zip_code": booking.serviceAddress?.zipCode,
+            //       "country": booking.serviceAddress?.country,
+            //       "street": booking.serviceAddress?.street,
+            //       "house": booking.serviceAddress?.house,
+            //       "floor": booking.serviceAddress?.floor,
+            //     },
+            //       onPressed: () async {
+            //       await dashController.getBookingDetails(booking.id!);
+            //       setState(() {});
+            //     },
+            //
+            //   );
+            //   log("makeDigitalPayment CALLED");
+            // },
+            // onTap: () async {
+            //   final booking = widget.booking!;
+            //
+            //   if (booking.serviceAddressId == null) {
+            //     log("ERROR: serviceAddressId is null");
+            //     return;
+            //   }
+            //
+            //   await makeBookingPayment(
+            //     bookingId: booking.id!,
+            //     serviceAddressId: booking.serviceAddressId.toString(),
+            //     zoneId: booking.zoneId.toString(),
+            //   );
+            //   log("SERVICE ADDRESS ID: ${widget.booking?.serviceAddressId}");
+            //   log("BOOKING ID TYPE: ${booking.id.runtimeType}");
+            //   log("ZONE ID TYPE: ${booking.zoneId.runtimeType}");
+            //
+            // },
             onTap: () async {
               final booking = widget.booking!;
               final dashController = Get.find<DashBoardController>();
 
-              log("BOOKING ID : ${booking.id}");
-              log("IS PAID : ${booking.isPaid}");
+              if (booking.serviceAddressId == null) {
+                log("ERROR: serviceAddressId is null");
+                return;
+              }
+
+              log("SERVICE ADDRESS ID: ${booking.serviceAddressId}");
 
               await makeDigitalPayment(
-                bookingId: booking.id!, // 🔴 IMPORTANT
+                bookingId: booking.id!,
                 isPartial: 0,
                 data: {
+                  "service_address_id": booking.serviceAddressId, // ✅ ADD THIS
+
                   "name":
                   "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
-                  "mobile_number": dashController
-                      .userModel.phone
-                      .replaceFirst("+91", ""),
+                  "mobile_number": dashController.userModel.phone.replaceFirst("+91", ""),
                   "email": dashController.userModel.email,
                   "address_label": "service",
                   "address": widget.locationAddress,
@@ -257,14 +331,16 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   "house": booking.serviceAddress?.house,
                   "floor": booking.serviceAddress?.floor,
                 },
-                  onPressed: () async {
-                  await dashController
-                      .getBookingDetails(booking.id!);
+                onPressed: () async {
+                  await dashController.getBookingDetails(booking.id!);
                   setState(() {});
                 },
               );
-              log("🔥 makeDigitalPayment CALLED");
+
+              log("makeDigitalPayment CALLED");
             },
+
+
             child: Container(
               height: 48,
               decoration: BoxDecoration(
@@ -284,7 +360,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             ),
           ),
         )
-        /// 🟢 CASE 2: PAYMENT DONE + SERVICE COMPLETED → SHOW INVOICE
+        /// CASE 2: PAYMENT DONE + SERVICE COMPLETED → SHOW INVOICE
             : (widget.booking?.isPaid == 1 &&
             widget.booking?.bookingStatus == 'completed')
             ? Padding(
@@ -663,7 +739,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     color: _getStatusColor(widget.booking?.bookingStatus),
                   ),
                 ),
-
                 SizedBox(
                   height: 16,
                 ),
@@ -1050,3 +1125,27 @@ Future<void> _launchUrl(String urlString) async {
   final Uri url = Uri.parse(urlString);
   await launchUrl(url, mode: LaunchMode.externalApplication);
 }
+
+// Future<void> makeBookingPayment({
+//   required String bookingId,
+//   required String serviceAddressId,
+//   required String zoneId,
+// }) async {
+//
+//   final url =
+//       '${AppConstants.baseUrl}payment?payment_method=razor_pay'
+//       '&booking_id=$bookingId'
+//       '&zone_id=$zoneId'
+//       '&service_address_id=$serviceAddressId'
+//       '&callback=https://panel.dofix.in'
+//       '&is_partial=0'
+//       '&payment_platform=app';
+//
+//   debugPrint("FINAL PAYMENT URL: $url");
+//
+//   Get.to(() => PaymentScreen(
+//     url: url,
+//     onPressed: null,
+//     data: {},
+//   ));
+// }

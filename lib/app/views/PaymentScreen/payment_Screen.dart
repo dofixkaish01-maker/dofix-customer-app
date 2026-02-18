@@ -26,7 +26,7 @@ class PaymentScreen extends StatefulWidget {
 class PaymentScreenState extends State<PaymentScreen> {
   String? selectedUrl;
   double value = 0.0;
-  final bool _isLoading = true;
+   bool _isLoading = false;
   PullToRefreshController? pullToRefreshController;
   late MyInAppBrowser browser;
 
@@ -75,6 +75,11 @@ class PaymentScreenState extends State<PaymentScreen> {
             hideUrlBar: true, hideToolbarTop: GetPlatform.isAndroid),
       ),
     );
+
+    setState(() {
+      _isLoading = false;
+    });
+
   }
 
   @override

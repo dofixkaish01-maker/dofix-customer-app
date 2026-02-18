@@ -1,9 +1,11 @@
 import 'package:do_fix/model/booking_response.dart';
 import 'package:do_fix/widgets/custom_image_viewer.dart';
 import 'package:flutter/material.dart';
+import '../../utils/dimensions.dart';
 
 class CustomBookingDetailsItems extends StatelessWidget {
   final ServiceDetail detail;
+
   const CustomBookingDetailsItems({
     super.key,
     required this.detail,
@@ -12,101 +14,100 @@ class CustomBookingDetailsItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomNetworkImageWidget(
-              image: detail.service?.coverImageFullPath ?? "",
-              height: 53,
-              width: 69,
-            ),
-            SizedBox(
-              width: 4,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  detail.variantKey ?? "",
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(
-                  height: 3,
-                ),
-                Text(
-                  detail.serviceName ?? "",
-                  style: TextStyle(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black.withAlpha((0.3 * 255).toInt()),
-                  ),
-                ),
-                SizedBox(
-                  height: 3,
-                ),
-                Text(
-                  "₹${detail.serviceCost.toString()}",
-                  style: TextStyle(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                )
-              ],
-            )
-          ],
-        ),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 34,
-              width: 100,
-              padding: EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 7,
+
+        /// 🔹 LEFT SIDE (Image + Details)
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomNetworkImageWidget(
+                image: detail.service?.coverImageFullPath ?? "",
+                height: 65,
+                width: 80,
               ),
-              decoration: BoxDecoration(
-                color: Color(0xFF207FA8).withAlpha(
-                  (0.1 * 255).toInt(),
-                ),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+
+              const SizedBox(width: 8),
+
+              /// 🔹 TEXT SECTION
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+                    /// Variant Key
                     Text(
-                      "X ${detail.quantity ?? 0}",
+                      detail.variantKey ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF207FA8),
+                        fontSize: Dimensions.fontSize14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
                       ),
                     ),
+
+                    SizedBox(height: Dimensions.paddingSize4),
+
+                    /// Service Name
                     Text(
-                      " = ${detail.totalCost.toString()}",
+                      detail.serviceName ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF207FA8),
+                        fontSize: Dimensions.fontSize12,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black.withOpacity(0.6),
+                      ),
+                    ),
+
+                    SizedBox(height: Dimensions.paddingSize4),
+
+                    /// Price
+                    Text(
+                      "₹${detail.serviceCost ?? 0}",
+                      style: TextStyle(
+                        fontSize: Dimensions.fontSize13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
                       ),
                     ),
                   ],
                 ),
               ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
+        /// 🔹 RIGHT SIDE (Quantity Box)
+        Container(
+          height: 34,
+          constraints: const BoxConstraints(minWidth: 90),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 7,
+          ),
+          decoration: BoxDecoration(
+            color: const Color(0xFF207FA8).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                "X ${detail.quantity ?? 0} = ₹${detail.totalCost ?? 0}",
+                style: TextStyle(
+                  fontSize: Dimensions.fontSize14,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF207FA8),
+                ),
+              ),
             ),
-          ],
-        )
+          ),
+        ),
       ],
     );
   }
