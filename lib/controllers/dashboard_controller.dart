@@ -28,6 +28,7 @@ import '../app/views/home/SubScreens/category_to_services.dart';
 import '../app/views/home/component/banner_widget.dart';
 import '../app/views/home/home_screen.dart';
 import '../app/views/no_service_screen.dart';
+import '../app/views/services/details_screen.dart';
 import '../app/views/services/services.dart';
 import '../data/api/api.dart';
 import '../data/repo/auth_repo.dart';
@@ -305,11 +306,11 @@ class DashBoardController extends GetxController implements GetxService {
 
   Future<void> getTopRated(String limit, String offset,
       [bool? isShowLoading]) async {
+
     if (isShowLoading ?? false) {
       showLoading();
     }
-    topRated?.data?.clear();
-    update();
+
     try {
       Response response = await authRepo.getToprated(limit, offset);
       var responseData = response.body;
@@ -317,34 +318,77 @@ class DashBoardController extends GetxController implements GetxService {
       if (responseData == null) {
         throw Exception("Response data is null");
       }
+
       log("Top rated Listing===>: $responseData");
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          topRated = sv.Services.fromJson(responseData['content']);
-          update();
-        } else {
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
-        }
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
+
+        // IMPORTANT: direct assign karo, clear mat karo
+        topRated = sv.Services.fromJson(responseData['content']);
+
       } else {
         closeSnackBarIfActive();
         showCustomSnackBar(responseData['message'], isError: true);
       }
+
     } catch (e) {
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
-      debugPrint("Error fetching categories:2 $e");
-      closeSnackBarIfActive();
+      debugPrint("Error fetching top rated: $e");
+      showCustomSnackBar("Something went wrong. Please try again.", isError: true);
     } finally {
       _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
       hideLoading();
-      // update();
+
+      // MOST IMPORTANT LINE
+      update();
     }
   }
+
+
+  // Future<void> getTopRated(String limit, String offset,
+  //     [bool? isShowLoading]) async {
+  //   if (isShowLoading ?? false) {
+  //     showLoading();
+  //   }
+  //   topRated?.data?.clear();
+  //   update();
+  //   try {
+  //     Response response = await authRepo.getToprated(limit, offset);
+  //     var responseData = response.body;
+  //
+  //     if (responseData == null) {
+  //       throw Exception("Response data is null");
+  //     }
+  //     log("Top rated Listing===>: $responseData");
+  //
+  //     if (response.statusCode == 200) {
+  //       if (responseData['message']
+  //           .toString()
+  //           .contains("Successfully data fetched")) {
+  //         topRated = sv.Services.fromJson(responseData['content']);
+  //         update();
+  //       } else {
+  //         closeSnackBarIfActive();
+  //         showCustomSnackBar(responseData['message'], isError: true);
+  //       }
+  //     } else {
+  //       closeSnackBarIfActive();
+  //       showCustomSnackBar(responseData['message'], isError: true);
+  //     }
+  //   } catch (e) {
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     debugPrint("Error fetching categories:2 $e");
+  //     closeSnackBarIfActive();
+  //   } finally {
+  //     _isLoginLoading = false;
+  //     // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+  //     hideLoading();
+  //     // update();
+  //   }
+  // }
 
   Future<void> getQuickRepair(String limit, String offset,
       [bool? isShowLoading]) async {

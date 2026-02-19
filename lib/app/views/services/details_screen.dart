@@ -421,7 +421,6 @@ class DetailsScreen extends StatelessWidget {
                                 },
                                 [variantKey],
                               );
-
                               Get.snackbar(
                                 "Cart Update",
                                 "Item added to cart",
@@ -430,7 +429,6 @@ class DetailsScreen extends StatelessWidget {
                                 colorText: Colors.white,
                               );
                             }
-
                             controller.update(['cart_${serviceModel.id}_$variantKey']);
                           },
                           child: Text(
@@ -443,9 +441,7 @@ class DetailsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 8),
-
                       InkWell(
                         borderRadius: BorderRadius.circular(14),
                         onTap: () {
