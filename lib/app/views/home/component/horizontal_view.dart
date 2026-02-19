@@ -1,20 +1,22 @@
-import 'package:do_fix/app/views/services/service_details_screen.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import '../../../../model/service_model.dart';
-import '../../../../utils/dimensions.dart';
 import '../../../../widgets/custom_image_viewer.dart';
+import '../../../../utils/dimensions.dart';
 
 class HorizontalAnimatedList extends StatefulWidget {
   final Services data;
   final String heading;
   final double imageHeight;
-  const HorizontalAnimatedList(
-      {super.key,
-      required this.data,
-      required this.heading,
-      required this.imageHeight});
+
+  const HorizontalAnimatedList({
+    super.key,
+    required this.data,
+    required this.heading,
+    required this.imageHeight,
+  });
 
   @override
   State<HorizontalAnimatedList> createState() => _HorizontalAnimatedListState();
@@ -22,6 +24,7 @@ class HorizontalAnimatedList extends StatefulWidget {
 
 class _HorizontalAnimatedListState extends State<HorizontalAnimatedList> {
   List<ServiceModel> _items = [];
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -31,59 +34,83 @@ class _HorizontalAnimatedListState extends State<HorizontalAnimatedList> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Column(
-        children: [
+    if (_items.isEmpty) return const SizedBox();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// HEADING
+        if (widget.heading.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  widget.heading,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontFamily: 'Albert Sans',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              widget.heading,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.2,
+              ),
             ),
           ),
-          const SizedBox(
-            height: 8,
+
+        const SizedBox(height: 12),
+
+        /// AUTO SLIDER
+        CarouselSlider.builder(
+          itemCount: _items.length,
+          itemBuilder: (context, index, realIndex) {
+            final service = _items[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: HorizontalComponent(
+                height: widget.imageHeight,
+                category: service,
+              ),
+            );
+          },
+          options: CarouselOptions(
+            height: widget.imageHeight + 60,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 3),
+            autoPlayAnimationDuration: const Duration(milliseconds: 700),
+            enlargeCenterPage: true,
+            viewportFraction: 0.55,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
           ),
-          SizedBox(
-            height: 195,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _items.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6.0,
-                  ),
-                  child: SizedBox(
-                    width: 140,
-                    child: HorizontalComponent(
-                      height: widget.imageHeight,
-                      category: _items[index],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+
+        /// DOT INDICATOR
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(_items.length, (index) {
+            final isActive = index == _currentIndex;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              height: 6,
+              width: isActive ? 18 : 6,
+              decoration: BoxDecoration(
+                color: isActive ? const Color(0xFF207FA7) : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            );
+          }),
+        ),
+      ],
     );
   }
 }
 
+/// Horizontal Card Component
 class HorizontalComponent extends StatelessWidget {
   final ServiceModel category;
   final double height;
+
   const HorizontalComponent({
     super.key,
     required this.category,
@@ -92,96 +119,108 @@ class HorizontalComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      // onTap: () {
-      //   Get.find<DashBoardController>().serviceModel = category;
-      //   Get.find<DashBoardController>().update();
-      //   Future.delayed(Duration(milliseconds: 1));
-      //   Get.to(() => ServiceDetails());
-      // },
-      onTap: () async {
-        await Get.find<DashBoardController>()
-            .getServicesDetails(category.id.toString());
-      },
-
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(Dimensions.radius5),
-            topRight: Radius.circular(Dimensions.radius5),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () async {
+          await Get.find<DashBoardController>().getServicesDetails(category.id.toString());
+        },
+        child: Ink(
+          width: 160,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.12),
+                blurRadius: 16,
+                spreadRadius: 2,
+                offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-        ),
-        child: Stack(
-          children: [
-            // Image
-            CustomNetworkImageWidget(
-              onlyTopRadius: true,
-              imagePadding: 0,
-              width: 140,
-              height: height,
-              image: category.thumbnailFullPath ?? "",
-            ),
-            // Gradient overlay
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              top: 0,
-              child: Container(
-                width: 140,
-                height: height,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(Dimensions.radius5),
-                    topRight: Radius.circular(Dimensions.radius5),
-                  ),
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      Colors.black,
-                      Colors.transparent,
-                    ],
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+
+                /// IMAGE
+                Positioned.fill(
+                  child: CustomNetworkImageWidget(
+                    imagePadding: 0,
+                    width: 160,
+                    height: height,
+                    image: category.thumbnailFullPath ?? "",
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
-            ),
-            // Text content at bottom
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+
+                /// GRADIENT OVERLAY
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.7),
+                          Colors.black.withOpacity(0.35),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                /// SERVICE NAME + CTA
+                Positioned(
+                  bottom: 12,
+                  left: 8,
+                  right: 8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Text(
-                          category.name ?? "",
-                          textAlign: TextAlign.center,
-                          maxLines: 3,
+                      Text(
+                        category.name ?? "",
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+
+                      /// CTA badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        child: const Text(
+                          "View Service",
                           style: TextStyle(
+                            fontSize: 10,
                             color: Colors.white,
-                            fontSize: 12,
-                            fontFamily: 'Albert Sans',
                             fontWeight: FontWeight.w400,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

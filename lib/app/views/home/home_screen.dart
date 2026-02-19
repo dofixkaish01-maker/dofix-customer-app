@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
@@ -27,13 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
     "9", // Painting
     "11", // Pest Control
   ];
-  final List<String> staticBanners = [
-    'assets/banner/ac.png',
-    'assets/banner/home_ap.png',
-    'assets/banner/home.png',
-    'assets/banner/home_panting.png',
-    'assets/banner/electric.png',
-    'assets/banner/cleaning.png',
+  final List<BannerModel> staticBanners = [
+    BannerModel(image: 'assets/banner/ac.png'),
+    BannerModel(image: 'assets/banner/home_ap.png'),
+    BannerModel(image: 'assets/banner/home.png'),
+    BannerModel(image: 'assets/banner/home_panting.png'),
+    BannerModel(image: 'assets/banner/electric.png'),
+    BannerModel(image: 'assets/banner/cleaning.png'),
   ];
 
   @override
@@ -68,17 +69,20 @@ class _HomeScreenState extends State<HomeScreen> {
       controller.getBanners();
       controller.homeSubCategoryList;
 
-      /// IMPORTANT PART (HOME PE SUB CATEGORY LOAD)
-      if ((controller.categoryList?.data ?? []).isNotEmpty) {
-        final firstCategory = controller.categoryList!.data![0];
 
-        controller.getCategoriesToServices(
-          id: firstCategory.id.toString(),
-          limit: "10",
-          offset: "1",
-          isLoading: false,
-        );
-      }
+      //******** iske wajah se back karne pe re-direct ho ja raha tha (service screen) pe *******
+
+      // /// IMPORTANT PART (HOME PE SUB CATEGORY LOAD)
+      // if ((controller.categoryList?.data ?? []).isNotEmpty) {
+      //   final firstCategory = controller.categoryList!.data![0];
+      //
+      //   // controller.getCategoriesToServices(
+      //   //   id: firstCategory.id.toString(),
+      //   //   limit: "10",
+      //   //   offset: "1",
+      //   //   isLoading: false,
+      //   // );
+      // }
       controller.getACServices();
     });
   }
@@ -115,17 +119,24 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               InkWell(
                 onTap: () async {
-                  final dash = Get.find<DashBoardController>();
+                  // final dash = Get.find<DashBoardController>();
+                  //
+                  // await dash.getFeaturedCategories(
+                  //     limit: "50", offset: "1", isShowLoading: false);
+                  //
+                  // Get.offAll(
+                  //   DashboardScreen(
+                  //     key: GlobalKey<DashboardScreenState>(),
+                  //     pageIndex: 1,
+                  //   ),
+                  // );
 
-                  await dash.getFeaturedCategories(
-                      limit: "50", offset: "1", isShowLoading: false);
-
-                  Get.offAll(
-                    DashboardScreen(
-                      key: GlobalKey<DashboardScreenState>(),
-                      pageIndex: 1,
-                    ),
-                  );
+                  // Get.find<DashBoardController>()
+                  //     .getCategoriesToSubCategories(
+                  //   id: cat.id.toString(),
+                  //   limit: '10',
+                  //   offset: "1",
+                  // );
                 },
                 child: Image.asset(
                   'assets/images/instant_repairs.png',
@@ -136,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               /// Heading Row
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -173,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         "See All",
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.blue,
+                          color: Color(0xFF1C89B8),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -247,66 +258,80 @@ class _HomeScreenState extends State<HomeScreen> {
                         CarouselSlider.builder(
                           itemCount: staticBanners.length,
                           itemBuilder: (context, index, realIndex) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Stack(
-                                children: [
-                                  /// ZOOM IMAGE EFFECT
-                                  Positioned.fill(
-                                    child: Transform.scale(
-                                      scale: 1.10,
-                                      child: Image.asset(
-                                        staticBanners[index],
-                                      ),
-                                    ),
-                                  ),
+                            final banner = staticBanners[index];
 
-                                  /// SOFT GRADIENT
-                                  Positioned.fill(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.transparent,
-                                            Colors.black.withOpacity(0.55),
-                                          ],
+                            final controller = Get.find<DashBoardController>();
+                            final allCategories =
+                                controller.categoryList?.data ?? [];
+
+                            if (allCategories.isEmpty) {
+                              return const SizedBox();
+                            }
+
+                            /// Dynamic category mapping
+                            final category =
+                                allCategories[index % allCategories.length];
+
+                            return InkWell(
+                              onTap: () {
+                                print(
+                                    "CLICKED BANNER CATEGORY ID = ${category.id}");
+
+                                controller.getCategoriesToSubCategories(
+                                  id: category.id.toString(),
+                                  limit: '10',
+                                  offset: "1",
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: Positioned.fill(
+                                        child: Image.asset(
+                                          banner.image,
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
-                                  ),
-
-                                  /// ️ TEXT AREA
-                                  Positioned(
-                                    left: 14,
-                                    right: 14,
-                                    bottom: 12,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Colors.white.withOpacity(0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: const Text(
-                                            "Explore",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11,
-                                            ),
+                                    Positioned.fill(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black.withOpacity(0.55),
+                                            ],
                                           ),
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    Positioned(
+                                      left: 14,
+                                      right: 14,
+                                      bottom: 12,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: const Text(
+                                          "Explore",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },
@@ -325,7 +350,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                         ),
-
                         const SizedBox(height: 10),
 
                         /// DOTS INSIDE CARD
@@ -357,47 +381,68 @@ class _HomeScreenState extends State<HomeScreen> {
               if ((controller.topRated?.data ?? []).isNotEmpty)
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// Heading (Outside Card)
-                      const Text(
-                        "Top Rated Services",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
+
+                      GetBuilder<DashBoardController>(
+                        builder: (controller) {
+                          // Agar topRated services available hai tabhi slider show karo
+                          if ((controller.topRated?.data ?? []).isEmpty) return const SizedBox();
+
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                            child: HorizontalAnimatedList(
+                              key: ValueKey(controller.topRated?.data?.length ?? 0), // rebuild fix
+                              data: controller.topRated ?? Services(data: []),
+                              heading: 'Top Rated Services', // heading show karega
+                              imageHeight: 180, // slider me image ka height
+                            ),
+                          );
+                        },
                       ),
 
-                      const SizedBox(height: 12),
 
                       /// Card
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: HorizontalAnimatedList(
-                          imageHeight: 195,
-                          data: controller.topRated ?? Services(data: []),
-                          heading: '',
-                        ),
-                      ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.white,
+                      //     borderRadius: BorderRadius.circular(16),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.black.withOpacity(0.05),
+                      //         blurRadius: 10,
+                      //         offset: const Offset(0, 4),
+                      //       ),
+                      //     ],
+                      //   ),
+                      //   padding: const EdgeInsets.all(12),
+                      //   child: HorizontalAnimatedList(
+                      //     imageHeight: 195,
+                      //     data: controller.topRated ?? Services(data: []),
+                      //     heading: '',
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
-              if ((controller.subCategoryModelListing?.data ?? []).isNotEmpty)
+              if ((controller.subCategoryModelListing?.data ?? [])
+                  .isNotEmpty) ...[
+                /// TEXT SHOW ONLY WHEN DATA AVAILABLE
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  child: Text(
+                    "Recent Services View",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
                 SizedBox(
-                  height: 200, // total height of card
+                  height: 200,
                   child: ListView.separated(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 10),
@@ -407,6 +452,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       final subCategory =
                           controller.subCategoryModelListing!.data![index];
+
                       final isSelected = controller.selectedSubCategories
                           .contains(subCategory);
 
@@ -463,10 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-
                                 const SizedBox(height: 8),
-
-                                /// Title
                                 Text(
                                   subCategory.name ?? "",
                                   maxLines: 2,
@@ -480,10 +523,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         : Colors.black87,
                                   ),
                                 ),
-
                                 const SizedBox(height: 6),
-
-                                /// indicator
                                 AnimatedContainer(
                                   duration: const Duration(milliseconds: 250),
                                   height: 4,
@@ -501,6 +541,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
+              ],
 
               // ///  Second Banner
               // if (controller.banner2.isNotEmpty)
@@ -518,27 +559,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// Heading (Outside Card)
-                      const Text(
-                        "Quick Repairs",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      /// Card
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFFEAF6FB), // soft light blue
+                              Color(0xFFF4FBFF), // lighter shade
+                            ],
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                              color: Colors.black.withOpacity(0.12), // main shadow
+                              blurRadius: 18,
+                              spreadRadius: 2,
+                              offset: Offset(0, 6),
+                            ),
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.7), // soft light highlight
+                              blurRadius: 12,
+                              offset: Offset(0, -3),
                             ),
                           ],
                         ),
@@ -546,9 +588,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: HorizontalAnimatedList(
                           imageHeight: 177,
                           data: controller.quickRepair ?? Services(data: []),
-                          heading: '',
+                          heading: 'Quick Repairs', // nice pro heading
                         ),
                       ),
+
                     ],
                   ),
                 ),
@@ -814,7 +857,7 @@ Widget buildDoFixFooter() {
 
         /// COPYRIGHT
         const Text(
-          "© 2026 DoFix. All rights reserved.",
+          "© 2025 DoFix. All rights reserved.",
           style: TextStyle(
             fontSize: 11,
             color: Color(0xFF8A9AA1),
@@ -823,4 +866,10 @@ Widget buildDoFixFooter() {
       ],
     ),
   );
+}
+
+class BannerModel {
+  final String image;
+
+  BannerModel({required this.image});
 }

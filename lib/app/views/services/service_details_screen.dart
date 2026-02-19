@@ -207,52 +207,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                             //     );
                             //   },
                             // ),
-                            const SizedBox(height: 5),
-                            AnimatedOpacity(
-                              duration: Duration(milliseconds: 300),
-                              opacity: _visible ? 1.0 : 0.0,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    'About the Service:-',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            AnimatedOpacity(
-                              duration: Duration(milliseconds: 300),
-                              opacity: _visible ? 1.0 : 0.0,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: controller.serviceModel.description !=
-                                            null &&
-                                        HtmlUtils.containsHtml(controller
-                                            .serviceModel.description!)
-                                    ? HtmlToFlutter(
-                                        htmlText: controller
-                                                .serviceModel.description ??
-                                            "",
-                                      )
-                                    : Text(
-                                        HtmlUtils.stripHtmlIfPresent(controller
-                                                .serviceModel.description ??
-                                            ""),
-                                        style: TextStyle(
-                                          color: Colors.black.withOpacity(0.6),
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                              ),
-                            ),
+
                             const SizedBox(height: 15),
                             AnimatedOpacity(
                               duration: Duration(milliseconds: 300),
@@ -339,6 +294,52 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                       },
                                     );
                                   },
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            AnimatedOpacity(
+                              duration: Duration(milliseconds: 300),
+                              opacity: _visible ? 1.0 : 0.0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'About the Service:-',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            AnimatedOpacity(
+                              duration: Duration(milliseconds: 300),
+                              opacity: _visible ? 1.0 : 0.0,
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: controller.serviceModel.description !=
+                                    null &&
+                                    HtmlUtils.containsHtml(controller
+                                        .serviceModel.description!)
+                                    ? HtmlToFlutter(
+                                  htmlText: controller
+                                      .serviceModel.description ??
+                                      "",
+                                )
+                                    : Text(
+                                  HtmlUtils.stripHtmlIfPresent(controller
+                                      .serviceModel.description ??
+                                      ""),
+                                  style: TextStyle(
+                                    color: Colors.black.withOpacity(0.6),
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             ),

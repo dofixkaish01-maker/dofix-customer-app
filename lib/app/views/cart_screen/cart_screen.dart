@@ -87,349 +87,384 @@ class _CartScreenState extends State<CartScreen> {
             isCartButtonExist: false,
             showNotificationIcon: false,
           ),
-          body: _items.isEmpty
-              ? SizedBox(
-            height: Get.size.height,
-            width: Get.size.width,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _isLoading
-                    ? Column(
-                  children: const [
-                    CircularProgressIndicator(
-                      color: Color(0xFF207FA7),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      "Loading cart...",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
+          body: SingleChildScrollView(
+            child: _items.isEmpty
+                ? SizedBox(
+              height: Get.size.height * 0.8,
+              width: Get.size.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _isLoading
+                      ? Column(
+                    children: const [
+                      CircularProgressIndicator(
+                        color: Color(0xFF207FA7),
                       ),
-                    ),
-                  ],
-                )
-                    : Column(
-                  children: [
-                    ///  LOTTIE ANIMATION
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24),
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF4F8FB),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 90,
-                            width: 90,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.shopping_cart_outlined,
-                              size: 50,
-                              color: Color(0xFF207FA7),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            "Your cart is empty",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            "Looks like you haven’t added any service yet",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ///  ADD SERVICE BUTTON
-                    GestureDetector(
-                      onTap: () {
-                        /// Dashboard ka home tab
-                        Get.to(() => DashboardScreen(pageIndex: 0,));
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF207FA7),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          "Add Service",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          )
-              : Visibility(
-                  visible: _items.isNotEmpty,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 22,
-                        ),
-                        //add more service
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     showModalBottomSheet(
-                        //       context: context,
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                        //       ),
-                        //       builder: (_) {
-                        //         return AddMoreServiceBottomSheet();
-                        //       },
-                        //     );// user ko service list par le jao
-                        //   },
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                        //     child: Row(
-                        //       children: const [
-                        //         Icon(Icons.add, color: Color(0xFF207FA7)),
-                        //         SizedBox(width: 6),
-                        //         Text(
-                        //           "Add more services",
-                        //           style: TextStyle(
-                        //             color: Color(0xFF207FA7),
-                        //             fontSize: 14,
-                        //             fontWeight: FontWeight.w500,
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                            width: Get.size.width,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: AnimatedList(
-                                key: _listKey,
-                                initialItemCount: _items.length,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder: (context, index, animation) {
-                                  return Column(
-                                    children: [
-                                      SlideTransition(
-                                        position: Tween<Offset>(
-                                          begin: const Offset(1.0, 0.0),
-                                          end: Offset.zero,
-                                        ).animate(CurvedAnimation(
-                                          parent: animation,
-                                          curve: Curves.easeOut,
-                                        )),
-                                        child: HeaderComponent(
-                                          serviceModel: _items[index],
-                                          function: (i) {
-                                            removeItem(index);
-                                          }, // trigger removal
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-          bottomNavigationBar: _items.isNotEmpty
-              ? GetBuilder<DashBoardController>(
-            builder: (controller) {
-              final cartModel = controller.cartModel;
-              final content = cartModel.content;
-              final cart = content?.cart;
-
-              double itemTotal = 0.0;
-              double discount = 0.0;
-              double couponDiscount = 0.0;
-              double tax = 0.0;
-
-              if (cart != null && cart.data != null && cart.data!.isNotEmpty) {
-                final items = cart.data!;
-
-                for (var item in items) {
-                  itemTotal += (item.serviceCost.toDouble() *
-                      item.quantity?.toDouble());
-
-                  discount += item.discountAmount.toDouble();
-                  couponDiscount += item.couponDiscount.toDouble();
-                  tax += item.taxAmount.toDouble();
-                }
-              }
-
-              final double grandTotal =
-              (content?.totalCost ?? 0).toDouble();
-
-              final double wallet =
-              (content?.walletBalance ?? 0).toDouble();
-
-              final double referral =
-              (content?.referralAmount ?? 0).toDouble();
-
-              Widget priceRow(String title, double amount,
-                  {bool isBold = false, Color? color}) {
-                return Padding(
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
-                  child: Row(
-                    children: [
+                      SizedBox(height: 16),
                       Text(
-                        title,
+                        "Loading cart...",
                         style: TextStyle(
-                          fontSize: 13,
-                          fontWeight:
-                          isBold ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        "₹ ${amount.toStringAsFixed(0)}",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight:
-                          isBold ? FontWeight.bold : FontWeight.normal,
-                          color: color ?? Colors.black,
+                          fontSize: 14,
+                          color: Colors.grey,
                         ),
                       ),
                     ],
-                  ),
-                );
-              }
-
-              return Container(
-                width: double.infinity,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 5, vertical: 16),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    priceRow("Item Total", itemTotal),
-                    priceRow("Discount", -discount),
-                    priceRow("Coupon Discount", -couponDiscount),
-                    priceRow("Tax", tax),
-
-                    const Divider(thickness: 1),
-
-                    priceRow("Total Amount", grandTotal, isBold: true),
-
-                    if (wallet > 0)
-                      priceRow("Wallet Used", -wallet, color: Colors.green),
-
-                    if (referral > 0)
-                      priceRow("Referral Used", -referral, color: Colors.green),
-
-                    const SizedBox(height: 6),
-
-                    Text(
-                      "You saved ₹${(discount + couponDiscount).toStringAsFixed(0)}",
-                      style: const TextStyle(color: Colors.green),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    Row(
-                      children: [
-                        const SizedBox(width: 20),
-                        const Text(
-                          'Amount to Pay',
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  )
+                      : Column(
+                    children: [
+                      /// EMPTY CARD
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 24),
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4F8FB),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        const Spacer(),
-                        Text(
-                          "₹ ${grandTotal.toStringAsFixed(0)}",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF207FA7),
-                          ),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 90,
+                              width: 90,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.shopping_cart_outlined,
+                                size: 50,
+                                color: Color(0xFF207FA7),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Your cart is empty",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            const Text(
+                              "Looks like you haven’t added any service yet",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 20),
-                      ],
-                    ),
+                      ),
 
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 24),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: GestureDetector(
+                      /// ADD SERVICE BUTTON
+                      GestureDetector(
                         onTap: () {
-                          Get.to(BookingScreen(
-                            cartTotalPrice: grandTotal,
-                          ));
+                          Get.to(() => DashboardScreen(pageIndex: 0));
                         },
                         child: Container(
-                          height: 50,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 12),
                           decoration: BoxDecoration(
                             color: const Color(0xFF207FA7),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Center(
-                            child: Text(
-                              'Continue',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
+                          child: const Text(
+                            "Add Service",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          )
-              : null,
+                    ],
+                  ),
+                ],
+              ),
+            )
 
+            /// ===================== CART LIST ======================
+                : Column(
+              children: [
+                const SizedBox(height: 22),
+
+                /// CART ITEMS LIST
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Container(
+                    width: Get.size.width,
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: AnimatedList(
+                        key: _listKey,
+                        initialItemCount: _items.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index, animation) {
+                          return Column(
+                            children: [
+                              SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1.0, 0.0),
+                                  end: Offset.zero,
+                                ).animate(CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOut,
+                                )),
+                                child: HeaderComponent(
+                                  serviceModel: _items[index],
+                                  function: (i) {
+                                    removeItem(index);
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+
+                ///  BILLING SUMMARY (SCROLLABLE NOW)
+                GetBuilder<DashBoardController>(
+                  builder: (controller) {
+                    final cartModel = controller.cartModel;
+                    final content = cartModel.content;
+                    final cart = content?.cart;
+
+                    double itemTotal = 0.0;
+                    double discount = 0.0;
+                    double couponDiscount = 0.0;
+                    double tax = 0.0;
+
+                    if (cart != null && cart.data != null && cart.data!.isNotEmpty) {
+                      final items = cart.data!;
+
+                      for (var item in items) {
+                        itemTotal += (item.serviceCost.toDouble() *
+                            item.quantity?.toDouble());
+
+                        discount += item.discountAmount.toDouble();
+                        couponDiscount += item.couponDiscount.toDouble();
+                        tax += item.taxAmount.toDouble();
+                      }
+                    }
+
+                    final double grandTotal =
+                    (content?.totalCost ?? 0).toDouble();
+
+                    final double wallet =
+                    (content?.walletBalance ?? 0).toDouble();
+
+                    final double referral =
+                    (content?.referralAmount ?? 0).toDouble();
+
+                    Widget priceRow(String title, double amount,
+                        {bool isBold = false, Color? color}) {
+                      return Padding(
+                        padding:
+                        const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
+                        child: Row(
+                          children: [
+                            Text(
+                              title,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight:
+                                isBold ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              "₹ ${amount.toStringAsFixed(0)}",
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight:
+                                isBold ? FontWeight.bold : FontWeight.normal,
+                                color: color ?? Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 20,
+                            offset: const Offset(0, -5),
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+
+                          /// HEADER
+                          Row(
+                            children: const [
+                              Icon(Icons.receipt_long, color: Color(0xFF207FA7)),
+                              SizedBox(width: 8),
+                              Text(
+                                "Billing Details",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 14),
+
+                          /// 🔷 CARD BOX
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF7FAFC),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              children: [
+                                priceRow("Item Total", itemTotal),
+                                priceRow("Coupon Discount", couponDiscount, color: Colors.green),
+                                priceRow("Tax & Fee", tax),
+
+                                const Divider(height: 20),
+
+                                priceRow("Total Amount", grandTotal, isBold: true),
+                              ],
+                            ),
+                          ),
+
+                          /// 🔷 WALLET + REFERRAL
+                          if (wallet > 0 || referral > 0) ...[
+                            const SizedBox(height: 10),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEAF7EF),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Column(
+                                children: [
+                                  if (wallet > 0)
+                                    priceRow("Wallet Used", -wallet, color: Colors.green),
+                                  if (referral > 0)
+                                    priceRow("Referral Used", -referral, color: Colors.green),
+                                ],
+                              ),
+                            ),
+                          ],
+
+                          const SizedBox(height: 8),
+
+                          /// 🔷 SAVING TEXT
+                          Text(
+                            "You saved ₹${(discount + couponDiscount).toStringAsFixed(0)} on this order",
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+
+                          const SizedBox(height: 14),
+
+                          /// 🔷 TOTAL PAY BAR
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF207FA7).withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  "To Pay",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Text(
+                                  "₹ ${grandTotal.toStringAsFixed(0)}",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF207FA7),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 18),
+
+                          /// 🔷 CONTINUE BUTTON (MODERN)
+                          InkWell(
+                            borderRadius: BorderRadius.circular(14),
+                            onTap: () {
+                              Get.to(BookingScreen(cartTotalPrice: grandTotal));
+                            },
+                            child: Container(
+                              height: 54,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF207FA7),
+                                    Color(0xFF2FA4D9),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF207FA7).withOpacity(0.4),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Continue to Booking",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 6),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
         ),
       );
     });
@@ -502,7 +537,7 @@ Widget flipkartSummaryCard(DashBoardController controller) {
         const SizedBox(height: 6),
 
         Text(
-          "🎉 You saved ₹${totalSaved.toStringAsFixed(0)} on this order",
+          "You saved ₹${totalSaved.toStringAsFixed(0)} on this order",
           style: const TextStyle(
               color: Colors.green, fontWeight: FontWeight.w600),
         ),
