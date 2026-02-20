@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
@@ -27,13 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
     "9", // Painting
     "11", // Pest Control
   ];
-  final List<String> staticBanners = [
-    'assets/banner/ac.png',
-    'assets/banner/home_ap.png',
-    'assets/banner/home.png',
-    'assets/banner/home_panting.png',
-    'assets/banner/electric.png',
-    'assets/banner/cleaning.png',
+  final List<BannerModel> staticBanners = [
+    BannerModel(image: 'assets/banner/ac.png'),
+    BannerModel(image: 'assets/banner/home_ap.png'),
+    BannerModel(image: 'assets/banner/home.png'),
+    BannerModel(image: 'assets/banner/home_panting.png'),
+    BannerModel(image: 'assets/banner/electric.png'),
+    BannerModel(image: 'assets/banner/cleaning.png')
   ];
 
   @override
@@ -63,22 +64,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
       controller.getFeaturedCategories(
           limit: "6", offset: "1", isShowLoading: true);
-      controller.getTopRated("10", "1", false);
+      controller.getTopRated("10", "1", true);
       controller.getQuickRepair("10", "1", false);
       controller.getBanners();
       controller.homeSubCategoryList;
 
       /// IMPORTANT PART (HOME PE SUB CATEGORY LOAD)
-      if ((controller.categoryList?.data ?? []).isNotEmpty) {
-        final firstCategory = controller.categoryList!.data![0];
-
-        controller.getCategoriesToServices(
-          id: firstCategory.id.toString(),
-          limit: "10",
-          offset: "1",
-          isLoading: false,
-        );
-      }
+      //******** iske wajah se back karne pe re-direct ho ja raha tha (service screen) pe *******
+      // if ((controller.categoryList?.data ?? []).isNotEmpty) {
+      //   final firstCategory = controller.categoryList!.data![0];
+      //
+      //   controller.getCategoriesToServices(
+      //     id: firstCategory.id.toString(),
+      //     limit: "10",
+      //     offset: "1",
+      //     isLoading: false,
+      //   );
+      // }
       controller.getACServices();
     });
   }
@@ -88,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await Future.wait([
       controller.getFeaturedCategories(limit: "6", offset: "1"),
-      controller.getTopRated("10", "1", false),
+      controller.getTopRated("10", "1", true),
       controller.getQuickRepair("10", "1", false),
       controller.getBanners(),
     ]);
@@ -247,68 +249,95 @@ class _HomeScreenState extends State<HomeScreen> {
                         CarouselSlider.builder(
                           itemCount: staticBanners.length,
                           itemBuilder: (context, index, realIndex) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Stack(
-                                children: [
-                                  /// ZOOM IMAGE EFFECT
-                                  Positioned.fill(
-                                    child: Transform.scale(
-                                      scale: 1.10,
-                                      child: Image.asset(
-                                        staticBanners[index],
-                                      ),
-                                    ),
-                                  ),
+                            final banner = staticBanners[index];
 
-                                  /// SOFT GRADIENT
-                                  Positioned.fill(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.transparent,
-                                            Colors.black.withOpacity(0.55),
-                                          ],
+                            final controller = Get.find<DashBoardController>();
+                            final allCategories =
+                                controller.categoryList?.data ?? [];
+
+                            if (allCategories.isEmpty) {
+                              return const SizedBox();
+                            }
+
+                            /// Dynamic category mapping
+                            final category =
+                                allCategories[index % allCategories.length];
+
+                            return InkWell(
+                                onTap: () {
+                                  print(
+                                      "CLICKED BANNER CATEGORY ID = ${category.id}");
+
+                                  controller.getCategoriesToSubCategories(
+                                    id: category.id.toString(),
+                                    limit: '10',
+                                    offset: "1",
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Stack(
+                                    children: [
+                                      /// ZOOM IMAGE EFFECT
+                                      Positioned.fill(
+                                        child: Transform.scale(
+                                          scale: 1.10,
+                                          child: Image.asset(
+                                            banner.image,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
 
-                                  /// ️ TEXT AREA
-                                  Positioned(
-                                    left: 14,
-                                    right: 14,
-                                    bottom: 12,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 4),
+                                      /// SOFT GRADIENT
+                                      Positioned.fill(
+                                        child: Container(
                                           decoration: BoxDecoration(
-                                            color:
-                                                Colors.white.withOpacity(0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: const Text(
-                                            "Explore",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11,
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [
+                                                Colors.transparent,
+                                                Colors.black.withOpacity(0.55),
+                                              ],
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+
+                                      /// ️ TEXT AREA
+                                      Positioned(
+                                        left: 14,
+                                        right: 14,
+                                        bottom: 12,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white
+                                                    .withOpacity(0.2),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: const Text(
+                                                "Explore",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            );
+                                ));
                           },
                           options: CarouselOptions(
                             height: 200,
@@ -372,26 +401,53 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       const SizedBox(height: 12),
 
-                      /// Card
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                      //working ***********************************
+                      GetBuilder<DashBoardController>(
+                        builder: (controller) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: HorizontalAnimatedList(
-                          imageHeight: 195,
-                          data: controller.topRated ?? Services(data: []),
-                          heading: '',
-                        ),
-                      ),
+                            padding: const EdgeInsets.all(12),
+                            child: HorizontalAnimatedList(
+                              key: ValueKey(controller.topRated?.data?.length ??
+                                  0), // rebuild fix
+                              imageHeight: 195,
+                              data: controller.topRated ?? Services(data: []),
+                              heading: '',
+                            ),
+                          );
+                        },
+                      )
+
+                      /// Card
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.white,
+                      //     borderRadius: BorderRadius.circular(16),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.black.withOpacity(0.05),
+                      //         blurRadius: 10,
+                      //         offset: const Offset(0, 4),
+                      //       ),
+                      //     ],
+                      //   ),
+                      //   padding: const EdgeInsets.all(12),
+                      //   child: HorizontalAnimatedList(
+                      //     imageHeight: 195,
+                      //     data: controller.topRated ?? Services(data: []),
+                      //     heading: '',
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -814,7 +870,7 @@ Widget buildDoFixFooter() {
 
         /// COPYRIGHT
         const Text(
-          "© 2026 DoFix. All rights reserved.",
+          "© 2025 DoFix. All rights reserved.",
           style: TextStyle(
             fontSize: 11,
             color: Color(0xFF8A9AA1),
@@ -823,4 +879,10 @@ Widget buildDoFixFooter() {
       ],
     ),
   );
+}
+
+class BannerModel {
+  final String image;
+
+  BannerModel({required this.image});
 }
