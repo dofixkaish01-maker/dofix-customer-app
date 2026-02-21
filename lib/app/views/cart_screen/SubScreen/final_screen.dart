@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:do_fix/widgets/app_snackbar.dart';
 import 'package:do_fix/widgets/common_loading.dart';
 import 'package:do_fix/widgets/custom_snack_bar.dart';
@@ -686,7 +687,8 @@ class _BookingSheetState extends State<BookingSheet> {
                       // Optionally you can uncomment the rest
                       // Get.back();
                     },
-                    buttonText: 'Save Address', width:  MediaQuery.of(context).size.width - 40,
+                    buttonText: 'Save Address',
+                    width: MediaQuery.of(context).size.width - 40,
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -1132,7 +1134,8 @@ class _BookingSheetState extends State<BookingSheet> {
                                       "address": address,
                                       "lat": _selectedLatLng.latitude,
                                       "lng": _selectedLatLng.longitude,
-                                      "zone_id": dashController.zoneIdForBooking,
+                                      "zone_id":
+                                          dashController.zoneIdForBooking,
                                       "message": message,
                                       // can be empty or null
                                       "date": DateConverter.dateTimeForCoupon(
@@ -1149,7 +1152,8 @@ class _BookingSheetState extends State<BookingSheet> {
                                       "service_preference": servicePreference
                                     }, dashController.selectedVariations,
                                         showLoader: true);
-                                  }, isPartial: 0,
+                                  },
+                                  isPartial: 0,
                                 );
                               },
                             ),
@@ -1160,12 +1164,14 @@ class _BookingSheetState extends State<BookingSheet> {
                         ),
                       );
                     },
-                    buttonText: 'Book Now', width:  MediaQuery.of(context).size.width - 40,
+                    buttonText: 'Book Now',
+                    width: MediaQuery.of(context).size.width - 40,
                   ),
                 ),
                 const SizedBox(height: 20),
               ],
-            ),          ),
+            ),
+          ),
         ),
       ),
     );
@@ -1195,8 +1201,8 @@ bool _validateAllFields({
     AppSnackBar.show(
         title: "Invalid Email",
         message: "Please enter a valid email address.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
 
@@ -1204,8 +1210,8 @@ bool _validateAllFields({
     AppSnackBar.show(
         title: "Invalid Mobile",
         message: "Enter a valid 10-digit mobile number.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
 
@@ -1213,8 +1219,8 @@ bool _validateAllFields({
     AppSnackBar.show(
         title: "Location Required",
         message: "Please select a location on the map.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
 
@@ -1233,8 +1239,8 @@ bool _validateAllFields({
     AppSnackBar.show(
         title: "Date Missing",
         message: "Please select a booking date.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
 
@@ -1242,8 +1248,8 @@ bool _validateAllFields({
     AppSnackBar.show(
         title: "Time Missing",
         message: "Please select a booking time.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
 
@@ -1251,42 +1257,42 @@ bool _validateAllFields({
     AppSnackBar.show(
         title: "Name Required",
         message: "Please enter your name.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
   if (mobile.isEmpty) {
-   AppSnackBar.show(
-       title: "Mobile Required",
-       message: "Please enter your mobile number.",
-        backgroundColor: Colors.red, textColor: Colors.white
-   );
+    AppSnackBar.show(
+        title: "Mobile Required",
+        message: "Please enter your mobile number.",
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
   if (email.isEmpty) {
     AppSnackBar.show(
         title: "Email Required",
         message: "Please enter your email address.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
   if (address.isEmpty) {
     AppSnackBar.show(
         title: "Address Required",
         message: "Please enter your address.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
   if (city == null || city.isEmpty) {
     city = "Default City";
     // TODO : publishing -> handle city
-   // AppSnackBar.show(
-   //    title:  "City Required",
-   //     message: "Please enter your city.",
-   //      backgroundColor: Colors.red, textColor: Colors.white
-   // );
+    // AppSnackBar.show(
+    //    title:  "City Required",
+    //     message: "Please enter your city.",
+    //      backgroundColor: Colors.red, textColor: Colors.white
+    // );
     return false;
   }
   if (postalCode == null || postalCode.isEmpty) {
@@ -1323,8 +1329,8 @@ bool _validateAllFields({
     AppSnackBar.show(
         title: "Address Type Required",
         message: "Please select address type.",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
   print(
@@ -1346,48 +1352,74 @@ bool _validateAllFields({
     AppSnackBar.show(
         title: "Error",
         message: "Please fill in all required fields!",
-        backgroundColor: Colors.red, textColor: Colors.white
-    );
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
     return false;
   }
 
   return true;
 }
 
-makeDigitalPayment(
-    {required String bookingId,
-    required Function? onPressed,
-    required Map<String, dynamic> data, required int isPartial}) async {
-  String url = '';
+makeDigitalPayment({
+  required String bookingId,
+  required VoidCallback onPressed,
+  required Map<String, dynamic> data,
+  required int isPartial,
+}) async {
+  debugPrint("makeDigitalPayment CALLED");
+
   await Get.find<DashBoardController>().getUserInfo(false);
+
   SharedPreferences preferences = await SharedPreferences.getInstance();
+
   ApiClient apiClient = ApiClient(
       appBaseUrl: AppConstants.baseUrl, sharedPreferences: preferences);
+
   String zoneId = apiClient.mainHeaders['zone_id'] ??
       "e8554d44-dcf2-47c7-8cf9-400d05a1340f";
+
   String userId = Get.find<DashBoardController>().userModel.id;
-  int isPartial = 0;
+
   String platform = "app";
+
+  // Map<String, dynamic> address = {
+  //   "lat": data["lat"],
+  //   "lon": data["lon"],
+  //   "address_label": data["address_label"],
+  //   "address": data["address"],
+  //   "contact_person_name": data["contact_person_name"],
+  //   "contact_person_number": data["contact_person_number"],
+  // };
+
   Map<String, dynamic> address = {
-    "lat": "${data["lat"]}",
-    "lon": "${data["lng"]}",
-    "address_label": "${data["address_label"]}",
-    "address": "${data["address"]}",
-    "contact_person_name": "${data["name"]}",
-    "contact_person_number": "+91${data["mobile_number"]}",
+    "lat": "28.583653",
+    "lon": "77.307526",
+    "address_label": "service",
+    "address": "5,3,block C,Noida,Uttar Pradesh,201301",
+    "contact_person_name": "GTR",
+    "contact_person_number": "+918978675645"
   };
+
   String encodedAddress = base64Encode(utf8.encode(jsonEncode(address)));
+
   final combined = '${data["date"]} ${data["time"]}';
   final dateTime = DateTime.parse(combined);
 
-// Format as 'yyyy-MM-dd HH:mm:ss'
   final formatted = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
-  debugPrint("encodedError $encodedAddress");
-  url =
-      '${AppConstants.baseUrl}payment?payment_method=razor_pay&access_token=${base64Url.encode(utf8.encode(userId))}&zone_id=$zoneId'
-      '&service_schedule=${formatted}&service_address_id=null&callback=https://panel.dofix.in&service_address=$encodedAddress&new_user_info=null&is_partial=$isPartial&payment_platform=$platform';
+  //
+  String url =
+      '${AppConstants.baseUrl}payment?payment_method=razor_pay'
+      '&access_token=${base64Url.encode(utf8.encode(userId))}'
+      '&zone_id=$zoneId'
+      '&service_schedule=$formatted'
+      '&service_address_id=${data["service_address_id"]}'
+      '&callback=https://panel.dofix.in'
+      '&service_address=${Uri.encodeComponent(encodedAddress)}'
+      '&new_user_info=null'
+      '&is_partial=$isPartial'
+      '&payment_platform=$platform';
 
-  debugPrint("url_with_digital_payment:$url");
+  debugPrint("url_with_digital_payment: $url");
 
   await Get.to(() => PaymentScreen(
         url: url,
@@ -1396,3 +1428,45 @@ makeDigitalPayment(
         data: data,
       ));
 }
+// makeDigitalPayment(
+//     {required String bookingId,
+//     required Function? onPressed,
+//     required Map<String, dynamic> data, required int isPartial}) async {
+//   String url = '';
+//   await Get.find<DashBoardController>().getUserInfo(false);
+//   SharedPreferences preferences = await SharedPreferences.getInstance();
+//   ApiClient apiClient = ApiClient(
+//       appBaseUrl: AppConstants.baseUrl, sharedPreferences: preferences);
+//   String zoneId = apiClient.mainHeaders['zone_id'] ??
+//       "e8554d44-dcf2-47c7-8cf9-400d05a1340f";
+//   String userId = Get.find<DashBoardController>().userModel.id;
+//   int isPartial = 0;
+//   String platform = "app";
+//   Map<String, dynamic> address = {
+//     "lat": "${data["lat"]}",
+//     "lon": "${data["lng"]}",
+//     "address_label": "${data["address_label"]}",
+//     "address": "${data["address"]}",
+//     "contact_person_name": "${data["name"]}",
+//     "contact_person_number": "+91${data["mobile_number"]}",
+//   };
+//   String encodedAddress = base64Encode(utf8.encode(jsonEncode(address)));
+//   final combined = '${data["date"]} ${data["time"]}';
+//   final dateTime = DateTime.parse(combined);
+//
+// // Format as 'yyyy-MM-dd HH:mm:ss'
+//   final formatted = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+//   debugPrint("encodedError $encodedAddress");
+//   url =
+//       '${AppConstants.baseUrl}payment?payment_method=razor_pay&access_token=${base64Url.encode(utf8.encode(userId))}&zone_id=$zoneId'
+//       '&service_schedule=${formatted}&service_address_id=${data["service_address_id"]}&callback=https://panel.dofix.in&service_address=$encodedAddress&new_user_info=null&is_partial=$isPartial&payment_platform=$platform';
+//
+//   debugPrint("url_with_digital_payment:$url");
+//
+//   await Get.to(() => PaymentScreen(
+//         url: url,
+//         fromPage: "switch-payment-method",
+//         onPressed: onPressed,
+//         data: data,
+//       ));
+// }

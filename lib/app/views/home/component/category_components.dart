@@ -127,7 +127,7 @@ class CategoryComponents extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: albertSansRegular.copyWith(
                           fontSize: 11,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],

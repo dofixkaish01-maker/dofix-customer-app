@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 // import 'package:do_fix/app/views/bookingScreen/widgets/custom_cancel_button.dart';
 import 'package:do_fix/app/views/bookingScreen/widgets/custom_invoide_button.dart';
@@ -41,7 +42,7 @@ class BookingDetailScreen extends StatefulWidget {
     required this.locationAddress,
     required this.paymentMethod,
     required this.userComments,
-    this.booking,
+    required this.booking,
   });
 
   @override
@@ -205,6 +206,25 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   }
   @override
   Widget build(BuildContext context) {
+
+
+    final lat = widget.booking?.serviceAddress?.lat ?? "NA";
+    final lon = widget.booking?.serviceAddress?.lon ?? "NA";
+    // logs
+    log("📦 BOOKING OBJECT => ${widget.booking?.toString()}");
+
+    log("📦 SERVICE ADDRESS OBJECT => ${widget.booking?.serviceAddress}");
+
+    log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
+    log("📍 LON RAW => ${widget.booking?.serviceAddress?.lon}");
+
+    log("🏷 ADDRESS LABEL => ${widget.booking?.serviceAddress?.addressLabel}");
+    log("🏠 ADDRESS => ${widget.booking?.serviceAddress?.address}");
+
+    log("👤 CONTACT NAME => ${widget.booking?.serviceAddress?.contactPersonName}");
+    log("📞 CONTACT NUMBER => ${widget.booking?.serviceAddress?.contactPersonNumber}");
+
+
     log("LIST LENGTH : ${dashBoardController.bookingResponse?.content?.detail?.length}");
     log("Current Booking status : ${widget.booking?.bookingStatus}");
     final details = dashBoardController.bookingResponse?.content?.detail ?? [];
@@ -212,7 +232,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     final addOnServices = details.where((d) => d.isAddOn == 1).toList();
     // final bookingDetails = dashBoardController.bookingResponse?.content;
     // "log lat: ${bookingDetails?.serviceAddress?.lat}";
-    // "log lng: ${bookingDetails?.serviceAddress?.lon}";
+    // "log lng: ${widget.booking?.serviceAddress?.lon}";
+
     // "log address id: ${bookingDetails?.serviceAddress?.id}";
     // final bookingDetails = dashBoardController.bookingResponse?.content;
     //
@@ -293,44 +314,130 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             //   log("ZONE ID TYPE: ${booking.zoneId.runtimeType}");
             //
             // },
+            // onTap: () async {
+            //   final booking = widget.booking!;
+            //   final dashController = Get.find<DashBoardController>();
+            //
+            //   log("🔥 BUTTON TAPPED");
+            //
+            //   if (booking.serviceAddressId == null) {
+            //     log("❌ ERROR: serviceAddressId is null");
+            //     return;
+            //   }
+            //
+            //   log("✅ SERVICE ADDRESS ID: ${booking.serviceAddressId}");
+            //
+            //   // Build data map
+            //   final Map<String, dynamic> paymentData = {
+            //     "service_address_id": booking.serviceAddressId,
+            //
+            //     "name":
+            //     "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+            //     "mobile_number":
+            //     dashController.userModel.phone.replaceFirst("+91", ""),
+            //     "email": dashController.userModel.email,
+            //     "address_label": "service",
+            //     "address": widget.locationAddress,
+            //     "lat": booking.serviceAddress?.lat,
+            //     "lng": booking.serviceAddress?.lon,
+            //     "zone_id": booking.zoneId,
+            //     "message": booking.message ?? "",
+            //     "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+            //     "time": formatTimeOfDay24Hour(
+            //       selectedTime ?? TimeOfDay.now(),
+            //     ).toString(),
+            //     "city": booking.serviceAddress?.city,
+            //     "zip_code": booking.serviceAddress?.zipCode,
+            //     "country": booking.serviceAddress?.country,
+            //     "street": booking.serviceAddress?.street,
+            //     "house": booking.serviceAddress?.house,
+            //     "floor": booking.serviceAddress?.floor,
+            //   };
+            //
+            //   // 🔍 PRINT FULL DATA
+            //   log("📦 PAYMENT DATA => ${jsonEncode(paymentData)}");
+            //
+            //   // 🔍 Individual important fields
+            //   log("📍 LAT => ${paymentData["lat"]}");
+            //   log("📍 LNG => ${paymentData["lng"]}");
+            //   log("🏷 ADDRESS LABEL => ${paymentData["address_label"]}");
+            //   log("🏠 ADDRESS => ${paymentData["address"]}");
+            //   log("👤 NAME => ${paymentData["name"]}");
+            //   log("📞 MOBILE => ${paymentData["mobile_number"]}");
+            //   log("🆔 SERVICE ADDRESS ID => ${paymentData["service_address_id"]}");
+            //
+            //   await makeDigitalPayment(
+            //     bookingId: booking.id!,
+            //     isPartial: 0,
+            //     data: paymentData,
+            //     onPressed: () async {
+            //       await dashController.getBookingDetails(booking.id!);
+            //       setState(() {});
+            //     },
+            //   );
+            //
+            //   log("🚀 makeDigitalPayment CALLED");
+            // },
+
             onTap: () async {
+
+              log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
+              log("📍 LON RAW => ${widget.booking?.serviceAddress?.lon}");
+
               final booking = widget.booking!;
               final dashController = Get.find<DashBoardController>();
+
+              log("BUTTON TAPPED");
+              log("log lng: ${widget.booking?.serviceAddress?.lon}");
 
               if (booking.serviceAddressId == null) {
                 log("ERROR: serviceAddressId is null");
                 return;
               }
 
-              log("SERVICE ADDRESS ID: ${booking.serviceAddressId}");
+              await dashController.getUserInfo(false);
+
+              final address = booking.serviceAddress;
+
+              log("ADDRESS MODEL => ${jsonEncode(address?.toJson())}");
+
+              final Map<String, dynamic> paymentData = {
+                "service_address_id": booking.serviceAddressId,
+
+                "contact_person_name": address?.contactPersonName ??
+                    "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+
+                "contact_person_number": address?.contactPersonNumber ??
+                    dashController.userModel.phone,
+
+                "name": address?.contactPersonName ??
+                    "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+
+                "mobile_number": address?.contactPersonNumber
+                    ?.replaceAll("+91", "") ??
+                    dashController.userModel.phone.replaceAll("+91", ""),
+
+                "email": dashController.userModel.email,
+
+                "address_label": address?.addressLabel,
+                "address": address?.address,
+
+                "lat": address?.lat,
+                "lon": address?.lon,
+
+                "zone_id": booking.zoneId,
+                "message": booking.message,
+
+                "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+                "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
+              };
+
+              log("PAYMENT DATA => ${jsonEncode(paymentData)}");
 
               await makeDigitalPayment(
                 bookingId: booking.id!,
                 isPartial: 0,
-                data: {
-                  "service_address_id": booking.serviceAddressId, // ✅ ADD THIS
-
-                  "name":
-                  "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
-                  "mobile_number": dashController.userModel.phone.replaceFirst("+91", ""),
-                  "email": dashController.userModel.email,
-                  "address_label": "service",
-                  "address": widget.locationAddress,
-                  "lat": booking.serviceAddress?.lat,
-                  "lng": booking.serviceAddress?.lon,
-                  "zone_id": booking.zoneId,
-                  "message": booking.message ?? "",
-                  "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                  "time": formatTimeOfDay24Hour(
-                    selectedTime ?? TimeOfDay.now(),
-                  ).toString(),
-                  "city": booking.serviceAddress?.city,
-                  "zip_code": booking.serviceAddress?.zipCode,
-                  "country": booking.serviceAddress?.country,
-                  "street": booking.serviceAddress?.street,
-                  "house": booking.serviceAddress?.house,
-                  "floor": booking.serviceAddress?.floor,
-                },
+                data: paymentData,
                 onPressed: () async {
                   await dashController.getBookingDetails(booking.id!);
                   setState(() {});
@@ -339,7 +446,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
               log("makeDigitalPayment CALLED");
             },
-
 
             child: Container(
               height: 48,
@@ -751,6 +857,15 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         fontSize: Dimensions.fontSizeDefault,
                         color: Colors.black,
                       ),
+                    ),
+                    Text(
+                      "Latitude: $lat",
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Longitude: $lon",
+                      style: const TextStyle(fontSize: 18),
                     ),
                     SizedBox(width: 8),
                     Expanded(
