@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:do_fix/app/views/dashboard/dashboard_screen.dart';
 import 'package:do_fix/app/views/services/service_details_screen.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
@@ -83,6 +82,9 @@ class DashBoardController extends GetxController implements GetxService {
   RxBool isGuest = true.obs;
   RxBool createBookingLoader = false.obs;
   bool isFetchingCategories = false;
+  TextEditingController searchController = TextEditingController();
+  List<AddressData> filteredAddresses = [];
+  List<Map<String, dynamic>> recentAddresses = [];
 
   ApiResponse apiResponse = ApiResponse(
       responseCode: '',
@@ -95,11 +97,47 @@ class DashBoardController extends GetxController implements GetxService {
   @override
   void onInit() {
     super.onInit();
-
+    // Auto location fetch
+    _autoFetchLocation();
     // Initial calls for Dashboard
     getFeaturedCategories(limit: "50", offset: "1", forDashboard: true); // Only 6 for dashboard
     getTopRated("10", "1", false);
     getQuickRepair("10", "1", false);
+    getAddressLists();
+  }
+
+  void filterAddresses(String query) {
+    if (query.isEmpty) {
+      filteredAddresses = addressResponse.data ?? [];
+    } else {
+      filteredAddresses = addressResponse.data!
+          .where((address) =>
+      (address.address ?? "")
+          .toLowerCase()
+          .contains(query.toLowerCase()) ||
+          (address.addressType ?? "")
+              .toLowerCase()
+              .contains(query.toLowerCase()))
+          .toList();
+    }
+
+    update();
+  }
+
+  Future<void> _autoFetchLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      print("Location permission not granted");
+      return;
+    }
+
+    await fetchUserLocation(); //hamara already existing function
   }
 
   Future<void> getFeaturedCategories({
@@ -635,6 +673,7 @@ class DashBoardController extends GetxController implements GetxService {
             .toString()
             .contains("Successfully data fetched")) {
           addressResponse = AddressResponse.fromJson(responseData['content']);
+          log("Address List Length: ${addressResponse.data.length}");
           debugPrint("Service Model: ${serviceModel.variations?.length}");
           hideLoading();
           update();
@@ -1821,48 +1860,59 @@ class DashBoardController extends GetxController implements GetxService {
   }
 
   Future<void> requestLocationPermission() async {
-    LocationPermission permission = await Geolocator.checkPermission();
+    showLoading();
 
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+
       if (permission == LocationPermission.denied) {
-        print("Location permission denied.");
-        // Still continue to home screen, but use default location
-        DashboardScreen.globalKey.currentState?.setPage(0);
-        hideLoading();
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        showCustomSnackBar(
+          "Location permission denied. Enable from settings.",
+          isError: false,
+        );
         return;
       }
-    }
 
-    if (permission == LocationPermission.deniedForever) {
-      log("Location permission permanently denied. Enable from settings.");
-
-      DashboardScreen.globalKey.currentState?.setPage(0);
+      await fetchUserLocation();
+    } catch (e) {
+      print("Location error: $e");
+    } finally {
       hideLoading();
-      showCustomSnackBar(
-          "Location permission denied. You can manually select your location in settings.",
-          isError: false);
-      return;
     }
-    await fetchUserLocation();
   }
 
   Future<void> fetchUserLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    log("dddd Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
 
-    if (kDebugMode) {
-      latitude = 28.5503;
-      longitude = 77.2502;
-    } else {
-      longitude = position.longitude;
-      latitude = position.latitude;
+      log("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+
+      if (kDebugMode) {
+        latitude = 28.5503;
+        longitude = 77.2502;
+      } else {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      }
+
+      update();
+
+      await getZone();
+
+    } catch (e) {
+      log("Location fetch error: $e");
+      showCustomSnackBar("Unable to fetch location", isError: true);
     }
-    update();
-    Future.delayed(Duration(milliseconds: 10));
-    await getZone();
   }
 
   UserModel userModel = UserModel(

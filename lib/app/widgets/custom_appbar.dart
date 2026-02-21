@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:do_fix/app/views/cart_screen/cart_screen.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../user_address/address_selection_screen.dart';
 import '../../utils/dimensions.dart';
 import '../../utils/sizeboxes.dart';
 import '../../utils/styles.dart';
@@ -223,9 +223,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                                   visible: controller.address != null &&
                                       controller.address!.isNotEmpty,
                                   child: InkWell(
-                                    onTap: () {
+                                    onTap: ()async{
                                       debugPrint(
                                           "Address value : ${controller.address} ");
+                                      await Get.find<DashBoardController>().getAddressLists();
+                                      Get.to(() => AddressSelectionScreen());
                                     },
                                     child: Container(
                                       constraints:

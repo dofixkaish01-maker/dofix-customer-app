@@ -680,20 +680,17 @@ class _BookingScreenState extends State<BookingScreen> {
                         userId: "",
                         lat: _selectedLatLng.latitude,
                         lon: _selectedLatLng.longitude,
-                        city: city,
-                        street: street,
-                        zipCode: postalCode,
-                        country: country,
+                        city: city.isEmpty ? mapController.text : city,                        street: streetController.text.trim(),
+                        zipCode: postalController.text.trim(),
+                        country: countryController.text.trim(),
                         address:
                             "${houseController.text.trim()},${floorController.text.trim()},${streetController.text.trim()},${city.trim()},${stateController.text.trim()},${postalCode.trim()}",
                         createdAt: DateTime.now().toString(),
                         updatedAt: DateTime.now().toString(),
                         addressType: addressType,
-                        contactPersonName: Get.find<DashBoardController>()
-                                .userModel
-                                .firstName +
-                            " " +
-                            Get.find<DashBoardController>().userModel.lastName,
+                        contactPersonName:
+                        "${Get.find<DashBoardController>().userModel.firstName ?? ''} "
+                            "${Get.find<DashBoardController>().userModel.lastName ?? ''}",
                         contactPersonNumber:
                             Get.find<DashBoardController>().userModel.phone,
                         addressLabel: addressType,
