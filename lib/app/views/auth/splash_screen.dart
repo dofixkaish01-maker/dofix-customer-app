@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/auth_controller.dart';
+import '../../../controllers/tracking_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +21,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _route(); // Call the navigation function
+    Future.delayed(Duration(seconds: 3), () {
+      _route();
+      TrackingController.requestTracking();
+    });
   }
 
   void _route() {

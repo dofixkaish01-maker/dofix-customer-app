@@ -265,6 +265,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                                                   ),
                                                 ),
                                               ),
+                                              Icon(
+                                                Icons.keyboard_arrow_down,
+                                                color: Colors.white,
+                                                size: 18,
+                                              ),
                                             ],
                                           ),
                                           SizedBox(

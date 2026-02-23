@@ -207,12 +207,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   @override
   Widget build(BuildContext context) {
 
-
-    final lat = widget.booking?.serviceAddress?.lat ?? "NA";
-    final lon = widget.booking?.serviceAddress?.lon ?? "NA";
-    // logs
-    log("📦 BOOKING OBJECT => ${widget.booking?.toString()}");
-
     log("📦 SERVICE ADDRESS OBJECT => ${widget.booking?.serviceAddress}");
 
     log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
@@ -380,8 +374,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             // },
 
             onTap: () async {
-
-              log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
+              print("SERVICE ADDRESS RAW => ${widget.booking?.serviceAddress?.toJson()}");
+              log("📍 LON RAW => ${widget.booking?.serviceAddress?.lon}");
               log("📍 LON RAW => ${widget.booking?.serviceAddress?.lon}");
 
               final booking = widget.booking!;
@@ -857,15 +851,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         fontSize: Dimensions.fontSizeDefault,
                         color: Colors.black,
                       ),
-                    ),
-                    Text(
-                      "Latitude: $lat",
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Longitude: $lon",
-                      style: const TextStyle(fontSize: 18),
                     ),
                     SizedBox(width: 8),
                     Expanded(

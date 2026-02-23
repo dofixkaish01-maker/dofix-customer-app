@@ -87,7 +87,7 @@ class _AccountScreenState extends State<AccountScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Get.back(); //  Cancel
+              Navigator.pop(context);//  Cancel
             },
             child: Text(
               'Cancel',
