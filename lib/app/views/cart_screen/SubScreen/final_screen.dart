@@ -1382,23 +1382,32 @@ makeDigitalPayment({
 
   String platform = "app";
 
+  Map<String, dynamic> address = {
+    "lat": data["lat"],
+    "lon": data["lon"],
+    "address_label": data["address_label"],
+    "address": data["address"],
+    "contact_person_name": data["contact_person_name"],
+    "contact_person_number": data["contact_person_number"],
+  };
+
   // Map<String, dynamic> address = {
-  //   "lat": data["lat"],
-  //   "lon": data["lon"],
-  //   "address_label": data["address_label"],
-  //   "address": data["address"],
+  //   "lat": "28.583653",
+  //   "lon": "77.307526",
+  //   "address_label": "service",
+  //   "address": "5,3,block C,Noida,Uttar Pradesh,201301",
   //   "contact_person_name": data["contact_person_name"],
   //   "contact_person_number": data["contact_person_number"],
   // };
 
-  Map<String, dynamic> address = {
-    "lat": "28.583653",
-    "lon": "77.307526",
-    "address_label": "service",
-    "address": "5,3,block C,Noida,Uttar Pradesh,201301",
-    "contact_person_name": "GTR",
-    "contact_person_number": "+918978675645"
-  };
+  // Map<String, dynamic> address = {
+  //   "lat": "28.583653",
+  //   "lon": "77.307526",
+  //   "address_label": "service",
+  //   "address": "5,3,block C,Noida,Uttar Pradesh,201301",
+  //   "contact_person_name": "GTR",
+  //   "contact_person_number": "+918978675645"
+  // };
 
   String encodedAddress = base64Encode(utf8.encode(jsonEncode(address)));
 

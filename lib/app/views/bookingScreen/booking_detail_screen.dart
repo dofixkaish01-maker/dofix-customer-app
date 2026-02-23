@@ -374,9 +374,15 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             // },
 
             onTap: () async {
-              print("SERVICE ADDRESS RAW => ${widget.booking?.serviceAddress?.toJson()}");
+              // "lat": null,
+              // "lon": null,
+              // "address_label": null,
+              // "address": null,
+
               log("📍 LON RAW => ${widget.booking?.serviceAddress?.lon}");
-              log("📍 LON RAW => ${widget.booking?.serviceAddress?.lon}");
+              log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
+              log("📍 ADDRESS LABEL RAW => ${widget.booking?.serviceAddress?.lon}");
+              log("📍 ADDRESS RAW => ${widget.booking?.serviceAddress?.lon}");
 
               final booking = widget.booking!;
               final dashController = Get.find<DashBoardController>();
@@ -413,6 +419,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
                 "email": dashController.userModel.email,
 
+                //*********** Working ***********
                 "address_label": address?.addressLabel,
                 "address": address?.address,
 

@@ -821,6 +821,8 @@ class NewCustomButtonWidget extends StatelessWidget {
   final IconData? icon;
   final bool transparent;
   final double? width;
+  final Color borderSideColor;
+  final Color textColor;
 
   const NewCustomButtonWidget({
     super.key,
@@ -829,44 +831,45 @@ class NewCustomButtonWidget extends StatelessWidget {
     this.color,
     this.icon,
     this.transparent = false,
-    this.width, required Color borderSideColor, required Color textColor,
+    this.width,
+    required this.borderSideColor,
+    required this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: width ?? double.infinity,
-      height: 48,
+      height: 52, // little taller for premium feel
       child: ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
-          elevation: MaterialStateProperty.all(transparent ? 0 : 2),
+          elevation: MaterialStateProperty.all(transparent ? 0 : 4),
+
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14), // smooth premium curve
+            ),
+          ),
 
           backgroundColor: MaterialStateProperty.resolveWith<Color>(
                 (states) {
-              if (transparent) {
-                return Colors.transparent;
-              }
+              if (transparent) return Colors.transparent;
               if (states.contains(MaterialState.disabled)) {
-                return Colors.grey.shade400; // ✅ disabled gray
+                return Colors.grey.shade400;
               }
-              return color ?? Theme.of(context).primaryColor;
+              return color ?? Colors.red; // default red
             },
           ),
 
-          foregroundColor: MaterialStateProperty.all(
-            transparent
-                ? Theme.of(context).primaryColor
-                : Colors.white,
-          ),
+          foregroundColor: MaterialStateProperty.all(textColor),
 
-          side: transparent
-              ? MaterialStateProperty.all(
+          side: MaterialStateProperty.all(
             BorderSide(
-              color: Theme.of(context).primaryColor,
+              color: borderSideColor, //  red border
+              width: 1.5,
             ),
-          )
-              : null,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -875,10 +878,85 @@ class NewCustomButtonWidget extends StatelessWidget {
               Icon(icon, size: 18),
               const SizedBox(width: 8),
             ],
-            Text(buttonText),
+            Text(
+              buttonText,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+                letterSpacing: 0.5,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+// class NewCustomButtonWidget extends StatelessWidget {
+//   final VoidCallback? onPressed;
+//   final String buttonText;
+//   final Color? color;
+//   final IconData? icon;
+//   final bool transparent;
+//   final double? width;
+//
+//   const NewCustomButtonWidget({
+//     super.key,
+//     required this.onPressed,
+//     required this.buttonText,
+//     this.color,
+//     this.icon,
+//     this.transparent = false,
+//     this.width, required Color borderSideColor, required Color textColor,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       width: width ?? double.infinity,
+//       height: 48,
+//       child: ElevatedButton(
+//         onPressed: onPressed,
+//         style: ButtonStyle(
+//           elevation: MaterialStateProperty.all(transparent ? 0 : 2),
+//
+//           backgroundColor: MaterialStateProperty.resolveWith<Color>(
+//                 (states) {
+//               if (transparent) {
+//                 return Colors.transparent;
+//               }
+//               if (states.contains(MaterialState.disabled)) {
+//                 return Colors.grey.shade400; // ✅ disabled gray
+//               }
+//               return color ?? Theme.of(context).primaryColor;
+//             },
+//           ),
+//
+//           foregroundColor: MaterialStateProperty.all(
+//             transparent
+//                 ? Theme.of(context).primaryColor
+//                 : Colors.white,
+//           ),
+//
+//           side: transparent
+//               ? MaterialStateProperty.all(
+//             BorderSide(
+//               color: Theme.of(context).primaryColor,
+//             ),
+//           )
+//               : null,
+//         ),
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             if (icon != null) ...[
+//               Icon(icon, size: 18),
+//               const SizedBox(width: 8),
+//             ],
+//             Text(buttonText),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
