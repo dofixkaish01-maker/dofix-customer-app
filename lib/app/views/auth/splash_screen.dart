@@ -21,10 +21,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
-      _route();
-      TrackingController.requestTracking();
-    });
+    _initApp();
+  }
+
+  Future<void> _initApp() async {
+    await TrackingController.requestTracking();
+    await Future.delayed(Duration(seconds: 3));
+    _route();
   }
 
   void _route() {
