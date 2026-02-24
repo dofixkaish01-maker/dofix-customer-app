@@ -106,5 +106,24 @@
         </dict>
     </array>
 
+    <!-- Facebook Meta Configuration -->
+    <key>FacebookAppID</key>
+    <string>26065870076366059</string>
+
+    <key>FacebookDisplayName</key>
+    <string>DoFix</string>
+
+    <key>FacebookClientToken</key>
+    <string>YOUR_REAL_CLIENT_TOKEN_HERE</string>
+
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>fb26065870076366059</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>
