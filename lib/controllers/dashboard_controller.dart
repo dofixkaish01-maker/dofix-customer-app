@@ -915,6 +915,10 @@ class DashBoardController extends GetxController implements GetxService {
       "is_partial": 0,
       "new_user_info": null,
       "payment_method": body['payment_method'],
+      // NEW KEYS ADD HERE
+      "assign_customer_name": "${body["assign_customer_name"]}",
+      "assign_customer_phone": "${body["assign_customer_phone"]}",
+      "assign_customer_email": "${body["assign_customer_email"]}",
       "service_address": json.encode(
         {
           "id": null,

@@ -54,6 +54,10 @@ class _BookingScreenState extends State<BookingScreen> {
   final TextEditingController stateController = TextEditingController();
   final TextEditingController postalController = TextEditingController();
 
+  TextEditingController assignNameController = TextEditingController();
+  TextEditingController assignPhoneController = TextEditingController();
+  TextEditingController assignEmailController = TextEditingController();
+
   final FocusNode addressFocus = FocusNode();
   final FocusNode mapFocus = FocusNode();
   AddressData? selectedAddress;
@@ -888,6 +892,9 @@ class _BookingScreenState extends State<BookingScreen> {
                           street: streetController.text.trim(),
                           addressType: addressType,
                           selectedVariations: dashController.selectedVariations,
+                          assignCustomerName: assignNameController.text.trim(),
+                          assignCustomerPhone: assignPhoneController.text.trim(),
+                          assignCustomerEmail: assignEmailController.text.trim(),
                         )) return;
                         if (selected == "COD") {
                           // showLoading();
@@ -916,7 +923,12 @@ class _BookingScreenState extends State<BookingScreen> {
                             "zip_code": postalCode,
                             "country": country,
                             "street": street,
-                            "service_preference": servicePreference
+                            "service_preference": servicePreference,
+                            // ADD THESE 3 LINES
+                            "assign_customer_name": assignNameController.text.trim(),
+                            "assign_customer_phone": assignPhoneController.text.trim(),
+                            "assign_customer_email": assignEmailController.text.trim(),
+
                           }, dashController.selectedVariations,
                               showLoader: false);
                           await dashController.getCartListing(
@@ -1277,6 +1289,83 @@ class _BookingScreenState extends State<BookingScreen> {
                               ),
                             ),
                           ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 15),
+
+// ASSIGN CUSTOMER DETAILS UI
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Assign Customer Details",
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Name Field
+                        TextField(
+                          controller: assignNameController,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: InputDecoration(
+                            labelText: "Customer Name",
+                            hintText: "Enter full name",
+                            prefixIcon: Icon(Icons.person_outline),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Phone Field (12 digit fixed)
+                        TextField(
+                          controller: assignPhoneController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 10,
+                          decoration: InputDecoration(
+                            labelText: "Customer Phone",
+                            hintText: "Enter 10 digit number",
+                            counterText: "", // removes counter text UI
+                            prefixIcon: Icon(Icons.phone_android),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (value.length > 12) {
+                              assignPhoneController.text = value.substring(0, 12);
+                              assignPhoneController.selection = TextSelection.fromPosition(
+                                TextPosition(offset: assignPhoneController.text.length),
+                              );
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Email Field
+                        TextField(
+                          controller: assignEmailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            labelText: "Customer Email",
+                            hintText: "example@gmail.com",
+                            prefixIcon: Icon(Icons.email_outlined),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -1646,6 +1735,8 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 }
 
+
+
 bool _validateAllFields({
   required String name,
   required String mobile,
@@ -1661,7 +1752,33 @@ bool _validateAllFields({
   required String? street,
   required dynamic addressType,
   required List selectedVariations,
+  /// NEW → Assign Customer
+  required String assignCustomerName,
+  required String assignCustomerPhone,
+  required String assignCustomerEmail,
 }) {
+  /// ASSIGN CUSTOMER VALIDATION
+
+  if (assignCustomerName.trim().isEmpty) {
+    _error("Customer Name Required", "Please enter assigned customer name");
+    return false;
+  }
+
+  if (assignCustomerName.trim().length < 3) {
+    _error("Invalid Name", "Customer name must be at least 3 characters");
+    return false;
+  }
+
+  if (!RegExp(r'^[6-9]\d{9}$').hasMatch(assignCustomerPhone)) {
+    _error("Invalid Customer Mobile", "Enter valid 10-digit customer mobile number");
+    return false;
+  }
+
+  if (!GetUtils.isEmail(assignCustomerEmail)) {
+    _error("Invalid Customer Email", "Enter valid customer email address");
+    return false;
+  }
+
   if (name.trim().isEmpty) {
     _error("Name Required", "Please enter your name");
     return false;

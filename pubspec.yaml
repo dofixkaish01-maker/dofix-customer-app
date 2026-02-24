@@ -65,7 +65,6 @@ dependencies:
   firebase_core: ^4.4.0
   firebase_messaging: ^16.1.1
   app_tracking_transparency: ^2.0.6+1
-#  facebook_audience_network: ^1.0.1
 
 dev_dependencies:
   flutter_test:
