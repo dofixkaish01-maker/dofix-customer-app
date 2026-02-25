@@ -255,145 +255,366 @@ class _BookingScreenState extends State<BookingScreen> {
 
     return child;
   }
-
   void showAddressChoiceDialog(
-    BuildContext context,
-    List<AddressData> addressList,
-    Function(AddressData) onSelectAddress,
-  ) {
+      BuildContext context,
+      List<AddressData> addressList,
+      Function(AddressData) onSelectAddress,
+      ) {
     if (addressList.isEmpty) {
-      // Show AlertDialog when list is empty
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            title: const Text("No Saved Addresses"),
-            content: const Text("You don't have any saved addresses yet."),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20)),
+            title: const Text(
+              "No Saved Addresses",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: const Text(
+              "You don't have any saved addresses yet.",
+            ),
+            actionsAlignment: MainAxisAlignment.center,
             actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  showAddNewAddressDialog(context);
-                  setState(() {
-                    selectedAddress = null;
-                  });
-                },
-                child: const Text("Add New Address"),
-              ),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.add),
+                  label: const Text("Add New Address"),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    showAddNewAddressDialog(context);
+                  },
+                ),
+              )
             ],
           );
         },
       );
-    } else {
-      // Show ModalBottomSheet with StatefulBuilder
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (context) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              return DraggableScrollableSheet(
-                expand: false,
-                initialChildSize: 0.6,
-                minChildSize: 0.4,
-                maxChildSize: 0.9,
-                builder: (_, controller) {
-                  return SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Choose Address",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius:
+                BorderRadius.vertical(top: Radius.circular(25)),
+              ),
+              child: Column(
+                children: [
+
+                  /// Drag Handle
+                  Container(
+                    margin: const EdgeInsets.only(top: 10, bottom: 8),
+                    height: 5,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+
+                  /// Header Row
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Choose Address",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 10),
-                          // ListTile(
-                          //   onTap: () async {
-                          //     debugPrint("Use Current Location");
-                          //     await _setInitialLocation();
-                          //     setState(() {
-                          //       debugPrint("Use Current Location setstate");
-                          //       selectedAddress = null;
-                          //       // Navigator.of(context).pop();
-                          //       Get.back();
-                          //     });
-                          //   },
-                          //   leading: Icon(
-                          //     selectedAddress != null
-                          //         ? Icons.location_searching
-                          //         : Icons.my_location,
-                          //     color: Colors.blue,
-                          //   ),
-                          //   title: const Text("Use Current Location"),
-                          // ),
-                          const Divider(),
-                          Expanded(
-                            child: ListView.builder(
-                              controller: controller,
-                              itemCount: addressList.length,
-                              itemBuilder: (context, index) {
-                                final address = addressList[index];
-                                return RadioListTile<AddressData>(
-                                  value: address,
-                                  selected: selectedAddress == address,
-                                  groupValue: selectedAddress,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedAddress = value;
-                                    });
-                                    onSelectAddress(value!);
-                                  },
-                                  title: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                        ),
+
+                        /// Cancel Icon
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.close, size: 20),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+                  const Divider(),
+
+                  /// Address List
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: addressList.length,
+                      itemBuilder: (context, index) {
+                        final address = addressList[index];
+                        final isSelected = selectedAddress == address;
+
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedAddress = address;
+                            });
+                            onSelectAddress(address);
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 6),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Colors.blue.withOpacity(0.08)
+                                  : Colors.grey.shade100,
+                              borderRadius:
+                              BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isSelected
+                                    ? Colors.blue
+                                    : Colors.transparent,
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: isSelected
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: Text(
-                                          "(${CommonFunctions().capitalizeFirstLetter(address.addressLabel)}) ${address.address}",
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                      Text(
+                                        CommonFunctions()
+                                            .capitalizeFirstLetter(
+                                            address.addressLabel),
+                                        style: const TextStyle(
+                                            fontWeight:
+                                            FontWeight.w600),
                                       ),
-                                      // IconButton(
-                                      //   icon: const Icon(Icons.edit,
-                                      //       color: Colors.grey),
-                                      //   onPressed: () {
-                                      //     Navigator.of(context).pop();
-                                      //     showAddNewAddressDialog(context);
-                                      //   },
-                                      // ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        address.address,
+                                        maxLines: 2,
+                                        overflow:
+                                        TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.black54),
+                                      ),
                                     ],
                                   ),
-                                );
-                              },
+                                ),
+                                if (isSelected)
+                                  const Icon(Icons.check_circle,
+                                      color: Colors.blue)
+                              ],
                             ),
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              showAddNewAddressDialog(context);
-                            },
-                            child: const Text("Add New Address"),
+                        );
+                      },
+                    ),
+                  ),
+
+                  /// Add New Address Button
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16,left: 16,right: 16,bottom: 20),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.add, size: 20),
+                        label: const Text(
+                          "Add New Address",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
                           ),
-                        ],
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          side: const BorderSide(
+                            color: Colors.blue,   // Border Color Added
+                            width: 1.5,
+                          ),
+                          foregroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          showAddNewAddressDialog(context);
+                        },
                       ),
                     ),
-                  );
-                },
-              );
-            },
-          );
-        },
-      );
-    }
+                  ),                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
+  // void showAddressChoiceDialog(
+  //   BuildContext context,
+  //   List<AddressData> addressList,
+  //   Function(AddressData) onSelectAddress,
+  // ) {
+  //   if (addressList.isEmpty) {
+  //     // Show AlertDialog when list is empty
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           shape:
+  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+  //           title: const Text("No Saved Addresses"),
+  //           content: const Text("You don't have any saved addresses yet."),
+  //           actions: [
+  //             OutlinedButton(
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //                 showAddNewAddressDialog(context);
+  //                 setState(() {
+  //                   selectedAddress = null;
+  //                 });
+  //               },
+  //               child: const Text("Add New Address"),
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     );
+  //   } else {
+  //     // Show ModalBottomSheet with StatefulBuilder
+  //     showModalBottomSheet(
+  //       context: context,
+  //       isScrollControlled: true,
+  //       shape: const RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //       ),
+  //       builder: (context) {
+  //         return StatefulBuilder(
+  //           builder: (context, setState) {
+  //             return DraggableScrollableSheet(
+  //               expand: false,
+  //               initialChildSize: 0.6,
+  //               minChildSize: 0.4,
+  //               maxChildSize: 0.9,
+  //               builder: (_, controller) {
+  //                 return SafeArea(
+  //                   child: Padding(
+  //                     padding: const EdgeInsets.all(16),
+  //                     child: Column(
+  //                       children: [
+  //                         const Text(
+  //                           "Choose Address",
+  //                           style: TextStyle(
+  //                               fontSize: 18, fontWeight: FontWeight.bold),
+  //                         ),
+  //                         const SizedBox(height: 10),
+  //                         // ListTile(
+  //                         //   onTap: () async {
+  //                         //     debugPrint("Use Current Location");
+  //                         //     await _setInitialLocation();
+  //                         //     setState(() {
+  //                         //       debugPrint("Use Current Location setstate");
+  //                         //       selectedAddress = null;
+  //                         //       // Navigator.of(context).pop();
+  //                         //       Get.back();
+  //                         //     });
+  //                         //   },
+  //                         //   leading: Icon(
+  //                         //     selectedAddress != null
+  //                         //         ? Icons.location_searching
+  //                         //         : Icons.my_location,
+  //                         //     color: Colors.blue,
+  //                         //   ),
+  //                         //   title: const Text("Use Current Location"),
+  //                         // ),
+  //                         const Divider(),
+  //                         Expanded(
+  //                           child: ListView.builder(
+  //                             controller: controller,
+  //                             itemCount: addressList.length,
+  //                             itemBuilder: (context, index) {
+  //                               final address = addressList[index];
+  //                               return RadioListTile<AddressData>(
+  //                                 value: address,
+  //                                 selected: selectedAddress == address,
+  //                                 groupValue: selectedAddress,
+  //                                 onChanged: (value) {
+  //                                   setState(() {
+  //                                     selectedAddress = value;
+  //                                   });
+  //                                   onSelectAddress(value!);
+  //                                 },
+  //                                 title: Row(
+  //                                   mainAxisAlignment:
+  //                                       MainAxisAlignment.spaceBetween,
+  //                                   children: [
+  //                                     Expanded(
+  //                                       child: Text(
+  //                                         "(${CommonFunctions().capitalizeFirstLetter(address.addressLabel)}) ${address.address}",
+  //                                         maxLines: 2,
+  //                                         overflow: TextOverflow.ellipsis,
+  //                                       ),
+  //                                     ),
+  //                                     // IconButton(
+  //                                     //   icon: const Icon(Icons.edit,
+  //                                     //       color: Colors.grey),
+  //                                     //   onPressed: () {
+  //                                     //     Navigator.of(context).pop();
+  //                                     //     showAddNewAddressDialog(context);
+  //                                     //   },
+  //                                     // ),
+  //                                   ],
+  //                                 ),
+  //                               );
+  //                             },
+  //                           ),
+  //                         ),
+  //                         TextButton(
+  //                           onPressed: () {
+  //                             Navigator.of(context).pop();
+  //                             showAddNewAddressDialog(context);
+  //                           },
+  //                           child: const Text("Add New Address"),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             );
+  //           },
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
 
   void showAddNewAddressDialog(BuildContext context) {
     showModalBottomSheet(
@@ -799,6 +1020,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           //   },
                           // );
                           // }
+
                         },
                       );
 
@@ -1429,44 +1651,65 @@ class _BookingScreenState extends State<BookingScreen> {
                       );
                     },
 
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () async {
-                        await Get.find<DashBoardController>().getAddressLists();
+                    suffixIcon: Container(
+                      margin: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.edit, size: 20),
+                        color: Colors.blue,
+                        onPressed: () async {
 
-                        showAddressChoiceDialog(
-                          context,
-                          Get.find<DashBoardController>().addressResponse.data,
-                              (address) {
+                          final controller = Get.find<DashBoardController>();
 
-                            // Dialog instantly close
-                            Get.back();
+                          /// Optional loading indicator
+                          Get.dialog(
+                            const Center(child: CircularProgressIndicator()),
+                            barrierDismissible: false,
+                          );
 
-                            setState(() {
-                              _selectedLatLng = LatLng(address.lat, address.lon);
+                          await controller.getAddressLists();
 
-                              final controller = Get.find<DashBoardController>();
-                              controller.addressController.text = address.address;
+                          Get.back(); // close loader
 
-                              city = address.city;
-                              stateController.text = address.city;
-                              houseController.text = address.house;
-                              floorController.text = address.floor;
-                              postalController.text = address.zipCode;
-                              countryController.text = address.country;
-                              streetController.text = address.street;
+                          if (controller.addressResponse.data.isEmpty) {
+                            Get.snackbar("No Address", "No saved address found");
+                            return;
+                          }
 
-                              country = address.country;
-                              street = address.street;
-                              postalCode = address.zipCode;
-                            });
+                          showAddressChoiceDialog(
+                            context,
+                            controller.addressResponse.data,
+                                (address) {
 
-                            Get.find<DashBoardController>().update();
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                              Get.back(); // close dialog
+
+                              setState(() {
+                                _selectedLatLng = LatLng(address.lat, address.lon);
+
+                                controller.addressController.text = address.address;
+
+                                city = address.city;
+                                stateController.text = address.city;
+                                houseController.text = address.house;
+                                floorController.text = address.floor;
+                                postalController.text = address.zipCode;
+                                countryController.text = address.country;
+                                streetController.text = address.street;
+
+                                country = address.country;
+                                street = address.street;
+                                postalCode = address.zipCode;
+                              });
+
+                              controller.update();
+                            },
+                          );
+                        },
+                      ),
+                    ),                  ),
                     // CustomTextField(
                     //   controller:
                     //       Get.find<DashBoardController>().addressController,
