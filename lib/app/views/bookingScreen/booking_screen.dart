@@ -1386,25 +1386,67 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     ),
                     SizedBox(height: 15),
-                    CustomTextField(
-                      controller: dashboardController.addressController,
-                      hintText: "Select an Address",
-                      focusNode: addressFocus,
-                      isEnabled: true,
-                      readOnly: true,
+                  CustomTextField(
+                    controller: Get.find<DashBoardController>().addressController,
+                    hintText: "Select an Address",
+                    focusNode: addressFocus,
+                    isEnabled: true,
+                    readOnly: true,
 
-                      onTap: () async {
-                        await dashboardController.getAddressLists();
+                    onTap: () async {
+                      await Get.find<DashBoardController>().getAddressLists();
+
+                      showAddressChoiceDialog(
+                        context,
+                        Get.find<DashBoardController>().addressResponse.data,
+                            (address) {
+
+                          // Dialog turant close
+                          Get.back();
+
+                          //  UI update
+                          setState(() {
+                            _selectedLatLng = LatLng(address.lat, address.lon);
+
+                            final controller = Get.find<DashBoardController>();
+                            controller.addressController.text = address.address;
+
+                            city = address.city;
+                            stateController.text = address.city;
+                            houseController.text = address.house;
+                            floorController.text = address.floor;
+                            postalController.text = address.zipCode;
+                            countryController.text = address.country;
+                            streetController.text = address.street;
+
+                            country = address.country;
+                            street = address.street;
+                            postalCode = address.zipCode;
+                          });
+
+                          Get.find<DashBoardController>().update();
+                        },
+                      );
+                    },
+
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () async {
+                        await Get.find<DashBoardController>().getAddressLists();
 
                         showAddressChoiceDialog(
                           context,
-                          dashboardController.addressResponse.data,
+                          Get.find<DashBoardController>().addressResponse.data,
                               (address) {
-                            /// 👉 IMPORTANT: setState properly call ho
+
+                            // Dialog instantly close
+                            Get.back();
+
                             setState(() {
                               _selectedLatLng = LatLng(address.lat, address.lon);
 
-                              dashboardController.addressController.text = address.address;
+                              final controller = Get.find<DashBoardController>();
+                              controller.addressController.text = address.address;
 
                               city = address.city;
                               stateController.text = address.city;
@@ -1419,44 +1461,12 @@ class _BookingScreenState extends State<BookingScreen> {
                               postalCode = address.zipCode;
                             });
 
-                            Get.back(); // dialog close
+                            Get.find<DashBoardController>().update();
                           },
                         );
                       },
-
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () async {
-                          await dashboardController.getAddressLists();
-
-                          showAddressChoiceDialog(
-                            context,
-                            dashboardController.addressResponse.data,
-                                (address) {
-                              setState(() {
-                                _selectedLatLng = LatLng(address.lat, address.lon);
-
-                                dashboardController.addressController.text = address.address;
-
-                                city = address.city;
-                                stateController.text = address.city;
-                                houseController.text = address.house;
-                                floorController.text = address.floor;
-                                postalController.text = address.zipCode;
-                                countryController.text = address.country;
-                                streetController.text = address.street;
-
-                                country = address.country;
-                                street = address.street;
-                                postalCode = address.zipCode;
-                              });
-
-                              Get.back();
-                            },
-                          );
-                        },
-                      ),
                     ),
+                  ),
                     // CustomTextField(
                     //   controller:
                     //       Get.find<DashBoardController>().addressController,
@@ -1808,132 +1818,136 @@ class _BookingScreenState extends State<BookingScreen> {
 
 
 
-bool _validateAllFields({
-  required String name,
-  required String mobile,
-  required String email,
-  required String address,
-  required LatLng? selectedLatLng,
-  required String? zoneId,
-  required DateTime? selectedDate,
-  required TimeOfDay? selectedTime,
-  required String? city,
-  required String? postalCode,
-  required String? country,
-  required String? street,
-  required dynamic addressType,
-  required List selectedVariations,
-  /// NEW → Assign Customer
-  required String assignCustomerName,
-  required String assignCustomerPhone,
-  required String assignCustomerEmail,
-}) {
-  /// ASSIGN CUSTOMER VALIDATION
+  bool _validateAllFields({
+    required String name,
+    required String mobile,
+    required String email,
+    required String address,
+    required LatLng? selectedLatLng,
+    required String? zoneId,
+    required DateTime? selectedDate,
+    required TimeOfDay? selectedTime,
+    required String? city,
+    required String? postalCode,
+    required String? country,
+    required String? street,
+    required dynamic addressType,
+    required List selectedVariations,
+    /// NEW → Assign Customer
+    required String assignCustomerName,
+    required String assignCustomerPhone,
+    required String assignCustomerEmail,
+  }) {
+    /// ASSIGN CUSTOMER VALIDATION
 
-  if (assignCustomerName.trim().isEmpty) {
-    _error("Customer Name Required", "Please enter assigned customer name");
-    return false;
+    if (assignCustomerName.trim().isEmpty) {
+      _error("Customer Name Required", "Please enter assigned customer name");
+      return false;
+    }
+
+    if (assignCustomerName.trim().length < 3) {
+      _error("Invalid Name", "Customer name must be at least 3 characters");
+      return false;
+    }
+
+    if (!RegExp(r'^[6-9]\d{9}$').hasMatch(assignCustomerPhone)) {
+      _error("Invalid Customer Mobile", "Enter valid 10-digit customer mobile number");
+      return false;
+    }
+
+    if (!GetUtils.isEmail(assignCustomerEmail)) {
+      _error("Invalid Customer Email", "Enter valid customer email address");
+      return false;
+    }
+
+    if (name.trim().isEmpty) {
+      _error("Name Required", "Please enter your name");
+      return false;
+    }
+
+    if (!RegExp(r'^[6-9]\d{9}$').hasMatch(mobile)) {
+      _error("Invalid Mobile", "Enter a valid 10-digit mobile number");
+      return false;
+    }
+
+    if (!GetUtils.isEmail(email)) {
+      _error("Invalid Email", "Please enter a valid email address");
+      return false;
+    }
+
+    if (selectedLatLng == null) {
+      _error("Location Required", "Please select service location");
+      return false;
+    }
+
+    // if (zoneId == null || zoneId.isEmpty) {
+    //   _error("Zone Error", "Service zone not detected");
+    //   return false;
+    // }
+    final dashboardController = Get.find<DashBoardController>();
+
+    if (zoneId == null || zoneId.isEmpty) {
+      zoneId = dashboardController.zoneIdForBooking;
+    }
+    // if (zoneId == null || zoneId.isEmpty) {
+    //   zoneId = "e8554d44-dcf2-47c7-8cf9-400d05a1340f";
+    //   // TODO : publishing -> handle zoneID
+    //   // Get.snackbar("Zone Error", "Zone ID is missing. Try restarting the app.",
+    //   //     backgroundColor: Colors.red, colorText: Colors.white);
+    //   // return false;
+    // }
+
+    if (selectedDate == null) {
+      _error("Date Missing", "Please select booking date");
+      return false;
+    }
+
+    if (selectedTime == null) {
+      _error("Time Missing", "Please select booking time");
+      return false;
+    }
+
+    if (Get.find<DashBoardController>()
+        .addressController
+        .text
+        .trim()
+        .isEmpty) {
+      _error("Address Required", "Please select address");
+      return false;
+    }
+
+    if (city == null || city.isEmpty) {
+      _error("City Required", "Please enter city");
+      return false;
+    }
+
+    if (postalCode == null || postalCode.isEmpty) {
+      _error("Postal Code Required", "Please enter postal code");
+      return false;
+    }
+
+    if (country == null || country.isEmpty) {
+      _error("Country Required", "Please enter country");
+      return false;
+    }
+
+    if (street == null || street.isEmpty) {
+      _error("Street Required", "Please enter street");
+      return false;
+    }
+
+    if (addressType == null) {
+      _error("Address Type", "Please select address type");
+      return false;
+    }
+
+    // if (selectedVariations.isEmpty) {
+    //   _error("Service Required", "Please select at least one service");
+    //   return false;
+    // }
+
+    return true;
   }
-
-  if (assignCustomerName.trim().length < 3) {
-    _error("Invalid Name", "Customer name must be at least 3 characters");
-    return false;
-  }
-
-  if (!RegExp(r'^[6-9]\d{9}$').hasMatch(assignCustomerPhone)) {
-    _error("Invalid Customer Mobile", "Enter valid 10-digit customer mobile number");
-    return false;
-  }
-
-  if (!GetUtils.isEmail(assignCustomerEmail)) {
-    _error("Invalid Customer Email", "Enter valid customer email address");
-    return false;
-  }
-
-  if (name.trim().isEmpty) {
-    _error("Name Required", "Please enter your name");
-    return false;
-  }
-
-  if (!RegExp(r'^[6-9]\d{9}$').hasMatch(mobile)) {
-    _error("Invalid Mobile", "Enter a valid 10-digit mobile number");
-    return false;
-  }
-
-  if (!GetUtils.isEmail(email)) {
-    _error("Invalid Email", "Please enter a valid email address");
-    return false;
-  }
-
-  if (selectedLatLng == null) {
-    _error("Location Required", "Please select service location");
-    return false;
-  }
-
-  // if (zoneId == null || zoneId.isEmpty) {
-  //   _error("Zone Error", "Service zone not detected");
-  //   return false;
-  // }
-  final dashboardController = Get.find<DashBoardController>();
-
-  if (zoneId == null || zoneId.isEmpty) {
-    zoneId = dashboardController.zoneIdForBooking;
-  }
-  // if (zoneId == null || zoneId.isEmpty) {
-  //   zoneId = "e8554d44-dcf2-47c7-8cf9-400d05a1340f";
-  //   // TODO : publishing -> handle zoneID
-  //   // Get.snackbar("Zone Error", "Zone ID is missing. Try restarting the app.",
-  //   //     backgroundColor: Colors.red, colorText: Colors.white);
-  //   // return false;
-  // }
-
-  if (selectedDate == null) {
-    _error("Date Missing", "Please select booking date");
-    return false;
-  }
-
-  if (selectedTime == null) {
-    _error("Time Missing", "Please select booking time");
-    return false;
-  }
-
-  if (address.trim().isEmpty) {
-    _error("Address Required", "Please select address");
-    return false;
-  }
-
-  if (city == null || city.isEmpty) {
-    _error("City Required", "Please enter city");
-    return false;
-  }
-
-  if (postalCode == null || postalCode.isEmpty) {
-    _error("Postal Code Required", "Please enter postal code");
-    return false;
-  }
-
-  if (country == null || country.isEmpty) {
-    _error("Country Required", "Please enter country");
-    return false;
-  }
-
-  if (street == null || street.isEmpty) {
-    _error("Street Required", "Please enter street");
-    return false;
-  }
-
-  if (addressType == null) {
-    _error("Address Type", "Please select address type");
-    return false;
-  }
-
-  // if (selectedVariations.isEmpty) {
-  //   _error("Service Required", "Please select at least one service");
-  //   return false;
-  // }
-
-  return true;
-}
 
 void _error(String title, String message) {
   if (Get.context == null) return;
