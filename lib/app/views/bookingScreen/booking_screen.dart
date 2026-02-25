@@ -1386,137 +1386,26 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     ),
                     SizedBox(height: 15),
-                    CustomTextField(
-                      controller: dashboardController.addressController,
-                      hintText: "Select an Address",
-                      focusNode: addressFocus,
-                      isEnabled: true,
-                      readOnly: true,
-
-                      onTap: () async {
-                        await dashboardController.getAddressLists();
-
-                        showAddressChoiceDialog(
-                          context,
-                          dashboardController.addressResponse.data,
-                              (address) {
-                            /// 👉 IMPORTANT: setState properly call ho
-                            setState(() {
-                              _selectedLatLng = LatLng(address.lat, address.lon);
-
-                              dashboardController.addressController.text = address.address;
-
-                              city = address.city;
-                              stateController.text = address.city;
-                              houseController.text = address.house;
-                              floorController.text = address.floor;
-                              postalController.text = address.zipCode;
-                              countryController.text = address.country;
-                              streetController.text = address.street;
-
-                              country = address.country;
-                              street = address.street;
-                              postalCode = address.zipCode;
-                            });
-
-                            Get.back(); // dialog close
-                          },
-                        );
-                      },
-
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () async {
-                          await dashboardController.getAddressLists();
-
-                          showAddressChoiceDialog(
-                            context,
-                            dashboardController.addressResponse.data,
-                                (address) {
-                              setState(() {
-                                _selectedLatLng = LatLng(address.lat, address.lon);
-
-                                dashboardController.addressController.text = address.address;
-
-                                city = address.city;
-                                stateController.text = address.city;
-                                houseController.text = address.house;
-                                floorController.text = address.floor;
-                                postalController.text = address.zipCode;
-                                countryController.text = address.country;
-                                streetController.text = address.street;
-
-                                country = address.country;
-                                street = address.street;
-                                postalCode = address.zipCode;
-                              });
-
-                              Get.back();
-                            },
-                          );
-                        },
-                      ),
-                    ),
                     // CustomTextField(
-                    //   controller:
-                    //       Get.find<DashBoardController>().addressController,
+                    //   controller: dashboardController.addressController,
                     //   hintText: "Select an Address",
                     //   focusNode: addressFocus,
                     //   isEnabled: true,
                     //   readOnly: true,
+                    //
                     //   onTap: () async {
-                    //     await Get.find<DashBoardController>().getAddressLists();
-                    //     await Future.delayed(Duration(seconds: 1));
+                    //     await dashboardController.getAddressLists();
+                    //
                     //     showAddressChoiceDialog(
-                    //         context,
-                    //         Get.find<DashBoardController>()
-                    //             .addressResponse
-                    //             .data, (address) {
-                    //       setState(() {
-                    //         _selectedLatLng = LatLng(
-                    //           address.lat,
-                    //           address.lon,
-                    //         );
-                    //         addressController.text = address.address;
-                    //         Get.find<DashBoardController>()
-                    //             .addressController
-                    //             .text = address.address;
-                    //         city = address.city;
-                    //         stateController.text = address.city;
-                    //         houseController.text = address.house;
-                    //         floorController.text = address.floor;
-                    //         postalController.text = address.zipCode;
-                    //         countryController.text = address.country;
-                    //         streetController.text = address.street;
-                    //         country = address.country;
-                    //         street = address.street;
-                    //         postalCode = address.zipCode;
-                    //         Get.find<DashBoardController>().update();
-                    //       });
-                    //       // showAddNewAddressDialog(context);
-                    //       Get.back();
-                    //     });
-                    //   },
-                    //   suffixIcon: IconButton(
-                    //     icon: Icon(Icons.edit),
-                    //     onPressed: () async {
-                    //       await Get.find<DashBoardController>()
-                    //           .getAddressLists();
-                    //       await Future.delayed(Duration(seconds: 1));
-                    //       showAddressChoiceDialog(
-                    //           context,
-                    //           Get.find<DashBoardController>()
-                    //               .addressResponse
-                    //               .data, (address) {
+                    //       context,
+                    //       dashboardController.addressResponse.data,
+                    //           (address) {
+                    //         /// 👉 IMPORTANT: setState properly call ho
                     //         setState(() {
-                    //           _selectedLatLng = LatLng(
-                    //             address.lat,
-                    //             address.lon,
-                    //           );
-                    //           addressController.text = address.address;
-                    //           Get.find<DashBoardController>()
-                    //               .addressController
-                    //               .text = address.address;
+                    //           _selectedLatLng = LatLng(address.lat, address.lon);
+                    //
+                    //           dashboardController.addressController.text = address.address;
+                    //
                     //           city = address.city;
                     //           stateController.text = address.city;
                     //           houseController.text = address.house;
@@ -1524,17 +1413,128 @@ class _BookingScreenState extends State<BookingScreen> {
                     //           postalController.text = address.zipCode;
                     //           countryController.text = address.country;
                     //           streetController.text = address.street;
+                    //
                     //           country = address.country;
                     //           street = address.street;
                     //           postalCode = address.zipCode;
-                    //           Get.find<DashBoardController>().update();
                     //         });
-                    //         // showAddNewAddressDialog(context);
-                    //         Get.back();
-                    //       });
+                    //
+                    //         Get.back(); // dialog close
+                    //       },
+                    //     );
+                    //   },
+                    //
+                    //   suffixIcon: IconButton(
+                    //     icon: const Icon(Icons.edit),
+                    //     onPressed: () async {
+                    //       await dashboardController.getAddressLists();
+                    //
+                    //       showAddressChoiceDialog(
+                    //         context,
+                    //         dashboardController.addressResponse.data,
+                    //             (address) {
+                    //           setState(() {
+                    //             _selectedLatLng = LatLng(address.lat, address.lon);
+                    //
+                    //             dashboardController.addressController.text = address.address;
+                    //
+                    //             city = address.city;
+                    //             stateController.text = address.city;
+                    //             houseController.text = address.house;
+                    //             floorController.text = address.floor;
+                    //             postalController.text = address.zipCode;
+                    //             countryController.text = address.country;
+                    //             streetController.text = address.street;
+                    //
+                    //             country = address.country;
+                    //             street = address.street;
+                    //             postalCode = address.zipCode;
+                    //           });
+                    //
+                    //           Get.back();
+                    //         },
+                    //       );
                     //     },
                     //   ),
                     // ),
+                    CustomTextField(
+                      controller:
+                          Get.find<DashBoardController>().addressController,
+                      hintText: "Select an Address",
+                      focusNode: addressFocus,
+                      isEnabled: true,
+                      readOnly: true,
+                      onTap: () async {
+                        await Get.find<DashBoardController>().getAddressLists();
+                        await Future.delayed(Duration(seconds: 1));
+                        showAddressChoiceDialog(
+                            context,
+                            Get.find<DashBoardController>()
+                                .addressResponse
+                                .data, (address) {
+                          setState(() {
+                            _selectedLatLng = LatLng(
+                              address.lat,
+                              address.lon,
+                            );
+                            addressController.text = address.address;
+                            Get.find<DashBoardController>()
+                                .addressController
+                                .text = address.address;
+                            city = address.city;
+                            stateController.text = address.city;
+                            houseController.text = address.house;
+                            floorController.text = address.floor;
+                            postalController.text = address.zipCode;
+                            countryController.text = address.country;
+                            streetController.text = address.street;
+                            country = address.country;
+                            street = address.street;
+                            postalCode = address.zipCode;
+                            Get.find<DashBoardController>().update();
+                          });
+                          // showAddNewAddressDialog(context);
+                          Get.back();
+                        });
+                      },
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () async {
+                          await Get.find<DashBoardController>()
+                              .getAddressLists();
+                          await Future.delayed(Duration(seconds: 1));
+                          showAddressChoiceDialog(
+                              context,
+                              Get.find<DashBoardController>()
+                                  .addressResponse
+                                  .data, (address) {
+                            setState(() {
+                              _selectedLatLng = LatLng(
+                                address.lat,
+                                address.lon,
+                              );
+                              addressController.text = address.address;
+                              Get.find<DashBoardController>()
+                                  .addressController
+                                  .text = address.address;
+                              city = address.city;
+                              stateController.text = address.city;
+                              houseController.text = address.house;
+                              floorController.text = address.floor;
+                              postalController.text = address.zipCode;
+                              countryController.text = address.country;
+                              streetController.text = address.street;
+                              country = address.country;
+                              street = address.street;
+                              postalCode = address.zipCode;
+                              Get.find<DashBoardController>().update();
+                            });
+                            // showAddNewAddressDialog(context);
+                            Get.back();
+                          });
+                        },
+                      ),
+                    ),
 
                     // SizedBox(height: 15),
                     // buildAnimatedItem(

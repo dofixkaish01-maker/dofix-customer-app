@@ -114,7 +114,7 @@
     <string>DoFix</string>
 
     <key>FacebookClientToken</key>
-    <string>YOUR_REAL_CLIENT_TOKEN_HERE</string>
+    <string>1a16da82c0db566c365a8ebb97133049</string>
 
     <key>CFBundleURLTypes</key>
     <array>
