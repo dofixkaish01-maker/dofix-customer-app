@@ -1892,27 +1892,47 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
+  // Future<void> fetchUserLocation() async {
+  //   try {
+  //     Position position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high,
+  //       timeLimit: const Duration(seconds: 10),
+  //     );
+  //
+  //     log("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+  //
+  //     if (kDebugMode) {
+  //       latitude = 28.5503;
+  //       longitude = 77.2502;
+  //     } else {
+  //       latitude = position.latitude;
+  //       longitude = position.longitude;
+  //     }
+  //
+  //     update();
+  //
+  //     await getZone();
+  //
+  //   } catch (e) {
+  //     log("Location fetch error: $e");
+  //     showCustomSnackBar("Unable to fetch location", isError: true);
+  //   }
+  // }
+
   Future<void> fetchUserLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(
+      final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10),
       );
 
-      log("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+      latitude = position.latitude;
+      longitude = position.longitude;
 
-      if (kDebugMode) {
-        latitude = 28.5503;
-        longitude = 77.2502;
-      } else {
-        latitude = position.latitude;
-        longitude = position.longitude;
-      }
+      log("Latitude: $latitude, Longitude: $longitude");
 
       update();
-
       await getZone();
-
     } catch (e) {
       log("Location fetch error: $e");
       showCustomSnackBar("Unable to fetch location", isError: true);
