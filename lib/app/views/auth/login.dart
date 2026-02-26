@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 
 import '../../../model/pages_model.dart';
 import '../HtmlPage/html_pages.dart';
+import '../account/account_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -204,27 +205,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
-                                              Get.to(
-                                                () => HtmlContentScreen(
-                                                  title: "Terms & Conditions",
-                                                  htmlContent: (Get.find<
-                                                                  DashBoardController>()
-                                                              .apiResponse
-                                                              .content
-                                                              .termsAndConditions ??
-                                                          PageInfo(
-                                                            id: '',
-                                                            key: '',
-                                                            value: '',
-                                                            type: '',
-                                                            isActive: 0,
-                                                            createdAt: '',
-                                                            updatedAt: '',
-                                                            translations: [],
-                                                          ))
-                                                      .value,
-                                                ),
-                                              );
+                                              // Get.to(
+                                              //   () => HtmlContentScreen(
+                                              //     title: "Terms & Conditions",
+                                              //     htmlContent: (Get.find<
+                                              //                     DashBoardController>()
+                                              //                 .apiResponse
+                                              //                 .content
+                                              //                 .termsAndConditions ??
+                                              //             PageInfo(
+                                              //               id: '',
+                                              //               key: '',
+                                              //               value: '',
+                                              //               type: '',
+                                              //               isActive: 0,
+                                              //               createdAt: '',
+                                              //               updatedAt: '',
+                                              //               translations: [],
+                                              //             ))
+                                              //         .value,
+                                              //   ),
+                                              // );
+                                              openUrl("https://dofix.in/terms");
                                             },
                                         ),
                                         const TextSpan(text: " and "),
@@ -238,27 +240,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
-                                              Get.to(
-                                                () => HtmlContentScreen(
-                                                  title: "Privacy Policy",
-                                                  htmlContent: (Get.find<
-                                                                  DashBoardController>()
-                                                              .apiResponse
-                                                              .content
-                                                              .privacyPolicy ??
-                                                          PageInfo(
-                                                            id: '',
-                                                            key: '',
-                                                            value: '',
-                                                            type: '',
-                                                            isActive: 0,
-                                                            createdAt: '',
-                                                            updatedAt: '',
-                                                            translations: [],
-                                                          ))
-                                                      .value,
-                                                ),
-                                              );
+                                              // Get.to(
+                                              //   () => HtmlContentScreen(
+                                              //     title: "Privacy Policy",
+                                              //     htmlContent: (Get.find<
+                                              //                     DashBoardController>()
+                                              //                 .apiResponse
+                                              //                 .content
+                                              //                 .privacyPolicy ??
+                                              //             PageInfo(
+                                              //               id: '',
+                                              //               key: '',
+                                              //               value: '',
+                                              //               type: '',
+                                              //               isActive: 0,
+                                              //               createdAt: '',
+                                              //               updatedAt: '',
+                                              //               translations: [],
+                                              //             ))
+                                              //         .value,
+                                              //   ),
+                                              // );
+                                              openUrl("https://dofix.in/privacy-policy");
                                             },
                                         ),
                                       ],

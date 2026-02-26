@@ -322,33 +322,54 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 sizedBox30(),
                 //Privacy Policy
+                // GestureDetector(
+                //   onTap: () {
+                //     Get.to(() => HtmlContentScreen(
+                //         title: "Privacy Policy",
+                //         htmlContent:
+                //             (controller.apiResponse.content.privacyPolicy ??
+                //                     PageInfo(
+                //                         id: '',
+                //                         key: '',
+                //                         value: '',
+                //                         type: '',
+                //                         isActive: 0,
+                //                         createdAt: '',
+                //                         updatedAt: '',
+                //                         translations: []))
+                //                 .value));
+                //   },
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Expanded(
+                //           child: Text(
+                //         "Privacy Policy",
+                //         style: albertSansRegular.copyWith(
+                //             fontSize: Dimensions.fontSizeDefault,
+                //             fontWeight: FontWeight.w400),
+                //       )),
+                //       Icon(Icons.arrow_forward_ios,
+                //           color: Colors.black, size: 18),
+                //     ],
+                //   ),
+                // ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(() => HtmlContentScreen(
-                        title: "Privacy Policy",
-                        htmlContent:
-                            (controller.apiResponse.content.privacyPolicy ??
-                                    PageInfo(
-                                        id: '',
-                                        key: '',
-                                        value: '',
-                                        type: '',
-                                        isActive: 0,
-                                        createdAt: '',
-                                        updatedAt: '',
-                                        translations: []))
-                                .value));
+                    openUrl("https://dofix.in/privacy-policy");
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                          child: Text(
-                        "Privacy Policy",
-                        style: albertSansRegular.copyWith(
+                        child: Text(
+                          "Privacy Policy",
+                          style: albertSansRegular.copyWith(
                             fontSize: Dimensions.fontSizeDefault,
-                            fontWeight: FontWeight.w400),
-                      )),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
                       Icon(Icons.arrow_forward_ios,
                           color: Colors.black, size: 18),
                     ],
@@ -356,33 +377,54 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 sizedBox30(),
                 //Terms & Conditions
+                // GestureDetector(
+                //   onTap: () {
+                //     Get.to(() => HtmlContentScreen(
+                //         title: "Terms & Conditions",
+                //         htmlContent: (controller
+                //                     .apiResponse.content.termsAndConditions ??
+                //                 PageInfo(
+                //                     id: '',
+                //                     key: '',
+                //                     value: '',
+                //                     type: '',
+                //                     isActive: 0,
+                //                     createdAt: '',
+                //                     updatedAt: '',
+                //                     translations: []))
+                //             .value));
+                //   },
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Expanded(
+                //           child: Text(
+                //         "Terms & Conditions",
+                //         style: albertSansRegular.copyWith(
+                //             fontSize: Dimensions.fontSizeDefault,
+                //             fontWeight: FontWeight.w400),
+                //       )),
+                //       Icon(Icons.arrow_forward_ios,
+                //           color: Colors.black, size: 18),
+                //     ],
+                //   ),
+                // ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(() => HtmlContentScreen(
-                        title: "Terms & Conditions",
-                        htmlContent: (controller
-                                    .apiResponse.content.termsAndConditions ??
-                                PageInfo(
-                                    id: '',
-                                    key: '',
-                                    value: '',
-                                    type: '',
-                                    isActive: 0,
-                                    createdAt: '',
-                                    updatedAt: '',
-                                    translations: []))
-                            .value));
+                    openUrl("https://dofix.in/terms");
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                          child: Text(
-                        "Terms & Conditions",
-                        style: albertSansRegular.copyWith(
+                        child: Text(
+                          "Terms & Conditions",
+                          style: albertSansRegular.copyWith(
                             fontSize: Dimensions.fontSizeDefault,
-                            fontWeight: FontWeight.w400),
-                      )),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
                       Icon(Icons.arrow_forward_ios,
                           color: Colors.black, size: 18),
                     ],
@@ -994,71 +1036,10 @@ class NewCustomButtonWidget extends StatelessWidget {
     );
   }
 }
-// class NewCustomButtonWidget extends StatelessWidget {
-//   final VoidCallback? onPressed;
-//   final String buttonText;
-//   final Color? color;
-//   final IconData? icon;
-//   final bool transparent;
-//   final double? width;
-//
-//   const NewCustomButtonWidget({
-//     super.key,
-//     required this.onPressed,
-//     required this.buttonText,
-//     this.color,
-//     this.icon,
-//     this.transparent = false,
-//     this.width, required Color borderSideColor, required Color textColor,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//       width: width ?? double.infinity,
-//       height: 48,
-//       child: ElevatedButton(
-//         onPressed: onPressed,
-//         style: ButtonStyle(
-//           elevation: MaterialStateProperty.all(transparent ? 0 : 2),
-//
-//           backgroundColor: MaterialStateProperty.resolveWith<Color>(
-//                 (states) {
-//               if (transparent) {
-//                 return Colors.transparent;
-//               }
-//               if (states.contains(MaterialState.disabled)) {
-//                 return Colors.grey.shade400; // ✅ disabled gray
-//               }
-//               return color ?? Theme.of(context).primaryColor;
-//             },
-//           ),
-//
-//           foregroundColor: MaterialStateProperty.all(
-//             transparent
-//                 ? Theme.of(context).primaryColor
-//                 : Colors.white,
-//           ),
-//
-//           side: transparent
-//               ? MaterialStateProperty.all(
-//             BorderSide(
-//               color: Theme.of(context).primaryColor,
-//             ),
-//           )
-//               : null,
-//         ),
-//         child: Row(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             if (icon != null) ...[
-//               Icon(icon, size: 18),
-//               const SizedBox(width: 8),
-//             ],
-//             Text(buttonText),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+Future<void> openUrl(String url) async {
+  final Uri uri = Uri.parse(url);
+
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    throw Exception('Could not launch $url');
+  }
+}
