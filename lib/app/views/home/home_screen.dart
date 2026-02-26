@@ -392,7 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       /// Heading (Outside Card)
                       const Text(
-                        "Top Rated Services",
+                        "AC Repair & Installation",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -453,108 +453,130 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               if ((controller.subCategoryModelListing?.data ?? []).isNotEmpty)
                 SizedBox(
-                  height: 200, // total height of card
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.subCategoryModelListing!.data!.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 14),
-                    itemBuilder: (context, index) {
-                      final subCategory =
-                          controller.subCategoryModelListing!.data![index];
-                      final isSelected = controller.selectedSubCategories
-                          .contains(subCategory);
-
-                      return GestureDetector(
-                        onTap: () {
-                          controller.getCategoriesToServices(
-                            id: subCategory.id.toString(),
-                            limit: '10',
-                            offset: "1",
-                            isLoading: true,
-                          );
-
-                          controller.selectedSubCategories.clear();
-                          controller.selectedSubCategories.add(subCategory);
-
-                          controller.update();
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                          width: (Get.size.width - 16 * 2 - 14) / 2,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? const Color(0xFF207FA7).withOpacity(0.08)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: isSelected
-                                  ? const Color(0xFF207FA7)
-                                  : Colors.grey.shade200,
-                              width: isSelected ? 2 : 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 12,
-                                spreadRadius: 2,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 10),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.network(
-                                    subCategory.thumbnailFullPath ?? "",
-                                    height: 100,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 8),
-
-                                /// Title
-                                Text(
-                                  subCategory.name ?? "",
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: isSelected
-                                        ? const Color(0xFF207FA7)
-                                        : Colors.black87,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 6),
-
-                                /// indicator
-                                AnimatedContainer(
-                                  duration: const Duration(milliseconds: 250),
-                                  height: 4,
-                                  width: isSelected ? 20 : 0,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF207FA7),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              ],
-                            ),
+                  height: 230, // 🔹 thoda bada height (text + list ke liye)
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// 🔹 Heading
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          "Services Viewed Recently",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      );
-                    },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      /// 🔹 ListView ko Expanded me wrap karo
+                      Expanded(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          scrollDirection: Axis.horizontal,
+                          itemCount:
+                              controller.subCategoryModelListing!.data!.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 14),
+                          itemBuilder: (context, index) {
+                            final subCategory = controller
+                                .subCategoryModelListing!.data![index];
+
+                            final isSelected = controller.selectedSubCategories
+                                .contains(subCategory);
+
+                            return GestureDetector(
+                              onTap: () {
+                                controller.getCategoriesToServices(
+                                  id: subCategory.id.toString(),
+                                  limit: '10',
+                                  offset: "1",
+                                  isLoading: true,
+                                );
+
+                                controller.selectedSubCategories.clear();
+                                controller.selectedSubCategories
+                                    .add(subCategory);
+
+                                controller.update();
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeInOut,
+                                width: (Get.size.width - 16 * 2 - 14) / 2,
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? const Color(0xFF207FA7)
+                                          .withOpacity(0.08)
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? const Color(0xFF207FA7)
+                                        : Colors.grey.shade200,
+                                    width: isSelected ? 2 : 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 12,
+                                      spreadRadius: 2,
+                                      offset: const Offset(0, 6),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 10),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.network(
+                                          subCategory.thumbnailFullPath ?? "",
+                                          height: 100,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        subCategory.name ?? "",
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: isSelected
+                                              ? const Color(0xFF207FA7)
+                                              : Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 250),
+                                        height: 4,
+                                        width: isSelected ? 20 : 0,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF207FA7),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -576,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       /// Heading (Outside Card)
                       const Text(
-                        "Quick Repairs",
+                        "Cleaning Services",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -838,7 +860,7 @@ Widget buildDoFixFooter() {
 
         const SizedBox(height: 10),
 
-        /// DESCRIPTION
+        // DESCRIPTION
         const Text(
           "Our vision is to simplify home services by connecting customers with verified professionals, ensuring quality, affordability, and convenience at your doorstep.",
           textAlign: TextAlign.center,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/dashboard_controller.dart';
@@ -10,6 +11,8 @@ import '../../../utils/styles.dart';
 import '../../../utils/theme.dart';
 import '../HtmlPage/html_pages.dart';
 import 'package:do_fix/app/views/home/refer screen/refer_earn_screen.dart';
+
+import '../helpSupport/help_and_support_screen.dart';
 
 
 class AccountScreen extends StatefulWidget {
@@ -72,44 +75,123 @@ class _AccountScreenState extends State<AccountScreen> {
   //Logout Dialog
   void showLogoutDialog() {
     Get.dialog(
-      AlertDialog(
+      Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
         ),
-        title: const Text(
-          'Log Out',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: const Text(
-          'Are you sure you want to log out?',
-          style: TextStyle(fontSize: 14),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);//  Cancel
-            },
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.grey),
-            ),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// 🔴 Icon
+              Container(
+                height: 64,
+                width: 64,
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.10),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.logout_rounded,
+                  color: Colors.red,
+                  size: 30,
+                ),
               ),
-            ),
-            onPressed: () {
-              Get.back();
-              authController.logout();
-            },
-            child: const Text('Log Out'),
+
+              const SizedBox(height: 18),
+
+              /// Title
+              const Text(
+                "Confirm Logout",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              /// Description
+              const Text(
+                "Are you sure you want to log out from your account?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                  color: Colors.black54,
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              /// Buttons
+              Row(
+                children: [
+                  /// Cancel
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: Colors.grey.withOpacity(0.4),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);// Cancel
+                      },
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 14),
+
+                  /// Logout
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Get.back(); // dialog close
+                        authController.logout(); // 👈 same controller call
+                      },
+                      child: const Text(
+                        "Log Out",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-      barrierDismissible: false, // outside tap disable
+      barrierDismissible: false,
     );
   }
 
@@ -119,6 +201,26 @@ class _AccountScreenState extends State<AccountScreen> {
       return SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 65),
+            child: FloatingActionButton.extended(
+              backgroundColor: Color(0xFF207FA7),
+              onPressed: () {
+                Get.to(() => const HelpSupportScreen());
+              },
+              label: Row(
+                children: [
+                  const Icon(Icons.support_agent_rounded, color: Colors.white),
+                  const SizedBox(width: 7),
+                  Text(
+                    'Help & Support',
+                    style: GoogleFonts.roboto(color: Colors.white),
+                  )
+                ],
+              ),
+            ),
+          ),
+
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -315,26 +417,26 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 sizedBox30(),
 
-                GestureDetector(
-                  onTap: () {
-                    _showAccountHelpBottomSheet();
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Help & Support",
-                          style: albertSansRegular.copyWith(
-                            fontSize: Dimensions.fontSizeDefault,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Icon(Icons.arrow_forward_ios, color: Colors.black, size: 18),
-                    ],
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: () {
+                //     // _showAccountHelpBottomSheet();
+                //   },
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Expanded(
+                //         child: Text(
+                //           "Help & Support",
+                //           style: albertSansRegular.copyWith(
+                //             fontSize: Dimensions.fontSizeDefault,
+                //             fontWeight: FontWeight.w400,
+                //           ),
+                //         ),
+                //       ),
+                //       Icon(Icons.arrow_forward_ios, color: Colors.black, size: 18),
+                //     ],
+                //   ),
+                // ),
                 SizedBox(height: 40,),
                 ///  Refer & Earn
                 // GestureDetector(
@@ -715,103 +817,103 @@ class _AccountScreenState extends State<AccountScreen> {
       // );
     });
   }
-  void _showAccountHelpBottomSheet() {
-    const supportNumber = "8383849293";
-
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // drag handle
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-
-            const Text(
-              "Help & Support",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 6),
-
-            const Text(
-              "Need help with your account or services?\nWe’re here to help you.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.black54,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Call Support
-            ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: Color(0xFFE8F5E9),
-                child: Icon(Icons.call, color: Colors.green),
-              ),
-              title: const Text(
-                "Call Support",
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-              subtitle: const Text("Talk directly with our support team"),
-              onTap: () async {
-                final uri = Uri.parse("tel:+91$supportNumber");
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri);
-                }
-              },
-            ),
-
-            const SizedBox(height: 8),
-
-            // WhatsApp Support
-            ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: Color(0xFFE0F2F1),
-                child: Icon(Icons.chat, color: Colors.teal),
-              ),
-              title: const Text(
-                "WhatsApp Support",
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-              subtitle: const Text("Chat with us on WhatsApp"),
-              onTap: () async {
-                final uri = Uri.parse(
-                  "https://wa.me/91$supportNumber?text="
-                      "Hi, I need some assistance with my account. Could you please let me know how you can help me?",
-                );
-
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(
-                    uri,
-                    mode: LaunchMode.externalApplication,
-                  );
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-      isScrollControlled: true,
-    );
-  }
+  // void _showAccountHelpBottomSheet() {
+  //   const supportNumber = "8383849293";
+  //
+  //   Get.bottomSheet(
+  //     Container(
+  //       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+  //       decoration: const BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //       ),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           // drag handle
+  //           Container(
+  //             width: 40,
+  //             height: 4,
+  //             margin: const EdgeInsets.only(bottom: 12),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey.shade300,
+  //               borderRadius: BorderRadius.circular(2),
+  //             ),
+  //           ),
+  //
+  //           const Text(
+  //             "Help & Support",
+  //             style: TextStyle(
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //
+  //           const SizedBox(height: 6),
+  //
+  //           const Text(
+  //             "Need help with your account or services?\nWe’re here to help you.",
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(
+  //               fontSize: 13,
+  //               color: Colors.black54,
+  //             ),
+  //           ),
+  //
+  //           const SizedBox(height: 20),
+  //
+  //           // Call Support
+  //           ListTile(
+  //             leading: const CircleAvatar(
+  //               backgroundColor: Color(0xFFE8F5E9),
+  //               child: Icon(Icons.call, color: Colors.green),
+  //             ),
+  //             title: const Text(
+  //               "Call Support",
+  //               style: TextStyle(fontWeight: FontWeight.w500),
+  //             ),
+  //             subtitle: const Text("Talk directly with our support team"),
+  //             onTap: () async {
+  //               final uri = Uri.parse("tel:+91$supportNumber");
+  //               if (await canLaunchUrl(uri)) {
+  //                 await launchUrl(uri);
+  //               }
+  //             },
+  //           ),
+  //
+  //           const SizedBox(height: 8),
+  //
+  //           // WhatsApp Support
+  //           ListTile(
+  //             leading: const CircleAvatar(
+  //               backgroundColor: Color(0xFFE0F2F1),
+  //               child: Icon(Icons.chat, color: Colors.teal),
+  //             ),
+  //             title: const Text(
+  //               "WhatsApp Support",
+  //               style: TextStyle(fontWeight: FontWeight.w500),
+  //             ),
+  //             subtitle: const Text("Chat with us on WhatsApp"),
+  //             onTap: () async {
+  //               final uri = Uri.parse(
+  //                 "https://wa.me/91$supportNumber?text="
+  //                     "Hi, I need some assistance with my account. Could you please let me know how you can help me?",
+  //               );
+  //
+  //               if (await canLaunchUrl(uri)) {
+  //                 await launchUrl(
+  //                   uri,
+  //                   mode: LaunchMode.externalApplication,
+  //                 );
+  //               }
+  //             },
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     isScrollControlled: true,
+  //   );
+  // }
 
 }
 class NewCustomButtonWidget extends StatelessWidget {
