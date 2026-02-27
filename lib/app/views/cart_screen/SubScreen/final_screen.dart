@@ -1381,6 +1381,15 @@ makeDigitalPayment({
   String userId = Get.find<DashBoardController>().userModel.id;
 
   String platform = "app";
+  //
+  // Map<String, dynamic> address = {
+  //   "lat": "28.592231447818",
+  //   "lon":  "77.315613292158",
+  //   "address_label":"home",
+  //   "address":"0001,third,sector 18,Noida,Uttar Pradesh,201301" ,
+  //   "contact_person_name": data["contact_person_name"],
+  //   "contact_person_number": data["contact_person_number"],
+  // };
 
   Map<String, dynamic> address = {
     "lat": data["lat"],
@@ -1390,6 +1399,7 @@ makeDigitalPayment({
     "contact_person_name": data["contact_person_name"],
     "contact_person_number": data["contact_person_number"],
   };
+
 
   // Map<String, dynamic> address = {
   //   "lat": "28.583653",
@@ -1436,6 +1446,7 @@ makeDigitalPayment({
         onPressed: onPressed,
         data: data,
       ));
+
 }
 // makeDigitalPayment(
 //     {required String bookingId,

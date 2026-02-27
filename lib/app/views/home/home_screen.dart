@@ -453,11 +453,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               if ((controller.subCategoryModelListing?.data ?? []).isNotEmpty)
                 SizedBox(
-                  height: 230, // 🔹 thoda bada height (text + list ke liye)
+                  height: 230, //  thoda bada height (text + list ke liye)
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// 🔹 Heading
+                      ///  Heading
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Text(

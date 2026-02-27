@@ -383,6 +383,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
               log("📍 ADDRESS LABEL RAW => ${widget.booking?.serviceAddress?.lon}");
               log("📍 ADDRESS RAW => ${widget.booking?.serviceAddress?.lon}");
+              // log("SERVICE ADDRESS OBJECT => ${widget.booking?.serviceAddress}");
+              // log("SERVICE ADDRESS ID => ${widget.booking?.serviceAddressId}");
+              // log("✔️ BOOKING OBJECT => ${jsonEncode(widget.booking)}");
 
               final booking = widget.booking!;
               final dashController = Get.find<DashBoardController>();
