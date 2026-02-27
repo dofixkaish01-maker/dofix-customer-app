@@ -47,7 +47,7 @@ class HelpSupportScreen extends StatelessWidget {
                       color: primaryColor),
                   onTap: () async {
                     final Uri url = Uri.parse(
-                        "https://text.at/7b47dbc2-a629-4ab1-80ab-f5d50c319844");
+                        "https://text.at/09133dbb-5961-4ba6-b473-e3a28e8fc994");
 
                     await launchUrl(
                       url,
