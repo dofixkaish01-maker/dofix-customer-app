@@ -19,72 +19,56 @@ class _PartnerFaqScreenState extends State<PartnerFaqScreen> {
 
   final List<FaqItem> generalFaq = [
     FaqItem(
-      question: "Kaam kaise milega?",
-      answer:
-      "App par aapke location aur skill ke according service requests milengi. Aap request accept karke customer ke paas ja sakte hain.",
+      question: "Dofix kya hai?",
+      answer: "Dofix ek organized home maintenance platform hai jo Delhi NCR mein trusted AC repair, plumbing services, electrician services aur appliance repair provide karta hai. Hum transparent pricing aur professional service standards ke saath safe aur reliable home service experience deliver karte hain.",
     ),
     FaqItem(
-      question: "Booking accept karne ke baad kya hota hai?",
+      question: "Main Dofix par service kaise book kar sakta/sakti hoon?",
       answer:
-      "Accept karne ke baad booking aapke ongoing list me chali jaati hai aur aap kaam complete kar sakte hain.",
+      "Booking process simple aur secure hai. Apni required home service select karein, preferred time slot choose karein, address confirm karein aur kuch hi minutes mein booking complete ho jaati hai. Aapko instant confirmation aur service details mil jaati hain.",
     ),
     FaqItem(
-      question: "Uniform aur ID Card milega?",
+      question: "Dofix kaun-kaun se areas mein service deta hai?",
       answer:
-      "Company approved uniform aur ID card provide kiya jayega (agar policy me ho).",
+      "Dofix Delhi, Noida, Gurgaon, Ghaziabad aur poore NCR region mein services provide karta hai — taaki aapko fast aur reliable home repair & installation services near you mil sakein.",
     ),
     FaqItem(
-      question: "Rating aur review ka kya importance hai?",
+      question: "Kya Dofix ke technicians verified hote hain?",
       answer:
-      "High rating wale partners ko zyada aur priority booking milti hai. Achhi service dena zaroori hai.",
+      "Haan. Har technician strict background verification, skill assessment aur identity checks se guzarta hai. Customer safety, professional behaviour aur quality workmanship humari top priority hai.",
     ),
     FaqItem(
-      question: "Kya main apni timing choose kar sakta hoon?",
+      question: "Service ki pricing kaise decide hoti hai?",
       answer:
-      "Haan, aap apni availability app me set kar sakte hain.",
+      "Hum transparent aur standardized pricing model follow karte hain. Charges inspection ya predefined rates ke basis par upfront bataye jaate hain. Koi hidden cost nahi hoti — final price aapki approval ke baad hi kaam shuru hota hai.",
     ),
     FaqItem(
-      question: "Kya main multiple services add kar sakta hoon?",
+      question: "Kya Dofix AC installation aur gas refilling service deta hai?",
       answer:
-      "Nhi Kr Skte.",
+      "Bilkul. Professional AC installation, uninstallation, servicing, repair aur gas refilling services trained aur experienced technicians ke through provide ki jaati hain.",
     ),
     FaqItem(
-      question: "Agar customer cancel kare to kya hoga?",
+      question: "Dofix kaun-kaun si services provide karta hai?",
       answer:
-      "Customer cancellation policy ke hisab se applicable charges partner ko mil sakte hain (terms & conditions ke according).",
+      "AC Repair & Installation Plumbing Services Electrician Services Appliance Repair General Home Maintenance Yeh aapka one-stop solution hai reliable home services ke liye.",
     ),
     FaqItem(
-      question: "Partner account block kab ho sakta hai?",
+      question: "PLocal technician ke bajaye Dofix kyu choose karein?",
       answer:
-      "Fake job completionCustomer complaint\nPoor rating\nCompany policy violatian.",
+      "✔ Background-verified professionals Standardized aur transparent pricing Selected services par warranty Responsive customer support Isliye aapko milta hai safer aur zyada dependable service experience.",
     ),
     FaqItem(
-      question: "Partner Kitni Holiday le sakte hai OR Kitni Job Chord Sakte hai ?",
+      question: "Kya service warranty ya post-service support milta hai?",
       answer:
-      "Hafte me 1 or Mahine me 4.",
+      "Haan, selected services par limited service warranty milti hai. Agar koi issue ho, toh dedicated support team prompt resolution aur proper follow-up ensure karti hai.",
     ),
   ];
 
   final List<FaqItem> paymentFaq = [
     FaqItem(
-      question: "Payment kaise milega?",
+      question: "Kaun-kaun se payment methods accept hote hain?",
       answer:
-      "Payment weekly ya daily settlement ke through direct bank account me transfer kiya jata hai.",
-    ),
-    FaqItem(
-      question: "Commission kitna katega?",
-      answer:
-      "DoFix har completed service par fixed percentage commission charge karta hai. (Yaha aap apna % likh sakte hain).",
-    ),
-    FaqItem(
-      question: "Agar payment issue ho to kya karein?",
-      answer:
-      "App ke support section me complaint raise karein ya DoFix Partner Support team se contact karein.",
-    ),
-    FaqItem(
-      question: "Earnings kaise track kare?",
-      answer:
-      "Paise tab me aap daily, weekly aur monthly earnings track kar sakte hain.",
+      "Aap UPI, debit/credit cards, net banking aur cash se payment kar sakte hain. Saare digital payments secure payment gateways ke through process hote hain.",
     ),
   ];
 
@@ -176,6 +160,7 @@ class _PartnerFaqScreenState extends State<PartnerFaqScreen> {
               },
             ),
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );
