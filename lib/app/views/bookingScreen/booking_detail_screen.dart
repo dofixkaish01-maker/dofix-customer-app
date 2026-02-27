@@ -214,10 +214,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
     log("🏷 ADDRESS LABEL => ${widget.booking?.serviceAddress?.addressLabel}");
     log("🏠 ADDRESS => ${widget.booking?.serviceAddress?.address}");
+    log("🏠 Booking Id => ${widget.booking?.id}");
 
     log("👤 CONTACT NAME => ${widget.booking?.serviceAddress?.contactPersonName}");
     log("📞 CONTACT NUMBER => ${widget.booking?.serviceAddress?.contactPersonNumber}");
-
 
     log("LIST LENGTH : ${dashBoardController.bookingResponse?.content?.detail?.length}");
     log("Current Booking status : ${widget.booking?.bookingStatus}");

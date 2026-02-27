@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:do_fix/data/repo/booking_repo.dart';
+import 'package:do_fix/model/booking_response.dart';
 import 'package:do_fix/widgets/app_snackbar.dart';
 import 'package:do_fix/widgets/common_loading.dart';
 import 'package:do_fix/widgets/custom_snack_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 // import 'package:flutter/services.dart';
 // import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geocoding/geocoding.dart';
@@ -1367,8 +1370,12 @@ makeDigitalPayment({
   required int isPartial,
 }) async {
   debugPrint("makeDigitalPayment CALLED");
+  debugPrint('Booking ID_: $bookingId');
 
   await Get.find<DashBoardController>().getUserInfo(false);
+  final dashBoardController = Get.find<DashBoardController>();
+  final totalAmountToPay =
+      await dashBoardController.bookingResponse?.content?.totalBookingAmount;
 
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
@@ -1400,7 +1407,6 @@ makeDigitalPayment({
     "contact_person_number": data["contact_person_number"],
   };
 
-
   // Map<String, dynamic> address = {
   //   "lat": "28.583653",
   //   "lon": "77.307526",
@@ -1426,12 +1432,13 @@ makeDigitalPayment({
 
   final formatted = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
   //
-  String url =
-      '${AppConstants.baseUrl}payment?payment_method=razor_pay'
+  String url = '${AppConstants.baseUrl}payment?payment_method=razor_pay'
       '&access_token=${base64Url.encode(utf8.encode(userId))}'
       '&zone_id=$zoneId'
       '&service_schedule=$formatted'
       '&service_address_id=${data["service_address_id"]}'
+      '&booking_id=$bookingId'
+      '&amount_to_pay=$totalAmountToPay'
       '&callback=https://panel.dofix.in'
       '&service_address=${Uri.encodeComponent(encodedAddress)}'
       '&new_user_info=null'
@@ -1446,7 +1453,6 @@ makeDigitalPayment({
         onPressed: onPressed,
         data: data,
       ));
-
 }
 // makeDigitalPayment(
 //     {required String bookingId,
