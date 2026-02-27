@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/tracking_controller.dart';
+import 'package:facebook_app_events/facebook_app_events.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,17 +19,27 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
+  Future<void> _initApp() async {
+    await TrackingController.requestTracking();
+
+    final facebookAppEvents = FacebookAppEvents();
+
+    await facebookAppEvents.setAdvertiserTracking(enabled: true);
+    await facebookAppEvents.logEvent(name: "amrit_test_event");
+
+    await Future.delayed(const Duration(seconds: 3));
+    Get.offNamed(RouteHelper.getLoginRoute());
+  }
   void initState() {
     super.initState();
     _initApp();
   }
 
-  Future<void> _initApp() async {
-    await TrackingController.requestTracking();
-    await Future.delayed(Duration(seconds: 3));
-    _route();
-  }
+  // Future<void> _initApp() async {
+  //   await TrackingController.requestTracking();
+  //   await Future.delayed(Duration(seconds: 3));
+  //   _route();
+  // }
 
   void _route() {
     Timer(const Duration(seconds: 2), () {
