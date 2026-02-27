@@ -32,6 +32,29 @@ class _HorizontalAnimatedListState extends State<HorizontalAnimatedList> {
     _items = widget.data.data ?? [];
   }
 
+  // ✅ NEW: visible dot window (overflow fix)
+  List<int> _visibleDotIndexes({
+    required int total,
+    required int current,
+    int maxDots = 7,
+  }) {
+    if (total <= maxDots) return List.generate(total, (i) => i);
+
+    final half = maxDots ~/ 2; // 7 -> 3
+    int start = current - half;
+    int end = current + half;
+
+    if (start < 0) {
+      start = 0;
+      end = maxDots - 1;
+    } else if (end > total - 1) {
+      end = total - 1;
+      start = total - maxDots;
+    }
+
+    return List.generate(maxDots, (i) => start + i);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_items.isEmpty) return const SizedBox();
@@ -83,23 +106,81 @@ class _HorizontalAnimatedListState extends State<HorizontalAnimatedList> {
           ),
         ),
 
-        /// DOT INDICATOR
+        /// ✅ DOT INDICATOR (Overflow-safe)
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(_items.length, (index) {
-            final isActive = index == _currentIndex;
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              height: 6,
-              width: isActive ? 18 : 6,
-              decoration: BoxDecoration(
-                color: isActive ? const Color(0xFF207FA7) : Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10),
+        Builder(
+          builder: (_) {
+            final total = _items.length;
+            final visible = _visibleDotIndexes(
+              total: total,
+              current: _currentIndex,
+              maxDots: 7, // you can set 5 also
+            );
+
+            final showLeftHint = total > visible.length && visible.first > 0;
+            final showRightHint =
+                total > visible.length && visible.last < total - 1;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  /// left "more" hint dot
+                  if (showLeftHint)
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      height: 6,
+                      width: 6,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+
+                  /// visible dots
+                  ...visible.map((index) {
+                    final isActive = index == _currentIndex;
+
+                    // Edge dots slightly smaller when we have hidden dots
+                    final bool isEdge =
+                        (index == visible.first || index == visible.last);
+
+                    final double h = 6;
+                    final double w = isActive
+                        ? 18
+                        : (isEdge && total > visible.length ? 5 : 6);
+
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 280),
+                      curve: Curves.easeOut,
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      height: h,
+                      width: w,
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? const Color(0xFF207FA7)
+                            : Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    );
+                  }).toList(),
+
+                  /// right "more" hint dot
+                  if (showRightHint)
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      height: 6,
+                      width: 6,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                ],
               ),
             );
-          }),
+          },
         ),
       ],
     );
@@ -124,7 +205,8 @@ class HorizontalComponent extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () async {
-          await Get.find<DashBoardController>().getServicesDetails(category.id.toString());
+          await Get.find<DashBoardController>()
+              .getServicesDetails(category.id.toString());
         },
         child: Ink(
           width: 160,
@@ -149,7 +231,6 @@ class HorizontalComponent extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-
                 /// IMAGE
                 Positioned.fill(
                   child: CustomNetworkImageWidget(
@@ -201,7 +282,8 @@ class HorizontalComponent extends StatelessWidget {
 
                       /// CTA badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 5),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(22),

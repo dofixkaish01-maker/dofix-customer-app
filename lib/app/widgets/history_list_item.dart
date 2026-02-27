@@ -23,13 +23,18 @@ class HistoryListItem extends StatefulWidget {
 
 class _HistoryListItemState extends State<HistoryListItem> {
   final bookController = Get.find<BookingController>();
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      splashColor: Colors.transparent,      // ADD
-      highlightColor: Colors.transparent,   // ADD
-      hoverColor: Colors.transparent,       // ADD
-      focusColor: Colors.transparent,       // ADD
+      splashColor: Colors.transparent,
+      // ADD
+      highlightColor: Colors.transparent,
+      // ADD
+      hoverColor: Colors.transparent,
+      // ADD
+      focusColor: Colors.transparent,
+      // ADD
       onTap: () async {
         await Get.find<DashBoardController>()
             .getBookingDetails(widget.booking?.id ?? "");
@@ -85,7 +90,10 @@ class _HistoryListItemState extends State<HistoryListItem> {
         }
       },
       child: Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border:
+                Border.all(color: Colors.grey.withOpacity(0.15), width: 0.8)),
         padding: EdgeInsets.symmetric(vertical: 9, horizontal: 9),
         // height: 154,
         child: Column(
@@ -173,7 +181,8 @@ class _HistoryListItemState extends State<HistoryListItem> {
               ),
             ]),
             SizedBox(height: 12),
-            /// 🔵 Service Status
+
+            ///  Service Status
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -189,7 +198,8 @@ class _HistoryListItemState extends State<HistoryListItem> {
                 Spacer(), // GAP HERE
 
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: _getServiceStatusColor(widget.booking?.bookingStatus)
                         .withOpacity(0.15),
@@ -202,7 +212,8 @@ class _HistoryListItemState extends State<HistoryListItem> {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: _getServiceStatusColor(widget.booking?.bookingStatus),
+                      color:
+                          _getServiceStatusColor(widget.booking?.bookingStatus),
                     ),
                   ),
                 ),
@@ -210,47 +221,48 @@ class _HistoryListItemState extends State<HistoryListItem> {
             ),
 
             SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, // ✅ Spacer ki zarurat nahi
-            children: [
-              const Text(
-                "Payment Type:",
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                ),
-              ),
-
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: _getPaymentChipColor(
-                    widget.booking?.paymentMethod,
-                    widget.booking?.isPaid,
-                  ).withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  _getPaymentText(
-                    widget.booking?.paymentMethod,
-                    widget.booking?.isPaid,
-                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Spacer ki zarurat nahi
+              children: [
+                const Text(
+                  "Payment Type:",
                   style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
                     color: _getPaymentChipColor(
                       widget.booking?.paymentMethod,
                       widget.booking?.isPaid,
+                    ).withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    _getPaymentText(
+                      widget.booking?.paymentMethod,
+                      widget.booking?.isPaid,
+                    ),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: _getPaymentChipColor(
+                        widget.booking?.paymentMethod,
+                        widget.booking?.isPaid,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
             SizedBox(height: 12),
 
-            /// 💰 Payment Status
+            ///  Payment Status
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -266,7 +278,8 @@ class _HistoryListItemState extends State<HistoryListItem> {
                 Spacer(), // GAP HERE
 
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: _getPaymentStatusColor(widget.booking?.isPaid)
                         .withOpacity(0.15),
@@ -740,6 +753,7 @@ Color _getServiceStatusColor(String? status) {
 Color _getPaymentStatusColor(int? isPaid) {
   return isPaid == 1 ? Colors.green : Colors.orange;
 }
+
 String _getPaymentText(String? method, int? isPaid) {
   if (method == "razor_pay") {
     return isPaid == 1 ? "Online • Paid" : "Online • Unpaid";
