@@ -22,13 +22,14 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _initApp() async {
     await TrackingController.requestTracking();
 
-    final facebookAppEvents = FacebookAppEvents();
-
-    await facebookAppEvents.setAdvertiserTracking(enabled: true);
-    await facebookAppEvents.logEvent(name: "amrit_test_event");
+    Future.microtask(() {
+      final facebookAppEvents = FacebookAppEvents();
+      facebookAppEvents.setAdvertiserTracking(enabled: true);
+      facebookAppEvents.logEvent(name: "amrit_test_event");
+    });
 
     await Future.delayed(const Duration(seconds: 3));
-    Get.offNamed(RouteHelper.getLoginRoute());
+    _route();
   }
   void initState() {
     super.initState();
