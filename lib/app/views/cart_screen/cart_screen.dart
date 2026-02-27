@@ -258,7 +258,7 @@ class _CartScreenState extends State<CartScreen> {
                     }
 
                     final double grandTotal =
-                    (content?.totalCost ?? 0).toDouble();
+                        (content?.totalCost ?? 0).toDouble() + tax;
 
                     final double wallet =
                     (content?.walletBalance ?? 0).toDouble();
