@@ -64,7 +64,6 @@ class CategoryToServices extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       // Sub-categories Grid
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
@@ -428,7 +427,7 @@ class CategoryToServices extends StatelessWidget {
                                                 CrossAxisAlignment.center,
                                                 children: [
 
-                                                  /// 🔥 Stylish Image
+                                                  /// Stylish Image
                                                   Container(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
@@ -460,7 +459,7 @@ class CategoryToServices extends StatelessWidget {
 
                                                   const SizedBox(width: 16),
 
-                                                  /// 🔥 Right Side Content
+                                                  /// Right Side Content
                                                   Expanded(
                                                     child: Column(
                                                       crossAxisAlignment:
@@ -560,7 +559,7 @@ class CategoryToServices extends StatelessWidget {
                                                               ),
                                                             ),
 
-                                                            /// 🔥 Circular Arrow
+                                                            /// Circular Arrow
                                                             Container(
                                                               padding:
                                                               const EdgeInsets

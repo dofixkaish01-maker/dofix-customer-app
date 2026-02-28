@@ -40,7 +40,7 @@ if (flutterVersionName == null) {
 android {
     namespace = "com.dofix.appcustomer"
     compileSdk = flutter.compileSdkVersion
-//    ndkVersion = flutter.ndkVersion
+    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -78,14 +78,26 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-        }
 
+            // Enable ProGuard / R8 for release builds
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
 }
 
 flutter {
     source = "../.."
 }
 
-dependencies {    
-   }
+dependencies {
+    implementation 'com.appsflyer:af-android-sdk:6.7.0'
+    implementation "com.android.installreferrer:installreferrer:2.2"
+}

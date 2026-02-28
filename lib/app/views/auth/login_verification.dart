@@ -34,13 +34,6 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
     _startTimer();
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _otpController.dispose();
-    super.dispose();
-  }
-
   void _startTimer() {
     _isResendEnabled = false;
     _remainingTime = 60;
@@ -93,7 +86,7 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
                 image: AssetImage(Images.icLoginBg),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
-                  Color(0xff227FA8).withOpacity(0.25), // 👈 shadow color
+                  Color(0xff227FA8).withOpacity(0.25),
                   BlendMode.srcATop,
                 ),
               ),
@@ -238,4 +231,11 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
       },
     );
   }
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _otpController.dispose();
+    super.dispose();
+  }
+
 }

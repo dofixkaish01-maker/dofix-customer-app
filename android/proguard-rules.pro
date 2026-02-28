@@ -1,0 +1,2 @@
+-keep class com.appsflyer.** { *; }
+-keep class kotlin.jvm.internal.** { *; }

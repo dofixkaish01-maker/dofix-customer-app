@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/tracking_controller.dart';
 import 'package:facebook_app_events/facebook_app_events.dart';
+import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,14 +20,18 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late AppsflyerSdk _appsFlyerSdk;
+
   Future<void> _initApp() async {
     await TrackingController.requestTracking();
 
-    Future.microtask(() {
-      final facebookAppEvents = FacebookAppEvents();
-      facebookAppEvents.setAdvertiserTracking(enabled: true);
-      facebookAppEvents.logEvent(name: "amrit_test_event");
-    });
+    // Facebook App Events
+    final facebookAppEvents = FacebookAppEvents();
+    facebookAppEvents.setAdvertiserTracking(enabled: true);
+    facebookAppEvents.logEvent(name: "amrit_test_event");
+
+    // AppsFlyer SDK init
+    await initAppsFlyer();
 
     await Future.delayed(const Duration(seconds: 3));
     _route();
@@ -46,6 +51,21 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 2), () {
       Get.find<AuthController>().isLoggedIn();
     });
+  }
+
+  Future<void> initAppsFlyer() async {
+    final AppsFlyerOptions options = AppsFlyerOptions(
+      afDevKey: "QPsc9zfWKAjutYjJgPVLWi",
+      appId: "com.dofix.appcustomer", // iOS App ID
+      showDebug: true,
+    );
+
+    _appsFlyerSdk = AppsflyerSdk(options);
+
+    await _appsFlyerSdk.initSdk(
+      registerConversionDataCallback: true,
+      registerOnAppOpenAttributionCallback: true,
+    );
   }
 
   @override

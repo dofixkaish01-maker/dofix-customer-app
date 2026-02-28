@@ -17,7 +17,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
-
 import '../app/views/ProfileScreen/profile_screen.dart';
 import '../app/views/SuccessFullScreen/success_full_screen.dart';
 import '../app/views/account/account_screen.dart';
@@ -27,7 +26,6 @@ import '../app/views/home/SubScreens/category_to_services.dart';
 import '../app/views/home/component/banner_widget.dart';
 import '../app/views/home/home_screen.dart';
 import '../app/views/no_service_screen.dart';
-import '../app/views/services/details_screen.dart';
 import '../app/views/services/services.dart';
 import '../data/api/api.dart';
 import '../data/repo/auth_repo.dart';
@@ -53,7 +51,8 @@ class DashBoardController extends GetxController implements GetxService {
   final ApiClient apiClient = Get.find<ApiClient>();
 
   bool _isLoginLoading = false;
-
+  bool isCategoryServiceLoading = false;
+  bool isSubCategoryLoading = false;
   bool get isLoginLoading => _isLoginLoading;
   CategoryModel? categoryList = CategoryModel(data: []);
   CategoryModel? allCategories = CategoryModel(data: []); // For ServiceScreens
@@ -133,11 +132,11 @@ class DashBoardController extends GetxController implements GetxService {
 
     if (permission == LocationPermission.denied ||
         permission == LocationPermission.deniedForever) {
-      print("Location permission not granted");
+      // print("Location permission not granted");
       return;
     }
 
-    await fetchUserLocation(); //hamara already existing function
+    await fetchUserLocation();
   }
 
   Future<void> getFeaturedCategories({
@@ -158,7 +157,7 @@ class DashBoardController extends GetxController implements GetxService {
           categoryList = CategoryModel.fromJson(responseData['content']); // 6 for dashboard
         } else {
           allCategories = CategoryModel.fromJson(responseData['content']); // 50+ for services
-          print("ALL CATEGORIES COUNT: ${allCategories?.data?.length}");
+          // print("ALL CATEGORIES COUNT: ${allCategories?.data?.length}");
         }
         update();
       } else {
@@ -172,7 +171,6 @@ class DashBoardController extends GetxController implements GetxService {
   }
   var isNotificationLoading = false.obs;
   var notificationModel = NotificationModel(null, null, []).obs;
-// normally ye auth / storage se aata hai
   late String? token=authRepo.apiClient.token;
 // final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
   String get customerId {
@@ -194,7 +192,7 @@ class DashBoardController extends GetxController implements GetxService {
 
       final result = await AuthRepo.fetchNotifications(
         token: token,
-        userId: customerId, // getter call ho raha hai
+        userId: customerId,
         userType: userType,
       );
 
@@ -767,7 +765,7 @@ class DashBoardController extends GetxController implements GetxService {
       if (responseData == null) {
         throw Exception("Response data is null");
       }
-      log("rrrr Response data booking: $responseData");
+      log("Response data booking: $responseData");
 
       if (response.statusCode == 200) {
         if (responseData['message']
@@ -778,7 +776,6 @@ class DashBoardController extends GetxController implements GetxService {
           update();
         } else {
           hideLoading();
-
           closeSnackBarIfActive();
           showCustomSnackBar(responseData['message'], isError: true);
         }
@@ -829,7 +826,7 @@ class DashBoardController extends GetxController implements GetxService {
           final booking = bookingResponse?.content;
 
           if (booking != null) {
-            debugPrint("Showing DialogBx : ${responseData}");
+            debugPrint("Showing DialogBx : $responseData");
           } else {
             debugPrint("Booking details not available");
             showCustomSnackBar("Booking details not available", isError: true);
@@ -974,12 +971,12 @@ class DashBoardController extends GetxController implements GetxService {
             // hideLoading();
             // update();
             Get.offAll(() => SuccessFullScreen());
-            print("✅ Success Response: $responseBody");
+            // print("Success Response: $responseBody");
           } else {
             // API returned failed flag
             // hideLoading();
             // update();
-            print("❌ API returned failed flag: $message");
+            // print("API returned failed flag: $message");
             showCustomSnackBar(
                 message.isNotEmpty
                     ? message
@@ -990,18 +987,18 @@ class DashBoardController extends GetxController implements GetxService {
           // If response parsing fails, treat as error
           hideLoading();
           update();
-          print("❌ Failed to parse response: $parseError");
-          print("📌 Response Body: $responseBody");
+          // print("Failed to parse response: $parseError");
+          // print("Response Body: $responseBody");
           showCustomSnackBar("Invalid response from server. Please try again.",
               isError: true);
         }
       } else {
         // hideLoading();
         // update();
-        print("❌ API Error ${response.statusCode}");
-        print("📌 Response Reason: ${response.reasonPhrase}");
-        print("📌 Response Body: $responseBody");
-        print("📌 Headers: ${response.headers}");
+        // print(" API Error ${response.statusCode}");
+        // print(" Response Reason: ${response.reasonPhrase}");
+        // print(" Response Body: $responseBody");
+        // print(" Headers: ${response.headers}");
 
         // Show error message to user
         showCustomSnackBar(
@@ -1013,8 +1010,8 @@ class DashBoardController extends GetxController implements GetxService {
       log("❌ Booking request failed with exception: $e");
       // hideLoading();
       // update();
-      debugPrint("❌ Exception: $e");
-      debugPrint("📌 Stack Trace: $stackTrace");
+      debugPrint("Exception: $e");
+      debugPrint("Stack Trace: $stackTrace");
 
       // Show specific error message to user
       String errorMessage =
@@ -1023,18 +1020,18 @@ class DashBoardController extends GetxController implements GetxService {
           e.toString().contains('TimeoutException')) {
         errorMessage =
             "Booking request timed out. This might be due to server overload. Please try again in a few moments.";
-        log("⏰ Request timed out after 30 seconds");
+        log("Request timed out after 30 seconds");
       } else if (e.toString().contains('connection') ||
           e.toString().contains('SocketException')) {
         errorMessage =
             "Connection failed. Please check your internet connection and try again.";
-        log("🔌 Connection error detected");
+        log("Connection error detected");
       } else if (e.toString().contains('FormatException')) {
         errorMessage = "Server response format error. Please try again later.";
-        log("📄 Response format error");
+        log("Response format error");
       }
 
-      log("🚨 Showing error message to user: $errorMessage");
+      log("Showing error message to user: $errorMessage");
       showCustomSnackBar(errorMessage, isError: true);
     }
   }
@@ -1088,7 +1085,7 @@ class DashBoardController extends GetxController implements GetxService {
       "quantity": "1",
       "variant_key": jsonDecode(variationsJson),
     };
-    log("Add to card body : ${requestBody}");
+    debugPrint("Add to card body : $requestBody");
     request.bodyBytes = utf8.encode(jsonEncode(requestBody));
     request.headers.addAll(headers);
 
@@ -1099,7 +1096,7 @@ class DashBoardController extends GetxController implements GetxService {
       String responseBody = await response.stream.bytesToString();
 
       if (response.statusCode == 200) {
-        print("✅ Success Response: $responseBody");
+        debugPrint("Success Response: $responseBody");
         await Future.delayed(Duration(seconds: 1));
         await getCartListing(
             limit: "100", offset: "1", isRoute: false, showLoader: true);
@@ -1112,14 +1109,14 @@ class DashBoardController extends GetxController implements GetxService {
         selectedVariations.clear();
       } else {
         log("Add to card body : catch : ${response.statusCode} and $responseBody");
-        print("❌ API Error ${response.statusCode}");
-        print("📌 Response Reason: ${response.reasonPhrase}");
-        print("📌 Response Body: $responseBody");
-        print("📌 Headers: ${response.headers}");
+        // print("API Error ${response.statusCode}");
+        // print("Response Reason: ${response.reasonPhrase}");
+        // print("Response Body: $responseBody");
+        // print("Headers: ${response.headers}");
       }
     } catch (e, stackTrace) {
-      debugPrint("❌ Exception: $e");
-      debugPrint("📌 Stack Trace: $stackTrace");
+      debugPrint("Exception: $e");
+      debugPrint("Stack Trace: $stackTrace");
       log("Add to card body : catch : $e and $stackTrace");
     } finally {
       hideLoading();
@@ -1147,7 +1144,7 @@ class DashBoardController extends GetxController implements GetxService {
             .contains("Successfully data fetched")) {
           log("dddd Zone: $responseData");
           String? token =
-              await sharedPreferences.getString(AppConstants.token).toString();
+              sharedPreferences.getString(AppConstants.token).toString();
           apiClient.updateHeader(
               token, responseData['content']['zone']['id'].toString());
           debugPrint(
@@ -1577,7 +1574,7 @@ class DashBoardController extends GetxController implements GetxService {
                     bannertype: bannerType,
                     onTap: () {
                       try {
-                        print("category id: ${bannerRedirect}, ${bannerType}");
+                        log("category id: $bannerRedirect, $bannerType");
                         if (bannerType == "category") {
                           Get.find<DashBoardController>()
                               .getCategoriesToSubCategories(
@@ -1606,7 +1603,7 @@ class DashBoardController extends GetxController implements GetxService {
                     bannertype: bannerType,
                     onTap: () {
                       try {
-                        print("category id: ${bannerRedirect}, ${bannerType}");
+                        debugPrint("category id: $bannerRedirect, $bannerType");
                         if (bannerType == "category") {
                           Get.find<DashBoardController>()
                               .getCategoriesToSubCategories(
@@ -1659,7 +1656,7 @@ class DashBoardController extends GetxController implements GetxService {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       // Handle error
-      print('Could not launch $url');
+      log('Could not launch $url');
     }
   }
 
@@ -1726,14 +1723,16 @@ class DashBoardController extends GetxController implements GetxService {
 
     if (response.statusCode == 200) {
       hideLoading();
-      print(responseBody);
+      debugPrint("Success Response: $responseBody");
       await getCartListing(
           limit: "100", offset: "1", isRoute: false, showLoader: true);
       // Notify UI that cart total has been updated
       update(['cart_total', 'service_container']);
     } else {
-      print(response.reasonPhrase);
-      print(responseBody);
+      debugPrint("API Error ${response.statusCode}");
+      debugPrint("Response Reason ${response.reasonPhrase}");
+      debugPrint("Response Body $responseBody");
+      debugPrint("Headers: ${response.headers}");
     }
   }
 
@@ -1754,14 +1753,14 @@ class DashBoardController extends GetxController implements GetxService {
 
     if (response.statusCode == 200) {
       hideLoading();
-      print(responseBody);
+      debugPrint("Success Response: $responseBody");
       await getCartListing(
           limit: "100", offset: "1", isRoute: false, showLoader: false);
       // Notify UI that cart total has been updated
       update(['cart_total', 'service_container']);
     } else {
-      print(response.reasonPhrase);
-      print(responseBody);
+      debugPrint("API Error ${response.reasonPhrase}");
+      debugPrint("Response Body $responseBody");
     }
   }
 
@@ -1779,16 +1778,16 @@ class DashBoardController extends GetxController implements GetxService {
   final bookingController = Get.find<BookingController>();
 
   Future<void> handleLocationPermission(BuildContext context) async {
-    LocationPermission permission = await Geolocator.checkPermission();
+    // LocationPermission permission = await Geolocator.checkPermission();
 
     showLoading();
     await fetchUserLocation();
 
-    // 🔥 Fetch Dashboard data separately
+    // Fetch Dashboard data separately
     await Get.find<DashBoardController>()
         .getFeaturedCategories(limit: "6", offset: "1", forDashboard: true);
 
-    // 🔥 Fetch ALL categories for ServiceScreens
+    // Fetch ALL categories for ServiceScreens
     await Get.find<DashBoardController>()
         .getFeaturedCategories(limit: "50", offset: "1", forDashboard: false);
 
@@ -1886,7 +1885,7 @@ class DashBoardController extends GetxController implements GetxService {
 
       await fetchUserLocation();
     } catch (e) {
-      print("Location error: $e");
+      debugPrint("Location error: $e");
     } finally {
       hideLoading();
     }
@@ -2056,15 +2055,15 @@ class DashBoardController extends GetxController implements GetxService {
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
+      log(await response.stream.bytesToString());
       Get.snackbar("Success", "Profile updated successfully",
           backgroundColor: Colors.green,
           colorText: Colors.white,
           duration: const Duration(seconds: 2));
     } else {
-      print(await response.stream.bytesToString());
-      print('Error: ${response.statusCode}');
-      print(response.reasonPhrase);
+      log(await response.stream.bytesToString());
+      log('Error: ${response.statusCode}');
+      log("Reason: ${response.reasonPhrase}");
     }
   }
 

@@ -229,7 +229,6 @@ class _ServiceDetailsState extends State<ServiceDetails>
                               ),
                             ),
                             /// Available Services
-
                             //******* working ********
                             AnimatedOpacity(
                               duration: Duration(milliseconds: 300),

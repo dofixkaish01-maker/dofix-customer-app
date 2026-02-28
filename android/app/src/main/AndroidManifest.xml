@@ -9,7 +9,7 @@
 
     <application
         android:label="DoFix"
-        android:name="${applicationName}"
+        android:name=".MyApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -50,6 +50,10 @@
 
         <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
             android:value="true"/>
+
+        <meta-data
+            android:name="com.appsflyer.sdk.AF_DEV_KEY"
+            android:value="QPsc9zfWKAjutYjJgPVLWi"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
