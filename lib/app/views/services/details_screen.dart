@@ -11,6 +11,7 @@ class DetailsScreen extends StatelessWidget {
   final dynamic serviceModel;
   final String variationName;
   final String rating;
+  final String coverImage;
   final String reviewCount;
   final String mrpPrice;
   final String discountedPrice;
@@ -18,11 +19,12 @@ class DetailsScreen extends StatelessWidget {
   final String description;
   final String variantKey;
 
-  const DetailsScreen({
+   DetailsScreen({
     super.key,
     required this.serviceModel,
     required this.variationName,
     required this.rating,
+    required this.coverImage,
     required this.reviewCount,
     required this.mrpPrice,
     required this.discountedPrice,
@@ -31,12 +33,15 @@ class DetailsScreen extends StatelessWidget {
     required this.variantKey,
   });
 
+  String coverVariantImagePath="https://panel.dofix.in/storage/service/variant/";
+
   @override
   Widget build(BuildContext context) {
 
     /// Percentage Calculation
     double mrp = double.tryParse(mrpPrice) ?? 0;
     double discountPrice = double.tryParse(discountedPrice) ?? 0;
+
 
     int percentOff = 0;
     if (mrp > 0) {
@@ -86,7 +91,7 @@ class DetailsScreen extends StatelessWidget {
 
                           Positioned.fill(
                             child: Image.network(
-                              serviceModel?.coverImageFullPath ?? "",
+                              coverVariantImagePath+coverImage,
                               fit: BoxFit.cover,
                             ),
                           ),

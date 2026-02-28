@@ -290,6 +290,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                           variantKey:
                                               variation?.variantKey ?? "",
                                           serviceModel: controller.serviceModel,
+                                          serviceCoverImage:variation?.coverImage ?? "" ,
                                         );
                                       },
                                     );

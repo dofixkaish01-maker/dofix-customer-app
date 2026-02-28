@@ -34,7 +34,7 @@ class CategoryToServices extends StatelessWidget {
               if (dash.selectedSubCategories.isNotEmpty) {
                 await dash.getCategoriesToServices(
                   id: dash.selectedSubCategories[0].id.toString(),
-                  limit: '10',
+                  limit: '50',
                   offset: "1",
                   isLoading: false,
                 );
@@ -80,7 +80,7 @@ class CategoryToServices extends StatelessWidget {
                                 onTap: () {
                                   controller.getCategoriesToServices(
                                     id: subCategory.id.toString(),
-                                    limit: '10',
+                                    limit: '50',
                                     offset: "1",
                                     isLoading: true,
                                   );

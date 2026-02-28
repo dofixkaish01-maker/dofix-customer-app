@@ -13,6 +13,7 @@ import 'package:do_fix/utils/sizeboxes.dart';
   class VariationsNewCard extends StatefulWidget {
     final String serviceVariationName;
     final String serviceRatings;
+    final String serviceCoverImage;
     final String serviceReviewCount;
     final String serviceMrpPrice;
     final String serviceDiscountedPrice;
@@ -27,6 +28,7 @@ import 'package:do_fix/utils/sizeboxes.dart';
       required this.serviceVariationName,
       required this.serviceRatings,
       required this.serviceReviewCount,
+      required this.serviceCoverImage,
       required this.serviceMrpPrice,
       required this.serviceDiscountedPrice,
       required this.serviceTimeDuration,
@@ -41,7 +43,9 @@ import 'package:do_fix/utils/sizeboxes.dart';
   class _VariationsNewCardState extends State<VariationsNewCard> {
     final DashBoardController dashboardController = Get.find<DashBoardController>();
     bool isInCart = false;
-  
+    String coverVariantImagePath="https://panel.dofix.in/storage/service/variant/";
+
+
     // Format duration from "18:30" to "18 Hours 30 Mins"
     String _formatDuration(String duration) {
       if (duration.contains(':')) {
@@ -143,11 +147,13 @@ import 'package:do_fix/utils/sizeboxes.dart';
 
     @override
     Widget build(BuildContext context) {
+      print("coverVariantImagePath: $coverVariantImagePath${widget.serviceCoverImage}");
       return GestureDetector(
         onTap: () {
           Get.to(() => DetailsScreen(
             serviceModel: widget.serviceModel,
             variationName: widget.serviceVariationName,
+            coverImage: widget.serviceCoverImage,
             rating: widget.serviceRatings,
             reviewCount: widget.serviceReviewCount,
             mrpPrice: widget.serviceMrpPrice,
@@ -193,11 +199,14 @@ import 'package:do_fix/utils/sizeboxes.dart';
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(
-                          widget.serviceModel.coverImageFullPath ?? "",
+                          coverVariantImagePath+widget.serviceCoverImage,
+                          // "https://panel.dofix.in/storage/service/variant/bathroom-had-cleaing.png",
+                          // widget.serviceModel.coverImageFullPath ?? "",
                           // widget.serviceModel.coverImageFullPath ?? "",
                           // widget.serviceModel.coverImage ?? "",
                           // widget.serviceModel.thumbnailFullPath ?? "",
                           // widget.serviceModel.thumbnail ?? "",
+                          // widget.serviceCoverImage ?? "",
                           height: 90,
                           width: 160,
                           fit: BoxFit.cover,

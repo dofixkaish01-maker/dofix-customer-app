@@ -6,6 +6,7 @@ class Variation {
   final String variantKey;
   final String serviceId;
   final String zoneId;
+  final String coverImage;
   final double price;
   final double mrpPrice;
   final double discount;
@@ -27,6 +28,7 @@ class Variation {
     required this.variantKey,
     required this.serviceId,
     required this.zoneId,
+    required this.coverImage,
     required this.price,
     required this.mrpPrice,
     required this.discount,
@@ -53,6 +55,7 @@ class Variation {
       variantKey: json['variant_key'] ?? '',
       serviceId: json['service_id'] ?? '',
       zoneId: json['zone_id'] ?? '',
+      coverImage: json['cover_image'] ?? '',
       price: (json['price'] is int || json['price'] is double)
           ? (json['price'] as num).toDouble()
           : double.tryParse(json['price'].toString()) ?? 0.0,
@@ -95,6 +98,7 @@ class Variation {
       'variant_key': variantKey,
       'service_id': serviceId,
       'zone_id': zoneId,
+      'cover_image': coverImage,
       'price': price,
       'mrp_price': mrpPrice,
       'discount': discount,
