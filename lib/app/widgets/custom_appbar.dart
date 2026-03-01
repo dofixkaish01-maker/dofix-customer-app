@@ -47,373 +47,397 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.white,
-      automaticallyImplyLeading: false,
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-      ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(40.0),
-        child: Column(
-          children: [
-            Visibility(
-              child: SizedBox(
-                height: 10,
-              ),
-              visible: showTitle,
-            ),
-            Visibility(
-              visible: showTitle,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Text(
-                    title ?? "",
-                    textAlign: TextAlign.start,
-                    style: albertSansRegular.copyWith(
-                      fontSize: Dimensions.fontSizeDefault,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Visibility(
-              child: SizedBox(
-                height: 30,
-              ),
-              visible: showTitle,
-            ),
-            Visibility(
-              visible: isBackButtonExist,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  try {
-                    if (onBackPressed != null) {
-                      onBackPressed!();
-                    }
-
-                    if (Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
-                    }
-                  } catch (e) {
-                    debugPrint("Back error: $e");
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 35,
-                        width: 36,
-                        padding: EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4)),
-                        child:
-                            SvgPicture.asset('assets/icons/ic_arrow_left.svg'),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                          child: Text(
-                        title ?? "",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Albert Sans',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Visibility(
-              visible: isSearchButtonExist ?? true,
-              child: Padding(
-                padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
-                child: Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Get.to(() => SearchScreen());
-                      },
-                      child: Container(
-                        height: 40,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: Dimensions.paddingSize10),
-                        decoration: BoxDecoration(
-                          color: primaryColorDuskyWhite,
-                          borderRadius:
-                              BorderRadius.circular(Dimensions.radius5),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              CupertinoIcons.search,
-                              color: Theme.of(context).hintColor,
-                            ),
-                            sizedBoxW10(),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "Search Service",
-                                    style: albertSansRegular.copyWith(
-                                        fontSize: Dimensions.fontSize12,
-                                        fontWeight: FontWeight.w300,
-                                        color: Theme.of(context).hintColor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      flexibleSpace: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            'assets/images/header_bg2.png',
-            fit: BoxFit.values[2],
+    return GetBuilder<DashBoardController>(
+      builder: (controller) {
+        final int cartCount =
+            controller.cartModel.content?.cart?.data?.length ?? 0;
+        return AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
           ),
-          GetBuilder<DashBoardController>(builder: (controller) {
-            log("Address value in Appbar : ${controller.address} ");
-            return FlexibleSpaceBar(
-              background: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: Dimensions.paddingSizeDefault),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 50,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(40.0),
+            child: Column(
+              children: [
+                Visibility(
+                  child: SizedBox(
+                    height: 10,
+                  ),
+                  visible: showTitle,
+                ),
+                Visibility(
+                  visible: showTitle,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(
+                        title ?? "",
+                        textAlign: TextAlign.start,
+                        style: albertSansRegular.copyWith(
+                          fontSize: Dimensions.fontSizeDefault,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ),
+                ),
+                Visibility(
+                  child: SizedBox(
+                    height: 30,
+                  ),
+                  visible: showTitle,
+                ),
+                Visibility(
+                  visible: isBackButtonExist,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      try {
+                        if (onBackPressed != null) {
+                          onBackPressed!();
+                        }
+
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
+                      } catch (e) {
+                        debugPrint("Back error: $e");
+                      }
+                    },
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 35,
+                            width: 36,
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4)),
+                            child: SvgPicture.asset(
+                                'assets/icons/ic_arrow_left.svg'),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                              child: Text(
+                            title ?? "",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'Albert Sans',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: isSearchButtonExist ?? true,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                    child: Column(
                       children: [
-                        Visibility(
-                          visible: isAddressExist,
-                          child: Expanded(
+                        InkWell(
+                          onTap: () {
+                            Get.to(() => SearchScreen());
+                          },
+                          child: Container(
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: Dimensions.paddingSize10),
+                            decoration: BoxDecoration(
+                              color: primaryColorDuskyWhite,
+                              borderRadius:
+                                  BorderRadius.circular(Dimensions.radius5),
+                            ),
                             child: Row(
                               children: [
-                                Visibility(
-                                  visible: controller.address != null &&
-                                      controller.address!.isNotEmpty,
-                                  child: InkWell(
-                                    onTap: ()async{
-                                      debugPrint(
-                                          "Address value : ${controller.address} ");
-                                      await Get.find<DashBoardController>().getAddressLists();
-                                      Get.to(() => AddressSelectionScreen());
-                                    },
-                                    child: Container(
-                                      constraints:
-                                          BoxConstraints(maxWidth: 250),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(Icons.location_on_sharp,
-                                                  color: Colors.white,
-                                                  size: Dimensions.fontSize15),
-                                              SizedBox(
-                                                width: 3,
-                                              ),
-                                              Flexible(
-                                                child: Text(
-                                                  controller.shortAddress.value
-                                                          .isNotEmpty
-                                                      ? controller
-                                                          .shortAddress.value
-                                                      : "Select Address",
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: albertSansRegular
-                                                      .copyWith(
-                                                    fontSize:
-                                                        Dimensions.fontSize14,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                              Icon(
-                                                Icons.keyboard_arrow_down,
-                                                color: Colors.white,
-                                                size: 18,
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Container(
-                                            constraints:
-                                                BoxConstraints(maxWidth: 230),
-                                            child: Text(
-                                              controller.address?.isNotEmpty ==
-                                                      true
-                                                  ? controller.address!
-                                                  : "",
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: albertSansRegular.copyWith(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                Icon(
+                                  CupertinoIcons.search,
+                                  color: Theme.of(context).hintColor,
+                                ),
+                                sizedBoxW10(),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "Search Service",
+                                        style: albertSansRegular.copyWith(
+                                            fontSize: Dimensions.fontSize12,
+                                            fontWeight: FontWeight.w300,
+                                            color: Theme.of(context).hintColor),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        Visibility(
-                          visible: showNotificationIcon,
-                          child: IconButton(
-                            tooltip: "Notifications",
-                            onPressed: () async {
-                              final authController = Get.find<AuthController>();
-                              bool isGuest = await authController.returnIsGuest();
-
-                              if (isGuest) {
-                                authController.checkIfGuest();
-                              } else {
-                                Get.to(() => NotificationScreen());
-                              }
-                            },
-                            icon: const Icon(
-                              Icons.notifications_active,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: isCartButtonExist,
-                          child: IconButton(
-                            tooltip: "Cart",
-                            onPressed: () async {
-                              final authController = Get.find<AuthController>();
-                              bool isGuest =
-                                  await authController.returnIsGuest();
-                              if (isGuest) {
-                                authController.checkIfGuest();
-                              } else {
-                                await Get.find<DashBoardController>()
-                                    .getCartListing(
-                                        limit: "100",
-                                        offset: "1",
-                                        isRoute: false,
-                                        showLoader: false);
-                                Get.to(() => CartScreen());
-                              }
-                            },
-                            icon: Badge(
-                              label: Text(
-                                "${controller.cartModel.content?.cart?.data?.length == null ? "0" : controller.cartModel.content?.cart?.data?.length}",
-                              ),
-                              offset: const Offset(6, -4),
-                              backgroundColor: Colors.red,
-                              child: Container(
-                                height: 35,
-                                width: 36,
-                                padding: EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: SvgPicture.asset(
-                                    'assets/icons/ic_buy_cart.svg'),
-                              ),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
-                    // Visibility(
-                    //   visible: isBackButtonExist,
-                    //   child: GestureDetector(
-                    //     behavior: HitTestBehavior.translucent,
-                    //     onTap: () {
-                    //       if (onBackPressed != null) {
-                    //         onBackPressed!();
-                    //       } else {
-                    //         Get.back();
-                    //       }
-                    //     },
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.start,
-                    //       crossAxisAlignment: CrossAxisAlignment.center,
-                    //       children: [
-                    //         Container(
-                    //           height: 35,
-                    //           width: 36,
-                    //           padding: EdgeInsets.all(6),
-                    //           decoration: BoxDecoration(
-                    //               color: Colors.white,
-                    //               borderRadius: BorderRadius.circular(4)),
-                    //           child: SvgPicture.asset(
-                    //               'assets/icons/ic_arrow_left.svg'),
-                    //         ),
-                    //         SizedBox(
-                    //           width: 10,
-                    //         ),
-                    //         Expanded(
-                    //             child: Text(
-                    //           title ?? "",
-                    //           maxLines: 1,
-                    //           overflow: TextOverflow.ellipsis,
-                    //           style: TextStyle(
-                    //             color: Colors.white,
-                    //             fontSize: 16,
-                    //             fontFamily: 'Albert Sans',
-                    //             fontWeight: FontWeight.w500,
-                    //           ),
-                    //         )),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
+                  ),
                 ),
+              ],
+            ),
+          ),
+          flexibleSpace: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                'assets/images/header_bg2.png',
+                fit: BoxFit.values[2],
               ),
-            );
-          }),
-        ],
+              GetBuilder<DashBoardController>(builder: (controller) {
+                log("Address value in Appbar : ${controller.address} ");
+                return FlexibleSpaceBar(
+                  background: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: Dimensions.paddingSizeDefault),
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Visibility(
+                              visible: isAddressExist,
+                              child: Expanded(
+                                child: Row(
+                                  children: [
+                                    Visibility(
+                                      visible: controller.address != null &&
+                                          controller.address!.isNotEmpty,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          debugPrint(
+                                              "Address value : ${controller.address} ");
+                                          await Get.find<DashBoardController>()
+                                              .getAddressLists();
+                                          Get.to(
+                                              () => AddressSelectionScreen());
+                                        },
+                                        child: Container(
+                                          constraints:
+                                              BoxConstraints(maxWidth: 250),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.location_on_sharp,
+                                                      color: Colors.white,
+                                                      size: Dimensions
+                                                          .fontSize15),
+                                                  SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(
+                                                      controller.shortAddress
+                                                              .value.isNotEmpty
+                                                          ? controller
+                                                              .shortAddress
+                                                              .value
+                                                          : "Select Address",
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: albertSansRegular
+                                                          .copyWith(
+                                                        fontSize: Dimensions
+                                                            .fontSize14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Icon(
+                                                    Icons.keyboard_arrow_down,
+                                                    color: Colors.white,
+                                                    size: 18,
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Container(
+                                                constraints: BoxConstraints(
+                                                    maxWidth: 230),
+                                                child: Text(
+                                                  controller.address
+                                                              ?.isNotEmpty ==
+                                                          true
+                                                      ? controller.address!
+                                                      : "",
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: albertSansRegular
+                                                      .copyWith(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: showNotificationIcon,
+                              child: IconButton(
+                                tooltip: "Notifications",
+                                onPressed: () async {
+                                  final authController =
+                                      Get.find<AuthController>();
+                                  bool isGuest =
+                                      await authController.returnIsGuest();
+
+                                  if (isGuest) {
+                                    authController.checkIfGuest();
+                                  } else {
+                                    Get.to(() => NotificationScreen());
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.notifications_active,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: isCartButtonExist,
+                              child: IconButton(
+                                tooltip: "Cart",
+                                onPressed: () async {
+                                  final authController =
+                                      Get.find<AuthController>();
+                                  bool isGuest =
+                                      await authController.returnIsGuest();
+
+                                  if (isGuest) {
+                                    authController.checkIfGuest();
+                                  } else {
+                                    await Get.find<DashBoardController>()
+                                        .getCartListing(
+                                      limit: "100",
+                                      offset: "1",
+                                      isRoute: false,
+                                      showLoader: false,
+                                    );
+                                    Get.to(() => CartScreen());
+                                  }
+                                },
+                                icon: cartCount > 0
+                                    ? Badge(
+                                        label: Text(cartCount.toString()),
+                                        offset: const Offset(6, -4),
+                                        backgroundColor: Colors.red,
+                                        child: _cartIcon(),
+                                      )
+                                    : _cartIcon(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Visibility(
+                        //   visible: isBackButtonExist,
+                        //   child: GestureDetector(
+                        //     behavior: HitTestBehavior.translucent,
+                        //     onTap: () {
+                        //       if (onBackPressed != null) {
+                        //         onBackPressed!();
+                        //       } else {
+                        //         Get.back();
+                        //       }
+                        //     },
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment.start,
+                        //       crossAxisAlignment: CrossAxisAlignment.center,
+                        //       children: [
+                        //         Container(
+                        //           height: 35,
+                        //           width: 36,
+                        //           padding: EdgeInsets.all(6),
+                        //           decoration: BoxDecoration(
+                        //               color: Colors.white,
+                        //               borderRadius: BorderRadius.circular(4)),
+                        //           child: SvgPicture.asset(
+                        //               'assets/icons/ic_arrow_left.svg'),
+                        //         ),
+                        //         SizedBox(
+                        //           width: 10,
+                        //         ),
+                        //         Expanded(
+                        //             child: Text(
+                        //           title ?? "",
+                        //           maxLines: 1,
+                        //           overflow: TextOverflow.ellipsis,
+                        //           style: TextStyle(
+                        //             color: Colors.white,
+                        //             fontSize: 16,
+                        //             fontFamily: 'Albert Sans',
+                        //             fontWeight: FontWeight.w500,
+                        //           ),
+                        //         )),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _cartIcon() {
+    return Container(
+      height: 35,
+      width: 36,
+      padding: const EdgeInsets.all(6),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
       ),
+      child: SvgPicture.asset('assets/icons/ic_buy_cart.svg'),
     );
   }
 

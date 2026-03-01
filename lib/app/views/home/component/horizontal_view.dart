@@ -32,7 +32,19 @@ class _HorizontalAnimatedListState extends State<HorizontalAnimatedList> {
     _items = widget.data.data ?? [];
   }
 
-  // ✅ NEW: visible dot window (overflow fix)
+  @override
+  void didUpdateWidget(covariant HorizontalAnimatedList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // jab new data aaye to items refresh
+    if (oldWidget.data.data != widget.data.data) {
+      _items = widget.data.data ?? [];
+      if (_currentIndex >= _items.length) _currentIndex = 0;
+      setState(() {});
+    }
+  }
+
+  // NEW: visible dot window (overflow fix)
   List<int> _visibleDotIndexes({
     required int total,
     required int current,
@@ -106,7 +118,7 @@ class _HorizontalAnimatedListState extends State<HorizontalAnimatedList> {
           ),
         ),
 
-        /// ✅ DOT INDICATOR (Overflow-safe)
+        /// DOT INDICATOR (Overflow-safe)
         const SizedBox(height: 8),
         Builder(
           builder: (_) {

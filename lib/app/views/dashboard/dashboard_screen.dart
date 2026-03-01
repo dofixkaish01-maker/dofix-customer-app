@@ -39,10 +39,13 @@ class DashboardScreenState extends State<DashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Get.find<DashBoardController>().handleLocationPermission(context);
     });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Get.find<DashBoardController>().handleLocationPermissionOnce(context);
+    // });
 
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {});
-    });
+    // Future.delayed(const Duration(seconds: 1), () {
+    //   setState(() {});
+    // });
   }
 
   @override
@@ -61,7 +64,9 @@ class DashboardScreenState extends State<DashboardScreen> {
                 now.difference(_lastBackPressed!) > Duration(seconds: 2)) {
               _lastBackPressed = now;
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Press back again to exit')),
+                SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text('Press back again to exit')),
               );
               return false;
             }

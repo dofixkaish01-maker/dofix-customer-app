@@ -15,6 +15,7 @@ class CustomNetworkImageWidget extends StatelessWidget {
   final double? radius;
   final double? imagePadding;
   final bool onlyTopRadius;
+
   const CustomNetworkImageWidget(
       {super.key,
       required this.image,
@@ -65,6 +66,7 @@ class CustomRoundNetworkImage extends StatelessWidget {
   final String image;
   final String? placeholder;
   final double? imagePadding;
+
   const CustomRoundNetworkImage(
       {super.key,
       this.height,
@@ -79,7 +81,8 @@ class CustomRoundNetworkImage extends StatelessWidget {
       height: height,
       width: width,
       decoration: BoxDecoration(shape: BoxShape.circle),
-      child: CachedNetworkImage(
+      child:
+      CachedNetworkImage(
         imageUrl: image,
         fit: BoxFit.cover,
         placeholder: (context, url) =>
@@ -97,6 +100,7 @@ class CustomRoundNetworkImage extends StatelessWidget {
 class ShimmerWidget extends StatelessWidget {
   final double? height;
   final double? width;
+
   const ShimmerWidget({super.key, this.height, this.width});
 
   @override

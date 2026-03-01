@@ -100,9 +100,6 @@ class DashBoardController extends GetxController implements GetxService {
     // Auto location fetch
     _autoFetchLocation();
     // Initial calls for Dashboard
-    getFeaturedCategories(limit: "50", offset: "1", forDashboard: true); // Only 6 for dashboard
-    getTopRated("10", "1", false);
-    getQuickRepair("10", "1", false);
     getAddressLists();
   }
 
@@ -110,7 +107,7 @@ class DashBoardController extends GetxController implements GetxService {
     if (query.isEmpty) {
       filteredAddresses = addressResponse.data ?? [];
     } else {
-      filteredAddresses = addressResponse.data!
+      filteredAddresses = addressResponse.data
           .where((address) =>
       (address.address ?? "")
           .toLowerCase()
@@ -122,6 +119,43 @@ class DashBoardController extends GetxController implements GetxService {
     }
 
     update();
+  }
+
+  // for booking history loading handle
+  bool _locationHandled = false;
+
+  Future<void> handleLocationPermissionOnce(BuildContext context) async {
+    if (_locationHandled) return;
+    _locationHandled = true;
+    await handleLocationPermission(context);
+  }
+
+  //------------------------------------------------
+
+  bool homeLoaded = false;
+  bool homeLoading = false;
+
+  Future<void> loadHome({bool force = false}) async {
+    if (homeLoaded && !force) return;
+    if (homeLoading) return;
+
+    homeLoading = true;
+    update(['home']); // optional: show shimmer
+
+    try {
+      await Future.wait([
+        getFeaturedCategories(limit: "6", offset: "1", forDashboard: true, isShowLoading: !homeLoaded),
+        getTopRated("10", "1", false),
+        getQuickRepair("10", "1", false),
+        getBanners(),
+        getACServices(),
+      ]);
+
+      homeLoaded = true;
+    } finally {
+      homeLoading = false;
+      update(['home']);
+    }
   }
 
   Future<void> _autoFetchLocation() async {
