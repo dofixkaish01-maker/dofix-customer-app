@@ -643,14 +643,24 @@ class AuthController extends GetxController implements GetxService {
     isLoggedIn();
   }
 
+
   Future<void> isLoggedIn() async {
     bool value = await authRepo.isLoggedIn();
+
     if (value) {
-      Get.toNamed(RouteHelper.getDashboardRoute());
+      Get.offAllNamed(RouteHelper.getDashboardRoute());
     } else {
-      Get.toNamed(RouteHelper.getLoginRoute());
+      Get.offAllNamed(RouteHelper.getLoginRoute());
     }
   }
+  // Future<void> isLoggedIn() async {
+  //   bool value = await authRepo.isLoggedIn();
+  //   if (value) {
+  //     Get.toNamed(RouteHelper.getDashboardRoute());
+  //   } else {
+  //     Get.toNamed(RouteHelper.getLoginRoute());
+  //   }
+  // }
 
   void logout() {
     ApiClient apiClient = ApiClient(

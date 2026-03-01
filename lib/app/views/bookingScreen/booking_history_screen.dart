@@ -72,11 +72,11 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
   //   final controller = Get.find<DashBoardController>();
   //
   //   if (isRefresh) {
-  //     // 🔥 FAST refresh – no animation drama
+  //     //  FAST refresh – no animation drama
   //     _items.clear();
   //     _listKeys[_tabController.index].currentState?.setState(() {});
   //   } else {
-  //     // 👇 normal tab change animation (as it is)
+  //     //  normal tab change animation (as it is)
   //     int toggle = 0;
   //     for (int i = _items.length - 1; i >= 0; i--) {
   //       final removedItem = _items.removeAt(i);
@@ -122,17 +122,17 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
 
     final controller = Get.find<DashBoardController>();
 
-    // ✅ START LOADING
+    //  START LOADING
     setState(() {
       _isLoading = true;
     });
 
     if (isRefresh) {
-      // 🔥 FAST refresh – no animation drama
+      //  FAST refresh – no animation drama
       _items.clear();
       _listKeys[_tabController.index].currentState?.setState(() {});
     } else {
-      // 👇 normal tab change animation (as it is)
+      //  normal tab change animation (as it is)
       int toggle = 0;
       for (int i = _items.length - 1; i >= 0; i--) {
         final removedItem = _items.removeAt(i);
@@ -153,7 +153,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
       }
     }
 
-    // ✅ API CALL
+    //  API CALL
     await controller.getBooking({
       "limit": "100",
       "offset": "1",
@@ -163,7 +163,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
 
     final data = controller.bookingModel.data ?? [];
 
-    // ✅ ADD NEW ITEMS WITH ANIMATION
+    //  ADD NEW ITEMS WITH ANIMATION
     int toggle = 0;
     for (int i = 0; i < data.length; i++) {
       final addFromRight = toggle % 2 == 0;
@@ -177,7 +177,6 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
       );
     }
 
-    // ✅ STOP LOADING
     setState(() {
       _isLoading = false;
     });

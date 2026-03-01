@@ -301,7 +301,7 @@ import 'package:do_fix/utils/sizeboxes.dart';
 
                       /// Description
                       SizedBox(
-                        height: 42, // 👈 fixed height (3 lines ke approx)
+                        height: 42, //  fixed height (3 lines ke approx)
                         child: Text(
                           HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
                           maxLines: 2,

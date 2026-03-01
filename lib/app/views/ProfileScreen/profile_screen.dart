@@ -33,7 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String image = "";
   FilePickerResult? _result; // File picker result
 
-  // 🔹 Initial values (important)
+  //  Initial values (important)
   String initialFirstName = '';
   String initialLastName = '';
   String initialEmail = '';

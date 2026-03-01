@@ -37,7 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     BannerModel(image: 'assets/banner/cleaning.png')
   ];
 
-  @override
   // void initState() {
   //   super.initState();
   //
@@ -55,48 +54,61 @@ class _HomeScreenState extends State<HomeScreen> {
   //     // hideLoading();
   //   });
   // }
+
+
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final controller = Get.find<DashBoardController>();
-
-      controller.getFeaturedCategories(
-          limit: "6", offset: "1", isShowLoading: true);
-      controller.getTopRated("10", "1", true);
-      controller.getQuickRepair("10", "1", false);
-      controller.getBanners();
-      controller.homeSubCategoryList;
-
-      /// IMPORTANT PART (HOME PE SUB CATEGORY LOAD)
-      //******** iske wajah se back karne pe re-direct ho ja raha tha (service screen) pe *******
-      // if ((controller.categoryList?.data ?? []).isNotEmpty) {
-      //   final firstCategory = controller.categoryList!.data![0];
-      //
-      //   controller.getCategoriesToServices(
-      //     id: firstCategory.id.toString(),
-      //     limit: "10",
-      //     offset: "1",
-      //     isLoading: false,
-      //   );
-      // }
-      controller.getACServices();
+      Get.find<DashBoardController>().loadHome();
     });
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final controller = Get.find<DashBoardController>();
+  //
+  //     controller.getFeaturedCategories(
+  //         limit: "6", offset: "1", isShowLoading: true);
+  //     controller.getTopRated("10", "1", true);
+  //     controller.getQuickRepair("10", "1", false);
+  //     controller.getBanners();
+  //     controller.homeSubCategoryList;
+  //
+  //     /// IMPORTANT PART (HOME PE SUB CATEGORY LOAD)
+  //     //******** iske wajah se back karne pe re-direct ho ja raha tha (service screen) pe *******
+  //     // if ((controller.categoryList?.data ?? []).isNotEmpty) {
+  //     //   final firstCategory = controller.categoryList!.data![0];
+  //     //
+  //     //   controller.getCategoriesToServices(
+  //     //     id: firstCategory.id.toString(),
+  //     //     limit: "10",
+  //     //     offset: "1",
+  //     //     isLoading: false,
+  //     //   );
+  //     // }
+  //     controller.getACServices();
+  //   });
+  // }
 
   Future<void> _onRefresh() async {
-    final controller = Get.find<DashBoardController>();
-
-    await Future.wait([
-      controller.getFeaturedCategories(limit: "6", offset: "1"),
-      controller.getTopRated("10", "1", true),
-      controller.getQuickRepair("10", "1", false),
-      controller.getBanners(),
-    ]);
-
-    controller.update();
+    await Get.find<DashBoardController>().loadHome(force: true);
   }
+
+  // Future<void> _onRefresh() async {
+  //   final controller = Get.find<DashBoardController>();
+  //
+  //   await Future.wait([
+  //     controller.getFeaturedCategories(limit: "6", offset: "1"),
+  //     controller.getTopRated("10", "1", true),
+  //     controller.getQuickRepair("10", "1", false),
+  //     controller.getBanners(),
+  //   ]);
+  //
+  //   controller.update();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -164,12 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           isShowLoading: false,
                         );
 
-                        Get.offAll(
-                          DashboardScreen(
-                            key: GlobalKey<DashboardScreenState>(),
-                            pageIndex: 1,
-                          ),
-                        );
+                        Get.to(() => DashboardScreen(pageIndex: 1));
                       },
                       child: const Text(
                         "See All",
