@@ -16,7 +16,13 @@ class BookingHostoryScreen extends StatefulWidget {
 }
 
 class _BookingHostoryScreenState extends State<BookingHostoryScreen>
-    with TickerProviderStateMixin, RouteAware {
+    with TickerProviderStateMixin, RouteAware, AutomaticKeepAliveClientMixin  {
+  @override
+  bool get wantKeepAlive => true;
+
+  //  extra flag so first time hi hard loader ho
+  bool _hasLoadedOnce = false;
+
   late List<GlobalKey<AnimatedListState>> _listKeys;
   List<Booking?> _items = [];
   late TabController _tabController;
@@ -59,10 +65,33 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
     });
     _listKeys =
         List.generate(statusList.length, (_) => GlobalKey<AnimatedListState>());
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchDataForTab("all");
+      //  OLD (comment)
+      // fetchDataForTab("all");
+
+      //  NEW: first time only
+      if (!_hasLoadedOnce) {
+        _hasLoadedOnce = true;
+        fetchDataForTab("all");
+      }
     });
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _tabController = TabController(length: statusList.length, vsync: this);
+  //   _tabController.addListener(() {
+  //     if (_tabController.indexIsChanging) return;
+  //     fetchDataForTab(statusList[_tabController.index]);
+  //   });
+  //   _listKeys =
+  //       List.generate(statusList.length, (_) => GlobalKey<AnimatedListState>());
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     fetchDataForTab("all");
+  //   });
+  // }
 
   // Future<void> fetchDataForTab(String status, {bool isRefresh = false}) async {
   //   if (status.toLowerCase() == "cancelled") {
@@ -366,4 +395,5 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
       ),
     );
   }
+
 }

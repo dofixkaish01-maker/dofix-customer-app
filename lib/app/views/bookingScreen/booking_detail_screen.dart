@@ -256,7 +256,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             //   log("IS PAID : ${booking.isPaid}");
             //
             //   await makeDigitalPayment(
-            //     bookingId: booking.id!, // 🔴 IMPORTANT
+            //     bookingId: booking.id!, //  IMPORTANT
             //     isPartial: 0,
             //     data: {
             //       "name":
