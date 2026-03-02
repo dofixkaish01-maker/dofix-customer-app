@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:do_fix/app/views/home/component/category_components.dart';
-import 'package:do_fix/app/views/services/services.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/category_model.dart';
@@ -11,7 +12,7 @@ import '../dashboard/dashboard_screen.dart';
 import 'component/horizontal_view.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -77,21 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
   //     controller.getQuickRepair("10", "1", false);
   //     controller.getBanners();
   //     controller.homeSubCategoryList;
-  //
-  //     /// IMPORTANT PART (HOME PE SUB CATEGORY LOAD)
-  //     //******** iske wajah se back karne pe re-direct ho ja raha tha (service screen) pe *******
-  //     // if ((controller.categoryList?.data ?? []).isNotEmpty) {
-  //     //   final firstCategory = controller.categoryList!.data![0];
-  //     //
-  //     //   controller.getCategoriesToServices(
-  //     //     id: firstCategory.id.toString(),
-  //     //     limit: "10",
-  //     //     offset: "1",
-  //     //     isLoading: false,
-  //     //   );
-  //     // }
-  //     controller.getACServices();
-  //   });
   // }
 
   Future<void> _onRefresh() async {
@@ -119,8 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
       final pinnedCategories = allCategories
           .where((cat) => pinnedCategoryIds.contains(cat.id.toString()))
           .toList();
-      print("ALL CATEGORIES COUNT: ${allCategories.length}");
-      print("PINNED COUNT: ${pinnedCategories.length}");
+      log("ALL CATEGORIES COUNT: ${allCategories.length}");
+      log("PINNED COUNT: ${pinnedCategories.length}");
 
       return Scaffold(
         body: RefreshIndicator(
@@ -211,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Our Features",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -273,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             return InkWell(
                                 onTap: () {
-                                  print(
+                                  log(
                                       "CLICKED BANNER CATEGORY ID = ${category.id}");
 
                                   controller.getCategoriesToSubCategories(
@@ -533,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     borderRadius: BorderRadius.circular(18),
                                     child: Stack(
                                       children: [
-                                        /// 🔹 Image
+                                        /// Image
                                         Positioned.fill(
                                           child: Image.network(
                                             subCategory.thumbnailFullPath ?? "",
@@ -541,7 +527,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
 
-                                        /// 🔹 Gradient overlay
+                                        /// Gradient overlay
                                         Positioned.fill(
                                           child: Container(
                                             decoration: BoxDecoration(
