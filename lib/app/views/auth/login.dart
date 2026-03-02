@@ -26,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isTermsAccepted = false;
   final _phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(builder: (controller) {
@@ -93,10 +94,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               keyboardType: TextInputType.number,
                               maxLength: 10,
                               cursorColor: const Color(0xff227FA8),
+
                               /// 🔒 INPUT CONTROL (MAIN FIX)
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly, // ❌ -, alphabets block
-                                LengthLimitingTextInputFormatter(10),   // ✅ only 10 digits
+                                FilteringTextInputFormatter.digitsOnly,
+                                // ❌ -, alphabets block
+                                LengthLimitingTextInputFormatter(10),
+                                // ✅ only 10 digits
                               ],
                               style: const TextStyle(
                                 // color: Color(0xff227FA8),
@@ -108,23 +112,48 @@ class _LoginScreenState extends State<LoginScreen> {
                                 counterText: "",
 
                                 /// 👇 PHONE ICON
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  child: Text(
-                                    "+91 |",
-                                    style: TextStyle(
-                                      color: Color(0xff227FA8),
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                // prefixIcon: Padding(
+                                //   padding: const EdgeInsets.symmetric(horizontal: 12),
+                                //   child: Text(
+                                //     "+91 |",
+                                //     style: TextStyle(
+                                //       color: Color(0xff227FA8),
+                                //       fontWeight: FontWeight.w600,
+                                //     ),
+                                //   ),
+                                // ),
+                                prefixIcon: SizedBox(
+                                  width: 60,
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 12,
+                                      ),
+                                      Text(
+                                        "+91",
+                                        style: TextStyle(
+                                          color: Color(0xff227FA8),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 7,
+                                      ),
+                                      Container(
+                                        width: 1,
+                                        height: 25,
+                                        color: Colors.grey,
+                                      )
+                                    ],
                                   ),
                                 ),
-                                prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-
+                                prefixIconConstraints: const BoxConstraints(
+                                    minWidth: 0, minHeight: 0),
 
                                 hintText: "Enter your mobile number",
                                 hintStyle: TextStyle(
-                                  // color: const Color(0xff227FA8).withOpacity(0.6),
-                                ),
+                                    // color: const Color(0xff227FA8).withOpacity(0.6),
+                                    ),
 
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 14,
@@ -164,7 +193,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your Phone No';
-                                } else if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                                } else if (!RegExp(r'^\d{10}$')
+                                    .hasMatch(value)) {
                                   return 'Enter valid 10 digit number';
                                 }
                                 return null;
@@ -234,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           text: "Privacy Policy",
                                           style: const TextStyle(
                                             color: Color(0xff227FA8),
-                                          fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.w600,
                                             decoration:
                                                 TextDecoration.underline,
                                           ),
@@ -261,7 +291,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                               //         .value,
                                               //   ),
                                               // );
-                                              openUrl("https://dofix.in/privacy-policy");
+                                              openUrl(
+                                                  "https://dofix.in/privacy-policy");
                                             },
                                         ),
                                       ],
@@ -271,7 +302,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
 
-                            sizedBox20(),
+                            sizedBox10(),
 
                             /// TERMS & CONDITIONS SECTION (BOTTOM)
                             CustomButtonWidget(

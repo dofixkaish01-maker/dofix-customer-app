@@ -42,12 +42,15 @@ class DetailsScreen extends StatefulWidget {
 
 class _DetailsScreenState extends State<DetailsScreen> {
   final bookController = Get.find<BookingController>();
-  String coverVariantImagePath = "https://panel.dofix.in/storage/service/variant/";
+  String coverVariantImagePath =
+      "https://panel.dofix.in/storage/service/variant/";
 
   // ------------------- UI helpers (no logic change) -------------------
-  bool _isTablet(BuildContext context) => MediaQuery.of(context).size.width >= 600;
+  bool _isTablet(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 600;
 
-  bool _isWide(BuildContext context) => MediaQuery.of(context).size.width >= 900;
+  bool _isWide(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 900;
 
   double _pad(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
@@ -96,64 +99,53 @@ class _DetailsScreenState extends State<DetailsScreen> {
           /// 1) "SingleChildScrollView(...)"  (MAIN SCROLL AREA)
           /// (Bottom bar wala code as-it-is rehne do — logic untouched)
 
+          // ✅ UPDATED UI (clean + responsive) — ONLY SingleChildScrollView wala part
+// NOTE: tumhare build() me ye already hai:
+// final bool isTablet = _isTablet(context);
+// final bool isWide = _isWide(context);
+// final double pagePad = _pad(context);
+// final double headerH = _headerHeight(context);
+
           SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.only(bottom: 130),
             child: LayoutBuilder(
               builder: (context, c) {
                 final w = c.maxWidth;
-                final bool isTablet = w >= 600;
-                final bool isWide = w >= 900;
 
-                final double pagePad = isWide ? 24 : (isTablet ? 18 : 16);
-                final double maxW = isWide ? 860 : double.infinity;
+                // ✅ only for max width center (tablet/desktop)
+                final double maxW = w >= 900 ? 860 : double.infinity;
 
-                final double headerH = isWide
-                    ? MediaQuery.of(context).size.height * 0.40
-                    : (isTablet
-                    ? MediaQuery.of(context).size.height * 0.34
-                    : MediaQuery.of(context).size.height * 0.30);
+                // ✅ typography + colors (responsive)
+                final double titleSize = isTablet ? 22 : 20;
+                final double priceSize = isTablet ? 26 : 24;
+                final double mrpSize = isTablet ? 15 : 14;
+                final double bodySize = isTablet ? 14 : 13;
+                final double sectionSize = isTablet ? 16 : 15;
+
+                final Color primaryText = Colors.black.withOpacity(0.92);
+                final Color secondaryText = Colors.black.withOpacity(0.62);
+                final Color dividerColor = Colors.black.withOpacity(0.06);
 
                 Widget sectionTitle(String t) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    t,
-                    style: TextStyle(
-                      fontSize: isTablet ? 18 : 17,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black.withOpacity(0.92),
-                    ),
-                  ),
-                );
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        t,
+                        style: TextStyle(
+                          fontSize: sectionSize,
+                          fontWeight: FontWeight.w800,
+                          color: primaryText,
+                          height: 1.2,
+                        ),
+                      ),
+                    );
 
                 Widget card({required Widget child}) => Container(
-                  padding: EdgeInsets.all(isTablet ? 18 : 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.black.withOpacity(0.06)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 16,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: child,
-                );
-
-                Widget chip({
-                  required Widget child,
-                  Color? bg,
-                  Border? border,
-                }) =>
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: EdgeInsets.all(isTablet ? 18 : 14),
                       decoration: BoxDecoration(
-                        color: bg ?? Colors.white.withOpacity(0.92),
-                        borderRadius: BorderRadius.circular(999),
-                        border: border,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: dividerColor),
                       ),
                       child: child,
                     );
@@ -164,180 +156,167 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        /// ===================== PREMIUM HERO HEADER =====================
+                        /// ===================== HERO IMAGE =====================
                         Padding(
                           padding: EdgeInsets.fromLTRB(pagePad, 12, pagePad, 0),
-                          child: Container(
-                            height: headerH,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(isTablet ? 28 : 24),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.14),
-                                  blurRadius: 26,
-                                  offset: const Offset(0, 16),
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(isTablet ? 22 : 18),
+                            child: Stack(
+                              children: [
+                                SizedBox(
+                                  height: headerH,
+                                  width: double.infinity,
+                                  child: Image.network(
+                                    coverVariantImagePath + widget.coverImage,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => Container(
+                                      color: Colors.grey.shade200,
+                                      child: const Center(
+                                        child: Icon(Icons.image, size: 40),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(isTablet ? 28 : 24),
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: Image.network(
-                                      coverVariantImagePath + widget.coverImage,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => Container(
-                                        color: Colors.grey.shade200,
-                                        child: const Center(
-                                          child: Icon(Icons.image, size: 44),
-                                        ),
+
+                                /// subtle bottom gradient (Urban feel)
+                                Positioned.fill(
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Colors.transparent,
+                                          Colors.black.withOpacity(0.16),
+                                        ],
                                       ),
                                     ),
                                   ),
+                                ),
 
-                                  // soft gradient for text legibility
-                                  Positioned.fill(
+                                /// 🔥 Rating chip bottom-left
+                                if (widget.rating != "0")
+                                  Positioned(
+                                    left: 12,
+                                    bottom: 12,
                                     child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 6),
                                       decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.black.withOpacity(0.05),
-                                            Colors.black.withOpacity(0.65),
-                                          ],
-                                        ),
+                                        color: Colors.black.withOpacity(0.65),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.star,
+                                              size: 14, color: Colors.amber),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            widget.rating,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            "(${widget.reviewCount})",
+                                            style: TextStyle(
+                                              color: Colors.white
+                                                  .withOpacity(0.85),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-
-                                  // Top chips: rating + discount
-                                  // Top chips: rating + discount
-                                  Positioned(
-                                    left: 14,
-                                    top: 14,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        if (widget.rating != "0")
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                            decoration: BoxDecoration(
-                                              color: Colors.black.withOpacity(0.55), // transparent bg
-                                              borderRadius: BorderRadius.circular(50),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.star,
-                                                    size: 14, color: Colors.amber),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  widget.rating,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Text(
-                                                  "(${widget.reviewCount})",
-                                                  style: TextStyle(
-                                                    color: Colors.white.withOpacity(0.9),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        const SizedBox(width: 8),
-                                      ],
-                                    ),
-                                  ),
-
-                                  // Title + quick meta
-                                  Positioned(
-                                    left: 16,
-                                    right: 16,
-                                    bottom: 16,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          widget.variationName,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: isTablet ? 24 : 20,
-                                            fontWeight: FontWeight.w900,
-                                            height: 1.15,
-                                          ),
-                                        ),
-                                        // const SizedBox(height: 10),
-                                        // Row(
-                                        //   children: [
-                                        //     chip(
-                                        //       bg: Colors.white.withOpacity(0.92),
-                                        //       child: Row(
-                                        //         mainAxisSize: MainAxisSize.min,
-                                        //         children: [
-                                        //           const Icon(Icons.currency_rupee,
-                                        //               size: 16, color: Colors.black87),
-                                        //           Text(
-                                        //             discountedPrice,
-                                        //             style: const TextStyle(
-                                        //               fontWeight: FontWeight.w900,
-                                        //               fontSize: 13,
-                                        //             ),
-                                        //           ),
-                                        //           const SizedBox(width: 6),
-                                        //           Text(
-                                        //             "₹$mrpPrice",
-                                        //             style: TextStyle(
-                                        //               fontSize: 12,
-                                        //               color: Colors.black.withOpacity(0.55),
-                                        //               decoration:
-                                        //               TextDecoration.lineThrough,
-                                        //               fontWeight: FontWeight.w700,
-                                        //             ),
-                                        //           ),
-                                        //         ],
-                                        //       ),
-                                        //     ),
-                                        //     const SizedBox(width: 8),
-                                        //     if (duration.isNotEmpty)
-                                        //       chip(
-                                        //         bg: Colors.white.withOpacity(0.92),
-                                        //         child: Row(
-                                        //           mainAxisSize: MainAxisSize.min,
-                                        //           children: [
-                                        //             const Icon(Icons.access_time,
-                                        //                 size: 16, color: Colors.black87),
-                                        //             const SizedBox(width: 6),
-                                        //             Text(
-                                        //               duration,
-                                        //               style: const TextStyle(
-                                        //                 fontWeight: FontWeight.w800,
-                                        //                 fontSize: 12,
-                                        //               ),
-                                        //             ),
-                                        //           ],
-                                        //         ),
-                                        //       ),
-                                        //   ],
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              ],
                             ),
                           ),
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
+
+                        /// ===================== TITLE OUTSIDE IMAGE =====================
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: pagePad),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.variationName,
+                                style: TextStyle(
+                                  fontSize: titleSize,
+                                  fontWeight: FontWeight.w900,
+                                  color: primaryText,
+                                  height: 1.15,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+
+                              /// small meta row: reviews/duration (simple)
+                              // Row(
+                              //   children: [
+                              //     if (widget.rating != "0") ...[
+                              //       Icon(Icons.star,
+                              //           size: 16, color: Colors.amber.shade700),
+                              //       const SizedBox(width: 4),
+                              //       Text(
+                              //         widget.rating,
+                              //         style: TextStyle(
+                              //           fontWeight: FontWeight.w700,
+                              //           color: primaryText,
+                              //           fontSize: 13,
+                              //         ),
+                              //       ),
+                              //       const SizedBox(width: 6),
+                              //       Text(
+                              //         "• ${widget.reviewCount} reviews",
+                              //         style: TextStyle(
+                              //           fontWeight: FontWeight.w600,
+                              //           color: secondaryText,
+                              //           fontSize: 13,
+                              //         ),
+                              //       ),
+                              //     ] else ...[
+                              //       Text(
+                              //         "No ratings yet",
+                              //         style: TextStyle(
+                              //           fontWeight: FontWeight.w600,
+                              //           color: secondaryText,
+                              //           fontSize: 13,
+                              //         ),
+                              //       ),
+                              //     ],
+                              //     const Spacer(),
+                              //     if (widget.duration.isNotEmpty)
+                              //       Row(
+                              //         children: [
+                              //           const Icon(Icons.access_time,
+                              //               size: 16, color: Colors.grey),
+                              //           const SizedBox(width: 6),
+                              //           Text(
+                              //             widget.duration,
+                              //             style: TextStyle(
+                              //               color: secondaryText,
+                              //               fontWeight: FontWeight.w700,
+                              //               fontSize: 13,
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //   ],
+                              // ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 14),
 
                         /// ===================== CONTENT =====================
                         Padding(
@@ -345,178 +324,74 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              /// ===== Rating detail card (KEEP condition)
-                              // if (rating != "0") ...[
-                              //   card(
-                              //     child: Row(
-                              //       children: [
-                              //         // stars (KEEP same logic)
-                              //         Row(
-                              //           children: List.generate(5, (index) {
-                              //             double ratingValue =
-                              //                 double.tryParse(rating) ?? 0.0;
-                              //
-                              //             if (index < ratingValue.floor()) {
-                              //               return const Icon(Icons.star,
-                              //                   color: Colors.amber, size: 20);
-                              //             } else if (index < ratingValue &&
-                              //                 index + 1 > ratingValue) {
-                              //               return const Icon(Icons.star_half,
-                              //                   color: Colors.amber, size: 20);
-                              //             } else {
-                              //               return const Icon(Icons.star_border,
-                              //                   color: Colors.amber, size: 20);
-                              //             }
-                              //           }),
-                              //         ),
-                              //         const SizedBox(width: 10),
-                              //         Text(
-                              //           rating,
-                              //           style: TextStyle(
-                              //             fontSize: isTablet ? 16 : 15,
-                              //             fontWeight: FontWeight.w900,
-                              //           ),
-                              //         ),
-                              //         const SizedBox(width: 8),
-                              //         Container(
-                              //           padding: const EdgeInsets.symmetric(
-                              //               horizontal: 10, vertical: 6),
-                              //           decoration: BoxDecoration(
-                              //             color: Colors.grey.shade100,
-                              //             borderRadius: BorderRadius.circular(12),
-                              //           ),
-                              //           child: Text(
-                              //             "$reviewCount Reviews",
-                              //             style: TextStyle(
-                              //               fontSize: 12,
-                              //               color: Colors.grey.shade700,
-                              //               fontWeight: FontWeight.w700,
-                              //             ),
-                              //           ),
-                              //         ),
-                              //         const Spacer(),
-                              //         const Icon(Icons.verified,
-                              //             color: Colors.green, size: 18),
-                              //       ],
-                              //     ),
-                              //   ),
-                              //   const SizedBox(height: 14),
-                              // ],
-
-                              /// ===== Price card (PREMIUM + You save included ✅)
-                              sectionTitle("Price & Duration"),
-                              card(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "₹${widget.discountedPrice}",
-                                          style: TextStyle(
-                                            fontSize: isTablet ? 30 : 28,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Text(
-                                          "₹${widget.mrpPrice}",
-                                          style: const TextStyle(
-                                            decoration: TextDecoration.lineThrough,
-                                            color: Colors.grey,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        if (percentOff > 0)
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 6),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xff3683ab),
-                                              borderRadius: BorderRadius.circular(999),
-                                            ),
-                                            child: Text(
-                                              "$percentOff% OFF",
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w900,
-                                              ),
-                                            ),
-                                          ),
-                                        const Spacer(),
-                                        if (widget.duration.isNotEmpty)
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.access_time,
-                                                  size: 18, color: Colors.grey),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                widget.duration,
-                                                style: const TextStyle(
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                      ],
+                              /// ===== Price section (NO big card, simple Urban style)
+                              sectionTitle("Price"),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "₹${widget.discountedPrice}",
+                                    style: TextStyle(
+                                      fontSize: priceSize,
+                                      fontWeight: FontWeight.w900,
+                                      color: primaryText,
+                                      height: 1,
                                     ),
-                                    const SizedBox(height: 12),
-
-                                    // ✅ YOU SAVE (KEEP condition percentOff > 0)
-                                    if (percentOff > 0)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.green.withOpacity(0.08),
-                                          borderRadius: BorderRadius.circular(16),
-                                          border: Border.all(
-                                            color: Colors.green.withOpacity(0.25),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.savings_rounded,
-                                                size: 20, color: Colors.green),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                              child: Text(
-                                                "You save ₹${(mrp - discountPrice).toStringAsFixed(0)} on this service",
-                                                style: const TextStyle(
-                                                  color: Colors.green,
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    "₹${widget.mrpPrice}",
+                                    style: TextStyle(
+                                      decoration: TextDecoration.lineThrough,
+                                      color: secondaryText,
+                                      fontSize: mrpSize,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  if (percentOff > 0)
+                                    Text(
+                                      "$percentOff% OFF",
+                                      style: const TextStyle(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 14,
                                       ),
-                                  ],
-                                ),
+                                    ),
+                                ],
                               ),
+                              if (percentOff > 0) ...[
+                                const SizedBox(height: 6),
+                                Text(
+                                  "You save ₹${(mrp - discountPrice).toStringAsFixed(0)}",
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
 
-                              const SizedBox(height: 18),
+                              const SizedBox(height: 16),
+                              Divider(
+                                  height: 1, thickness: 1, color: dividerColor),
+                              const SizedBox(height: 16),
 
                               /// ===== About
                               sectionTitle("About this service"),
-                               Text(
-                                  widget.description,
-                                  style: TextStyle(
-                                    height: 1.65,
-                                    fontSize: isTablet ? 14 : 13,
-                                    color: Colors.black.withOpacity(0.78),
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              Text(
+                                widget.description,
+                                style: TextStyle(
+                                  height: 1.65,
+                                  fontSize: bodySize,
+                                  color: Colors.black.withOpacity(0.78),
+                                  fontWeight: FontWeight.w500,
                                 ),
+                              ),
 
-                              const SizedBox(height: 18),
+                              const SizedBox(height: 16),
 
-                              /// ===== Helpful info / trust row (UI only)
+                              /// ===== Trust row (keep as card - looks good)
                               card(
                                 child: Row(
                                   children: [
@@ -527,12 +402,15 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                             height: 36,
                                             width: 36,
                                             decoration: BoxDecoration(
-                                              color:
-                                              const Color(0xff3683ab).withOpacity(0.10),
-                                              borderRadius: BorderRadius.circular(12),
+                                              color: const Color(0xff3683ab)
+                                                  .withOpacity(0.10),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
-                                            child: const Icon(Icons.security_rounded,
-                                                color: Color(0xff3683ab), size: 20),
+                                            child: const Icon(
+                                                Icons.security_rounded,
+                                                color: Color(0xff3683ab),
+                                                size: 20),
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
@@ -540,7 +418,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                               "Verified professionals & quality service",
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
-                                                color: Colors.black.withOpacity(0.85),
+                                                color: primaryText,
+                                                fontSize: 13,
                                               ),
                                             ),
                                           ),
@@ -555,11 +434,15 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                             height: 36,
                                             width: 36,
                                             decoration: BoxDecoration(
-                                              color: Colors.green.withOpacity(0.10),
-                                              borderRadius: BorderRadius.circular(12),
+                                              color: Colors.green
+                                                  .withOpacity(0.10),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
-                                            child: const Icon(Icons.timer_rounded,
-                                                color: Colors.green, size: 20),
+                                            child: const Icon(
+                                                Icons.timer_rounded,
+                                                color: Colors.green,
+                                                size: 20),
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
@@ -567,7 +450,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                               "On-time service updates",
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
-                                                color: Colors.black.withOpacity(0.85),
+                                                color: primaryText,
+                                                fontSize: 13,
                                               ),
                                             ),
                                           ),
@@ -577,32 +461,46 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   ],
                                 ),
                               ),
+
                               const SizedBox(height: 18),
 
+                              /// ===== Reviews
                               sectionTitle("Reviews"),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 8),
 
                               Obx(() {
-                                final reviewList =
-                                    bookController.reviewRatingModel.value?.content?[0].reviews ?? [];
+                                final reviewList = bookController
+                                        .reviewRatingModel
+                                        .value
+                                        ?.content?[0]
+                                        .reviews ??
+                                    [];
 
                                 if (reviewList.isEmpty) {
                                   return Text(
                                     "No reviews available",
-                                    style: TextStyle(color: Colors.grey.shade600),
+                                    style: TextStyle(
+                                      color: secondaryText,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   );
                                 }
 
-                                final limitedReviews =
-                                reviewList.length > 10 ? reviewList.sublist(0, 10) : reviewList;
+                                final limitedReviews = reviewList.length > 10
+                                    ? reviewList.sublist(0, 10)
+                                    : reviewList;
 
                                 String safeUserLabel(dynamic r) {
-                                  final readable = (r.readableId ?? "").toString().trim();
+                                  final readable =
+                                      (r.readableId ?? "").toString().trim();
                                   if (readable.isNotEmpty) return readable;
 
-                                  final cid = (r.customerId ?? "").toString().trim();
+                                  final cid =
+                                      (r.customerId ?? "").toString().trim();
                                   if (cid.isNotEmpty) {
-                                    return cid.length > 8 ? "User • ${cid.substring(0, 8)}" : "User • $cid";
+                                    return cid.length > 8
+                                        ? "User • ${cid.substring(0, 8)}"
+                                        : "User • $cid";
                                   }
                                   return "User";
                                 }
@@ -626,70 +524,100 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: Colors.black.withOpacity(0.06)),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(color: dividerColor),
                                   ),
                                   child: Column(
-                                    children: List.generate(limitedReviews.length, (index) {
+                                    children: List.generate(
+                                        limitedReviews.length, (index) {
                                       final review = limitedReviews[index];
 
                                       final label = safeUserLabel(review);
                                       final initial = safeInitial(label);
 
-                                      final int ratingValue = (review.reviewRating is int)
-                                          ? (review.reviewRating as int)
-                                          : int.tryParse(review.reviewRating?.toString() ?? "0") ?? 0;
+                                      final int ratingValue =
+                                          (review.reviewRating is int)
+                                              ? (review.reviewRating as int)
+                                              : int.tryParse(review.reviewRating
+                                                          ?.toString() ??
+                                                      "0") ??
+                                                  0;
 
-                                      final comment = (review.reviewComment ?? "").toString();
-                                      final dateText = formatDate(review.createdAt);
+                                      final comment =
+                                          (review.reviewComment ?? "")
+                                              .toString();
+                                      final dateText =
+                                          formatDate(review.createdAt);
 
                                       return Column(
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 14, vertical: 12),
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                /// Top row: avatar + name/date + rating
                                                 Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     CircleAvatar(
                                                       radius: 18,
                                                       backgroundColor:
-                                                      const Color(0xff3683ab).withOpacity(0.12),
+                                                          const Color(
+                                                                  0xff3683ab)
+                                                              .withOpacity(
+                                                                  0.12),
                                                       child: Text(
                                                         initial,
                                                         style: const TextStyle(
-                                                          fontWeight: FontWeight.w800,
-                                                          color: Color(0xff3683ab),
+                                                          fontWeight:
+                                                              FontWeight.w800,
+                                                          color:
+                                                              Color(0xff3683ab),
                                                         ),
                                                       ),
                                                     ),
                                                     const SizedBox(width: 10),
-
                                                     Expanded(
                                                       child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           Text(
                                                             label,
                                                             maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: const TextStyle(
-                                                              fontWeight: FontWeight.w700,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800,
                                                               fontSize: 14,
+                                                              color:
+                                                                  primaryText,
                                                             ),
                                                           ),
-                                                          if (dateText.isNotEmpty)
+                                                          if (dateText
+                                                              .isNotEmpty)
                                                             Padding(
-                                                              padding: const EdgeInsets.only(top: 2),
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top: 2),
                                                               child: Text(
                                                                 dateText,
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 12,
-                                                                  color: Colors.black.withOpacity(0.55),
-                                                                  fontWeight: FontWeight.w500,
+                                                                  color:
+                                                                      secondaryText,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
                                                                 ),
                                                               ),
                                                             ),
@@ -697,28 +625,44 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                                       ),
                                                     ),
 
-                                                    /// Rating pill (Urban type)
+                                                    // rating pill (simple)
                                                     Container(
-                                                      padding: const EdgeInsets.symmetric(
-                                                          horizontal: 8, vertical: 4),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.green.withOpacity(0.10),
-                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: Colors.green
+                                                            .withOpacity(0.10),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
                                                         border: Border.all(
-                                                          color: Colors.green.withOpacity(0.25),
+                                                          color: Colors.green
+                                                              .withOpacity(
+                                                                  0.25),
                                                         ),
                                                       ),
                                                       child: Row(
-                                                        mainAxisSize: MainAxisSize.min,
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
                                                         children: [
                                                           const Icon(Icons.star,
-                                                              size: 14, color: Colors.green),
-                                                          const SizedBox(width: 4),
+                                                              size: 14,
+                                                              color:
+                                                                  Colors.green),
+                                                          const SizedBox(
+                                                              width: 4),
                                                           Text(
-                                                            ratingValue.toString(),
-                                                            style: const TextStyle(
-                                                              fontWeight: FontWeight.w800,
-                                                              color: Colors.green,
+                                                            ratingValue
+                                                                .toString(),
+                                                            style:
+                                                                const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800,
+                                                              color:
+                                                                  Colors.green,
                                                               fontSize: 12,
                                                             ),
                                                           ),
@@ -727,29 +671,31 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                                     ),
                                                   ],
                                                 ),
-
-                                                /// Comment
                                                 const SizedBox(height: 10),
                                                 Text(
-                                                  comment.isNotEmpty ? comment : "No comment",
+                                                  comment.isNotEmpty
+                                                      ? comment
+                                                      : "No comment",
                                                   style: TextStyle(
                                                     height: 1.5,
                                                     fontSize: 13,
-                                                    color: Colors.black.withOpacity(
-                                                        comment.isNotEmpty ? 0.78 : 0.45),
+                                                    color: Colors.black
+                                                        .withOpacity(
+                                                            comment.isNotEmpty
+                                                                ? 0.78
+                                                                : 0.45),
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
-
-                                          /// Divider between items (Urban style)
-                                          if (index != limitedReviews.length - 1)
+                                          if (index !=
+                                              limitedReviews.length - 1)
                                             Divider(
                                               height: 1,
                                               thickness: 1,
-                                              color: Colors.black.withOpacity(0.06),
+                                              color: dividerColor,
                                             ),
                                         ],
                                       );
@@ -769,6 +715,577 @@ class _DetailsScreenState extends State<DetailsScreen> {
               },
             ),
           ),
+          // SingleChildScrollView(
+          //   physics: const BouncingScrollPhysics(),
+          //   padding: const EdgeInsets.only(bottom: 130),
+          //   child: LayoutBuilder(
+          //     builder: (context, c) {
+          //       // final w = c.maxWidth;
+          //       // final bool isTablet = w >= 600;
+          //       // final bool isWide = w >= 900;
+          //       //
+          //       // final double pagePad = isWide ? 24 : (isTablet ? 18 : 16);
+          //       // final double maxW = isWide ? 860 : double.infinity;
+          //       // final double titleSize = isTablet ? 22 : 20;
+          //       // final double priceSize = isTablet ? 26 : 24;
+          //       // final double bodySize  = isTablet ? 14 : 13;
+          //       //
+          //       // final Color primaryText   = Colors.black.withOpacity(0.90);
+          //       // final Color secondaryText = Colors.black.withOpacity(0.60);
+          //       //
+          //       final double headerH = isWide
+          //           ? MediaQuery.of(context).size.height * 0.40
+          //           : (isTablet
+          //           ? MediaQuery.of(context).size.height * 0.34
+          //           : MediaQuery.of(context).size.height * 0.30);
+          //       final w = c.maxWidth;
+          //       final bool isTabletL = w >= 600;
+          //       final bool isWideL = w >= 900;
+          //
+          //       final double pagePadL = isWideL ? 24 : (isTabletL ? 18 : 16);
+          //       final double headerHL = isWideL
+          //           ? MediaQuery.of(context).size.height * 0.40
+          //           : (isTabletL
+          //           ? MediaQuery.of(context).size.height * 0.34
+          //           : MediaQuery.of(context).size.height * 0.30);
+          //
+          //       final double titleSize = isTabletL ? 22 : 20;
+          //       final double priceSize = isTabletL ? 26 : 24;
+          //       final double bodySize  = isTabletL ? 14 : 13;
+          //
+          //       final Color primaryText   = Colors.black.withOpacity(0.90);
+          //       final Color secondaryText = Colors.black.withOpacity(0.60);
+          //
+          //       Widget sectionTitle(String t) => Padding(
+          //         padding: const EdgeInsets.only(bottom: 10),
+          //         child: Text(
+          //           t,
+          //           style: TextStyle(
+          //             fontSize: isTablet ? 18 : 17,
+          //             fontWeight: FontWeight.w800,
+          //             color: Colors.black.withOpacity(0.92),
+          //           ),
+          //         ),
+          //       );
+          //
+          //       Widget card({required Widget child}) => Container(
+          //         padding: EdgeInsets.all(isTablet ? 18 : 14),
+          //         decoration: BoxDecoration(
+          //           color: Colors.white,
+          //           borderRadius: BorderRadius.circular(20),
+          //           border: Border.all(color: Colors.black.withOpacity(0.06)),
+          //           boxShadow: [
+          //             BoxShadow(
+          //               color: Colors.black.withOpacity(0.05),
+          //               blurRadius: 16,
+          //               offset: const Offset(0, 10),
+          //             ),
+          //           ],
+          //         ),
+          //         child: child,
+          //       );
+          //
+          //       Widget chip({
+          //         required Widget child,
+          //         Color? bg,
+          //         Border? border,
+          //       }) =>
+          //           Container(
+          //             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          //             decoration: BoxDecoration(
+          //               color: bg ?? Colors.white.withOpacity(0.92),
+          //               borderRadius: BorderRadius.circular(999),
+          //               border: border,
+          //             ),
+          //             child: child,
+          //           );
+          //
+          //       return Center(
+          //         child: ConstrainedBox(
+          //           constraints: BoxConstraints(maxWidth: w),
+          //           child: Column(
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               /// ===================== PREMIUM HERO HEADER =====================
+          //               Padding(
+          //                 padding: EdgeInsets.fromLTRB(pagePad, 12, pagePad, 0),
+          //                 child: ClipRRect(
+          //                   borderRadius: BorderRadius.circular(isTablet ? 22 : 18),
+          //                   child: Stack(
+          //                     children: [
+          //                       SizedBox(
+          //                         height: headerH,
+          //                         width: double.infinity,
+          //                         child: Image.network(
+          //                           coverVariantImagePath + widget.coverImage,
+          //                           fit: BoxFit.cover,
+          //                           errorBuilder: (_, __, ___) => Container(
+          //                             color: Colors.grey.shade200,
+          //                             child: const Center(child: Icon(Icons.image, size: 40)),
+          //                           ),
+          //                         ),
+          //                       ),
+          //
+          //                       /// 🔥 Rating bottom-left (Urban style)
+          //                       if (widget.rating != "0")
+          //                         Positioned(
+          //                           left: 14,
+          //                           bottom: 14,
+          //                           child: Container(
+          //                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          //                             decoration: BoxDecoration(
+          //                               color: Colors.black.withOpacity(0.65),
+          //                               borderRadius: BorderRadius.circular(8),
+          //                             ),
+          //                             child: Row(
+          //                               mainAxisSize: MainAxisSize.min,
+          //                               children: [
+          //                                 const Icon(Icons.star, size: 14, color: Colors.amber),
+          //                                 const SizedBox(width: 4),
+          //                                 Text(
+          //                                   widget.rating,
+          //                                   style: const TextStyle(
+          //                                     color: Colors.white,
+          //                                     fontWeight: FontWeight.w700,
+          //                                     fontSize: 12,
+          //                                   ),
+          //                                 ),
+          //                                 const SizedBox(width: 6),
+          //                                 Text(
+          //                                   "(${widget.reviewCount})",
+          //                                   style: const TextStyle(
+          //                                     color: Colors.white70,
+          //                                     fontSize: 12,
+          //                                   ),
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                           ),
+          //                         ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //               SizedBox(height: 16),
+          //
+          //               Padding(
+          //                 padding: EdgeInsets.symmetric(horizontal: pagePad),
+          //                 child: Text(
+          //                   widget.variationName,
+          //                   style: TextStyle(
+          //                     fontSize: titleSize,
+          //                     fontWeight: FontWeight.w800,
+          //                     color: primaryText,
+          //                     height: 1.3,
+          //                   ),
+          //                 ),
+          //               ),
+          //
+          //               const SizedBox(height: 16),
+          //
+          //               /// ===================== CONTENT =====================
+          //               Padding(
+          //                 padding: EdgeInsets.symmetric(horizontal: pagePad),
+          //                 child: Column(
+          //                   crossAxisAlignment: CrossAxisAlignment.start,
+          //                   children: [
+          //                     /// ===== Rating detail card (KEEP condition)
+          //                     // if (rating != "0") ...[
+          //                     //   card(
+          //                     //     child: Row(
+          //                     //       children: [
+          //                     //         // stars (KEEP same logic)
+          //                     //         Row(
+          //                     //           children: List.generate(5, (index) {
+          //                     //             double ratingValue =
+          //                     //                 double.tryParse(rating) ?? 0.0;
+          //                     //
+          //                     //             if (index < ratingValue.floor()) {
+          //                     //               return const Icon(Icons.star,
+          //                     //                   color: Colors.amber, size: 20);
+          //                     //             } else if (index < ratingValue &&
+          //                     //                 index + 1 > ratingValue) {
+          //                     //               return const Icon(Icons.star_half,
+          //                     //                   color: Colors.amber, size: 20);
+          //                     //             } else {
+          //                     //               return const Icon(Icons.star_border,
+          //                     //                   color: Colors.amber, size: 20);
+          //                     //             }
+          //                     //           }),
+          //                     //         ),
+          //                     //         const SizedBox(width: 10),
+          //                     //         Text(
+          //                     //           rating,
+          //                     //           style: TextStyle(
+          //                     //             fontSize: isTablet ? 16 : 15,
+          //                     //             fontWeight: FontWeight.w900,
+          //                     //           ),
+          //                     //         ),
+          //                     //         const SizedBox(width: 8),
+          //                     //         Container(
+          //                     //           padding: const EdgeInsets.symmetric(
+          //                     //               horizontal: 10, vertical: 6),
+          //                     //           decoration: BoxDecoration(
+          //                     //             color: Colors.grey.shade100,
+          //                     //             borderRadius: BorderRadius.circular(12),
+          //                     //           ),
+          //                     //           child: Text(
+          //                     //             "$reviewCount Reviews",
+          //                     //             style: TextStyle(
+          //                     //               fontSize: 12,
+          //                     //               color: Colors.grey.shade700,
+          //                     //               fontWeight: FontWeight.w700,
+          //                     //             ),
+          //                     //           ),
+          //                     //         ),
+          //                     //         const Spacer(),
+          //                     //         const Icon(Icons.verified,
+          //                     //             color: Colors.green, size: 18),
+          //                     //       ],
+          //                     //     ),
+          //                     //   ),
+          //                     //   const SizedBox(height: 14),
+          //                     // ],
+          //
+          //                     /// ===== Price card (PREMIUM + You save included )
+          //                     SizedBox(height: 14),
+          //
+          //                     Column(
+          //                       crossAxisAlignment: CrossAxisAlignment.start,
+          //                       children: [
+          //                         Row(
+          //                           crossAxisAlignment: CrossAxisAlignment.end,
+          //                           children: [
+          //                             Text(
+          //                               "₹${widget.discountedPrice}",
+          //                               style: TextStyle(
+          //                                 fontSize: isTablet ? 26 : 24,
+          //                                 fontWeight: FontWeight.w900,
+          //                               ),
+          //                             ),
+          //                             const SizedBox(width: 10),
+          //                             Text(
+          //                               "₹${widget.mrpPrice}",
+          //                               style: const TextStyle(
+          //                                 decoration: TextDecoration.lineThrough,
+          //                                 color: Colors.grey,
+          //                                 fontSize: 15,
+          //                                 fontWeight: FontWeight.w600,
+          //                               ),
+          //                             ),
+          //                             const SizedBox(width: 10),
+          //                             if (percentOff > 0)
+          //                               Text(
+          //                                 "$percentOff% OFF",
+          //                                 style: const TextStyle(
+          //                                   color: Colors.green,
+          //                                   fontSize: 14,
+          //                                   fontWeight: FontWeight.w800,
+          //                                 ),
+          //                               ),
+          //                           ],
+          //                         ),
+          //
+          //                         if (widget.duration.isNotEmpty) ...[
+          //                           const SizedBox(height: 6),
+          //                           Row(
+          //                             children: [
+          //                               const Icon(Icons.access_time, size: 16, color: Colors.grey),
+          //                               const SizedBox(width: 6),
+          //                               Text(
+          //                                 widget.duration,
+          //                                 style: const TextStyle(
+          //                                   color: Colors.grey,
+          //                                   fontWeight: FontWeight.w600,
+          //                                 ),
+          //                               ),
+          //                             ],
+          //                           ),
+          //                         ],
+          //
+          //                         if (percentOff > 0) ...[
+          //                           const SizedBox(height: 6),
+          //                           Text(
+          //                             "You save ₹${(mrp - discountPrice).toStringAsFixed(0)}",
+          //                             style: const TextStyle(
+          //                               color: Colors.green,
+          //                               fontWeight: FontWeight.w700,
+          //                               fontSize: 13,
+          //                             ),
+          //                           ),
+          //                         ],
+          //                       ],
+          //                     ),
+          //
+          //                     const SizedBox(height: 18),
+          //
+          //                     /// ===== About
+          //                     sectionTitle("About this service"),
+          //                      Text(
+          //                         widget.description,
+          //                         style: TextStyle(
+          //                           height: 1.65,
+          //                           fontSize: isTablet ? 14 : 13,
+          //                           color: Colors.black.withOpacity(0.78),
+          //                           fontWeight: FontWeight.w500,
+          //                         ),
+          //                       ),
+          //
+          //                     const SizedBox(height: 18),
+          //
+          //                     /// ===== Helpful info / trust row (UI only)
+          //                     card(
+          //                       child: Row(
+          //                         children: [
+          //                           Expanded(
+          //                             child: Row(
+          //                               children: [
+          //                                 Container(
+          //                                   height: 36,
+          //                                   width: 36,
+          //                                   decoration: BoxDecoration(
+          //                                     color:
+          //                                     const Color(0xff3683ab).withOpacity(0.10),
+          //                                     borderRadius: BorderRadius.circular(12),
+          //                                   ),
+          //                                   child: const Icon(Icons.security_rounded,
+          //                                       color: Color(0xff3683ab), size: 20),
+          //                                 ),
+          //                                 const SizedBox(width: 10),
+          //                                 Expanded(
+          //                                   child: Text(
+          //                                     "Verified professionals & quality service",
+          //                                     style: TextStyle(
+          //                                       fontWeight: FontWeight.w700,
+          //                                       color: Colors.black.withOpacity(0.85),
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                           ),
+          //                           const SizedBox(width: 12),
+          //                           Expanded(
+          //                             child: Row(
+          //                               children: [
+          //                                 Container(
+          //                                   height: 36,
+          //                                   width: 36,
+          //                                   decoration: BoxDecoration(
+          //                                     color: Colors.green.withOpacity(0.10),
+          //                                     borderRadius: BorderRadius.circular(12),
+          //                                   ),
+          //                                   child: const Icon(Icons.timer_rounded,
+          //                                       color: Colors.green, size: 20),
+          //                                 ),
+          //                                 const SizedBox(width: 10),
+          //                                 Expanded(
+          //                                   child: Text(
+          //                                     "On-time service updates",
+          //                                     style: TextStyle(
+          //                                       fontWeight: FontWeight.w700,
+          //                                       color: Colors.black.withOpacity(0.85),
+          //                                     ),
+          //                                   ),
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                           ),
+          //                         ],
+          //                       ),
+          //                     ),
+          //                     const SizedBox(height: 18),
+          //
+          //                     sectionTitle("Reviews"),
+          //                     const SizedBox(height: 12),
+          //
+          //                     Obx(() {
+          //                       final reviewList =
+          //                           bookController.reviewRatingModel.value?.content?[0].reviews ?? [];
+          //
+          //                       if (reviewList.isEmpty) {
+          //                         return Text(
+          //                           "No reviews available",
+          //                           style: TextStyle(color: Colors.grey.shade600),
+          //                         );
+          //                       }
+          //
+          //                       final limitedReviews =
+          //                       reviewList.length > 10 ? reviewList.sublist(0, 10) : reviewList;
+          //
+          //                       String safeUserLabel(dynamic r) {
+          //                         final readable = (r.readableId ?? "").toString().trim();
+          //                         if (readable.isNotEmpty) return readable;
+          //
+          //                         final cid = (r.customerId ?? "").toString().trim();
+          //                         if (cid.isNotEmpty) {
+          //                           return cid.length > 8 ? "User • ${cid.substring(0, 8)}" : "User • $cid";
+          //                         }
+          //                         return "User";
+          //                       }
+          //
+          //                       String safeInitial(String label) {
+          //                         final t = label.trim();
+          //                         if (t.isEmpty) return "U";
+          //                         return t[0].toUpperCase();
+          //                       }
+          //
+          //                       String formatDate(dynamic d) {
+          //                         if (d == null) return "";
+          //                         try {
+          //                           final dt = d as DateTime;
+          //                           return "${dt.day.toString().padLeft(2, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.year}";
+          //                         } catch (_) {
+          //                           return "";
+          //                         }
+          //                       }
+          //
+          //                       return Container(
+          //                         decoration: BoxDecoration(
+          //                           color: Colors.white,
+          //                           borderRadius: BorderRadius.circular(16),
+          //                           border: Border.all(color: Colors.black.withOpacity(0.06)),
+          //                         ),
+          //                         child: Column(
+          //                           children: List.generate(limitedReviews.length, (index) {
+          //                             final review = limitedReviews[index];
+          //
+          //                             final label = safeUserLabel(review);
+          //                             final initial = safeInitial(label);
+          //
+          //                             final int ratingValue = (review.reviewRating is int)
+          //                                 ? (review.reviewRating as int)
+          //                                 : int.tryParse(review.reviewRating?.toString() ?? "0") ?? 0;
+          //
+          //                             final comment = (review.reviewComment ?? "").toString();
+          //                             final dateText = formatDate(review.createdAt);
+          //
+          //                             return Column(
+          //                               children: [
+          //                                 Padding(
+          //                                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          //                                   child: Column(
+          //                                     crossAxisAlignment: CrossAxisAlignment.start,
+          //                                     children: [
+          //                                       /// Top row: avatar + name/date + rating
+          //                                       Row(
+          //                                         crossAxisAlignment: CrossAxisAlignment.start,
+          //                                         children: [
+          //                                           CircleAvatar(
+          //                                             radius: 18,
+          //                                             backgroundColor:
+          //                                             const Color(0xff3683ab).withOpacity(0.12),
+          //                                             child: Text(
+          //                                               initial,
+          //                                               style: const TextStyle(
+          //                                                 fontWeight: FontWeight.w800,
+          //                                                 color: Color(0xff3683ab),
+          //                                               ),
+          //                                             ),
+          //                                           ),
+          //                                           const SizedBox(width: 10),
+          //
+          //                                           Expanded(
+          //                                             child: Column(
+          //                                               crossAxisAlignment: CrossAxisAlignment.start,
+          //                                               children: [
+          //                                                 Text(
+          //                                                   label,
+          //                                                   maxLines: 1,
+          //                                                   overflow: TextOverflow.ellipsis,
+          //                                                   style: const TextStyle(
+          //                                                     fontWeight: FontWeight.w700,
+          //                                                     fontSize: 14,
+          //                                                   ),
+          //                                                 ),
+          //                                                 if (dateText.isNotEmpty)
+          //                                                   Padding(
+          //                                                     padding: const EdgeInsets.only(top: 2),
+          //                                                     child: Text(
+          //                                                       dateText,
+          //                                                       style: TextStyle(
+          //                                                         fontSize: 12,
+          //                                                         color: Colors.black.withOpacity(0.55),
+          //                                                         fontWeight: FontWeight.w500,
+          //                                                       ),
+          //                                                     ),
+          //                                                   ),
+          //                                               ],
+          //                                             ),
+          //                                           ),
+          //
+          //                                           /// Rating pill (Urban type)
+          //                                           Container(
+          //                                             padding: const EdgeInsets.symmetric(
+          //                                                 horizontal: 8, vertical: 4),
+          //                                             decoration: BoxDecoration(
+          //                                               color: Colors.green.withOpacity(0.10),
+          //                                               borderRadius: BorderRadius.circular(10),
+          //                                               border: Border.all(
+          //                                                 color: Colors.green.withOpacity(0.25),
+          //                                               ),
+          //                                             ),
+          //                                             child: Row(
+          //                                               mainAxisSize: MainAxisSize.min,
+          //                                               children: [
+          //                                                 const Icon(Icons.star,
+          //                                                     size: 14, color: Colors.green),
+          //                                                 const SizedBox(width: 4),
+          //                                                 Text(
+          //                                                   ratingValue.toString(),
+          //                                                   style: const TextStyle(
+          //                                                     fontWeight: FontWeight.w800,
+          //                                                     color: Colors.green,
+          //                                                     fontSize: 12,
+          //                                                   ),
+          //                                                 ),
+          //                                               ],
+          //                                             ),
+          //                                           ),
+          //                                         ],
+          //                                       ),
+          //
+          //                                       /// Comment
+          //                                       const SizedBox(height: 10),
+          //                                       Text(
+          //                                         comment.isNotEmpty ? comment : "No comment",
+          //                                         style: TextStyle(
+          //                                           height: 1.5,
+          //                                           fontSize: 13,
+          //                                           color: Colors.black.withOpacity(
+          //                                               comment.isNotEmpty ? 0.78 : 0.45),
+          //                                           fontWeight: FontWeight.w500,
+          //                                         ),
+          //                                       ),
+          //                                     ],
+          //                                   ),
+          //                                 ),
+          //
+          //                                 /// Divider between items (Urban style)
+          //                                 if (index != limitedReviews.length - 1)
+          //                                   Divider(
+          //                                     height: 1,
+          //                                     thickness: 1,
+          //                                     color: Colors.black.withOpacity(0.06),
+          //                                   ),
+          //                               ],
+          //                             );
+          //                           }),
+          //                         ),
+          //                       );
+          //                     }),
+          //
+          //                     const SizedBox(height: 40),
+          //                   ],
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ),
 
           /// BOTTOM ADD / REMOVE BUTTON (KEEP logic/conditions)
           Positioned(
@@ -778,7 +1295,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
             child: SafeArea(
               top: false,
               child: Container(
-                padding: const EdgeInsets.only(top: 8, left: 15, right: 15, bottom: 10),
+                padding: const EdgeInsets.only(
+                    top: 8, left: 15, right: 15, bottom: 10),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -796,8 +1314,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         bool isInCart = false;
 
                         if (controller.cartModel.content?.cart?.data != null) {
-                          for (var item in controller.cartModel.content!.cart!.data!) {
-                            if (item.serviceId == widget.serviceModel.id && item.variantKey == widget.variantKey) {
+                          for (var item
+                              in controller.cartModel.content!.cart!.data!) {
+                            if (item.serviceId == widget.serviceModel.id &&
+                                item.variantKey == widget.variantKey) {
                               isInCart = true;
                               break;
                             }
@@ -813,8 +1333,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               height: isTablet ? 50 : 46,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: isInCart ? Colors.red : const Color(0xff3683ab),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  backgroundColor: isInCart
+                                      ? Colors.red
+                                      : const Color(0xff3683ab),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14),
                                   ),
@@ -840,8 +1363,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     await controller.addToCart(
                                       {
                                         "service_id": widget.serviceModel.id,
-                                        "category_id": widget.serviceModel.categoryId,
-                                        "sub_category_id": widget.serviceModel.subCategoryId,
+                                        "category_id":
+                                            widget.serviceModel.categoryId,
+                                        "sub_category_id":
+                                            widget.serviceModel.subCategoryId,
                                         "quantity": "1",
                                         "extras": [],
                                       },
@@ -855,7 +1380,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                       colorText: Colors.white,
                                     );
                                   }
-                                  controller.update(['cart_${widget.serviceModel.id}_${widget.variantKey}']);
+                                  controller.update([
+                                    'cart_${widget.serviceModel.id}_${widget.variantKey}'
+                                  ]);
                                 },
                                 child: Text(
                                   isInCart ? "Remove from Cart" : "Add to Cart",
@@ -874,16 +1401,20 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               borderRadius: BorderRadius.circular(14),
                               onTap: () {
                                 Get.to(() => GetRateCardScreen(
-                                  categoryId: widget.serviceModel.categoryId ?? "",
-                                ));
+                                      categoryId:
+                                          widget.serviceModel.categoryId ?? "",
+                                    ));
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 14),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xff3683ab).withOpacity(0.08),
+                                  color:
+                                      const Color(0xff3683ab).withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: const Color(0xff3683ab).withOpacity(0.30),
+                                    color: const Color(0xff3683ab)
+                                        .withOpacity(0.30),
                                   ),
                                 ),
                                 child: Row(
@@ -927,9 +1458,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 }
-
-
-
 
 // import 'package:flutter/material.dart';
 // import 'package:get/get_core/src/get_main.dart';
