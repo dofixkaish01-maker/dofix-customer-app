@@ -248,6 +248,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                       itemBuilder: (context, index) {
                                         final variation = controller
                                             .serviceModel.variations?[index];
+
                                         return VariationsNewCard(
                                           serviceDescription: (variation
                                                           ?.varDescription !=

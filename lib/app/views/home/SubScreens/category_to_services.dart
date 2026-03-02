@@ -11,8 +11,7 @@ import '../../../../utils/styles.dart';
 import '../../../widgets/custom_appbar.dart';
 
 class CategoryToServices extends StatelessWidget {
-   CategoryToServices({super.key});
-
+  CategoryToServices({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +48,14 @@ class CategoryToServices extends StatelessWidget {
                     children: [
                       // Selected Sub-category Name
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 10),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
                             controller.selectedSubCategories.isNotEmpty
-                                ? controller.selectedSubCategories[0].name ?? "Category"
+                                ? controller.selectedSubCategories[0].name ??
+                                    "Category"
                                 : "Category",
                             style: albertSansRegular.copyWith(
                               fontSize: 18,
@@ -66,12 +67,16 @@ class CategoryToServices extends StatelessWidget {
                       ),
                       // Sub-categories Grid
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 16),
                         width: Get.size.width,
                         child: Wrap(
                           spacing: 10,
                           runSpacing: 10,
-                          children: ((controller.subCategoryModelListing ?? SubCategoryModel(data: [])).data ?? [])
+                          children: ((controller.subCategoryModelListing ??
+                                          SubCategoryModel(data: []))
+                                      .data ??
+                                  [])
                               .map((subCategory) {
                             return SizedBox(
                               width: (Get.size.width - 16 * 2 - 10 * 2) / 3,
@@ -84,7 +89,8 @@ class CategoryToServices extends StatelessWidget {
                                     isLoading: true,
                                   );
                                   controller.selectedSubCategories.clear();
-                                  controller.selectedSubCategories.add(subCategory);
+                                  controller.selectedSubCategories
+                                      .add(subCategory);
                                 },
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -95,7 +101,9 @@ class CategoryToServices extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         border: Border.all(
                                           width: 3,
-                                          color: controller.selectedSubCategories.contains(subCategory)
+                                          color: controller
+                                                  .selectedSubCategories
+                                                  .contains(subCategory)
                                               ? const Color(0xFF207FA7)
                                               : Colors.white,
                                         ),
@@ -117,7 +125,8 @@ class CategoryToServices extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                       style: albertSansRegular.copyWith(
                                         fontSize: Dimensions.fontSize12,
-                                        color: controller.selectedSubCategories.contains(subCategory)
+                                        color: controller.selectedSubCategories
+                                                .contains(subCategory)
                                             ? const Color(0xFF207FA7)
                                             : Colors.black,
                                       ),
@@ -131,38 +140,68 @@ class CategoryToServices extends StatelessWidget {
                       ),
                       sizedBox10(),
 
-            // Services List or Placeholder
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Builder(builder: (context) {
-                  final services = (controller.categoriesToServiceListing ?? Services(data: [])).data ?? [];
+                      // Services List or Placeholder
+                      Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Builder(builder: (context) {
+                            final services =
+                                (controller.categoriesToServiceListing ??
+                                            Services(data: []))
+                                        .data ??
+                                    [];
+                            if (controller.isServiceListingLoading) {
+                              return const SizedBox(height: 120); // ya loader widget
+                              // return const Center(child: CircularProgressIndicator());
+                            }
 
-                  if (services.isEmpty) {
-                    return Column(
-                      children: [
-                        const SizedBox(height: 50),
-                        Icon(
-                          Icons.info_outline,
-                          size: 60,
-                          color: Colors.grey.shade400,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          "No services available for this sub-category.",
-                          style: albertSansRegular.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                })),
-
+                            // if (services.isEmpty) {
+                            //   return Column(
+                            //     children: [
+                            //       const SizedBox(height: 50),
+                            //       Icon(
+                            //         Icons.info_outline,
+                            //         size: 60,
+                            //         color: Colors.grey.shade400,
+                            //       ),
+                            //       const SizedBox(height: 12),
+                            //       Text(
+                            //         "No services available for this sub-category.",
+                            //         style: albertSansRegular.copyWith(
+                            //           fontSize: 16,
+                            //           fontWeight: FontWeight.w500,
+                            //           color: Colors.grey.shade600,
+                            //         ),
+                            //         textAlign: TextAlign.center,
+                            //       ),
+                            //     ],
+                            //   );
+                            // }
+                            if (services.isEmpty) {
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 50),
+                                  Icon(
+                                    Icons.info_outline,
+                                    size: 60,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    "No services available for this sub-category.",
+                                    style: albertSansRegular.copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              );
+                            }
+                            else {
+                              return const SizedBox();
+                            }
+                          })),
 
                       // Container(
                       //   padding: const EdgeInsets.symmetric(
@@ -311,7 +350,11 @@ class CategoryToServices extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Builder(builder: (_) {
-                          final services = (controller.categoriesToServiceListing ?? Services(data: [])).data ?? [];
+                          final services =
+                              (controller.categoriesToServiceListing ??
+                                          Services(data: []))
+                                      .data ??
+                                  [];
 
                           // Agar services available hain, tab hi name dikhao
                           if (services.isNotEmpty) {
@@ -338,269 +381,348 @@ class CategoryToServices extends StatelessWidget {
                       // bathroom
                       Container(
                         color: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                         width: Get.size.width,
                         child: Builder(
                           builder: (context) {
-
                             final services =
-                                (controller.categoriesToServiceListing ?? Services(data: []))
-                                    .data ??
+                                (controller.categoriesToServiceListing ??
+                                            Services(data: []))
+                                        .data ??
                                     [];
 
                             final totalServices = services.length;
 
                             return services.isNotEmpty
                                 ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      /// Total Services Count Badge
+                                      Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 15),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 14, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF207FA7)
+                                              .withOpacity(0.08),
+                                          borderRadius:
+                                              BorderRadius.circular(25),
+                                          border: Border.all(
+                                            color: const Color(0xFF207FA7)
+                                                .withOpacity(0.2),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          "$totalServices Services Available",
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFF207FA7),
+                                          ),
+                                        ),
+                                      ),
 
-                                /// Total Services Count Badge
-                                Container(
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                  padding:
-                                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF207FA7).withOpacity(0.08),
-                                    borderRadius: BorderRadius.circular(25),
-                                    border: Border.all(
-                                      color: const Color(0xFF207FA7).withOpacity(0.2),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    "$totalServices Services Available",
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF207FA7),
-                                    ),
-                                  ),
-                                ),
-                                /// Services List
-                                ...List.generate(
-                                  services.length,
-                                      (i) {
-                                    final service = services[i];
+                                      /// Services List
+                                      ...List.generate(
+                                        services.length,
+                                        (i) {
+                                          final service = services[i];
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Get.find<DashBoardController>()
-                                            .getServicesDetails(service.id ?? "");
-                                      },
-                                      child: Container(
-                                        margin: const EdgeInsets.only(bottom: 12),
-                                        child: LayoutBuilder(
-                                          builder: (context, constraints) {
-                                            return Container(
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  colors: [
-                                                    Colors.white,
-                                                    Colors.grey.shade50,
-                                                  ],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                ),
-                                                borderRadius: BorderRadius.circular(18),
-                                                border: Border.all(
-                                                  color: Colors.grey.shade200,
-                                                  width: 1.2,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black.withOpacity(0.08),
-                                                    blurRadius: 20,
-                                                    spreadRadius: 2,
-                                                    offset: const Offset(0, 10),
-                                                  ),
-                                                  BoxShadow(
-                                                    color: Colors.black.withOpacity(0.04),
-                                                    blurRadius: 8,
-                                                    spreadRadius: 1,
-                                                    offset: const Offset(0, 4),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: [
-
-                                                  /// Stylish Image
-                                                  Container(
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Get.find<DashBoardController>()
+                                                  .getServicesDetails(
+                                                      service.id ?? "");
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 12),
+                                              child: LayoutBuilder(
+                                                builder:
+                                                    (context, constraints) {
+                                                  return Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            12),
                                                     decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        colors: [
+                                                          Colors.white,
+                                                          Colors.grey.shade50,
+                                                        ],
+                                                        begin:
+                                                            Alignment.topLeft,
+                                                        end: Alignment
+                                                            .bottomRight,
+                                                      ),
                                                       borderRadius:
-                                                      BorderRadius.circular(16),
+                                                          BorderRadius.circular(
+                                                              18),
+                                                      border: Border.all(
+                                                        color: Colors
+                                                            .grey.shade200,
+                                                        width: 1.2,
+                                                      ),
                                                       boxShadow: [
                                                         BoxShadow(
                                                           color: Colors.black
-                                                              .withOpacity(0.12),
-                                                          blurRadius: 12,
-                                                          offset:
-                                                          const Offset(0, 6),
+                                                              .withOpacity(
+                                                                  0.08),
+                                                          blurRadius: 20,
+                                                          spreadRadius: 2,
+                                                          offset: const Offset(
+                                                              0, 10),
+                                                        ),
+                                                        BoxShadow(
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.04),
+                                                          blurRadius: 8,
+                                                          spreadRadius: 1,
+                                                          offset: const Offset(
+                                                              0, 4),
                                                         ),
                                                       ],
                                                     ),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                      BorderRadius.circular(12),
-                                                      child: CustomNetworkImageWidget(
-                                                        fit: BoxFit.cover,
-                                                        imagePadding: 0,
-                                                        width: constraints.maxWidth * 0.28,
-                                                        height: 110,
-                                                        image: service
-                                                            .thumbnailFullPath ??
-                                                            "",
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  const SizedBox(width: 16),
-
-                                                  /// Right Side Content
-                                                  Expanded(
-                                                    child: Column(
+                                                    child: Row(
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .center,
                                                       children: [
-
-                                                        /// Service Name
-                                                        Text(
-                                                          service.name ?? "",
-                                                          maxLines: 2,
-                                                          overflow:
-                                                          TextOverflow.ellipsis,
-                                                          style:
-                                                          albertSansRegular.copyWith(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                            FontWeight.w700,
-                                                            color: Colors.black87,
-                                                          ),
-                                                        ),
-
-                                                        const SizedBox(height: 10),
-
-                                                        /// Rating Row
-                                                        Row(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.star_rounded,
-                                                              size: 18,
-                                                              color: Colors
-                                                                  .amber.shade600,
-                                                            ),
-                                                            const SizedBox(width: 4),
-                                                            Text(
-                                                              "${service.avgRating?.toStringAsFixed(1) ?? "0.0"}",
-                                                              style:
-                                                              const TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(width: 4),
-                                                            Text(
-                                                              "(${service.ratingCount ?? 0})",
-                                                              style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .grey.shade600,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(height: 4),
-
-                                                        if ((service.variations?.length ?? 0) > 0)
-                                                          Container(
-                                                            margin: const EdgeInsets.only(top: 6),
-                                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                            decoration: BoxDecoration(
-                                                              color: const Color(
-                                                                  0xFF91A4AF).withOpacity(0.08),
-                                                              borderRadius: BorderRadius.circular(20),
-                                                              border: Border.all(
-                                                                color: const Color(
-                                                                    0xFF217A9F).withOpacity(0.2),
-                                                              ),
-                                                            ),
-                                                            child: Text(
-                                                              "${service.variations?.length ?? 0} Options Available",
-                                                              style: const TextStyle(
-                                                                fontSize: 11,
-                                                                fontWeight: FontWeight.w600,
-                                                                color: Color(0xFF207FA7),
-                                                              ),
-                                                            ),
-                                                          ),
-
-
-                                                        const SizedBox(height: 4),
-
-                                                        /// CTA Row
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                          children: [
-
-                                                            Text(
-                                                              "View Details",
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                color: const Color(
-                                                                    0xFF207FA7),
-                                                                fontWeight:
-                                                                FontWeight.w600,
-                                                              ),
-                                                            ),
-
-                                                            /// Circular Arrow
-                                                            Container(
-                                                              padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                              decoration:
+                                                        /// Stylish Image
+                                                        Container(
+                                                          decoration:
                                                               BoxDecoration(
-                                                                color: const Color(
-                                                                    0xFF207FA7)
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        16),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black
                                                                     .withOpacity(
-                                                                    0.12),
-                                                                shape:
-                                                                BoxShape.circle,
+                                                                        0.12),
+                                                                blurRadius: 12,
+                                                                offset:
+                                                                    const Offset(
+                                                                        0, 6),
                                                               ),
-                                                              child:
-                                                              const Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios_rounded,
-                                                                size: 14,
-                                                                color: Color(
-                                                                    0xFF207FA7),
-                                                              ),
+                                                            ],
+                                                          ),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                            child:
+                                                                CustomNetworkImageWidget(
+                                                              fit: BoxFit.cover,
+                                                              imagePadding: 0,
+                                                              width: constraints
+                                                                      .maxWidth *
+                                                                  0.28,
+                                                              height: 110,
+                                                              image: service
+                                                                      .thumbnailFullPath ??
+                                                                  "",
                                                             ),
-                                                          ],
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(
+                                                            width: 16),
+
+                                                        /// Right Side Content
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              /// Service Name
+                                                              Text(
+                                                                service.name ??
+                                                                    "",
+                                                                maxLines: 2,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style:
+                                                                    albertSansRegular
+                                                                        .copyWith(
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                              ),
+
+                                                              const SizedBox(
+                                                                  height: 10),
+
+                                                              /// Rating Row
+                                                              Row(
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .star_rounded,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .amber
+                                                                        .shade600,
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 4),
+                                                                  Text(
+                                                                    "${service.avgRating?.toStringAsFixed(1) ?? "0.0"}",
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 4),
+                                                                  Text(
+                                                                    "(${service.ratingCount ?? 0})",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .shade600,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 4),
+
+                                                              if ((service.variations
+                                                                          ?.length ??
+                                                                      0) >
+                                                                  0)
+                                                                Container(
+                                                                  margin:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              6),
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          10,
+                                                                      vertical:
+                                                                          4),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: const Color(
+                                                                            0xFF91A4AF)
+                                                                        .withOpacity(
+                                                                            0.08),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border:
+                                                                        Border
+                                                                            .all(
+                                                                      color: const Color(
+                                                                              0xFF217A9F)
+                                                                          .withOpacity(
+                                                                              0.2),
+                                                                    ),
+                                                                  ),
+                                                                  child: Text(
+                                                                    "${service.variations?.length ?? 0} Options Available",
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Color(
+                                                                          0xFF207FA7),
+                                                                    ),
+                                                                  ),
+                                                                ),
+
+                                                              const SizedBox(
+                                                                  height: 4),
+
+                                                              /// CTA Row
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    "View Details",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: const Color(
+                                                                          0xFF207FA7),
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    ),
+                                                                  ),
+
+                                                                  /// Circular Arrow
+                                                                  Container(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            8),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: const Color(
+                                                                              0xFF207FA7)
+                                                                          .withOpacity(
+                                                                              0.12),
+                                                                      shape: BoxShape
+                                                                          .circle,
+                                                                    ),
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .arrow_forward_ios_rounded,
+                                                                      size: 14,
+                                                                      color: Color(
+                                                                          0xFF207FA7),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ],
                                                     ),
-                                                  ),
-                                                ],
+                                                  );
+                                                },
                                               ),
-                                            );
-                                          },
-                                        ),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            )
+                                    ],
+                                  )
                                 : const SizedBox(
-                              height: 150,
-                            );
+                                    height: 150,
+                                  );
                           },
                         ),
                       ),

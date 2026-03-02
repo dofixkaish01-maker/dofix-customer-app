@@ -48,11 +48,13 @@ class DashBoardController extends GetxController implements GetxService {
     required this.authRepo,
     required this.sharedPreferences,
   });
+
   final ApiClient apiClient = Get.find<ApiClient>();
 
   bool _isLoginLoading = false;
   bool isCategoryServiceLoading = false;
   bool isSubCategoryLoading = false;
+
   bool get isLoginLoading => _isLoginLoading;
   CategoryModel? categoryList = CategoryModel(data: []);
   CategoryModel? allCategories = CategoryModel(data: []); // For ServiceScreens
@@ -91,8 +93,6 @@ class DashBoardController extends GetxController implements GetxService {
       content: ContentData(images: PolicyImages()),
       errors: []);
 
-
-
   @override
   void onInit() {
     super.onInit();
@@ -108,12 +108,12 @@ class DashBoardController extends GetxController implements GetxService {
     } else {
       filteredAddresses = addressResponse.data
           .where((address) =>
-      (address.address ?? "")
-          .toLowerCase()
-          .contains(query.toLowerCase()) ||
-          (address.addressType ?? "")
-              .toLowerCase()
-              .contains(query.toLowerCase()))
+              (address.address ?? "")
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ||
+              (address.addressType ?? "")
+                  .toLowerCase()
+                  .contains(query.toLowerCase()))
           .toList();
     }
 
@@ -143,7 +143,11 @@ class DashBoardController extends GetxController implements GetxService {
 
     try {
       await Future.wait([
-        getFeaturedCategories(limit: "6", offset: "1", forDashboard: true, isShowLoading: !homeLoaded),
+        getFeaturedCategories(
+            limit: "6",
+            offset: "1",
+            forDashboard: true,
+            isShowLoading: !homeLoaded),
         getTopRated("10", "1", false),
         getQuickRepair("10", "1", false),
         getBanners(),
@@ -186,11 +190,15 @@ class DashBoardController extends GetxController implements GetxService {
       var responseData = response.body;
 
       if (response.statusCode == 200 &&
-          responseData['message'].toString().contains("Successfully data fetched")) {
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
         if (forDashboard) {
-          categoryList = CategoryModel.fromJson(responseData['content']); // 6 for dashboard
+          categoryList = CategoryModel.fromJson(
+              responseData['content']); // 6 for dashboard
         } else {
-          allCategories = CategoryModel.fromJson(responseData['content']); // 50+ for services
+          allCategories = CategoryModel.fromJson(
+              responseData['content']); // 50+ for services
           // print("ALL CATEGORIES COUNT: ${allCategories?.data?.length}");
         }
         update();
@@ -203,17 +211,19 @@ class DashBoardController extends GetxController implements GetxService {
       hideLoading();
     }
   }
+
   var isNotificationLoading = false.obs;
   var notificationModel = NotificationModel(null, null, []).obs;
-  late String? token=authRepo.apiClient.token;
+  late String? token = authRepo.apiClient.token;
+
 // final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
   String get customerId {
     return cartModel.content?.cart?.data?.isNotEmpty == true
         ? cartModel.content!.cart!.data!.first.customerId ?? ""
         : "";
   }
-  final String userType = 'customer';
 
+  final String userType = 'customer';
 
   Future<void> fetchNotifications() async {
     try {
@@ -231,14 +241,12 @@ class DashBoardController extends GetxController implements GetxService {
       );
 
       notificationModel.value = result;
-
     } catch (e) {
       Get.snackbar('Error', e.toString());
     } finally {
       isNotificationLoading.value = false;
     }
   }
-
 
   void updateLatLong(String lat, String long) {
     if (kDebugMode) {
@@ -258,15 +266,13 @@ class DashBoardController extends GetxController implements GetxService {
   }
 
   Future<void> reloadFeaturedProperly() async {
-
     categoryList?.data?.clear();
     update();
 
-    await getFeaturedCategories( limit: '50', offset: '1');
+    await getFeaturedCategories(limit: '50', offset: '1');
 
     update();
   }
-
 
   // Future<void> getFeaturedCategories(String limit, String offset,
   //     [bool? isShowLoading]) async {
@@ -332,6 +338,7 @@ class DashBoardController extends GetxController implements GetxService {
   }
 
   double vat = 0.0;
+
   static double calculateVat(
       {required List<sv.CartItem> cartList, int daysCount = 1}) {
     double vat = 0;
@@ -342,6 +349,7 @@ class DashBoardController extends GetxController implements GetxService {
   }
 
   double subTotal = 0.0;
+
   static double calculateSubTotal(
       {required List<sv.CartItem> cartList, int daysCount = 1}) {
     double subTotalPrice = 0;
@@ -351,14 +359,13 @@ class DashBoardController extends GetxController implements GetxService {
     }
     return subTotalPrice;
   }
+
 //my new function to replace top rated service with ac service
   Future<void> getACServices() async {
     try {
       Response response = await apiClient.getData(
         AppConstants.service,
-        query: {
-          "category_id": "40dfb6c2-df7b-4708-acc0-e096a1e0ff8e"
-        },
+        query: {"category_id": "40dfb6c2-df7b-4708-acc0-e096a1e0ff8e"},
         method: 'GET',
       );
       debugPrint("Status Code: ${response.statusCode}");
@@ -376,7 +383,6 @@ class DashBoardController extends GetxController implements GetxService {
 
   Future<void> getTopRated(String limit, String offset,
       [bool? isShowLoading]) async {
-
     if (isShowLoading ?? false) {
       showLoading();
     }
@@ -395,18 +401,16 @@ class DashBoardController extends GetxController implements GetxService {
           responseData['message']
               .toString()
               .contains("Successfully data fetched")) {
-
         // IMPORTANT: direct assign karo, clear mat karo
         topRated = sv.Services.fromJson(responseData['content']);
-
       } else {
         closeSnackBarIfActive();
         showCustomSnackBar(responseData['message'], isError: true);
       }
-
     } catch (e) {
       debugPrint("Error fetching top rated: $e");
-      showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+      showCustomSnackBar("Something went wrong. Please try again.",
+          isError: true);
     } finally {
       _isLoginLoading = false;
       hideLoading();
@@ -415,7 +419,6 @@ class DashBoardController extends GetxController implements GetxService {
       update();
     }
   }
-
 
   // Future<void> getTopRated(String limit, String offset,
   //     [bool? isShowLoading]) async {
@@ -505,7 +508,8 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
-  Future<void> getData(int limit, int offset, [bool isShowLoading = false]) async {
+  Future<void> getData(int limit, int offset,
+      [bool isShowLoading = false]) async {
     if (isFetchingCategories) return;
     isFetchingCategories = true;
 
@@ -519,13 +523,12 @@ class DashBoardController extends GetxController implements GetxService {
           responseData['message']
               .toString()
               .contains("Successfully data fetched")) {
-
         final newData = CategoryModel.fromJson(responseData['content']);
 
         // YAHI MAIN FIX HAI
         if (offset == 1) {
           categoryList?.data?.clear(); // OLD DATA CLEAR
-          categoryList = newData;      // NEW DATA SET
+          categoryList = newData; // NEW DATA SET
         } else {
           categoryList?.data?.addAll(newData.data ?? []);
         }
@@ -688,6 +691,7 @@ class DashBoardController extends GetxController implements GetxService {
       // update();
     }
   }
+
   Future<void> getAddressLists() async {
     showLoading();
     update();
@@ -1071,22 +1075,17 @@ class DashBoardController extends GetxController implements GetxService {
   }
 
   Future<void> removeFromCart(
-      String serviceId,
-      String variantKey,
-      ) async {
-
+    String serviceId,
+    String variantKey,
+  ) async {
     if (cartModel.content?.cart?.data != null) {
-
       cartModel.content!.cart!.data!.removeWhere(
-            (item) =>
-        item.serviceId == serviceId &&
-            item.variantKey == variantKey,
+        (item) => item.serviceId == serviceId && item.variantKey == variantKey,
       );
 
       update(); // UI refresh
     }
   }
-
 
   Future<void> addToCart(
     dynamic body,
@@ -1322,15 +1321,20 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
+  bool isServiceListingLoading = false;
+
   Future<void> getCategoriesToServices(
       {required String id,
       required String limit,
       required String offset,
       bool? isLoading}) async {
     categoriesToServiceListing = sv.Services(data: []);
+    // agar service select karne par loading nhi chahiye to ye condition hata do bro
     if (isLoading ?? false) {
       showLoading();
     }
+    //--------------------------------------------------------------------------------
+    isServiceListingLoading = true;
     update();
 
     try {
@@ -1390,11 +1394,15 @@ class DashBoardController extends GetxController implements GetxService {
       debugPrint("Error fetching categories:10 $e");
       closeSnackBarIfActive();
     } finally {
-      _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      // hideLoading();
-      // update();
+      isServiceListingLoading = false;
+      update();
     }
+    // finally {
+    //   _isLoginLoading = false;
+    //   // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+    //   // hideLoading();
+    //   // update();
+    // }
   }
 
   Future<void> getHomeSubCategories({
@@ -1407,7 +1415,7 @@ class DashBoardController extends GetxController implements GetxService {
 
     try {
       Response response =
-      await authRepo.categoriesToSubCategories(id, limit, offset);
+          await authRepo.categoriesToSubCategories(id, limit, offset);
 
       var responseData = response.body;
 
@@ -1415,23 +1423,18 @@ class DashBoardController extends GetxController implements GetxService {
           responseData['message']
               .toString()
               .contains("Successfully data fetched")) {
-
-        final model =
-        sv.SubCategoryModel.fromJson(responseData['content']);
+        final model = sv.SubCategoryModel.fromJson(responseData['content']);
 
         homeSubCategoryList = model.data ?? [];
 
         update();
-
       } else {
-        showCustomSnackBar(responseData['message'] ?? "Error",
-            isError: true);
+        showCustomSnackBar(responseData['message'] ?? "Error", isError: true);
       }
     } catch (e) {
       showCustomSnackBar("Something went wrong $e", isError: true);
     }
   }
-
 
   Future<void> getCategoriesToSubCategories(
       {required String id,
@@ -1700,8 +1703,7 @@ class DashBoardController extends GetxController implements GetxService {
       serviceModelSearchList.clear();
       update();
 
-      final Response response =
-      await authRepo.searchList(searchText);
+      final Response response = await authRepo.searchList(searchText);
 
       final responseData = response.body;
 
@@ -1714,10 +1716,9 @@ class DashBoardController extends GetxController implements GetxService {
 
       if (response.statusCode == 200 &&
           responseData['message']
-              ?.toString()
-              .contains("Successfully data fetched") ==
+                  ?.toString()
+                  .contains("Successfully data fetched") ==
               true) {
-
         /// FIX HERE
         final List list = responseData['content'] ?? [];
 
@@ -1829,7 +1830,6 @@ class DashBoardController extends GetxController implements GetxService {
     await Get.find<DashBoardController>().getBanners();
     hideLoading();
   }
-
 
   // Future<void> handleLocationPermission(BuildContext context) async {
   //   LocationPermission permission = await Geolocator.checkPermission();
@@ -2055,7 +2055,8 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
-  Future<void> updateProfile(String firstName, String lastName, String email, File? profileImage) async {
+  Future<void> updateProfile(String firstName, String lastName, String email,
+      File? profileImage) async {
     ApiClient apiClient = ApiClient(
       appBaseUrl: AppConstants.baseUrl,
       sharedPreferences: sharedPreferences,

@@ -33,7 +33,6 @@ class _SplashScreenState extends State<SplashScreen> {
     // AppsFlyer SDK init
     await initAppsFlyer();
 
-    await Future.delayed(const Duration(seconds: 3));
     _route();
   }
   void initState() {
@@ -48,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
   // }
 
   void _route() {
-    Timer(const Duration(seconds: 2), () {
+    Timer(const Duration(milliseconds: 1200), () {
       Get.find<AuthController>().isLoggedIn();
     });
   }

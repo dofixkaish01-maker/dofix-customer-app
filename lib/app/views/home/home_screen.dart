@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:do_fix/app/views/home/component/category_components.dart';
+import 'package:do_fix/app/views/services/services.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/category_model.dart';
@@ -55,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
   //   });
   // }
 
-
   @override
   void initState() {
     super.initState();
@@ -63,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Get.find<DashBoardController>().loadHome();
     });
   }
+
   // @override
   // void initState() {
   //   super.initState();
@@ -150,13 +151,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
               /// Heading Row
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                        const SizedBox(width: 6),
                         Text(
                           "All Services",
                           style: const TextStyle(
@@ -177,6 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
 
                         Get.to(() => DashboardScreen(pageIndex: 1));
+                        // Get.to(()=> ServiceScreens());
                       },
                       child: const Text(
                         "See All",
