@@ -1,12 +1,8 @@
 import 'dart:async';
-
-import 'package:do_fix/helper/route_helper.dart';
 import 'package:do_fix/utils/dimensions.dart';
 import 'package:do_fix/utils/images.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/tracking_controller.dart';
 import 'package:facebook_app_events/facebook_app_events.dart';
@@ -22,6 +18,12 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   late AppsflyerSdk _appsFlyerSdk;
 
+  @override
+  void initState() {
+    super.initState();
+    _initApp();
+  }
+
   Future<void> _initApp() async {
     await TrackingController.requestTracking();
 
@@ -35,10 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     _route();
   }
-  void initState() {
-    super.initState();
-    _initApp();
-  }
+
 
   // Future<void> _initApp() async {
   //   await TrackingController.requestTracking();
