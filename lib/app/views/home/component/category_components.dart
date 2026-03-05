@@ -101,7 +101,7 @@ class CategoryComponents extends StatelessWidget {
 
               return SizedBox(
                 width: width,
-                height: 115,
+                height: 142,
                 child: GestureDetector(
                   onTap: () {
                     Get.find<DashBoardController>()
@@ -114,9 +114,9 @@ class CategoryComponents extends StatelessWidget {
                   child: Column(
                     children: [
                       CustomNetworkImageWidget(
-                        fit: BoxFit.cover,
+                        // fit: BoxFit.cover,
                         width: width,
-                        height: 80,
+                        height: 100,
                         image: cat.imageFullPath ?? "",
                       ),
                       const SizedBox(height: 8),
