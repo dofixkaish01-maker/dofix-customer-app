@@ -4,15 +4,13 @@ import '../../../../../controllers/search_controller.dart';
 import '../../../../../controllers/dashboard_controller.dart';
 import '../../../../widgets/networkimg_summerize/network_Image_with_shimmer.dart';
 
-
 class SearchScreen extends StatelessWidget {
   SearchScreen({Key? key}) : super(key: key);
 
   final SearchController controller =
-  Get.put(SearchController(apiClient: Get.find()));
+      Get.put(SearchController(apiClient: Get.find()));
 
-  final DashBoardController dashboard =
-  Get.find<DashBoardController>();
+  final DashBoardController dashboard = Get.find<DashBoardController>();
 
   @override
   Widget build(BuildContext context) {
@@ -27,28 +25,29 @@ class SearchScreen extends StatelessWidget {
           child: SizedBox(
             height: 42,
             child: Obx(() => TextField(
-              controller: controller.textController,
-              onChanged: controller.onSearchChanged,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                hintText: "Search services",
-                hintStyle: TextStyle(color: Colors.grey.shade600),
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                suffixIcon: controller.searchText.value.isNotEmpty
-                    ? IconButton(
-                  icon: const Icon(Icons.close, color: Colors.grey),
-                  onPressed: controller.clearSearch,
-                )
-                    : null,
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            )),
+                  autofocus: true,
+                  controller: controller.textController,
+                  onChanged: controller.onSearchChanged,
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    hintText: "Search services",
+                    hintStyle: TextStyle(color: Colors.grey.shade600),
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    suffixIcon: controller.searchText.value.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.close, color: Colors.grey),
+                            onPressed: controller.clearSearch,
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                )),
           ),
         ),
       ),
@@ -58,8 +57,11 @@ class SearchScreen extends StatelessWidget {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
-                await dashboard.getFeaturedCategories(limit: "10",offset:  "1", forDashboard: false); // categories refresh
-                controller.clearSearch();          // search reset
+                await dashboard.getFeaturedCategories(
+                    limit: "10",
+                    offset: "1",
+                    forDashboard: false); // categories refresh
+                controller.clearSearch(); // search reset
               },
               child: Obx(() {
                 /// EMPTY SEARCH
@@ -71,14 +73,11 @@ class SearchScreen extends StatelessWidget {
                       children: [
                         _title("Trending Searches"),
                         _trendingList(),
-
                         if (controller.recentSearches.isNotEmpty) ...[
                           _title("Recent Searches"),
                           _recentSearch(),
                         ],
-
                         _title("Browse Categories"),
-
                         GetBuilder<DashBoardController>(
                           builder: (dashboard) => _categoryGrid(dashboard),
                         ),
@@ -167,7 +166,8 @@ class SearchScreen extends StatelessWidget {
                               /// VIEW BUTTON
                               TextButton(
                                 onPressed: () async {
-                                  await dashboard.getServicesDetails(item.id ?? "");
+                                  await dashboard
+                                      .getServicesDetails(item.id ?? "");
                                 },
                                 child: const Text(
                                   "View",
@@ -195,62 +195,58 @@ class SearchScreen extends StatelessWidget {
   // ================= WIDGETS =================
 
   Widget _title(String text) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-    child: Text(
-      text,
-      style: const TextStyle(
-          fontSize: 16, fontWeight: FontWeight.bold),
-    ),
-  );
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      );
 
   /// TRENDING KEYWORDS (Flipkart style)
   Widget _trendingList() => SizedBox(
-    height: 48,
-    child: Obx(() => ListView.separated(
-      padding:
-      const EdgeInsets.symmetric(horizontal: 16),
-      scrollDirection: Axis.horizontal,
-      itemCount: controller.trendingSearches.length,
-      separatorBuilder: (_, __) =>
-      const SizedBox(width: 8),
-      itemBuilder: (_, index) {
-        final text =
-        controller.trendingSearches[index];
+        height: 48,
+        child: Obx(() => ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.trendingSearches.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (_, index) {
+                final text = controller.trendingSearches[index];
 
-        return ActionChip(
-          label: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(text),
-              const SizedBox(width: 4),
-              const Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-              ),
-            ],
-          ),
-          onPressed: () => controller.setSearchFromChip(text),
-        );
-      },
-    )),
-  );
+                return ActionChip(
+                  label: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(text),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                      ),
+                    ],
+                  ),
+                  onPressed: () => controller.setSearchFromChip(text),
+                );
+              },
+            )),
+      );
 
   Widget _recentSearch() => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: Obx(() => Wrap(
-      spacing: 8,
-      children: controller.recentSearches
-          .map((e) => ActionChip(
-        avatar: const Icon(
-          Icons.history,
-          size: 18,
-        ),
-        label: Text(e),
-        onPressed: () => controller.setSearchFromChip(e),
-      ))
-          .toList(),
-    )),
-  );
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Obx(() => Wrap(
+              spacing: 8,
+              children: controller.recentSearches
+                  .map((e) => ActionChip(
+                        avatar: const Icon(
+                          Icons.history,
+                          size: 18,
+                        ),
+                        label: Text(e),
+                        onPressed: () => controller.setSearchFromChip(e),
+                      ))
+                  .toList(),
+            )),
+      );
 
   Widget _categoryGrid(DashBoardController dashboard) {
     final list = dashboard.categoryList?.data;
@@ -269,7 +265,7 @@ class SearchScreen extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 0.72, // 👈 balanced ratio
+          childAspectRatio: 0.72,
         ),
         itemBuilder: (_, index) {
           final cat = list[index];
@@ -283,7 +279,7 @@ class SearchScreen extends StatelessWidget {
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child:NetworkImageWithShimmer(
+                    child: NetworkImageWithShimmer(
                       imageUrl: cat.imageFullPath ?? "",
                       borderRadius: BorderRadius.circular(10),
                     ),

@@ -14,6 +14,7 @@ import '../../utils/sizeboxes.dart';
 import '../../utils/styles.dart';
 import '../../utils/theme.dart';
 import '../views/notification/notification_screen.dart';
+import 'animated_searchbar_readonly.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -65,10 +66,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Column(
               children: [
                 Visibility(
+                  visible: showTitle,
                   child: SizedBox(
                     height: 10,
                   ),
-                  visible: showTitle,
                 ),
                 Visibility(
                   visible: showTitle,
@@ -89,10 +90,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 Visibility(
+                  visible: showTitle,
                   child: SizedBox(
                     height: 30,
                   ),
-                  visible: showTitle,
                 ),
                 Visibility(
                   visible: isBackButtonExist,
@@ -155,43 +156,45 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         const EdgeInsets.all(Dimensions.paddingSizeDefault),
                     child: Column(
                       children: [
-                        InkWell(
-                          onTap: () {
-                            Get.to(() => SearchScreen());
-                          },
-                          child: Container(
-                            height: 40,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: Dimensions.paddingSize10),
-                            decoration: BoxDecoration(
-                              color: primaryColorDuskyWhite,
-                              borderRadius:
-                                  BorderRadius.circular(Dimensions.radius5),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  CupertinoIcons.search,
-                                  color: Theme.of(context).hintColor,
-                                ),
-                                sizedBoxW10(),
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: "Search Service",
-                                        style: albertSansRegular.copyWith(
-                                            fontSize: Dimensions.fontSize12,
-                                            fontWeight: FontWeight.w300,
-                                            color: Theme.of(context).hintColor),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        const AnimatedSearchBarReadonly(),
+                        // InkWell(
+                        //   onTap: () {
+                        //     Get.to(() => SearchScreen());
+                        //   },
+                        //   child: Container(
+                        //     height: 40,
+                        //     padding: const EdgeInsets.symmetric(
+                        //         horizontal: Dimensions.paddingSize10),
+                        //     decoration: BoxDecoration(
+                        //       color: primaryColorDuskyWhite,
+                        //       borderRadius:
+                        //           BorderRadius.circular(Dimensions.radius5),
+                        //     ),
+                        //     child:
+                        //     Row(
+                        //       children: [
+                        //         Icon(
+                        //           CupertinoIcons.search,
+                        //           color: Theme.of(context).hintColor,
+                        //         ),
+                        //         sizedBoxW10(),
+                        //         RichText(
+                        //           text: TextSpan(
+                        //             children: [
+                        //               TextSpan(
+                        //                 text: "Search Service",
+                        //                 style: albertSansRegular.copyWith(
+                        //                     fontSize: Dimensions.fontSize12,
+                        //                     fontWeight: FontWeight.w300,
+                        //                     color: Theme.of(context).hintColor),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
