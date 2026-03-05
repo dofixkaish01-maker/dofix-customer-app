@@ -1,7 +1,10 @@
 import 'package:do_fix/app/views/dashboard/dashboard_screen.dart';
+import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../controllers/dashboard_controller.dart';
 import '../../../utils/images.dart';
@@ -25,17 +28,41 @@ class SuccessFullScreen extends StatelessWidget {
               Get.offAll(() => DashboardScreen(pageIndex: 0));
             },
           ),
-          body: Row(
+          body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                Images.icsuccessfull,
-                scale: 3,
+              Center(
+                child: SizedBox(
+                    width: 200,
+                    child: Lottie.asset(
+                        'assets/lottie_animation/confirmed_animation.json',
+                        repeat: false)),
               ),
+              const SizedBox(
+                height: 40,
+              ),
+              Center(
+                  child: Text(
+                'Congratulation!',
+                style: GoogleFonts.montserrat(
+                    fontSize: 25, fontWeight: FontWeight.bold),
+              )),
+              const SizedBox(
+                height: 20,
+              ),
+              Center(
+                  child: const Text(
+                'Your booking is successfully done',
+                style: TextStyle(fontSize: 18, overflow: TextOverflow.ellipsis),
+              )),
+              // Image.asset(
+              //   Images.icsuccessfull,
+              //   scale: 3,
+              // ),
             ],
           ),
           bottomNavigationBar: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -44,7 +71,7 @@ class SuccessFullScreen extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

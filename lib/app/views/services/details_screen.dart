@@ -324,7 +324,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              /// ===== Price section (NO big card, simple Urban style)
+                              /// ===== Price section
                               sectionTitle("Price"),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.end,
