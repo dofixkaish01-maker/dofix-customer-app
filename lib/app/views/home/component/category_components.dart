@@ -95,7 +95,7 @@ class CategoryComponents extends StatelessWidget {
 
           Wrap(
             spacing: 10,
-            runSpacing: 8,
+            runSpacing: 12,
             children: List.generate(list.length, (i) {
               final cat = list[i];
 
@@ -126,9 +126,9 @@ class CategoryComponents extends StatelessWidget {
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         style: albertSansRegular.copyWith(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87),
                       ),
                     ],
                   ),
