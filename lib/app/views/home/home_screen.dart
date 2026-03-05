@@ -118,15 +118,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () async {
                   final dash = Get.find<DashBoardController>();
 
+                  // Fetch data without showing loading
                   await dash.getFeaturedCategories(
-                      limit: "50", offset: "1", isShowLoading: false);
-
-                  Get.offAll(
-                    DashboardScreen(
-                      key: GlobalKey<DashboardScreenState>(),
-                      pageIndex: 1,
-                    ),
+                    limit: "50",
+                    offset: "1",
+                    isShowLoading: false,
                   );
+
+                  // Switch to page 1 on the existing dashboard
+                  DashboardScreen.globalKey.currentState?.setPage(1);
                 },
                 child: Image.asset(
                   'assets/images/instant_repairs.png',
@@ -156,13 +156,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () async {
                         final dash = Get.find<DashBoardController>();
 
+                        // Fetch data without showing loading
                         await dash.getFeaturedCategories(
                           limit: "50",
                           offset: "1",
                           isShowLoading: false,
                         );
 
-                        Get.to(() => DashboardScreen(pageIndex: 1));
+                        // Switch to page 1 on the existing dashboard
+                        DashboardScreen.globalKey.currentState?.setPage(1);
                       },
                       child: const Text(
                         "See All",
@@ -258,8 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             return InkWell(
                                 onTap: () {
-                                  log(
-                                      "CLICKED BANNER CATEGORY ID = ${category.id}");
+                                  log("CLICKED BANNER CATEGORY ID = ${category.id}");
 
                                   controller.getCategoriesToSubCategories(
                                     id: category.id.toString(),
