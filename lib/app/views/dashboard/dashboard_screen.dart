@@ -9,7 +9,7 @@ import '../../widgets/custom_nav_bar.dart';
 class DashboardScreen extends StatefulWidget {
   final int pageIndex;
 
-  DashboardScreen({Key? key, required this.pageIndex}) : super(key: key);
+   DashboardScreen({Key? key, required this.pageIndex}) : super(key: key);
 
   @override
   DashboardScreenState createState() => DashboardScreenState();
