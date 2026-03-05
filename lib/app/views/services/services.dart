@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../../model/category_model.dart';
 import '../home/component/category_components.dart';
+
 class ServiceScreens extends StatefulWidget {
   const ServiceScreens({super.key});
 
@@ -38,11 +39,9 @@ class _ServiceScreensState extends State<ServiceScreens> {
     });
   }
 
-
   Future<void> onRefresh() async {
     currentOffset = 1;
-    await Get.find<DashBoardController>()
-        .getData(10, currentOffset);
+    await Get.find<DashBoardController>().getData(10, currentOffset);
   }
 
   void _scrollListener() {
@@ -136,12 +135,9 @@ class _ServiceScreensState extends State<ServiceScreens> {
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               child: CategoryComponents(
-                categoryList: controller.allCategories ??
-                    CategoryModel(data: []),
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width / 3 - 18,
+                categoryList:
+                    controller.allCategories ?? CategoryModel(data: []),
+                width: MediaQuery.of(context).size.width / 3 - 18,
                 isShowSeeAll: true,
               ),
             ),
