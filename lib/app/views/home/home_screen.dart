@@ -163,7 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
 
                         Get.to(() => DashboardScreen(pageIndex: 1));
-                        // Get.to(()=> ServiceScreens());
                       },
                       child: const Text(
                         "See All",
