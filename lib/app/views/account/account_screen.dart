@@ -236,12 +236,19 @@ class _AccountScreenState extends State<AccountScreen> {
 
           body: LayoutBuilder(
             builder: (context, constraints) {
-              final w = constraints.maxWidth;
-              final isTablet = w >= 600;
+              final shortest = MediaQuery.of(context).size.shortestSide;
+
+              final isTablet = shortest >= 600;
+              final isLargeTablet = shortest >= 900;
+
+              final contentMaxWidth = isLargeTablet
+                  ? 760.0
+                  : isTablet
+                  ? 620.0
+                  : double.infinity;
 
               // responsive paddings + max width for tablet/iPad
               final horizontalPadding = isTablet ? 24.0 : 16.0;
-              final contentMaxWidth = isTablet ? 520.0 : double.infinity;
 
               return Align(
                 alignment: Alignment.topCenter,
