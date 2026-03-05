@@ -576,12 +576,21 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         itemCount: mainServices.length,
                         itemBuilder: (context, index) {
                           final detail = mainServices[index];
+
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
-                            child: CustomBookingDetailsItems(detail: detail),
+                            child: GestureDetector(
+                              onTap: () async {
+                                // Fetch service details for clicked item
+                                await Get.find<DashBoardController>()
+                                    .getServicesDetails(detail.serviceId ?? "");
+
+                                },
+                              child: CustomBookingDetailsItems(detail: detail),
+                            ),
                           );
                         },
-                      ),
+                      )
                     ],
                     if (addOnServices.isNotEmpty) ...[
                       SizedBox(height: 12),
