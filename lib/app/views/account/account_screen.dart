@@ -14,7 +14,6 @@ import 'package:do_fix/app/views/home/refer screen/refer_earn_screen.dart';
 
 import '../helpSupport/help_and_support_screen.dart';
 
-
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -40,6 +39,7 @@ class _AccountScreenState extends State<AccountScreen> {
       }
     });
   }
+
   //Delete Dialog
   void _showDeleteAccountDialog(BuildContext context) {
     showDialog(
@@ -54,7 +54,10 @@ class _AccountScreenState extends State<AccountScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("No",style: TextStyle(color: Colors.red),),
+              child: Text(
+                "No",
+                style: TextStyle(color: Colors.red),
+              ),
             ),
             TextButton(
               onPressed: () async {
@@ -72,6 +75,7 @@ class _AccountScreenState extends State<AccountScreen> {
       },
     );
   }
+
   //Logout Dialog
   void showLogoutDialog() {
     Get.dialog(
@@ -89,7 +93,7 @@ class _AccountScreenState extends State<AccountScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              /// 🔴 Icon
+              ///  Icon
               Container(
                 height: 64,
                 width: 64,
@@ -147,7 +151,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pop(context);// Cancel
+                        Navigator.pop(context); // Cancel
                       },
                       child: const Text(
                         "Cancel",
@@ -174,7 +178,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       ),
                       onPressed: () {
                         Get.back(); // dialog close
-                        authController.logout(); // 👈 same controller call
+                        authController.logout(); //  same controller call
                       },
                       child: const Text(
                         "Log Out",
@@ -201,413 +205,285 @@ class _AccountScreenState extends State<AccountScreen> {
       return SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 65),
-            child: FloatingActionButton.extended(
-              backgroundColor: Color(0xFF207FA7),
-              onPressed: () {
-                Get.to(() => const HelpSupportScreen());
-              },
-              label: Row(
-                children: [
-                  const Icon(Icons.support_agent_rounded, color: Colors.white),
-                  const SizedBox(width: 7),
-                  Text(
-                    'Help & Support',
-                    style: GoogleFonts.roboto(color: Colors.white),
-                  )
-                ],
-              ),
-            ),
+
+          floatingActionButton: LayoutBuilder(
+            builder: (context, constraints) {
+              final w = constraints.maxWidth;
+              final isTablet = w >= 600;
+
+              return Padding(
+                // bottom nav / safe spacing
+                padding: EdgeInsets.only(bottom: isTablet ? 80 : 65),
+                child: FloatingActionButton.extended(
+                  backgroundColor: const Color(0xFF207FA7),
+                  onPressed: () {
+                    Get.to(() => const HelpSupportScreen());
+                  },
+                  label: Row(
+                    children: [
+                      const Icon(Icons.support_agent_rounded, color: Colors.white),
+                      const SizedBox(width: 7),
+                      Text(
+                        'Help & Support',
+                        style: GoogleFonts.roboto(color: Colors.white),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
 
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                //Profile setting
-                SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () async {
-                    final authController = Get.find<AuthController>();
-                    bool isGuest = await authController.returnIsGuest();
-                    if (isGuest) {
-                      authController.checkIfGuest();
-                    } else {
-                      controller.getUserInfo(true);
-                    }
-                  },
-                  //Profile setting
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          child: Text(
-                        "Profile Settings",
-                        style: albertSansRegular.copyWith(
-                            fontSize: Dimensions.fontSizeDefault,
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Icon(Icons.arrow_forward_ios,
-                          color: Colors.black, size: 18),
-                    ],
-                  ),
-                ),
-                sizedBox30(),
-                //Ratings
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     Expanded(
-                //         child: Text(
-                //       "Ratings",
-                //       style: albertSansRegular.copyWith(
-                //           fontSize: Dimensions.fontSize20),
-                //     )),
-                //     Icon(Icons.arrow_forward_ios, color: Colors.black),
-                //   ],
-                // ),
-                // sizedBox30(),
-                //Manage Addresses
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     Expanded(
-                //         child: Text(
-                //       "Manage Addresses",
-                //       style: albertSansRegular.copyWith(
-                //           fontSize: Dimensions.fontSize20),
-                //     )),
-                //     Icon(Icons.arrow_forward_ios, color: Colors.black),
-                //   ],
-                // ),
-                // sizedBox30(),
-                GestureDetector(
-                  // onTap: () {
-                  //   Get.to(() => HtmlContentScreen(
-                  //       title: "About DoFix",
-                  //       htmlContent: (controller.apiResponse.content.aboutUs ??
-                  //               PageInfo(
-                  //                   id: '',
-                  //                   key: '',
-                  //                   value: '',
-                  //                   type: '',
-                  //                   isActive: 0,
-                  //                   createdAt: '',
-                  //                   updatedAt: '',
-                  //                   translations: []))
-                  //           .value));
-                  // },
-                  onTap: () async {
-                    await controller.getPagesData();
-                    Get.to(() => HtmlContentScreen(
-                      title: "About DoFix",
-                      htmlContent: controller.apiResponse.content.aboutUs?.value ?? "",
-                    ));
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          child: Text(
-                        "About DoFix",
-                        style: albertSansRegular.copyWith(
-                            fontSize: Dimensions.fontSizeDefault,
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Icon(Icons.arrow_forward_ios,
-                          color: Colors.black, size: 18),
-                    ],
-                  ),
-                ),
-                sizedBox30(),
-                //Privacy Policy
-                // GestureDetector(
-                //   onTap: () {
-                //     Get.to(() => HtmlContentScreen(
-                //         title: "Privacy Policy",
-                //         htmlContent:
-                //             (controller.apiResponse.content.privacyPolicy ??
-                //                     PageInfo(
-                //                         id: '',
-                //                         key: '',
-                //                         value: '',
-                //                         type: '',
-                //                         isActive: 0,
-                //                         createdAt: '',
-                //                         updatedAt: '',
-                //                         translations: []))
-                //                 .value));
-                //   },
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Expanded(
-                //           child: Text(
-                //         "Privacy Policy",
-                //         style: albertSansRegular.copyWith(
-                //             fontSize: Dimensions.fontSizeDefault,
-                //             fontWeight: FontWeight.w400),
-                //       )),
-                //       Icon(Icons.arrow_forward_ios,
-                //           color: Colors.black, size: 18),
-                //     ],
-                //   ),
-                // ),
-                GestureDetector(
-                  onTap: () {
-                    openUrl("https://dofix.in/privacy-policy");
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Privacy Policy",
-                          style: albertSansRegular.copyWith(
-                            fontSize: Dimensions.fontSizeDefault,
-                            fontWeight: FontWeight.w400,
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              final w = constraints.maxWidth;
+              final isTablet = w >= 600;
+
+              // responsive paddings + max width for tablet/iPad
+              final horizontalPadding = isTablet ? 24.0 : 16.0;
+              final contentMaxWidth = isTablet ? 520.0 : double.infinity;
+
+              return Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: contentMaxWidth),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          // ensures Spacer works + button stays at bottom if content is short
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            children: [
+                              //Profile setting
+                              SizedBox(height: isTablet ? 24 : 20),
+
+                              GestureDetector(
+                                onTap: () async {
+                                  final authController = Get.find<AuthController>();
+                                  bool isGuest = await authController.returnIsGuest();
+                                  if (isGuest) {
+                                    authController.checkIfGuest();
+                                  } else {
+                                    controller.getUserInfo(true);
+                                  }
+                                },
+                                //Profile setting
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Profile Settings",
+                                        style: albertSansRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.black,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              sizedBox30(),
+
+                              //Ratings
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Expanded(
+                              //         child: Text(
+                              //       "Ratings",
+                              //       style: albertSansRegular.copyWith(
+                              //           fontSize: Dimensions.fontSize20),
+                              //     )),
+                              //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+                              //   ],
+                              // ),
+                              // sizedBox30(),
+                              //Manage Addresses
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Expanded(
+                              //         child: Text(
+                              //       "Manage Addresses",
+                              //       style: albertSansRegular.copyWith(
+                              //           fontSize: Dimensions.fontSize20),
+                              //     )),
+                              //     Icon(Icons.arrow_forward_ios, color: Colors.black),
+                              //   ],
+                              // ),
+                              // sizedBox30(),
+
+                              GestureDetector(
+                                onTap: () async {
+                                  await controller.getPagesData();
+                                  Get.to(() => HtmlContentScreen(
+                                    title: "About DoFix",
+                                    htmlContent:
+                                    controller.apiResponse.content.aboutUs?.value ?? "",
+                                  ));
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "About DoFix",
+                                        style: albertSansRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.black,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              sizedBox30(),
+
+                              GestureDetector(
+                                onTap: () {
+                                  openUrl("https://dofix.in/privacy-policy");
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Privacy Policy",
+                                        style: albertSansRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.black,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              sizedBox30(),
+
+                              GestureDetector(
+                                onTap: () {
+                                  openUrl("https://dofix.in/terms");
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Terms & Conditions",
+                                        style: albertSansRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.black,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              sizedBox30(),
+
+                              GestureDetector(
+                                onTap: () async {
+                                  final authController = Get.find<AuthController>();
+                                  bool isGuest = await authController.returnIsGuest();
+                                  if (isGuest) {
+                                    authController.checkIfGuest();
+                                  } else {
+                                    _showDeleteAccountDialog(context);
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Delete Account",
+                                        style: albertSansRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.black,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              sizedBox30(),
+
+                              SizedBox(height: isTablet ? 48 : 40),
+
+                              Spacer(),
+
+                              Obx(
+                                    () => controller.isGuest.value
+                                    ? NewCustomButtonWidget(
+                                  buttonText: 'Log In',
+                                  onPressed: () {
+                                    Get.toNamed('/login');
+                                  },
+                                  transparent: true,
+                                  borderSideColor: primaryBlue,
+                                  textColor: primaryBlue,
+                                )
+                                    : NewCustomButtonWidget(
+                                  buttonText: 'Log Out',
+                                  onPressed: () {
+                                    showLogoutDialog(); //  FIXED
+                                  },
+                                  transparent: true,
+                                  borderSideColor: darkRed,
+                                  textColor: darkRed,
+                                ),
+                              ),
+
+                              sizedBox20(),
+                            ],
                           ),
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios,
-                          color: Colors.black, size: 18),
-                    ],
+                    ),
                   ),
                 ),
-                sizedBox30(),
-                //Terms & Conditions
-                // GestureDetector(
-                //   onTap: () {
-                //     Get.to(() => HtmlContentScreen(
-                //         title: "Terms & Conditions",
-                //         htmlContent: (controller
-                //                     .apiResponse.content.termsAndConditions ??
-                //                 PageInfo(
-                //                     id: '',
-                //                     key: '',
-                //                     value: '',
-                //                     type: '',
-                //                     isActive: 0,
-                //                     createdAt: '',
-                //                     updatedAt: '',
-                //                     translations: []))
-                //             .value));
-                //   },
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Expanded(
-                //           child: Text(
-                //         "Terms & Conditions",
-                //         style: albertSansRegular.copyWith(
-                //             fontSize: Dimensions.fontSizeDefault,
-                //             fontWeight: FontWeight.w400),
-                //       )),
-                //       Icon(Icons.arrow_forward_ios,
-                //           color: Colors.black, size: 18),
-                //     ],
-                //   ),
-                // ),
-                GestureDetector(
-                  onTap: () {
-                    openUrl("https://dofix.in/terms");
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Terms & Conditions",
-                          style: albertSansRegular.copyWith(
-                            fontSize: Dimensions.fontSizeDefault,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Icon(Icons.arrow_forward_ios,
-                          color: Colors.black, size: 18),
-                    ],
-                  ),
-                ),
-                sizedBox30(),
-                //Delete Account
-                GestureDetector(
-                  onTap: () async {
-                    final authController = Get.find<AuthController>();
-                    bool isGuest = await authController.returnIsGuest();
-                    if (isGuest) {
-                      authController.checkIfGuest();
-                    } else {
-                      _showDeleteAccountDialog(context);
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          child: Text(
-                        "Delete Account",
-                        style: albertSansRegular.copyWith(
-                            fontSize: Dimensions.fontSizeDefault,
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Icon(Icons.arrow_forward_ios,
-                          color: Colors.black, size: 18),
-                    ],
-                  ),
-                ),
-                sizedBox30(),
-
-                // GestureDetector(
-                //   onTap: () {
-                //     // _showAccountHelpBottomSheet();
-                //   },
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Expanded(
-                //         child: Text(
-                //           "Help & Support",
-                //           style: albertSansRegular.copyWith(
-                //             fontSize: Dimensions.fontSizeDefault,
-                //             fontWeight: FontWeight.w400,
-                //           ),
-                //         ),
-                //       ),
-                //       Icon(Icons.arrow_forward_ios, color: Colors.black, size: 18),
-                //     ],
-                //   ),
-                // ),
-                SizedBox(height: 40,),
-                ///  Refer & Earn
-                // GestureDetector(
-                //   onTap: () async {
-                //     final authController = Get.find<AuthController>();
-                //     bool isGuest = await authController.returnIsGuest();
-                //
-                //     if (isGuest) {
-                //       authController.checkIfGuest();
-                //     } else {
-                //       Get.to(() => ReferEarnScreen());
-                //     }
-                //   },
-                //   child: Container(
-                //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                //     decoration: BoxDecoration(
-                //       borderRadius: BorderRadius.circular(14),
-                //       gradient: const LinearGradient(
-                //         begin: Alignment.topLeft,
-                //         end: Alignment.bottomRight,
-                //         colors: [
-                //           Color(0xff266a8a), // dark blue-teal
-                //           Color(0xff125778), // deeper shade
-                //         ],
-                //       ),
-                //       boxShadow: [
-                //         BoxShadow(
-                //           color: Colors.black.withOpacity(.25),
-                //           blurRadius: 10,
-                //           offset: Offset(0, 4),
-                //         ),
-                //       ],
-                //     ),
-                //     child: Row(
-                //       children: [
-                //         /// ICON
-                //         Container(
-                //           padding: const EdgeInsets.all(10),
-                //           decoration: BoxDecoration(
-                //             color: Colors.white.withOpacity(.15),
-                //             borderRadius: BorderRadius.circular(10),
-                //           ),
-                //           child: const Icon(
-                //             Icons.card_giftcard,
-                //             color: Colors.white,
-                //             size: 26,
-                //           ),
-                //         ),
-                //
-                //         const SizedBox(width: 14),
-                //
-                //         /// 📝 TEXT
-                //         Expanded(
-                //           child: Column(
-                //             crossAxisAlignment: CrossAxisAlignment.start,
-                //             children: [
-                //               Text(
-                //                 "Refer & Earn ₹150",
-                //                 style: albertSansRegular.copyWith(
-                //                   fontSize: Dimensions.fontSize15,
-                //                   fontWeight: FontWeight.w600,
-                //                   color: Colors.white,
-                //                 ),
-                //               ),
-                //               const SizedBox(height: 6),
-                //               Text(
-                //                 "Invite friends & earn rewards on every booking",
-                //                 style: albertSansRegular.copyWith(
-                //                   fontSize: Dimensions.fontSize12,
-                //                   color: Colors.white70,
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //
-                //         /// ➡️ ARROW
-                //         const Icon(
-                //           Icons.arrow_forward_ios_rounded,
-                //           color: Colors.white70,
-                //           size: 18,
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-
-                //Complaint center
-                // sizedBox30(),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     Expanded(
-                //         child: Text(
-                //       "Complaint center",
-                //       style: albertSansRegular.copyWith(
-                //           fontSize: Dimensions.fontSize20),
-                //     )),
-                //     Icon(Icons.arrow_forward_ios, color: Colors.black),
-                //   ],
-                // ),
-                Spacer(),
-                Obx(
-                      () => controller.isGuest.value
-                      ? NewCustomButtonWidget(
-                    buttonText: 'Log In',
-                    onPressed: () {
-                      Get.toNamed('/login');
-                    },
-                    transparent: true,
-                    borderSideColor: primaryBlue,
-                    textColor: primaryBlue,
-                  )
-                      : NewCustomButtonWidget(
-                    buttonText: 'Log Out',
-                    onPressed: () {
-                      showLogoutDialog(); // 🔥 FIXED
-                    },
-                    transparent: true,
-                    borderSideColor: darkRed,
-                    textColor: darkRed,
-                  ),
-                ),
-                sizedBox20(),
-              ],
-            ),
+              );
+            },
           ),
         ),
       );
+
       //   CustomScrollView(
       //   slivers: <Widget>[
       //     SliverAppBar(
@@ -694,163 +570,7 @@ class _AccountScreenState extends State<AccountScreen> {
       //         child: Column(
       //           children: [
       //             sizedBox20(),
-      //             // Row(
-      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //             //   children: [
-      //             //     Expanded(
-      //             //         child: Text(
-      //             //       "Profile Settings",
-      //             //       style: albertSansRegular.copyWith(
-      //             //           fontSize: Dimensions.fontSize20),
-      //             //     )),
-      //             //     Icon(Icons.arrow_forward_ios, color: Colors.black),
-      //             //   ],
-      //             // ),
-      //             // sizedBox30(),
-      //             // Row(
-      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //             //   children: [
-      //             //     Expanded(
-      //             //         child: Text(
-      //             //       "Ratings",
-      //             //       style: albertSansRegular.copyWith(
-      //             //           fontSize: Dimensions.fontSize20),
-      //             //     )),
-      //             //     Icon(Icons.arrow_forward_ios, color: Colors.black),
-      //             //   ],
-      //             // ),
-      //             // sizedBox30(),
-      //             // Row(
-      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //             //   children: [
-      //             //     Expanded(
-      //             //         child: Text(
-      //             //       "Manage Addresses",
-      //             //       style: albertSansRegular.copyWith(
-      //             //           fontSize: Dimensions.fontSize20),
-      //             //     )),
-      //             //     Icon(Icons.arrow_forward_ios, color: Colors.black),
-      //             //   ],
-      //             // ),
-      //             // sizedBox30(),
-      //             GestureDetector(
-      //               onTap: () {
-      //                 Get.to(() =>
-      //                   HtmlContentScreen(
-      //                       title: "About FixOn",
-      //                       htmlContent:
-      //                           (controller.apiResponse.content.aboutUs ??
-      //                                   PageInfo(
-      //                                       id: '',
-      //                                       key: '',
-      //                                       value: '',
-      //                                       type: '',
-      //                                       isActive: 0,
-      //                                       createdAt: '',
-      //                                       updatedAt: '',
-      //                                       translations: []))
-      //                               .value));
-      //               },
-      //               child: Row(
-      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                 children: [
-      //                   Expanded(
-      //                       child: Text(
-      //                     "About FixOn",
-      //                     style: albertSansRegular.copyWith(
-      //                         fontSize: Dimensions.fontSize20),
-      //                   )),
-      //                   Icon(Icons.arrow_forward_ios, color: Colors.black),
-      //                 ],
-      //               ),
-      //             ),
-      //             sizedBox30(),
-      //             GestureDetector(
-      //               onTap: () {
-      //                 Get.to(() =>
-      //                     HtmlContentScreen(
-      //                         title: "Privacy Policy",
-      //                         htmlContent:
-      //                         (controller.apiResponse.content.privacyPolicy ??
-      //                             PageInfo(
-      //                                 id: '',
-      //                                 key: '',
-      //                                 value: '',
-      //                                 type: '',
-      //                                 isActive: 0,
-      //                                 createdAt: '',
-      //                                 updatedAt: '',
-      //                                 translations: []))
-      //                             .value));
-      //               },
-      //               child: Row(
-      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                 children: [
-      //                   Expanded(
-      //                       child: Text(
-      //                     "Privacy Policy",
-      //                     style: albertSansRegular.copyWith(
-      //                         fontSize: Dimensions.fontSize20),
-      //                   )),
-      //                   Icon(Icons.arrow_forward_ios, color: Colors.black),
-      //                 ],
-      //               ),
-      //             ),
-      //             sizedBox30(),
-      //             GestureDetector(
-      //               onTap: () {
-      //                 Get.to(() =>
-      //                     HtmlContentScreen(
-      //                         title: "Terms & Conditions",
-      //                         htmlContent:
-      //                         (controller.apiResponse.content.termsAndConditions ??
-      //                             PageInfo(
-      //                                 id: '',
-      //                                 key: '',
-      //                                 value: '',
-      //                                 type: '',
-      //                                 isActive: 0,
-      //                                 createdAt: '',
-      //                                 updatedAt: '',
-      //                                 translations: []))
-      //                             .value));
-      //               },
-      //               child: Row(
-      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                 children: [
-      //                   Expanded(
-      //                       child: Text(
-      //                     "Terms & Conditions",
-      //                     style: albertSansRegular.copyWith(
-      //                         fontSize: Dimensions.fontSize20),
-      //                   )),
-      //                   Icon(Icons.arrow_forward_ios, color: Colors.black),
-      //                 ],
-      //               ),
-      //             ),
-      //             // sizedBox30(),
-      //             // Row(
-      //             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //             //   children: [
-      //             //     Expanded(
-      //             //         child: Text(
-      //             //       "Complaint center",
-      //             //       style: albertSansRegular.copyWith(
-      //             //           fontSize: Dimensions.fontSize20),
-      //             //     )),
-      //             //     Icon(Icons.arrow_forward_ios, color: Colors.black),
-      //             //   ],
-      //             // ),
-      //             sizedBox50(),
-      //             CustomButtonWidget(
-      //               buttonText: 'Log Out',
-      //               onPressed: () {
-      //                 Get.find<AuthController>().logout();
-      //               },
-      //               transparent: true,
-      //               borderSideColor: Colors.red,
-      //               textColor: Colors.red,
-      //             ),
+      //             ...
       //           ],
       //         ),
       //       ),
@@ -859,105 +579,105 @@ class _AccountScreenState extends State<AccountScreen> {
       // );
     });
   }
-  // void _showAccountHelpBottomSheet() {
-  //   const supportNumber = "8383849293";
-  //
-  //   Get.bottomSheet(
-  //     Container(
-  //       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-  //       decoration: const BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //       ),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           // drag handle
-  //           Container(
-  //             width: 40,
-  //             height: 4,
-  //             margin: const EdgeInsets.only(bottom: 12),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey.shade300,
-  //               borderRadius: BorderRadius.circular(2),
-  //             ),
-  //           ),
-  //
-  //           const Text(
-  //             "Help & Support",
-  //             style: TextStyle(
-  //               fontSize: 18,
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //           ),
-  //
-  //           const SizedBox(height: 6),
-  //
-  //           const Text(
-  //             "Need help with your account or services?\nWe’re here to help you.",
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(
-  //               fontSize: 13,
-  //               color: Colors.black54,
-  //             ),
-  //           ),
-  //
-  //           const SizedBox(height: 20),
-  //
-  //           // Call Support
-  //           ListTile(
-  //             leading: const CircleAvatar(
-  //               backgroundColor: Color(0xFFE8F5E9),
-  //               child: Icon(Icons.call, color: Colors.green),
-  //             ),
-  //             title: const Text(
-  //               "Call Support",
-  //               style: TextStyle(fontWeight: FontWeight.w500),
-  //             ),
-  //             subtitle: const Text("Talk directly with our support team"),
-  //             onTap: () async {
-  //               final uri = Uri.parse("tel:+91$supportNumber");
-  //               if (await canLaunchUrl(uri)) {
-  //                 await launchUrl(uri);
-  //               }
-  //             },
-  //           ),
-  //
-  //           const SizedBox(height: 8),
-  //
-  //           // WhatsApp Support
-  //           ListTile(
-  //             leading: const CircleAvatar(
-  //               backgroundColor: Color(0xFFE0F2F1),
-  //               child: Icon(Icons.chat, color: Colors.teal),
-  //             ),
-  //             title: const Text(
-  //               "WhatsApp Support",
-  //               style: TextStyle(fontWeight: FontWeight.w500),
-  //             ),
-  //             subtitle: const Text("Chat with us on WhatsApp"),
-  //             onTap: () async {
-  //               final uri = Uri.parse(
-  //                 "https://wa.me/91$supportNumber?text="
-  //                     "Hi, I need some assistance with my account. Could you please let me know how you can help me?",
-  //               );
-  //
-  //               if (await canLaunchUrl(uri)) {
-  //                 await launchUrl(
-  //                   uri,
-  //                   mode: LaunchMode.externalApplication,
-  //                 );
-  //               }
-  //             },
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //     isScrollControlled: true,
-  //   );
-  // }
-
+// void _showAccountHelpBottomSheet() {
+//   const supportNumber = "8383849293";
+//
+//   Get.bottomSheet(
+//     Container(
+//       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+//       decoration: const BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+//       ),
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           // drag handle
+//           Container(
+//             width: 40,
+//             height: 4,
+//             margin: const EdgeInsets.only(bottom: 12),
+//             decoration: BoxDecoration(
+//               color: Colors.grey.shade300,
+//               borderRadius: BorderRadius.circular(2),
+//             ),
+//           ),
+//
+//           const Text(
+//             "Help & Support",
+//             style: TextStyle(
+//               fontSize: 18,
+//               fontWeight: FontWeight.bold,
+//             ),
+//           ),
+//
+//           const SizedBox(height: 6),
+//
+//           const Text(
+//             "Need help with your account or services?\nWe’re here to help you.",
+//             textAlign: TextAlign.center,
+//             style: TextStyle(
+//               fontSize: 13,
+//               color: Colors.black54,
+//             ),
+//           ),
+//
+//           const SizedBox(height: 20),
+//
+//           // Call Support
+//           ListTile(
+//             leading: const CircleAvatar(
+//               backgroundColor: Color(0xFFE8F5E9),
+//               child: Icon(Icons.call, color: Colors.green),
+//             ),
+//             title: const Text(
+//               "Call Support",
+//               style: TextStyle(fontWeight: FontWeight.w500),
+//             ),
+//             subtitle: const Text("Talk directly with our support team"),
+//             onTap: () async {
+//               final uri = Uri.parse("tel:+91$supportNumber");
+//               if (await canLaunchUrl(uri)) {
+//                 await launchUrl(uri);
+//               }
+//             },
+//           ),
+//
+//           const SizedBox(height: 8),
+//
+//           // WhatsApp Support
+//           ListTile(
+//             leading: const CircleAvatar(
+//               backgroundColor: Color(0xFFE0F2F1),
+//               child: Icon(Icons.chat, color: Colors.teal),
+//             ),
+//             title: const Text(
+//               "WhatsApp Support",
+//               style: TextStyle(fontWeight: FontWeight.w500),
+//             ),
+//             subtitle: const Text("Chat with us on WhatsApp"),
+//             onTap: () async {
+//               final uri = Uri.parse(
+//                 "https://wa.me/91$supportNumber?text="
+//                     "Hi, I need some assistance with my account. Could you please let me know how you can help me?",
+//               );
+//
+//               if (await canLaunchUrl(uri)) {
+//                 await launchUrl(
+//                   uri,
+//                   mode: LaunchMode.externalApplication,
+//                 );
+//               }
+//             },
+//           ),
+//         ],
+//       ),
+//     ),
+//     isScrollControlled: true,
+//   );
+// }
 }
+
 class NewCustomButtonWidget extends StatelessWidget {
   final VoidCallback? onPressed;
   final String buttonText;
@@ -989,15 +709,13 @@ class NewCustomButtonWidget extends StatelessWidget {
         onPressed: onPressed,
         style: ButtonStyle(
           elevation: MaterialStateProperty.all(transparent ? 0 : 4),
-
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14), // smooth premium curve
             ),
           ),
-
           backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                (states) {
+            (states) {
               if (transparent) return Colors.transparent;
               if (states.contains(MaterialState.disabled)) {
                 return Colors.grey.shade400;
@@ -1005,9 +723,7 @@ class NewCustomButtonWidget extends StatelessWidget {
               return color ?? Colors.red; // default red
             },
           ),
-
           foregroundColor: MaterialStateProperty.all(textColor),
-
           side: MaterialStateProperty.all(
             BorderSide(
               color: borderSideColor, //  red border
@@ -1036,6 +752,7 @@ class NewCustomButtonWidget extends StatelessWidget {
     );
   }
 }
+
 Future<void> openUrl(String url) async {
   final Uri uri = Uri.parse(url);
 

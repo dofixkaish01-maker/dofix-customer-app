@@ -24,6 +24,9 @@ Future<void> main() async {
       statusBarBrightness: Brightness.dark,
     ),
   );
+  // await SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  // ]);
   await di.init();
   Get.put(NetworkController(), permanent: true);
   runApp(const MyApp());
