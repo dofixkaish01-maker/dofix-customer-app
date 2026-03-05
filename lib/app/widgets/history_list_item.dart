@@ -437,7 +437,7 @@ class _ChipPair extends StatelessWidget {
             color: Colors.black.withOpacity(.75),
           ),
         ),
-        const SizedBox(width: 8),
+        Spacer(),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
