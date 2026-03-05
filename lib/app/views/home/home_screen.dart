@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
             final categoryWidth =
                 (categoryItemWidth - (horizontalPadding * 2)) /
                         categoryColumns -
-                    12;
+                    6;
 
             // Carousel height responsive
             final carouselHeight = isLargeTablet
@@ -178,14 +178,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       InkWell(
                         onTap: () async {
-                          final dash = Get.find<DashBoardController>();
-
-                          // Fetch data without showing loading
-                          await dash.getFeaturedCategories(
-                            limit: "50",
-                            offset: "1",
-                            isShowLoading: false,
-                          );
+                          // final dash = Get.find<DashBoardController>();
+                          //
+                          // // Fetch data without showing loading
+                          // await dash.getFeaturedCategories(
+                          //   limit: "50",
+                          //   offset: "1",
+                          //   isShowLoading: false,
+                          // );
 
                           // Switch to page 1 on the existing dashboard
                           DashboardScreen.globalKey.currentState?.setPage(1);
@@ -218,14 +218,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             GestureDetector(
                               onTap: () async {
-                                final dash = Get.find<DashBoardController>();
-
-                                // Fetch data without showing loading
-                                await dash.getFeaturedCategories(
-                                  limit: "50",
-                                  offset: "1",
-                                  isShowLoading: false,
-                                );
+                                // final dash = Get.find<DashBoardController>();
+                                //
+                                // // Fetch data without showing loading
+                                // await dash.getFeaturedCategories(
+                                //   limit: "50",
+                                //   offset: "1",
+                                //   isShowLoading: false,
+                                // );
 
                                 // Switch to page 1 on the existing dashboard
                                 DashboardScreen.globalKey.currentState
