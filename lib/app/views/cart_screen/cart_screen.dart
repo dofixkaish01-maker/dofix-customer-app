@@ -27,29 +27,49 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 200), () {
-      final data =
-          Get.find<DashBoardController>().cartModel.content?.cart?.data ?? [];
-      setState(() {
-        _items = [];
-      });
-      for (int i = 0; i < data.length; i++) {
-        Future.delayed(Duration(milliseconds: 150 * i), () {
-          _items.insert(i, data[i]);
-          _listKey.currentState?.insertItem(i);
-        });
-      }
+    final data =
+        Get.find<DashBoardController>().cartModel.content?.cart?.data ?? [];
 
-      // Show loader for 3 seconds before showing empty cart message
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+    if (data.isEmpty) {
+      // Agar cart khali hai → loading na dikhao
+      _isLoading = false;
+    }
+
+    _items = [];
+    for (int i = 0; i < data.length; i++) {
+      Future.delayed(Duration(milliseconds: 150 * i), () {
+        _items.insert(i, data[i]);
+        _listKey.currentState?.insertItem(i);
       });
-    });
+    }
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Future.delayed(const Duration(milliseconds: 200), () {
+  //     final data =
+  //         Get.find<DashBoardController>().cartModel.content?.cart?.data ?? [];
+  //     setState(() {
+  //       _items = [];
+  //     });
+  //     for (int i = 0; i < data.length; i++) {
+  //       Future.delayed(Duration(milliseconds: 150 * i), () {
+  //         _items.insert(i, data[i]);
+  //         _listKey.currentState?.insertItem(i);
+  //       });
+  //     }
+  //
+  //     // Show loader for 3 seconds before showing empty cart message
+  //     Future.delayed(const Duration(seconds: 3), () {
+  //       if (mounted) {
+  //         setState(() {
+  //           _isLoading = false;
+  //         });
+  //       }
+  //     });
+  //   });
+  // }
 
   void removeItem(int index) {
     final removedItem = _items[index];
@@ -96,24 +116,12 @@ class _CartScreenState extends State<CartScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _isLoading
-                      ? Column(
-                    children: const [
-                      CircularProgressIndicator(
-                        color: Color(0xFF207FA7),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        "Loading cart...",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
+                      ? const CircularProgressIndicator(
+                    color: Color(0xFF207FA7),
                   )
                       : Column(
                     children: [
-                      /// EMPTY CARD
+                      /// EMPTY CART
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 24),
                         padding: const EdgeInsets.all(24),
@@ -156,13 +164,13 @@ class _CartScreenState extends State<CartScreen> {
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 24),
 
                       /// ADD SERVICE BUTTON
                       GestureDetector(
                         onTap: () {
-                          Get.to(() => DashboardScreen(pageIndex: 0));
+                          // Navigate to Dashboard pageIndex 0
+                          DashboardScreen.globalKey.currentState?.setPage(0);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
