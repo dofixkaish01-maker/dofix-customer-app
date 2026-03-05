@@ -189,6 +189,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   width: MediaQuery.of(context).size.width / 3 - 18,
                   isShowSeeAll: true,
+                )
+              else
+              // Placeholder: 2 rows x 3 columns
+                SizedBox(
+                  height: (MediaQuery.of(context).size.width / 3 - 18) * 2 + 8, // height for 2 rows + spacing
+                  child: GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      );
+                    },
+                  ),
                 ),
 
               /// Our Features
