@@ -17,7 +17,7 @@ class CustomBookingDetailsItems extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
 
-        /// 🔹 LEFT SIDE (Image + Details)
+        /// LEFT SIDE (Image + Details)
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
