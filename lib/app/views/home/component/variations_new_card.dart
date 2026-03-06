@@ -181,184 +181,203 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             /// 1st Column: Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(Dimensions.radius10),
-              child: Image.network(
-                coverVariantImagePath + widget.serviceCoverImage,
-                height: isTablet ? 110 : 95,
-                width: isTablet ? 160 : 120,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  height: isTablet ? 110 : 95,
-                  width: isTablet ? 160 : 120,
-                  color: Colors.grey.shade200,
-                  child: const Icon(Icons.image, size: 30, color: Colors.grey),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(Dimensions.radius10),
+                  child: Image.network(
+                    coverVariantImagePath + widget.serviceCoverImage,
+                    width: isTablet ? 180 : 130, // keep width fixed if needed
+                    fit: BoxFit.contain, // <-- shows full image without cropping
+                    errorBuilder: (_, __, ___) => Container(
+                      height: isTablet ? 160 : 180,
+                      width: isTablet ? 200 : 160,
+                      color: Colors.grey.shade200,
+                      child: const Icon(Icons.image, size: 30, color: Colors.grey),
+                    ),
+                  ),
                 ),
-              ),
+                /// 1st Line: Title
+                SizedBox(width: 10,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+
+                    Text(
+                      widget.serviceVariationName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: isTablet ? Dimensions.fontSize15 : Dimensions.fontSize14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(0.9),
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    /// 3rd Line: Rating and Price in one row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        /// Rating
+                        Row(
+                          children: [
+                            if (widget.serviceRatings != "0.0") ...[
+                              const Icon(Icons.star, size: 14, color: Color(0xFFFFAC33)),
+                              const SizedBox(width: 4),
+                              Text(
+                                widget.serviceRatings,
+                                style: const TextStyle(
+                                  fontSize: Dimensions.fontSize12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                " (${widget.serviceReviewCount})",
+                                style: TextStyle(
+                                  fontSize: Dimensions.fontSize10,
+                                  color: Colors.black.withOpacity(0.45),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    /// Price Section
+                    Row(
+                      children: [
+                        Text(
+                          "₹${widget.serviceDiscountedPrice}",
+                          style: TextStyle(
+                            fontSize: isTablet ? Dimensions.fontSize18 : Dimensions.fontSize15,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF207FA8),
+                          ),
+                        ),
+                        if (widget.serviceMrpPrice != "0.0" &&
+                            widget.serviceMrpPrice != "null" &&
+                            widget.serviceMrpPrice != "0") ...[
+                          const SizedBox(width: 6),
+                          Text(
+                            "₹${widget.serviceMrpPrice}",
+                            style: TextStyle(
+                              fontSize: Dimensions.fontSize10,
+                              decoration: TextDecoration.lineThrough,
+                              color: Colors.black.withOpacity(0.4),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
             const SizedBox(width: Dimensions.paddingSize12),
+            SizedBox(height: 10,),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// 2nd Column: Details
 
-            /// 2nd Column: Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// 1st Line: Title
-                  Text(
-                    widget.serviceVariationName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: isTablet ? Dimensions.fontSize15 : Dimensions.fontSize14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.9),
-                      height: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-
-                  /// 2nd Line: Description
-                  Text(
-                    HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: Dimensions.fontSize12,
-                      height: 1.4,
-                      color: Colors.black.withOpacity(0.55),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  /// 3rd Line: Rating and Price in one row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// Rating
-                      Row(
-                        children: [
-                          if (widget.serviceRatings != "0.0") ...[
-                            const Icon(Icons.star, size: 14, color: Color(0xFFFFAC33)),
-                            const SizedBox(width: 4),
-                            Text(
-                              widget.serviceRatings,
-                              style: const TextStyle(
-                                fontSize: Dimensions.fontSize12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              " (${widget.serviceReviewCount})",
-                              style: TextStyle(
-                                fontSize: Dimensions.fontSize10,
-                                color: Colors.black.withOpacity(0.45),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
 
-                      /// Price Section
-                      Row(
-                        children: [
-                          Text(
-                            "₹${widget.serviceDiscountedPrice}",
-                            style: TextStyle(
-                              fontSize: isTablet ? Dimensions.fontSize18 : Dimensions.fontSize15,
-                              fontWeight: FontWeight.w800,
-                              color: const Color(0xFF207FA8),
-                            ),
-                          ),
-                          if (widget.serviceMrpPrice != "0.0" &&
-                              widget.serviceMrpPrice != "null" &&
-                              widget.serviceMrpPrice != "0") ...[
-                            const SizedBox(width: 6),
-                            Text(
-                              "₹${widget.serviceMrpPrice}",
-                              style: TextStyle(
-                                fontSize: Dimensions.fontSize10,
-                                decoration: TextDecoration.lineThrough,
-                                color: Colors.black.withOpacity(0.4),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  /// 4th Line: View Rate Card and Add Button in one row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      /// Rate Card Link
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(() => GetRateCardScreen(
-                            categoryId: widget.serviceModel.categoryId ?? "",
-                          ));
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Text(
-                            "View Rate Card",
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF2B7EA5),
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
+                      /// 2nd Line: Description
+                      Text(
+                        HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: Dimensions.fontSize12,
+                          height: 1.4,
+                          color: Colors.black.withOpacity(0.55),
                         ),
                       ),
 
-                      /// Add Button
-                      GetBuilder<DashBoardController>(
-                        id: 'cart_${widget.serviceModel.id}_${widget.variantKey}',
-                        builder: (controller) {
-                          bool itemInCart = false;
-                          if (controller.cartModel.content?.cart?.data != null) {
-                            for (var item in controller.cartModel.content!.cart!.data!) {
-                              if (item.serviceId == widget.serviceModel.id &&
-                                  item.variantKey == widget.variantKey) {
-                                itemInCart = true;
-                                break;
-                              }
-                            }
-                          }
-                          isInCart = itemInCart;
+                      const SizedBox(height: 8),
 
-                          return GestureDetector(
-                            onTap: isInCart ? removeFromCart : addToCart,
+                      /// 4th Line: View Rate Card and Add Button in one row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          /// Rate Card Link
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => GetRateCardScreen(
+                                categoryId: widget.serviceModel.categoryId ?? "",
+                              ));
+                            },
                             child: Container(
-                              height: 30,
-                              width: 85,
-                              decoration: BoxDecoration(
-                                color: isInCart ? Colors.red.shade400 : const Color(0xFF207FA8),
-                                borderRadius: BorderRadius.circular(Dimensions.radius5),
-                              ),
-                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(vertical: 4),
                               child: Text(
-                                isInCart ? "Remove" : "Add",
-                                style: const TextStyle(
-                                  fontSize: Dimensions.fontSize10,
+                                "View Rate Card",
+                                style: TextStyle(
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: const Color(0xFF2B7EA5),
+                                  decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),
-                          );
-                        },
+                          ),
+
+                          /// Add Button
+                          GetBuilder<DashBoardController>(
+                            id: 'cart_${widget.serviceModel.id}_${widget.variantKey}',
+                            builder: (controller) {
+                              bool itemInCart = false;
+                              if (controller.cartModel.content?.cart?.data != null) {
+                                for (var item in controller.cartModel.content!.cart!.data!) {
+                                  if (item.serviceId == widget.serviceModel.id &&
+                                      item.variantKey == widget.variantKey) {
+                                    itemInCart = true;
+                                    break;
+                                  }
+                                }
+                              }
+                              isInCart = itemInCart;
+
+                              return GestureDetector(
+                                onTap: isInCart ? removeFromCart : addToCart,
+                                child: Container(
+                                  height: 30,
+                                  width: 85,
+                                  decoration: BoxDecoration(
+                                    color: isInCart ? Colors.red.shade400 : const Color(0xFF207FA8),
+                                    borderRadius: BorderRadius.circular(Dimensions.radius5),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    isInCart ? "Remove" : "Add",
+                                    style: const TextStyle(
+                                      fontSize: Dimensions.fontSize10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
