@@ -1,12 +1,10 @@
 import 'package:do_fix/app/views/services/details_screen.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
-import 'package:do_fix/utils/sizeboxes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/service_model.dart';
 import 'package:do_fix/utils/html_utils.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../../utils/dimensions.dart';
 import 'get_rate_card_screen.dart';
 
