@@ -8,6 +8,7 @@ import '../../../../widgets/custom_image_viewer.dart';
 class HeaderComponent extends StatefulWidget {
   final CartItem? serviceModel;
   final Function(dynamic index) function;
+
   const HeaderComponent({
     super.key,
     required this.serviceModel,
@@ -20,6 +21,7 @@ class HeaderComponent extends StatefulWidget {
 
 class _HeaderComponentState extends State<HeaderComponent> {
   int quantity = 0;
+
   @override
   void initState() {
     super.initState();
@@ -38,20 +40,23 @@ class _HeaderComponentState extends State<HeaderComponent> {
         child: Container(
           height: 240,
           width: double.infinity,
-          margin: const EdgeInsets.symmetric(horizontal: 6,vertical: 2),
+          margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: const Color(0xFF207FA7).withOpacity(0.5), // primary color, thoda halki shade
+              color: const Color(0xFF207FA7).withOpacity(0.5),
+              // primary color, thoda halki shade
               width: 1.2,
             ),
             boxShadow: [
               // main shadow
               BoxShadow(
-                color: Colors.black.withOpacity(0.12), // thoda zyada visible shadow
-                blurRadius: 12, // spread out blur
+                color: Colors.black.withOpacity(0.12),
+                // thoda zyada visible shadow
+                blurRadius: 12,
+                // spread out blur
                 spreadRadius: 1,
                 offset: const Offset(0, 6), // bottom shadow
               ),
@@ -63,9 +68,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
               ),
             ],
           ),
-
-
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -124,7 +126,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                         ),
 
                         // working*********
-
                       ],
                     ),
                   ),
@@ -151,7 +152,8 @@ class _HeaderComponentState extends State<HeaderComponent> {
                         _circleButton(
                           icon: Icons.remove,
                           onTap: () {
-                            if (widget.serviceModel?.quantity != null && quantity > 1) {
+                            if (widget.serviceModel?.quantity != null &&
+                                quantity > 1) {
                               setState(() => quantity--);
                               Get.find<DashBoardController>().updateQuantity(
                                 quantity.toString(),
@@ -193,18 +195,25 @@ class _HeaderComponentState extends State<HeaderComponent> {
                                               child: OutlinedButton(
                                                 onPressed: () {
                                                   // Close the dialog safely
-                                                  Navigator.of(context, rootNavigator: true).pop();
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
                                                 }, // Cancel
                                                 style: OutlinedButton.styleFrom(
-                                                  side: const BorderSide(color: Colors.grey),
+                                                  side: const BorderSide(
+                                                      color: Colors.grey),
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
                                                   ),
-                                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 12),
                                                 ),
                                                 child: const Text(
                                                   "Cancel",
-                                                  style: TextStyle(color: Colors.black87),
+                                                  style: TextStyle(
+                                                      color: Colors.black87),
                                                 ),
                                               ),
                                             ),
@@ -213,11 +222,17 @@ class _HeaderComponentState extends State<HeaderComponent> {
                                               child: ElevatedButton(
                                                 onPressed: () {
                                                   //  Close dialog safely
-                                                  Navigator.of(context, rootNavigator: true).pop();
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop();
 
                                                   //  Remove item from controller
-                                                  Get.find<DashBoardController>()
-                                                      .removeItem(widget.serviceModel?.id ?? "");
+                                                  Get.find<
+                                                          DashBoardController>()
+                                                      .removeItem(widget
+                                                              .serviceModel
+                                                              ?.id ??
+                                                          "");
 
                                                   //  Trigger parent function for AnimatedList remove
                                                   widget.function(null);
@@ -225,13 +240,17 @@ class _HeaderComponentState extends State<HeaderComponent> {
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: Colors.red,
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
                                                   ),
-                                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 12),
                                                 ),
                                                 child: const Text(
                                                   "Remove",
-                                                  style: TextStyle(color: Colors.white),
+                                                  style: TextStyle(
+                                                      color: Colors.white),
                                                 ),
                                               ),
                                             ),
@@ -243,7 +262,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                                 ),
                                 barrierDismissible: false,
                               );
-
                             }
                           },
                         ),
@@ -275,8 +293,8 @@ class _HeaderComponentState extends State<HeaderComponent> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      await Get.find<DashBoardController>()
-                          .getServicesDetails(widget.serviceModel?.serviceId ?? "");
+                      await Get.find<DashBoardController>().getServicesDetails(
+                          widget.serviceModel?.serviceId ?? "");
                     },
                     child: Row(
                       children: [
@@ -298,7 +316,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                       ],
                     ),
                   )
-
                 ],
               ),
             ],
@@ -307,6 +324,7 @@ class _HeaderComponentState extends State<HeaderComponent> {
       );
     });
   }
+
   Widget _circleButton({
     required IconData icon,
     required VoidCallback onTap,
@@ -330,5 +348,4 @@ class _HeaderComponentState extends State<HeaderComponent> {
       ),
     );
   }
-
 }
