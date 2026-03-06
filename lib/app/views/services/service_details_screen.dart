@@ -153,9 +153,9 @@ class _ServiceDetailsState extends State<ServiceDetails>
                               builder: (context, child) {
                                 return AnimatedSlide(
                                   offset: _slideAnimation.value,
-                                  duration: const Duration(milliseconds: 600),
+                                  duration: const Duration(milliseconds: 400),
                                   child: AnimatedOpacity(
-                                    duration: const Duration(milliseconds: 400),
+                                    duration: const Duration(milliseconds: 200),
                                     opacity: _visible ? 1.0 : 0.0,
                                     child: Container(
                                       width: double.infinity,

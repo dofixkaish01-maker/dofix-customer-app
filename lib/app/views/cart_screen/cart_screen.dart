@@ -233,7 +233,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
 
-                ///  BILLING SUMMARY (SCROLLABLE NOW)
+                ///  BILLING SUMMARY
                 GetBuilder<DashBoardController>(
                   builder: (controller) {
                     final cartModel = controller.cartModel;
@@ -334,7 +334,7 @@ class _CartScreenState extends State<CartScreen> {
 
                           const SizedBox(height: 14),
 
-                          /// 🔷 CARD BOX
+                          ///  CARD BOX
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
@@ -354,7 +354,7 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                           ),
 
-                          /// 🔷 WALLET + REFERRAL
+                          ///  WALLET + REFERRAL
                           if (wallet > 0 || referral > 0) ...[
                             const SizedBox(height: 10),
                             Container(
@@ -376,7 +376,7 @@ class _CartScreenState extends State<CartScreen> {
 
                           // const SizedBox(height: 8),
 
-                          // /// 🔷 SAVING TEXT
+                          // ///  SAVING TEXT
                           // Text(
                           //   "You saved ₹${(discount + couponDiscount).toStringAsFixed(0)} on this order",
                           //   style: const TextStyle(
@@ -387,7 +387,7 @@ class _CartScreenState extends State<CartScreen> {
 
                           const SizedBox(height: 14),
 
-                          /// 🔷 TOTAL PAY BAR
+                          ///  TOTAL PAY BAR
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                             decoration: BoxDecoration(
@@ -418,7 +418,7 @@ class _CartScreenState extends State<CartScreen> {
 
                           const SizedBox(height: 18),
 
-                          /// 🔷 CONTINUE BUTTON (MODERN)
+                          ///  CONTINUE BUTTON (MODERN)
                           InkWell(
                             borderRadius: BorderRadius.circular(14),
                             onTap: () {

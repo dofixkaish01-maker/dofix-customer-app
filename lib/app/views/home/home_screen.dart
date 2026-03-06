@@ -259,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Placeholder: 2 rows x 3/4 columns feel
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding,vertical: 15),
+                              horizontal: horizontalPadding,vertical: 12),
                           child: SizedBox(
                             height: placeholderHeight,
                             child: GridView.builder(
@@ -288,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Padding(
                         padding: EdgeInsets.only(
                           left: horizontalPadding,
-                          top: 8,
+                          // top: 8,
                           right: horizontalPadding,
                         ),
                         child: const Align(
