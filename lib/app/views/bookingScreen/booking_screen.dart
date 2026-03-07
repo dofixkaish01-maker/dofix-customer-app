@@ -57,6 +57,26 @@ class _BookingScreenState extends State<BookingScreen> {
   TextEditingController assignPhoneController = TextEditingController();
   TextEditingController assignEmailController = TextEditingController();
 
+  bool isServiceAvailable = true;
+  String regionMessage = "";
+  LatLng? _lastValidLatLng;
+
+  final Set<String> _allowedCities = {
+    'ghaziabad',
+    'greater noida',
+    'noida',
+    'delhi',
+    'new delhi',
+    'faridabad',
+    'gurugram',
+    'gurgaon',
+  };
+
+  final LatLngBounds _allowedBounds = LatLngBounds(
+    southwest: LatLng(28.20, 76.80),
+    northeast: LatLng(28.95, 77.85),
+  );
+
   final FocusNode addressFocus = FocusNode();
   final FocusNode mapFocus = FocusNode();
   AddressData? selectedAddress;
@@ -78,23 +98,137 @@ class _BookingScreenState extends State<BookingScreen> {
   PaymentMethod _paymentMethod = PaymentMethod.cash_after_service;
 
   @override
-  @override
   void initState() {
     super.initState();
 
     addressController.text = "";
     streetController.text = "";
-    Get.find<DashBoardController>().addressController.text = "";
+    Get
+        .find<DashBoardController>()
+        .addressController
+        .text = "";
+    _lastValidLatLng = _selectedLatLng;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Get.find<DashBoardController>().getUserInfo(false);
       _setInitialLocation();
     });
-    // _razorpay = Razorpay();
-    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
+
+  bool _isAllowedCity(String cityName) {
+    return _allowedCities.contains(cityName.trim().toLowerCase());
+  }
+
+  Future<void> _applyPlacemarkToFields(Placemark place,
+      StateSetter modalSetState,) async {
+    modalSetState(() {
+      floorController.text = "";
+      houseController.text = "";
+      streetController.text = place.street ?? place.name ?? "";
+      mapController.text =
+          "${place.street ?? place.name ?? ''}, ${place.locality ?? ''}, ${place
+              .country ?? ''}"
+              .replaceAll(RegExp(r'(, )+'), ', ')
+              .replaceAll(RegExp(r'^, |, $'), '');
+
+      city = place.locality ?? place.subAdministrativeArea ?? "";
+      state = place.administrativeArea ?? "";
+      country = place.country ?? "";
+      street = place.street ?? place.name ?? "";
+      postalCode = place.postalCode ?? "";
+
+      stateController.text = place.administrativeArea ?? "";
+      countryController.text = place.country ?? "";
+      postalController.text = place.postalCode ?? "";
+    });
+
+    _lastValidLatLng = _selectedLatLng;
+
+    Get.find<DashBoardController>().updateLatLong(
+      _selectedLatLng.latitude.toString(),
+      _selectedLatLng.longitude.toString(),
+    );
+  }
+
+  Future<void> _validateSelectedLocation(StateSetter modalSetState) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        _selectedLatLng.latitude,
+        _selectedLatLng.longitude,
+      );
+
+      if (placemarks.isEmpty) {
+        modalSetState(() {
+          isServiceAvailable = false;
+          regionMessage = "Service not available in this region";
+        });
+        return;
+      }
+
+      final place = placemarks.first;
+
+      final cityName = (place.locality ??
+          place.subAdministrativeArea ??
+          place.administrativeArea ??
+          "")
+          .trim()
+          .toLowerCase();
+
+      final allowed = _isAllowedCity(cityName);
+
+      if (allowed) {
+        modalSetState(() {
+          isServiceAvailable = true;
+          regionMessage = "";
+        });
+
+        await _applyPlacemarkToFields(place, modalSetState);
+      } else {
+        modalSetState(() {
+          isServiceAvailable = false;
+          regionMessage = "Service not available in this region";
+        });
+      }
+    } catch (e) {
+      debugPrint("Location validation error: $e");
+      modalSetState(() {
+        isServiceAvailable = false;
+        regionMessage = "Unable to verify this location";
+      });
+    }
+  }
+
+  Future<void> _handleSearchSelection(double lat,
+      double lng,
+      StateSetter modalSetState,) async {
+    modalSetState(() {
+      _selectedLatLng = LatLng(lat, lng);
+    });
+
+    await _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(_selectedLatLng, 15),
+    );
+
+    await _validateSelectedLocation(modalSetState);
+  }
+
+  // void initState() {
+  //   super.initState();
+  //
+  //   addressController.text = "";
+  //   streetController.text = "";
+  //   Get.find<DashBoardController>().addressController.text = "";
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //     await Get.find<DashBoardController>().getUserInfo(false);
+  //     _setInitialLocation();
+  //   });
+  //   // _razorpay = Razorpay();
+  //   // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+  //   // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+  //   // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  //   _lastValidLatLng = _selectedLatLng;
+  // }
 
   bool isCashPayment() {
     return _paymentMethod == PaymentMethod.cash_after_service;
@@ -188,65 +322,158 @@ class _BookingScreenState extends State<BookingScreen> {
   Future<void> _setInitialLocation() async {
     debugPrint("Use Current Location inside");
     showLoading();
+
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       hideLoading();
-      // showCustomSnackBar("Location services are disabled.");
       return;
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.deniedForever) {
+
+      if (permission == LocationPermission.deniedForever ||
+          permission == LocationPermission.denied) {
         hideLoading();
-        // showCustomSnackBar("Location services are disabled.");
-        return;
-      } else if (permission == LocationPermission.denied) {
-        hideLoading();
-        // showCustomSnackBar("Location services are disabled.");
         return;
       }
     }
 
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
     setState(() {
       _selectedLatLng = LatLng(position.latitude, position.longitude);
+      _lastValidLatLng = _selectedLatLng;
     });
-    await _getAddressFromLatLng(LatLng(position.latitude, position.longitude));
+
+    await _getAddressFromLatLng(_selectedLatLng);
   }
+
+  // Future<void> _setInitialLocation() async {
+  //   debugPrint("Use Current Location inside");
+  //   showLoading();
+  //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     hideLoading();
+  //     // showCustomSnackBar("Location services are disabled.");
+  //     return;
+  //   }
+  //
+  //   LocationPermission permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission == LocationPermission.deniedForever) {
+  //       hideLoading();
+  //       // showCustomSnackBar("Location services are disabled.");
+  //       return;
+  //     } else if (permission == LocationPermission.denied) {
+  //       hideLoading();
+  //       // showCustomSnackBar("Location services are disabled.");
+  //       return;
+  //     }
+  //   }
+  //
+  //   Position position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
+  //   setState(() {
+  //     _selectedLatLng = LatLng(position.latitude, position.longitude);
+  //   });
+  //   await _getAddressFromLatLng(LatLng(position.latitude, position.longitude));
+  // }
 
   Future<void> _getAddressFromLatLng(LatLng position) async {
     try {
       List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
-      Placemark place = placemarks[0];
+      await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      if (placemarks.isEmpty) {
+        hideLoading();
+        return;
+      }
+
+      Placemark place = placemarks.first;
+
+      final cityName = (place.locality ??
+          place.subAdministrativeArea ??
+          place.administrativeArea ??
+          "")
+          .trim()
+          .toLowerCase();
+
+      final allowed = _isAllowedCity(cityName);
+
       setState(() {
-        // addressController.text =
-        //     "${place.street}, ${place.locality}, ${place.country}";
-        // Get.find<DashBoardController>().addressController.text =
-        //     "${place.street}, ${place.locality}, ${place.country}";
+        isServiceAvailable = allowed;
+        regionMessage = allowed ? "" : "Service not available in this region";
+
         addressController.text = "";
-        Get.find<DashBoardController>().addressController.text = "";
-        city = place.locality ?? "";
+        Get
+            .find<DashBoardController>()
+            .addressController
+            .text = "";
+
+        city = place.locality ?? place.subAdministrativeArea ?? "";
         state = place.administrativeArea ?? "";
         country = place.country ?? "";
-        street = place.street ?? "";
+        street = place.street ?? place.name ?? "";
         postalCode = place.postalCode ?? "";
+
         mapController.text =
-            "${place.street},${place.locality}, ${place.country}";
+            "${place.street ?? place.name ?? ''}, ${place.locality ??
+                ''}, ${place.country ?? ''}"
+                .replaceAll(RegExp(r'(, )+'), ', ')
+                .replaceAll(RegExp(r'^, |, $'), '');
+      });
+
+      if (allowed) {
+        _lastValidLatLng = position;
         Get.find<DashBoardController>().updateLatLong(
           position.latitude.toString(),
           position.longitude.toString(),
         );
-      });
+      }
+
       Get.find<DashBoardController>().update();
       hideLoading();
     } catch (e) {
-      print(e);
+      debugPrint("getAddressFromLatLng error: $e");
+      hideLoading();
     }
   }
+
+  // Future<void> _getAddressFromLatLng(LatLng position) async {
+  //   try {
+  //     List<Placemark> placemarks =
+  //         await placemarkFromCoordinates(position.latitude, position.longitude);
+  //     Placemark place = placemarks[0];
+  //     setState(() {
+  //       // addressController.text =
+  //       //     "${place.street}, ${place.locality}, ${place.country}";
+  //       // Get.find<DashBoardController>().addressController.text =
+  //       //     "${place.street}, ${place.locality}, ${place.country}";
+  //       addressController.text = "";
+  //       Get.find<DashBoardController>().addressController.text = "";
+  //       city = place.locality ?? "";
+  //       state = place.administrativeArea ?? "";
+  //       country = place.country ?? "";
+  //       street = place.street ?? "";
+  //       postalCode = place.postalCode ?? "";
+  //       mapController.text =
+  //           "${place.street},${place.locality}, ${place.country}";
+  //       Get.find<DashBoardController>().updateLatLong(
+  //         position.latitude.toString(),
+  //         position.longitude.toString(),
+  //       );
+  //     });
+  //     Get.find<DashBoardController>().update();
+  //     hideLoading();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   Widget buildAnimatedItem({required int index, required Widget child}) {
     final bool fromLeft = index.isEven;
@@ -254,18 +481,16 @@ class _BookingScreenState extends State<BookingScreen> {
     return child;
   }
 
-  void showAddressChoiceDialog(
-    BuildContext context,
-    List<AddressData> addressList,
-    Function(AddressData) onSelectAddress,
-  ) {
+  void showAddressChoiceDialog(BuildContext context,
+      List<AddressData> addressList,
+      Function(AddressData) onSelectAddress,) {
     if (addressList.isEmpty) {
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: const Text(
               "No Saved Addresses",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -303,169 +528,179 @@ class _BookingScreenState extends State<BookingScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.75,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-              ),
-              child: Column(
-                children: [
-                  /// Drag Handle
-                  Container(
-                    margin: const EdgeInsets.only(top: 10, bottom: 8),
-                    height: 5,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(10),
+        return SafeArea(
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return Container(
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.75,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+                ),
+                child: Column(
+                  children: [
+
+                    /// Drag Handle
+                    Container(
+                      margin: const EdgeInsets.only(top: 10, bottom: 8),
+                      height: 5,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
 
-                  /// Header Row
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Choose Address",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                    /// Header Row
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Choose Address",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
 
-                        /// Cancel Icon
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.close, size: 20),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-                  const Divider(),
-
-                  /// Address List
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      itemCount: addressList.length,
-                      itemBuilder: (context, index) {
-                        final address = addressList[index];
-                        final isSelected = selectedAddress == address;
-
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedAddress = address;
-                            });
-                            onSelectAddress(address);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 6),
-                            padding: const EdgeInsets.all(14),
+                          /// Cancel Icon
+                          Container(
                             decoration: BoxDecoration(
-                              color: isSelected
-                                  ? Colors.blue.withOpacity(0.08)
-                                  : Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
+                              color: Colors.grey.shade200,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.close, size: 20),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+                    const Divider(),
+
+                    /// Address List
+                    Expanded(
+                      child: ListView.builder(
+                        // padding: const EdgeInsets.symmetric(horizontal: 12),
+                        itemCount: addressList.length,
+                        itemBuilder: (context, index) {
+                          final address = addressList[index];
+                          final isSelected = selectedAddress == address;
+
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedAddress = address;
+                              });
+                              onSelectAddress(address);
+
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 6),
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
                                 color: isSelected
-                                    ? Colors.blue
-                                    : Colors.transparent,
+                                    ? Colors.blue.withOpacity(0.08)
+                                    : Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Colors.blue
+                                      : Colors.transparent,
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: isSelected ? Colors.blue : Colors
+                                        .grey,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          CommonFunctions()
+                                              .capitalizeFirstLetter(
+                                              address.addressLabel),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          address.address,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (isSelected)
+                                    const Icon(Icons.check_circle,
+                                        color: Colors.blue)
+                                ],
                               ),
                             ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  color: isSelected ? Colors.blue : Colors.grey,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        CommonFunctions().capitalizeFirstLetter(
-                                            address.addressLabel),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        address.address,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.black54),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                if (isSelected)
-                                  const Icon(Icons.check_circle,
-                                      color: Colors.blue)
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  /// Add New Address Button
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 16, left: 16, right: 16, bottom: 20),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.add, size: 20),
-                        label: const Text(
-                          "Add New Address",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          side: const BorderSide(
-                            color: Colors.blue, // Border Color Added
-                            width: 1.5,
-                          ),
-                          foregroundColor: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          showAddNewAddressDialog(context);
+                          );
                         },
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
+
+                    /// Add New Address Button
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 16, left: 16, right: 16, bottom: 20),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.add, size: 20),
+                          label: const Text(
+                            "Add New Address",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            side: const BorderSide(
+                              color: Colors.blue, // Border Color Added
+                              width: 1.5,
+                            ),
+                            foregroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            showAddNewAddressDialog(context);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );
@@ -614,38 +849,49 @@ class _BookingScreenState extends State<BookingScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          left: 5,
-          right: 16,
-          top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: buildGoogleMapWithDetailsDialog(context),
-      ),
+      builder: (sheetContext) =>
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              16,
+              16,
+              16,
+              MediaQuery
+                  .of(sheetContext)
+                  .viewInsets
+                  .bottom + 16,
+            ),
+            child: buildGoogleMapWithDetailsDialog(sheetContext),
+          ),
     );
   }
 
   Widget buildGoogleMapWithDetailsDialog(BuildContext context1) {
     return StatefulBuilder(
-      builder: (context, setState) {
+      builder: (context, modalSetState) {
         return SafeArea(
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 15),
                 Row(
                   children: [
                     IconButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        icon: const Icon(Icons.arrow_back,
-                            size: 30, color: Colors.black)),
-                    Text(
+                      onPressed: () {
+                        FocusScope.of(context1).unfocus();
+                        Navigator.of(context1).pop();
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        size: 30,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const Text(
                       "Add Address",
                       style: TextStyle(
                         fontSize: 18,
@@ -654,6 +900,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                   ],
                 ),
+
                 buildAnimatedItem(
                   index: 10,
                   child: Padding(
@@ -661,7 +908,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
+                        const BorderRadius.all(Radius.circular(10)),
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
@@ -687,57 +934,35 @@ class _BookingScreenState extends State<BookingScreen> {
                                         target: _selectedLatLng,
                                         zoom: 15,
                                       ),
+                                      cameraTargetBounds:
+                                      CameraTargetBounds(_allowedBounds),
+                                      minMaxZoomPreference:
+                                      const MinMaxZoomPreference(10, 18),
                                       onMapCreated: (controller) {
                                         _mapController = controller;
                                       },
                                       onCameraMove: (position) {
-                                        setState(() =>
-                                            _selectedLatLng = position.target);
+                                        modalSetState(() {
+                                          _selectedLatLng = position.target;
+                                        });
                                       },
                                       onCameraIdle: () async {
-                                        List<Placemark> placemarks =
-                                            await placemarkFromCoordinates(
-                                          _selectedLatLng.latitude,
-                                          _selectedLatLng.longitude,
-                                        );
-                                        Placemark place = placemarks.first;
-                                        setState(() {
-                                          floorController.text = "";
-                                          houseController.text = "";
-                                          streetController.text = "";
-                                          mapController.text =
-                                              "${place.street}, ${place.locality}, ${place.country}";
-                                          city = place.locality ?? "";
-                                          state =
-                                              place.administrativeArea ?? "";
-                                          country = place.country ?? "";
-                                          street = place.street ?? "";
-                                          postalCode = place.postalCode ?? "";
-
-                                          // streetController.text =
-                                          //     place.street ?? "";
-                                          stateController.text =
-                                              place.administrativeArea ?? "";
-                                          countryController.text =
-                                              place.country ?? "";
-                                          postalController.text =
-                                              place.postalCode ?? "";
-                                        });
-
-                                        Get.find<DashBoardController>()
-                                            .updateLatLong(
-                                          _selectedLatLng.latitude.toString(),
-                                          _selectedLatLng.longitude.toString(),
+                                        await _validateSelectedLocation(
+                                          modalSetState,
                                         );
                                       },
                                       gestureRecognizers: {
                                         Factory<OneSequenceGestureRecognizer>(
-                                            () => EagerGestureRecognizer()),
+                                              () => EagerGestureRecognizer(),
+                                        ),
                                       },
                                     ),
                                     const Center(
-                                      child: Icon(Icons.location_pin,
-                                          size: 40, color: Colors.red),
+                                      child: Icon(
+                                        Icons.location_pin,
+                                        size: 40,
+                                        color: Colors.red,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -748,74 +973,132 @@ class _BookingScreenState extends State<BookingScreen> {
                               focusNode: mapFocus,
                               textEditingController: mapController,
                               googleAPIKey:
-                                  "AIzaSyBLI5I6o95GqluNuRh0YT3zRj5yqoix8zA",
+                              "AIzaSyBLI5I6o95GqluNuRh0YT3zRj5yqoix8zA",
                               inputDecoration: InputDecoration(
                                 hintText: "Search location",
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                               debounceTime: 600,
-                              itemClick: (prediction) {
-                                double lat =
-                                    double.parse(prediction.lat ?? "0.0");
-                                double lng =
-                                    double.parse(prediction.lng ?? "0.0");
-                                setState(() {
-                                  _selectedLatLng = LatLng(lat, lng);
+                              itemClick: (prediction) async {
+                                final lat =
+                                double.tryParse(prediction.lat ?? "");
+                                final lng =
+                                double.tryParse(prediction.lng ?? "");
+
+                                if (lat == null || lng == null) return;
+
+                                FocusScope.of(context).unfocus();
+
+                                modalSetState(() {
+                                  mapController.text =
+                                      prediction.description ?? "";
                                 });
-                                _mapController?.animateCamera(
-                                    CameraUpdate.newLatLng(_selectedLatLng));
+
+                                await _handleSearchSelection(
+                                  lat,
+                                  lng,
+                                  modalSetState,
+                                );
                               },
                               getPlaceDetailWithLatLng: (prediction) async {
-                                double lat =
-                                    double.parse(prediction.lat ?? "0.0");
-                                double lng =
-                                    double.parse(prediction.lng ?? "0.0");
-                                setState(() {
-                                  _selectedLatLng = LatLng(lat, lng);
-                                });
-                                _mapController?.animateCamera(
-                                    CameraUpdate.newLatLng(_selectedLatLng));
+                                final lat =
+                                double.tryParse(prediction.lat ?? "");
+                                final lng =
+                                double.tryParse(prediction.lng ?? "");
+
+                                if (lat == null || lng == null) return;
+
+                                await _handleSearchSelection(
+                                  lat,
+                                  lng,
+                                  modalSetState,
+                                );
                               },
                             ),
+                            if (!isServiceAvailable) ...[
+                              const SizedBox(height: 12),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF3F0),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color(0xFFFFC9BD),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_off_outlined,
+                                      color: Colors.redAccent,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        regionMessage,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.redAccent,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 15),
+
                 buildAnimatedItem(
                   index: 9,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Address Type",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text(
+                        "Address Type",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Radio<String>(
                             value: "home",
                             groupValue: addressType,
                             onChanged: (value) =>
-                                setState(() => addressType = value!),
+                                modalSetState(() => addressType = value!),
                           ),
                           const Text("Home"),
                           Radio<String>(
                             value: "office",
                             groupValue: addressType,
                             onChanged: (value) =>
-                                setState(() => addressType = value!),
+                                modalSetState(() => addressType = value!),
                           ),
                           const Text("Office"),
                           Radio<String>(
                             value: "other",
                             groupValue: addressType,
                             onChanged: (value) =>
-                                setState(() => addressType = value!),
+                                modalSetState(() => addressType = value!),
                           ),
                           const Text("Other"),
                         ],
@@ -823,208 +1106,619 @@ class _BookingScreenState extends State<BookingScreen> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 15),
-                buildAnimatedItem(
-                    index: 11,
-                    child: CustomTextField(
-                        controller: houseController, hintText: "House No.")),
-                const SizedBox(height: 15),
-                buildAnimatedItem(
-                    index: 12,
-                    child: CustomTextField(
-                        controller: floorController, hintText: "Floor")),
-                const SizedBox(height: 15),
-                buildAnimatedItem(
-                    index: 13,
-                    child: CustomTextField(
-                        controller: streetController,
-                        hintText: "Street/Block/Area/Locality")),
-                const SizedBox(height: 15),
-                buildAnimatedItem(
-                    index: 14,
-                    child: CustomTextField(
-                        controller: countryController, hintText: "Country")),
-                const SizedBox(height: 15),
-                buildAnimatedItem(
-                    index: 15,
-                    child: CustomTextField(
-                        controller: stateController, hintText: "State")),
-                const SizedBox(height: 15),
-                buildAnimatedItem(
-                    index: 16,
-                    child: CustomTextField(
-                        controller: postalController, hintText: "Postal Code")),
-                const SizedBox(height: 15),
-                buildAnimatedItem(
-                  index: 17,
-                  child: CustomButtonWidget(
-                    onPressed: () async {
-                      if (streetController.text.trim().isEmpty) {
-                        showCustomSnackBar("Please enter street");
-                        return;
-                      }
-
-                      if (stateController.text.trim().isEmpty) {
-                        showCustomSnackBar("Please enter state");
-                        return;
-                      }
-
-                      if (postalController.text.trim().isEmpty) {
-                        showCustomSnackBar("Please enter zip/postal code");
-                        return;
-                      }
-
-                      if (countryController.text.trim().isEmpty) {
-                        showCustomSnackBar("Please enter country");
-                        return;
-                      }
-
-                      if (houseController.text.trim().isEmpty) {
-                        showCustomSnackBar("Please enter house number");
-                        return;
-                      }
-
-                      if (floorController.text.trim().isEmpty) {
-                        showCustomSnackBar("Please enter floor number");
-                        return;
-                      }
-
-                      if (addressType.trim().isEmpty) {
-                        showCustomSnackBar("Please select address type");
-                        return;
-                      }
-
-                      AddressData newAddress = AddressData(
-                        id: 0,
-                        userId: "",
-                        lat: _selectedLatLng.latitude,
-                        lon: _selectedLatLng.longitude,
-                        city: city.isEmpty ? mapController.text : city,
-                        street: streetController.text.trim(),
-                        zipCode: postalController.text.trim(),
-                        country: countryController.text.trim(),
-                        address:
-                            "${houseController.text.trim()},${floorController.text.trim()},${streetController.text.trim()},${city.trim()},${stateController.text.trim()},${postalCode.trim()}",
-                        createdAt: DateTime.now().toString(),
-                        updatedAt: DateTime.now().toString(),
-                        addressType: addressType,
-                        contactPersonName:
-                            "${Get.find<DashBoardController>().userModel.firstName ?? ''} "
-                            "${Get.find<DashBoardController>().userModel.lastName ?? ''}",
-                        contactPersonNumber:
-                            Get.find<DashBoardController>().userModel.phone,
-                        addressLabel: addressType,
-                        zoneId:
-                            Get.find<DashBoardController>().zoneIdForBooking,
-                        isGuest: false,
-                        house: houseController.text.trim(),
-                        floor: floorController.text.trim(),
-                      );
-
-                      await Get.find<DashBoardController>()
-                          .addAddress(newAddress)
-                          .then(
-                        (value) async {
-                          await Future.delayed(Duration(milliseconds: 300));
-                          await Get.find<DashBoardController>()
-                              .getAddressLists();
-                          // .then((_) {
-                          // Get.back();
-                          // showAddressChoiceDialog(
-                          //   context,
-                          //   Get.find<DashBoardController>()
-                          //       .addressResponse
-                          //       .data,
-                          //   (address) {
-                          //     Get.find<DashBoardController>()
-                          //         .selectedAddressLists
-                          //         .clear();
-                          //     Get.find<DashBoardController>()
-                          //         .selectedAddressLists
-                          //         .add(address);
-                          //   },
-                          // );
-                          // });
-
-                          // if (Get.find<DashBoardController>()
-                          //     .addressResponse
-                          //     .data
-                          //     .isNotEmpty) {
-                          // showAddressChoiceDialog(
-                          //   context,
-                          //   Get.find<DashBoardController>()
-                          //       .addressResponse
-                          //       .data,
-                          //   (address) {
-                          //     Get.find<DashBoardController>()
-                          //         .selectedAddressLists
-                          //         .clear();
-                          //     Get.find<DashBoardController>()
-                          //         .selectedAddressLists
-                          //         .add(address);
-                          // setState(() {
-                          //   _selectedLatLng = LatLng(
-                          //     address.lat,
-                          //     address.lon,
-                          //   );
-                          //   addressController.text = address.address;
-                          //   Get.find<DashBoardController>()
-                          //       .addressController
-                          //       .text = address.address;
-                          //   city = address.city ?? "";
-                          //   houseController.text = address.house ?? "";
-                          //   floorController.text = address.floor ?? "";
-                          //   country = address.country ?? "";
-                          //   street = address.street ?? "";
-                          //   postalCode = address.zipCode ?? "";
-                          //   Get.find<DashBoardController>().update();
-                          // });
-                          // showAddNewAddressDialog(context);
-                          // Get.back();
-                          // Get.to(BookingScreen());
-                          // showAddressChoiceDialog(
-                          //   context,
-                          //   Get.find<DashBoardController>()
-                          //       .addressResponse
-                          //       .data,
-                          //   (address) {
-                          //     setState(
-                          //       () {
-                          //         _selectedLatLng = LatLng(
-                          //           address.lat,
-                          //           address.lon,
-                          //         );
-                          //         addressController.text =
-                          //             address.address;
-                          //         Get.find<DashBoardController>()
-                          //             .addressController
-                          //             .text = address.address;
-                          //         city = address.city;
-                          //         houseController.text = address.house;
-                          //         floorController.text = address.floor;
-                          //         country = address.country;
-                          //         street = address.street;
-                          //         postalCode = address.zipCode;
-                          //         Get.find<DashBoardController>()
-                          //             .update();
-                          //       },
-                          //     );
-                          //     showAddNewAddressDialog(context);
-                          //   },
-                          // );
-                          //   },
-                          // );
-                          // }
-                        },
-                      );
-
-                      // Optionally you can uncomment the rest
-                      // Get.back();
-                    },
-                    buttonText: 'Save Address',
-                    width: MediaQuery.of(context).size.width - 40,
+                const Text(
+                  'House No.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6B7280),
                   ),
                 ),
+                const SizedBox(height: 6),
+
+                buildAnimatedItem(
+                  index: 11,
+                  child: CustomTextField(
+                    controller: houseController,
+                    hintText: "Enter house number",
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Floor',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                buildAnimatedItem(
+                  index: 12,
+                  child: CustomTextField(
+                    controller: floorController,
+                    hintText: "Enter floor",
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Street / Block / Area / Locality',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                buildAnimatedItem(
+                  index: 13,
+                  child: CustomTextField(
+                    controller: streetController,
+                    hintText: "Enter street / locality",
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Country',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                buildAnimatedItem(
+                  index: 14,
+                  child: CustomTextField(
+                    readOnly: true,
+                    controller: countryController,
+                    hintText: "Country",
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'State',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                buildAnimatedItem(
+                  index: 15,
+                  child: CustomTextField(
+                    readOnly: true,
+                    controller: stateController,
+                    hintText: "State",
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Postal Code',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                buildAnimatedItem(
+                  index: 16,
+                  child: CustomTextField(
+                    readOnly: true,
+                    controller: postalController,
+                    hintText: "Postal Code",
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                buildAnimatedItem(
+                  index: 17,
+                  child: Opacity(
+                    opacity: isServiceAvailable ? 1.0 : 0.6,
+                    child: CustomButtonWidget(
+                      onPressed: () async {
+                        if (!isServiceAvailable) {
+                          showCustomSnackBar(
+                              "Service not available in this region");
+                          return;
+                        }
+
+                        if (streetController.text
+                            .trim()
+                            .isEmpty) {
+                          showCustomSnackBar("Please enter street");
+                          return;
+                        }
+
+                        if (stateController.text
+                            .trim()
+                            .isEmpty) {
+                          showCustomSnackBar("Please enter state");
+                          return;
+                        }
+
+                        if (postalController.text
+                            .trim()
+                            .isEmpty) {
+                          showCustomSnackBar("Please enter zip/postal code");
+                          return;
+                        }
+
+                        if (countryController.text
+                            .trim()
+                            .isEmpty) {
+                          showCustomSnackBar("Please enter country");
+                          return;
+                        }
+
+                        if (houseController.text
+                            .trim()
+                            .isEmpty) {
+                          showCustomSnackBar("Please enter house number");
+                          return;
+                        }
+
+                        if (floorController.text
+                            .trim()
+                            .isEmpty) {
+                          showCustomSnackBar("Please enter floor number");
+                          return;
+                        }
+
+                        if (addressType
+                            .trim()
+                            .isEmpty) {
+                          showCustomSnackBar("Please select address type");
+                          return;
+                        }
+
+                        AddressData newAddress = AddressData(
+                          id: 0,
+                          userId: "",
+                          lat: _selectedLatLng.latitude,
+                          lon: _selectedLatLng.longitude,
+                          city: city.isEmpty ? mapController.text : city,
+                          street: streetController.text.trim(),
+                          zipCode: postalController.text.trim(),
+                          country: countryController.text.trim(),
+                          address:
+                          "${houseController.text.trim()},${floorController.text
+                              .trim()},${streetController.text.trim()},${city
+                              .trim()},${stateController.text
+                              .trim()},${postalController.text.trim()}",
+                          createdAt: DateTime.now().toString(),
+                          updatedAt: DateTime.now().toString(),
+                          addressType: addressType,
+                          contactPersonName:
+                          "${Get
+                              .find<DashBoardController>()
+                              .userModel
+                              .firstName ?? ''} "
+                              "${Get
+                              .find<DashBoardController>()
+                              .userModel
+                              .lastName ?? ''}",
+                          contactPersonNumber: Get
+                              .find<DashBoardController>()
+                              .userModel
+                              .phone,
+                          addressLabel: addressType,
+                          zoneId: Get
+                              .find<DashBoardController>()
+                              .zoneIdForBooking,
+                          isGuest: false,
+                          house: houseController.text.trim(),
+                          floor: floorController.text.trim(),
+                        );
+
+                        try {
+                          showLoading();
+
+                          final dashController = Get.find<
+                              DashBoardController>();
+
+                          await dashController.addAddress(newAddress);
+                          await Future.delayed(
+                              const Duration(milliseconds: 300));
+                          await dashController.getAddressLists();
+
+                          final addresses = dashController.addressResponse.data;
+
+                          /// immediately fill the newly added address in service address field
+                          setState(() {
+                            _selectedLatLng =
+                                LatLng(newAddress.lat, newAddress.lon);
+
+                            dashController.addressController.text =
+                                newAddress.address;
+
+                            city = newAddress.city;
+                            country = newAddress.country;
+                            street = newAddress.street;
+                            postalCode = newAddress.zipCode;
+
+                            houseController.text = newAddress.house;
+                            floorController.text = newAddress.floor;
+                            streetController.text = newAddress.street;
+                            countryController.text = newAddress.country;
+                            postalController.text = newAddress.zipCode;
+                          });
+
+                          /// try matching saved object from API response
+                          AddressData? matchedAddress;
+                          try {
+                            matchedAddress =
+                                addresses.cast<AddressData?>().firstWhere(
+                                      (a) =>
+                                  a != null &&
+                                      a.lat == newAddress.lat &&
+                                      a.lon == newAddress.lon &&
+                                      (a.house ?? "") ==
+                                          (newAddress.house ?? "") &&
+                                      (a.floor ?? "") ==
+                                          (newAddress.floor ?? "") &&
+                                      (a.street ?? "") ==
+                                          (newAddress.street ?? ""),
+                                );
+                          } catch (_) {
+                            matchedAddress = null;
+                          }
+
+                          selectedAddress = matchedAddress ?? newAddress;
+
+                          dashController.updateLatLong(
+                            newAddress.lat.toString(),
+                            newAddress.lon.toString(),
+                          );
+
+                          dashController.update();
+
+                          hideLoading();
+
+                          FocusScope.of(context1).unfocus();
+
+                          if (Navigator.of(context1).canPop()) {
+                            Navigator.of(context1).pop();
+                          }
+                        } catch (e) {
+                          hideLoading();
+                          debugPrint("Save address error: $e");
+                          showCustomSnackBar("Failed to save address");
+                        }
+                      },
+                      // onPressed: () async {
+                      //   if (!isServiceAvailable) {
+                      //     showCustomSnackBar(
+                      //         "Service not available in this region");
+                      //     return;
+                      //   }
+                      //
+                      //   if (streetController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter street");
+                      //     return;
+                      //   }
+                      //
+                      //   if (stateController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter state");
+                      //     return;
+                      //   }
+                      //
+                      //   if (postalController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter zip/postal code");
+                      //     return;
+                      //   }
+                      //
+                      //   if (countryController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter country");
+                      //     return;
+                      //   }
+                      //
+                      //   if (houseController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter house number");
+                      //     return;
+                      //   }
+                      //
+                      //   if (floorController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter floor number");
+                      //     return;
+                      //   }
+                      //
+                      //   if (addressType.trim().isEmpty) {
+                      //     showCustomSnackBar("Please select address type");
+                      //     return;
+                      //   }
+                      //
+                      //   AddressData newAddress = AddressData(
+                      //     id: 0,
+                      //     userId: "",
+                      //     lat: _selectedLatLng.latitude,
+                      //     lon: _selectedLatLng.longitude,
+                      //     city: city.isEmpty ? mapController.text : city,
+                      //     street: streetController.text.trim(),
+                      //     zipCode: postalController.text.trim(),
+                      //     country: countryController.text.trim(),
+                      //     address:
+                      //         "${houseController.text.trim()},${floorController.text.trim()},${streetController.text.trim()},${city.trim()},${stateController.text.trim()},${postalController.text.trim()}",
+                      //     createdAt: DateTime.now().toString(),
+                      //     updatedAt: DateTime.now().toString(),
+                      //     addressType: addressType,
+                      //     contactPersonName:
+                      //         "${Get.find<DashBoardController>().userModel.firstName ?? ''} "
+                      //         "${Get.find<DashBoardController>().userModel.lastName ?? ''}",
+                      //     contactPersonNumber:
+                      //         Get.find<DashBoardController>().userModel.phone,
+                      //     addressLabel: addressType,
+                      //     zoneId:
+                      //         Get.find<DashBoardController>().zoneIdForBooking,
+                      //     isGuest: false,
+                      //     house: houseController.text.trim(),
+                      //     floor: floorController.text.trim(),
+                      //   );
+                      //
+                      //   try {
+                      //     showLoading();
+                      //
+                      //     final dashController =
+                      //         Get.find<DashBoardController>();
+                      //
+                      //     await dashController.addAddress(newAddress);
+                      //     await Future.delayed(
+                      //         const Duration(milliseconds: 300));
+                      //     await dashController.getAddressLists();
+                      //
+                      //     final addresses = dashController.addressResponse.data;
+                      //
+                      //     if (addresses.isNotEmpty) {
+                      //       final AddressData addedAddress = addresses.last;
+                      //
+                      //       setState(() {
+                      //         selectedAddress = addedAddress;
+                      //         _selectedLatLng =
+                      //             LatLng(addedAddress.lat, addedAddress.lon);
+                      //
+                      //         dashController.addressController.text =
+                      //             addedAddress.address;
+                      //
+                      //         city = addedAddress.city;
+                      //         country = addedAddress.country;
+                      //         street = addedAddress.street;
+                      //         postalCode = addedAddress.zipCode;
+                      //
+                      //         houseController.text = addedAddress.house;
+                      //         floorController.text = addedAddress.floor;
+                      //         streetController.text = addedAddress.street;
+                      //         countryController.text = addedAddress.country;
+                      //         postalController.text = addedAddress.zipCode;
+                      //       });
+                      //
+                      //       dashController.updateLatLong(
+                      //         addedAddress.lat.toString(),
+                      //         addedAddress.lon.toString(),
+                      //       );
+                      //
+                      //       dashController.update();
+                      //     }
+                      //
+                      //     hideLoading();
+                      //
+                      //     FocusScope.of(context1).unfocus();
+                      //
+                      //     if (Navigator.of(context1).canPop()) {
+                      //       Navigator.of(context1).pop();
+                      //     }
+                      //   } catch (e) {
+                      //     hideLoading();
+                      //     debugPrint("Save address error: $e");
+                      //     showCustomSnackBar("Failed to save address");
+                      //   }
+                      // },
+                      // onPressed: () async {
+                      //   if (!isServiceAvailable) {
+                      //     showCustomSnackBar(
+                      //         "Service not available in this region");
+                      //     return;
+                      //   }
+                      //
+                      //   if (streetController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter street");
+                      //     return;
+                      //   }
+                      //
+                      //   if (stateController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter state");
+                      //     return;
+                      //   }
+                      //
+                      //   if (postalController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter zip/postal code");
+                      //     return;
+                      //   }
+                      //
+                      //   if (countryController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter country");
+                      //     return;
+                      //   }
+                      //
+                      //   if (houseController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter house number");
+                      //     return;
+                      //   }
+                      //
+                      //   if (floorController.text.trim().isEmpty) {
+                      //     showCustomSnackBar("Please enter floor number");
+                      //     return;
+                      //   }
+                      //
+                      //   if (addressType.trim().isEmpty) {
+                      //     showCustomSnackBar("Please select address type");
+                      //     return;
+                      //   }
+                      //
+                      //   AddressData newAddress = AddressData(
+                      //     id: 0,
+                      //     userId: "",
+                      //     lat: _selectedLatLng.latitude,
+                      //     lon: _selectedLatLng.longitude,
+                      //     city: city.isEmpty ? mapController.text : city,
+                      //     street: streetController.text.trim(),
+                      //     zipCode: postalController.text.trim(),
+                      //     country: countryController.text.trim(),
+                      //     address:
+                      //         "${houseController.text.trim()},${floorController.text.trim()},${streetController.text.trim()},${city.trim()},${stateController.text.trim()},${postalController.text.trim()}",
+                      //     createdAt: DateTime.now().toString(),
+                      //     updatedAt: DateTime.now().toString(),
+                      //     addressType: addressType,
+                      //     contactPersonName:
+                      //         "${Get.find<DashBoardController>().userModel.firstName ?? ''} "
+                      //         "${Get.find<DashBoardController>().userModel.lastName ?? ''}",
+                      //     contactPersonNumber:
+                      //         Get.find<DashBoardController>().userModel.phone,
+                      //     addressLabel: addressType,
+                      //     zoneId:
+                      //         Get.find<DashBoardController>().zoneIdForBooking,
+                      //     isGuest: false,
+                      //     house: houseController.text.trim(),
+                      //     floor: floorController.text.trim(),
+                      //   );
+                      //
+                      //   await Get.find<DashBoardController>()
+                      //       .addAddress(newAddress);
+                      //   await Future.delayed(const Duration(milliseconds: 300));
+                      //   await Get.find<DashBoardController>().getAddressLists();
+                      //
+                      //   FocusScope.of(context1).unfocus();
+                      //
+                      //   if (Navigator.of(context1).canPop()) {
+                      //     Navigator.of(context1).pop();
+                      //   }
+                      // },
+                      buttonText: 'Save Address',
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
+                    ),
+                  ),
+                ),
+                //
+                // buildAnimatedItem(
+                //   index: 17,
+                //   child: Opacity(
+                //     opacity: isServiceAvailable ? 1.0 : 0.6,
+                //     child: IgnorePointer(
+                //       ignoring: !isServiceAvailable,
+                //       child: CustomButtonWidget(
+                //         onPressed: () async {
+                //           if (!isServiceAvailable) {
+                //             showCustomSnackBar(
+                //               "Service not available in this region",
+                //             );
+                //             return;
+                //           }
+                //
+                //           if (streetController.text.trim().isEmpty) {
+                //             showCustomSnackBar("Please enter street");
+                //             return;
+                //           }
+                //
+                //           if (stateController.text.trim().isEmpty) {
+                //             showCustomSnackBar("Please enter state");
+                //             return;
+                //           }
+                //
+                //           if (postalController.text.trim().isEmpty) {
+                //             showCustomSnackBar(
+                //               "Please enter zip/postal code",
+                //             );
+                //             return;
+                //           }
+                //
+                //           if (countryController.text.trim().isEmpty) {
+                //             showCustomSnackBar("Please enter country");
+                //             return;
+                //           }
+                //
+                //           if (houseController.text.trim().isEmpty) {
+                //             showCustomSnackBar("Please enter house number");
+                //             return;
+                //           }
+                //
+                //           if (floorController.text.trim().isEmpty) {
+                //             showCustomSnackBar("Please enter floor number");
+                //             return;
+                //           }
+                //
+                //           if (addressType.trim().isEmpty) {
+                //             showCustomSnackBar("Please select address type");
+                //             return;
+                //           }
+                //
+                //           AddressData newAddress = AddressData(
+                //             id: 0,
+                //             userId: "",
+                //             lat: _selectedLatLng.latitude,
+                //             lon: _selectedLatLng.longitude,
+                //             city: city.isEmpty ? mapController.text : city,
+                //             street: streetController.text.trim(),
+                //             zipCode: postalController.text.trim(),
+                //             country: countryController.text.trim(),
+                //             address:
+                //             "${houseController.text.trim()},${floorController.text.trim()},${streetController.text.trim()},${city.trim()},${stateController.text.trim()},${postalController.text.trim()}",
+                //             createdAt: DateTime.now().toString(),
+                //             updatedAt: DateTime.now().toString(),
+                //             addressType: addressType,
+                //             contactPersonName:
+                //             "${Get.find<DashBoardController>().userModel.firstName ?? ''} "
+                //                 "${Get.find<DashBoardController>().userModel.lastName ?? ''}",
+                //             contactPersonNumber:
+                //             Get.find<DashBoardController>().userModel.phone,
+                //             addressLabel: addressType,
+                //             zoneId: Get.find<DashBoardController>()
+                //                 .zoneIdForBooking,
+                //             isGuest: false,
+                //             house: houseController.text.trim(),
+                //             floor: floorController.text.trim(),
+                //           );
+                //
+                //           await Get.find<DashBoardController>()
+                //               .addAddress(newAddress)
+                //               .then((value) async {
+                //             await Future.delayed(
+                //               const Duration(milliseconds: 300),
+                //             );
+                //             await Get.find<DashBoardController>()
+                //                 .getAddressLists();
+                //
+                //             Get.back();
+                //           });
+                //         },
+                //         buttonText: 'Save Address',
+                //         width: MediaQuery.of(context).size.width - 40,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+
                 const SizedBox(height: 15),
               ],
             ),
@@ -1033,6 +1727,411 @@ class _BookingScreenState extends State<BookingScreen> {
       },
     );
   }
+
+  // Widget buildGoogleMapWithDetailsDialog(BuildContext context1) {
+  //   return StatefulBuilder(
+  //     builder: (context, setState) {
+  //       return SafeArea(
+  //         child: SingleChildScrollView(
+  //           child: Column(
+  //             children: [
+  //               const SizedBox(height: 15),
+  //               Row(
+  //                 children: [
+  //                   IconButton(
+  //                       onPressed: () {
+  //                         Get.back();
+  //                       },
+  //                       icon: const Icon(Icons.arrow_back,
+  //                           size: 30, color: Colors.black)),
+  //                   Text(
+  //                     "Add Address",
+  //                     style: TextStyle(
+  //                       fontSize: 18,
+  //                       fontWeight: FontWeight.bold,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               buildAnimatedItem(
+  //                 index: 10,
+  //                 child: Padding(
+  //                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                       borderRadius:
+  //                           const BorderRadius.all(Radius.circular(10)),
+  //                       color: Colors.white,
+  //                       boxShadow: [
+  //                         BoxShadow(
+  //                           color: Colors.grey.withOpacity(0.2),
+  //                           spreadRadius: 5,
+  //                           blurRadius: 7,
+  //                           offset: const Offset(0, 3),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.all(8.0),
+  //                       child: Column(
+  //                         children: [
+  //                           GestureDetector(
+  //                             onVerticalDragUpdate: (_) {},
+  //                             child: SizedBox(
+  //                               height: 200,
+  //                               child: Stack(
+  //                                 children: [
+  //                                   GoogleMap(
+  //                                     initialCameraPosition: CameraPosition(
+  //                                       target: _selectedLatLng,
+  //                                       zoom: 15,
+  //                                     ),
+  //                                     onMapCreated: (controller) {
+  //                                       _mapController = controller;
+  //                                     },
+  //                                     onCameraMove: (position) {
+  //                                       setState(() =>
+  //                                           _selectedLatLng = position.target);
+  //                                     },
+  //                                     onCameraIdle: () async {
+  //                                       List<Placemark> placemarks =
+  //                                           await placemarkFromCoordinates(
+  //                                         _selectedLatLng.latitude,
+  //                                         _selectedLatLng.longitude,
+  //                                       );
+  //                                       Placemark place = placemarks.first;
+  //                                       setState(() {
+  //                                         floorController.text = "";
+  //                                         houseController.text = "";
+  //                                         streetController.text = "";
+  //                                         mapController.text =
+  //                                             "${place.street}, ${place.locality}, ${place.country}";
+  //                                         city = place.locality ?? "";
+  //                                         state =
+  //                                             place.administrativeArea ?? "";
+  //                                         country = place.country ?? "";
+  //                                         street = place.street ?? "";
+  //                                         postalCode = place.postalCode ?? "";
+  //
+  //                                         // streetController.text =
+  //                                         //     place.street ?? "";
+  //                                         stateController.text =
+  //                                             place.administrativeArea ?? "";
+  //                                         countryController.text =
+  //                                             place.country ?? "";
+  //                                         postalController.text =
+  //                                             place.postalCode ?? "";
+  //                                       });
+  //
+  //                                       Get.find<DashBoardController>()
+  //                                           .updateLatLong(
+  //                                         _selectedLatLng.latitude.toString(),
+  //                                         _selectedLatLng.longitude.toString(),
+  //                                       );
+  //                                     },
+  //                                     gestureRecognizers: {
+  //                                       Factory<OneSequenceGestureRecognizer>(
+  //                                           () => EagerGestureRecognizer()),
+  //                                     },
+  //                                   ),
+  //                                   const Center(
+  //                                     child: Icon(Icons.location_pin,
+  //                                         size: 40, color: Colors.red),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           const SizedBox(height: 15),
+  //                           GooglePlaceAutoCompleteTextField(
+  //                             focusNode: mapFocus,
+  //                             textEditingController: mapController,
+  //                             googleAPIKey:
+  //                                 "AIzaSyBLI5I6o95GqluNuRh0YT3zRj5yqoix8zA",
+  //                             inputDecoration: InputDecoration(
+  //                               hintText: "Search location",
+  //                               fillColor: Colors.white,
+  //                               filled: true,
+  //                               border: OutlineInputBorder(
+  //                                   borderRadius: BorderRadius.circular(10)),
+  //                             ),
+  //                             debounceTime: 600,
+  //                             itemClick: (prediction) {
+  //                               double lat =
+  //                                   double.parse(prediction.lat ?? "0.0");
+  //                               double lng =
+  //                                   double.parse(prediction.lng ?? "0.0");
+  //                               setState(() {
+  //                                 _selectedLatLng = LatLng(lat, lng);
+  //                               });
+  //                               _mapController?.animateCamera(
+  //                                   CameraUpdate.newLatLng(_selectedLatLng));
+  //                             },
+  //                             getPlaceDetailWithLatLng: (prediction) async {
+  //                               double lat =
+  //                                   double.parse(prediction.lat ?? "0.0");
+  //                               double lng =
+  //                                   double.parse(prediction.lng ?? "0.0");
+  //                               setState(() {
+  //                                 _selectedLatLng = LatLng(lat, lng);
+  //                               });
+  //                               _mapController?.animateCamera(
+  //                                   CameraUpdate.newLatLng(_selectedLatLng));
+  //                             },
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 15),
+  //               buildAnimatedItem(
+  //                 index: 9,
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     const Text("Address Type",
+  //                         style: TextStyle(
+  //                             fontSize: 18, fontWeight: FontWeight.bold)),
+  //                     Row(
+  //                       children: [
+  //                         Radio<String>(
+  //                           value: "home",
+  //                           groupValue: addressType,
+  //                           onChanged: (value) =>
+  //                               setState(() => addressType = value!),
+  //                         ),
+  //                         const Text("Home"),
+  //                         Radio<String>(
+  //                           value: "office",
+  //                           groupValue: addressType,
+  //                           onChanged: (value) =>
+  //                               setState(() => addressType = value!),
+  //                         ),
+  //                         const Text("Office"),
+  //                         Radio<String>(
+  //                           value: "other",
+  //                           groupValue: addressType,
+  //                           onChanged: (value) =>
+  //                               setState(() => addressType = value!),
+  //                         ),
+  //                         const Text("Other"),
+  //                       ],
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 15),
+  //               buildAnimatedItem(
+  //                   index: 11,
+  //                   child: CustomTextField(
+  //                       controller: houseController, hintText: "House No.")),
+  //               const SizedBox(height: 15),
+  //               buildAnimatedItem(
+  //                   index: 12,
+  //                   child: CustomTextField(
+  //                       controller: floorController, hintText: "Floor")),
+  //               const SizedBox(height: 15),
+  //               buildAnimatedItem(
+  //                   index: 13,
+  //                   child: CustomTextField(
+  //                       controller: streetController,
+  //                       hintText: "Street/Block/Area/Locality")),
+  //               const SizedBox(height: 15),
+  //               buildAnimatedItem(
+  //                   index: 14,
+  //                   child: CustomTextField(
+  //                       controller: countryController, hintText: "Country")),
+  //               const SizedBox(height: 15),
+  //               buildAnimatedItem(
+  //                   index: 15,
+  //                   child: CustomTextField(
+  //                       controller: stateController, hintText: "State")),
+  //               const SizedBox(height: 15),
+  //               buildAnimatedItem(
+  //                   index: 16,
+  //                   child: CustomTextField(
+  //                       controller: postalController, hintText: "Postal Code")),
+  //               const SizedBox(height: 15),
+  //               buildAnimatedItem(
+  //                 index: 17,
+  //                 child: CustomButtonWidget(
+  //                   onPressed: () async {
+  //                     if (streetController.text.trim().isEmpty) {
+  //                       showCustomSnackBar("Please enter street");
+  //                       return;
+  //                     }
+  //
+  //                     if (stateController.text.trim().isEmpty) {
+  //                       showCustomSnackBar("Please enter state");
+  //                       return;
+  //                     }
+  //
+  //                     if (postalController.text.trim().isEmpty) {
+  //                       showCustomSnackBar("Please enter zip/postal code");
+  //                       return;
+  //                     }
+  //
+  //                     if (countryController.text.trim().isEmpty) {
+  //                       showCustomSnackBar("Please enter country");
+  //                       return;
+  //                     }
+  //
+  //                     if (houseController.text.trim().isEmpty) {
+  //                       showCustomSnackBar("Please enter house number");
+  //                       return;
+  //                     }
+  //
+  //                     if (floorController.text.trim().isEmpty) {
+  //                       showCustomSnackBar("Please enter floor number");
+  //                       return;
+  //                     }
+  //
+  //                     if (addressType.trim().isEmpty) {
+  //                       showCustomSnackBar("Please select address type");
+  //                       return;
+  //                     }
+  //
+  //                     AddressData newAddress = AddressData(
+  //                       id: 0,
+  //                       userId: "",
+  //                       lat: _selectedLatLng.latitude,
+  //                       lon: _selectedLatLng.longitude,
+  //                       city: city.isEmpty ? mapController.text : city,
+  //                       street: streetController.text.trim(),
+  //                       zipCode: postalController.text.trim(),
+  //                       country: countryController.text.trim(),
+  //                       address:
+  //                           "${houseController.text.trim()},${floorController.text.trim()},${streetController.text.trim()},${city.trim()},${stateController.text.trim()},${postalCode.trim()}",
+  //                       createdAt: DateTime.now().toString(),
+  //                       updatedAt: DateTime.now().toString(),
+  //                       addressType: addressType,
+  //                       contactPersonName:
+  //                           "${Get.find<DashBoardController>().userModel.firstName ?? ''} "
+  //                           "${Get.find<DashBoardController>().userModel.lastName ?? ''}",
+  //                       contactPersonNumber:
+  //                           Get.find<DashBoardController>().userModel.phone,
+  //                       addressLabel: addressType,
+  //                       zoneId:
+  //                           Get.find<DashBoardController>().zoneIdForBooking,
+  //                       isGuest: false,
+  //                       house: houseController.text.trim(),
+  //                       floor: floorController.text.trim(),
+  //                     );
+  //
+  //                     await Get.find<DashBoardController>()
+  //                         .addAddress(newAddress)
+  //                         .then(
+  //                       (value) async {
+  //                         await Future.delayed(Duration(milliseconds: 300));
+  //                         await Get.find<DashBoardController>()
+  //                             .getAddressLists();
+  //                         // .then((_) {
+  //                         // Get.back();
+  //                         // showAddressChoiceDialog(
+  //                         //   context,
+  //                         //   Get.find<DashBoardController>()
+  //                         //       .addressResponse
+  //                         //       .data,
+  //                         //   (address) {
+  //                         //     Get.find<DashBoardController>()
+  //                         //         .selectedAddressLists
+  //                         //         .clear();
+  //                         //     Get.find<DashBoardController>()
+  //                         //         .selectedAddressLists
+  //                         //         .add(address);
+  //                         //   },
+  //                         // );
+  //                         // });
+  //
+  //                         // if (Get.find<DashBoardController>()
+  //                         //     .addressResponse
+  //                         //     .data
+  //                         //     .isNotEmpty) {
+  //                         // showAddressChoiceDialog(
+  //                         //   context,
+  //                         //   Get.find<DashBoardController>()
+  //                         //       .addressResponse
+  //                         //       .data,
+  //                         //   (address) {
+  //                         //     Get.find<DashBoardController>()
+  //                         //         .selectedAddressLists
+  //                         //         .clear();
+  //                         //     Get.find<DashBoardController>()
+  //                         //         .selectedAddressLists
+  //                         //         .add(address);
+  //                         // setState(() {
+  //                         //   _selectedLatLng = LatLng(
+  //                         //     address.lat,
+  //                         //     address.lon,
+  //                         //   );
+  //                         //   addressController.text = address.address;
+  //                         //   Get.find<DashBoardController>()
+  //                         //       .addressController
+  //                         //       .text = address.address;
+  //                         //   city = address.city ?? "";
+  //                         //   houseController.text = address.house ?? "";
+  //                         //   floorController.text = address.floor ?? "";
+  //                         //   country = address.country ?? "";
+  //                         //   street = address.street ?? "";
+  //                         //   postalCode = address.zipCode ?? "";
+  //                         //   Get.find<DashBoardController>().update();
+  //                         // });
+  //                         // showAddNewAddressDialog(context);
+  //                         // Get.back();
+  //                         // Get.to(BookingScreen());
+  //                         // showAddressChoiceDialog(
+  //                         //   context,
+  //                         //   Get.find<DashBoardController>()
+  //                         //       .addressResponse
+  //                         //       .data,
+  //                         //   (address) {
+  //                         //     setState(
+  //                         //       () {
+  //                         //         _selectedLatLng = LatLng(
+  //                         //           address.lat,
+  //                         //           address.lon,
+  //                         //         );
+  //                         //         addressController.text =
+  //                         //             address.address;
+  //                         //         Get.find<DashBoardController>()
+  //                         //             .addressController
+  //                         //             .text = address.address;
+  //                         //         city = address.city;
+  //                         //         houseController.text = address.house;
+  //                         //         floorController.text = address.floor;
+  //                         //         country = address.country;
+  //                         //         street = address.street;
+  //                         //         postalCode = address.zipCode;
+  //                         //         Get.find<DashBoardController>()
+  //                         //             .update();
+  //                         //       },
+  //                         //     );
+  //                         //     showAddNewAddressDialog(context);
+  //                         //   },
+  //                         // );
+  //                         //   },
+  //                         // );
+  //                         // }
+  //                       },
+  //                     );
+  //
+  //                     // Optionally you can uncomment the rest
+  //                     // Get.back();
+  //                   },
+  //                   buttonText: 'Save Address',
+  //                   width: MediaQuery.of(context).size.width - 40,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 15),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   // String selected = 'Online Payment';
   String selected = 'COD';
@@ -1071,15 +2170,18 @@ class _BookingScreenState extends State<BookingScreen> {
           final horizontalPadding = isTablet
               ? 24.0
               : isLandscape
-                  ? 12.0
-                  : 16.0;
+              ? 12.0
+              : 16.0;
 
           final maxContentWidth = isTablet ? 760.0 : double.infinity;
 
           return Scaffold(
             backgroundColor: const Color(0xFFF7F9FC),
             resizeToAvoidBottomInset: true,
-            bottomNavigationBar: MediaQuery.of(context).viewInsets.bottom > 0
+            bottomNavigationBar: MediaQuery
+                .of(context)
+                .viewInsets
+                .bottom > 0
                 ? null
                 : SafeArea(
               top: false,
@@ -1175,16 +2277,31 @@ class _BookingScreenState extends State<BookingScreen> {
         index: 22,
         child: CustomButtonWidget(
           onPressed: () async {
-            final name = Get.find<DashBoardController>().userModel.firstName +
-                " " +
-                Get.find<DashBoardController>().userModel.lastName;
-            var mobile = Get.find<DashBoardController>().userModel.phone;
+            final name =
+                "${Get
+                .find<DashBoardController>()
+                .userModel
+                .firstName} ${Get
+                .find<DashBoardController>()
+                .userModel
+                .lastName}";
+            var mobile = Get
+                .find<DashBoardController>()
+                .userModel
+                .phone;
             if (mobile.startsWith("+91")) {
               mobile = mobile.substring(3);
             }
-            final email = Get.find<DashBoardController>().userModel.email;
+            final email = Get
+                .find<DashBoardController>()
+                .userModel
+                .email;
             final address =
-                Get.find<DashBoardController>().addressController.text.trim();
+            Get
+                .find<DashBoardController>()
+                .addressController
+                .text
+                .trim();
             final message = messageController.text.trim();
 
             final dashController = Get.find<DashBoardController>();
@@ -1210,8 +2327,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
             if (selected == "COD") {
               dashboardController.createBookingLoader.value = true;
-              log("rrrr Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
-              log("rrrr Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
+              log("rrrr Date date date: ${DateConverter.dateTimeForCoupon(
+                  selectedDate).toString()}");
+              log("rrrr Date date time: ${formatTimeOfDay24Hour(
+                  selectedTime ?? TimeOfDay.now()).toString()}");
               await dashController.postOrder({
                 "name": name,
                 "mobile_number": mobile,
@@ -1223,7 +2342,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 "zone_id": dashController.zoneIdForBooking,
                 "message": message,
                 "date":
-                    DateConverter.dateTimeForCoupon(selectedDate).toString(),
+                DateConverter.dateTimeForCoupon(selectedDate).toString(),
                 "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
                     .toString(),
                 "payment_method": getPaymentMethodForApi(),
@@ -1246,8 +2365,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
               dashboardController.createBookingLoader.value = false;
             } else {
-              log("Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
-              log("Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
+              log("Date date date: ${DateConverter.dateTimeForCoupon(
+                  selectedDate).toString()}");
+              log("Date date time: ${formatTimeOfDay24Hour(
+                  selectedTime ?? TimeOfDay.now()).toString()}");
 
               makeDigitalPayment(
                 isPartial: 0,
@@ -1263,7 +2384,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   "zone_id": dashController.zoneIdForBooking,
                   "message": message,
                   "date":
-                      DateConverter.dateTimeForCoupon(selectedDate).toString(),
+                  DateConverter.dateTimeForCoupon(selectedDate).toString(),
                   "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
                       .toString(),
                   "payment_method": "razor_pay",
@@ -1276,8 +2397,10 @@ class _BookingScreenState extends State<BookingScreen> {
                   "floor": floorController.text.trim(),
                 },
                 onPressed: () async {
-                  log("Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
-                  log("Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
+                  log("Date date date: ${DateConverter.dateTimeForCoupon(
+                      selectedDate).toString()}");
+                  log("Date date time: ${formatTimeOfDay24Hour(
+                      selectedTime ?? TimeOfDay.now()).toString()}");
                   debugPrint("OnPressed Called====>");
                   await dashController.postOrder({
                     "name": name,
@@ -1292,8 +2415,8 @@ class _BookingScreenState extends State<BookingScreen> {
                     "date": DateConverter.dateTimeForCoupon(selectedDate)
                         .toString(),
                     "time":
-                        formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
-                            .toString(),
+                    formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
+                        .toString(),
                     "payment_method": "razor_pay",
                     "city": city,
                     "zip_code": postalCode,
@@ -1313,7 +2436,10 @@ class _BookingScreenState extends State<BookingScreen> {
             }
           },
           buttonText: 'Create Booking',
-          width: MediaQuery.of(context).size.width - 40,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 40,
         ),
       );
     }
@@ -1366,7 +2492,9 @@ class _BookingScreenState extends State<BookingScreen> {
 
               /// STEP 2 VALIDATION
               if (_currentStep == 1) {
-                if (assignNameController.text.trim().isEmpty) {
+                if (assignNameController.text
+                    .trim()
+                    .isEmpty) {
                   _error("Customer Name", "Please enter customer name");
                   return;
                 }
@@ -1382,7 +2510,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   return;
                 }
 
-                if (Get.find<DashBoardController>()
+                if (Get
+                    .find<DashBoardController>()
                     .addressController
                     .text
                     .trim()
@@ -1421,7 +2550,9 @@ class _BookingScreenState extends State<BookingScreen> {
     return Row(
       children: [
         GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () {
+            Get.back();
+          },
           child: const Icon(
             Icons.arrow_back,
             size: 25,
@@ -1442,8 +2573,7 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildCurrentStepContent(
-    BuildContext context, {
+  Widget _buildCurrentStepContent(BuildContext context, {
     required bool isTablet,
     Key? key,
   }) {
@@ -1451,7 +2581,9 @@ class _BookingScreenState extends State<BookingScreen> {
       case 0:
         return Column(
           children: [
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             _buildSectionCard(
               title: "Step 1 • Schedule Service",
               subtitle: "Choose service type, date and preferred time slot",
@@ -1472,23 +2604,19 @@ class _BookingScreenState extends State<BookingScreen> {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-
                             Expanded(
                               child: _serviceOption(
                                 title: "On-site Service",
                                 value: "onsite",
                               ),
                             ),
-
                             SizedBox(width: 12),
-
                             Expanded(
                               child: _serviceOption(
                                 title: "Technician Pickup",
                                 value: "serviceman_pickup",
                               ),
                             ),
-
                           ],
                         ),
                       ],
@@ -1517,16 +2645,14 @@ class _BookingScreenState extends State<BookingScreen> {
                       itemCount: 10,
                       separatorBuilder: (_, __) => const SizedBox(width: 10),
                       itemBuilder: (context, index) {
+                        DateTime date =
+                        DateTime.now().add(Duration(days: index));
 
-                        DateTime date = DateTime.now().add(Duration(days: index));
-
-                        bool isSelected =
-                            selectedDate.year == date.year &&
-                                selectedDate.month == date.month &&
-                                selectedDate.day == date.day;
+                        bool isSelected = selectedDate.year == date.year &&
+                            selectedDate.month == date.month &&
+                            selectedDate.day == date.day;
 
                         return _dateCard(date, isSelected);
-
                       },
                     ),
                   ),
@@ -1586,7 +2712,9 @@ class _BookingScreenState extends State<BookingScreen> {
           key: key,
           child: Column(
             children: [
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               _buildSectionCard(
                 title: "Step 2 • Customer & Address",
                 subtitle: "Assign customer details and select service location",
@@ -1637,10 +2765,10 @@ class _BookingScreenState extends State<BookingScreen> {
                           assignPhoneController.text = value.substring(0, 12);
                           assignPhoneController.selection =
                               TextSelection.fromPosition(
-                            TextPosition(
-                              offset: assignPhoneController.text.length,
-                            ),
-                          );
+                                TextPosition(
+                                  offset: assignPhoneController.text.length,
+                                ),
+                              );
                         }
                       },
                     ),
@@ -1670,7 +2798,9 @@ class _BookingScreenState extends State<BookingScreen> {
                     const SizedBox(height: 12),
                     CustomTextField(
                       controller:
-                          Get.find<DashBoardController>().addressController,
+                      Get
+                          .find<DashBoardController>()
+                          .addressController,
                       hintText: "Select an Address",
                       focusNode: addressFocus,
                       isEnabled: true,
@@ -1680,16 +2810,17 @@ class _BookingScreenState extends State<BookingScreen> {
 
                         showAddressChoiceDialog(
                           context,
-                          Get.find<DashBoardController>().addressResponse.data,
-                          (address) {
-                            Get.back();
-
+                          Get
+                              .find<DashBoardController>()
+                              .addressResponse
+                              .data,
+                              (address) {
                             setState(() {
                               _selectedLatLng =
                                   LatLng(address.lat, address.lon);
 
-                              final controller =
-                                  Get.find<DashBoardController>();
+                              final controller = Get.find<
+                                  DashBoardController>();
                               controller.addressController.text =
                                   address.address;
 
@@ -1709,6 +2840,38 @@ class _BookingScreenState extends State<BookingScreen> {
                             Get.find<DashBoardController>().update();
                           },
                         );
+
+                        // showAddressChoiceDialog(
+                        //   context,
+                        //   Get.find<DashBoardController>().addressResponse.data,
+                        //   (address) {
+                        //     Get.back();
+                        //
+                        //     setState(() {
+                        //       _selectedLatLng =
+                        //           LatLng(address.lat, address.lon);
+                        //
+                        //       final controller =
+                        //           Get.find<DashBoardController>();
+                        //       controller.addressController.text =
+                        //           address.address;
+                        //
+                        //       city = address.city;
+                        //       stateController.text = address.city;
+                        //       houseController.text = address.house;
+                        //       floorController.text = address.floor;
+                        //       postalController.text = address.zipCode;
+                        //       countryController.text = address.country;
+                        //       streetController.text = address.street;
+                        //
+                        //       country = address.country;
+                        //       street = address.street;
+                        //       postalCode = address.zipCode;
+                        //     });
+                        //
+                        //     Get.find<DashBoardController>().update();
+                        //   },
+                        // );
                       },
                       suffixIcon: Container(
                         margin: const EdgeInsets.all(6),
@@ -1722,14 +2885,19 @@ class _BookingScreenState extends State<BookingScreen> {
                           onPressed: () async {
                             final controller = Get.find<DashBoardController>();
 
-                            Get.dialog(
-                              const Center(child: CircularProgressIndicator()),
-                              barrierDismissible: false,
-                            );
+                            try {
+                              Get.dialog(
+                                const Center(
+                                    child: CircularProgressIndicator()),
+                                barrierDismissible: false,
+                              );
 
-                            await controller.getAddressLists();
-
-                            Get.back();
+                              await controller.getAddressLists();
+                            } finally {
+                              if (Get.isDialogOpen ?? false) {
+                                Get.back();
+                              }
+                            }
 
                             if (controller.addressResponse.data.isEmpty) {
                               Get.snackbar(
@@ -1740,9 +2908,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             showAddressChoiceDialog(
                               context,
                               controller.addressResponse.data,
-                              (address) {
-                                Get.back();
-
+                                  (address) {
                                 setState(() {
                                   _selectedLatLng =
                                       LatLng(address.lat, address.lon);
@@ -1766,12 +2932,59 @@ class _BookingScreenState extends State<BookingScreen> {
                                 controller.update();
                               },
                             );
+                            // final controller = Get.find<DashBoardController>();
+                            //
+                            // Get.dialog(
+                            //   const Center(child: CircularProgressIndicator()),
+                            //   barrierDismissible: false,
+                            // );
+                            //
+                            // await controller.getAddressLists();
+                            //
+                            // Get.back();
+                            //
+                            // if (controller.addressResponse.data.isEmpty) {
+                            //   Get.snackbar(
+                            //       "No Address", "No saved address found");
+                            //   return;
+                            // }
+                            //
+                            // showAddressChoiceDialog(
+                            //   context,
+                            //   controller.addressResponse.data,
+                            //   (address) {
+                            //     Get.back();
+                            //
+                            //     setState(() {
+                            //       _selectedLatLng =
+                            //           LatLng(address.lat, address.lon);
+                            //
+                            //       controller.addressController.text =
+                            //           address.address;
+                            //
+                            //       city = address.city;
+                            //       stateController.text = address.city;
+                            //       houseController.text = address.house;
+                            //       floorController.text = address.floor;
+                            //       postalController.text = address.zipCode;
+                            //       countryController.text = address.country;
+                            //       streetController.text = address.street;
+                            //
+                            //       country = address.country;
+                            //       street = address.street;
+                            //       postalCode = address.zipCode;
+                            //     });
+                            //
+                            //     controller.update();
+                            //   },
+                            // );
                           },
                         ),
                       ),
                     ),
                     const SizedBox(height: 12),
-                    if (Get.find<DashBoardController>()
+                    if (Get
+                        .find<DashBoardController>()
                         .addressController
                         .text
                         .trim()
@@ -1796,7 +3009,8 @@ class _BookingScreenState extends State<BookingScreen> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                Get.find<DashBoardController>()
+                                Get
+                                    .find<DashBoardController>()
                                     .addressController
                                     .text,
                                 style: const TextStyle(
@@ -1821,11 +3035,13 @@ class _BookingScreenState extends State<BookingScreen> {
           key: key,
           child: Column(
             children: [
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               _buildSectionCard(
                 title: "Step 3 • Payment & Review",
                 subtitle:
-                    "Choose payment method, add notes and confirm booking",
+                "Choose payment method, add notes and confirm booking",
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1952,7 +3168,6 @@ class _BookingScreenState extends State<BookingScreen> {
     required String title,
     required String value,
   }) {
-
     bool isSelected = servicePreference == value;
 
     return GestureDetector(
@@ -1965,17 +3180,12 @@ class _BookingScreenState extends State<BookingScreen> {
         duration: Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-
           color: isSelected
               ? Color(0xFF207FA7).withOpacity(0.1)
               : Colors.grey.shade100,
-
           borderRadius: BorderRadius.circular(10),
-
           border: Border.all(
-            color: isSelected
-                ? Color(0xFF207FA7)
-                : Colors.grey.shade300,
+            color: isSelected ? Color(0xFF207FA7) : Colors.grey.shade300,
           ),
         ),
         child: Center(
@@ -1984,9 +3194,7 @@ class _BookingScreenState extends State<BookingScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: isSelected
-                  ? Color(0xFF207FA7)
-                  : Colors.black87,
+              color: isSelected ? Color(0xFF207FA7) : Colors.black87,
             ),
           ),
         ),
@@ -1995,14 +3203,14 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Widget _dateCard(DateTime date, bool isSelected) {
-
     return GestureDetector(
       onTap: () {
         setState(() {
           selectedDate = date;
           selectedTime = null;
 
-          log("Select Date: ${selectedDate.toLocal().toString().split(' ')[0]}");
+          log("Select Date: ${selectedDate.toLocal().toString().split(
+              ' ')[0]}");
         });
       },
       child: AnimatedContainer(
@@ -2010,47 +3218,32 @@ class _BookingScreenState extends State<BookingScreen> {
         width: 64,
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-
-          color: isSelected
-              ? const Color(0xFF207FA7)
-              : Colors.grey.shade100,
-
+          color: isSelected ? const Color(0xFF207FA7) : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(10),
-
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF207FA7)
-                : Colors.grey.shade300,
+            color: isSelected ? const Color(0xFF207FA7) : Colors.grey.shade300,
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             Text(
               DateFormat('EEE').format(date),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: isSelected
-                    ? Colors.white
-                    : Colors.black54,
+                color: isSelected ? Colors.white : Colors.black54,
               ),
             ),
-
             const SizedBox(height: 4),
-
             Text(
               DateFormat('dd').format(date),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: isSelected
-                    ? Colors.white
-                    : Colors.black87,
+                color: isSelected ? Colors.white : Colors.black87,
               ),
             ),
-
           ],
         ),
       ),
@@ -2087,8 +3280,8 @@ class _BookingScreenState extends State<BookingScreen> {
                         color: isDone
                             ? const Color(0xFF207FA7)
                             : isActive
-                                ? const Color(0xFF207FA7)
-                                : Colors.white,
+                            ? const Color(0xFF207FA7)
+                            : Colors.white,
                         border: Border.all(
                           color: isActive || isDone
                               ? const Color(0xFF207FA7)
@@ -2097,27 +3290,27 @@ class _BookingScreenState extends State<BookingScreen> {
                         ),
                         boxShadow: isActive
                             ? [
-                                BoxShadow(
-                                  color:
-                                      const Color(0xFF207FA7).withOpacity(0.20),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                )
-                              ]
+                          BoxShadow(
+                            color:
+                            const Color(0xFF207FA7).withOpacity(0.20),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ]
                             : null,
                       ),
                       child: Center(
                         child: isDone
                             ? const Icon(Icons.check,
-                                color: Colors.white, size: 18)
+                            color: Colors.white, size: 18)
                             : Text(
-                                "${index + 1}",
-                                style: TextStyle(
-                                  color:
-                                      isActive ? Colors.white : Colors.black87,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
+                          "${index + 1}",
+                          style: TextStyle(
+                            color:
+                            isActive ? Colors.white : Colors.black87,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -2127,9 +3320,9 @@ class _BookingScreenState extends State<BookingScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight:
-                            isActive ? FontWeight.w700 : FontWeight.w500,
+                        isActive ? FontWeight.w700 : FontWeight.w500,
                         color:
-                            isActive ? const Color(0xFF207FA7) : Colors.black54,
+                        isActive ? const Color(0xFF207FA7) : Colors.black54,
                       ),
                     ),
                   ],
@@ -2153,10 +3346,14 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget _buildSummaryCard() {
     final selectedAddress =
-        Get.find<DashBoardController>().addressController.text.trim();
+    Get
+        .find<DashBoardController>()
+        .addressController
+        .text
+        .trim();
     final selectedDateText = DateFormat("dd MMM yyyy").format(selectedDate);
     final selectedTimeText =
-        selectedTime == null ? "--" : _formatTimeOfDay(selectedTime!);
+    selectedTime == null ? "--" : _formatTimeOfDay(selectedTime!);
 
     return Container(
       width: double.infinity,
@@ -2187,7 +3384,9 @@ class _BookingScreenState extends State<BookingScreen> {
           _buildReviewRow(
             icon: Icons.person_outline_rounded,
             title: "Assigned Customer",
-            value: assignNameController.text.trim().isEmpty
+            value: assignNameController.text
+                .trim()
+                .isEmpty
                 ? "--"
                 : assignNameController.text.trim(),
           ),
@@ -2343,12 +3542,16 @@ bool _validateAllFields({
 }) {
   /// ASSIGN CUSTOMER VALIDATION
 
-  if (assignCustomerName.trim().isEmpty) {
+  if (assignCustomerName
+      .trim()
+      .isEmpty) {
     _error("Customer Name Required", "Please enter assigned customer name");
     return false;
   }
 
-  if (assignCustomerName.trim().length < 3) {
+  if (assignCustomerName
+      .trim()
+      .length < 3) {
     _error("Invalid Name", "Customer name must be at least 3 characters");
     return false;
   }
@@ -2364,7 +3567,9 @@ bool _validateAllFields({
     return false;
   }
 
-  if (name.trim().isEmpty) {
+  if (name
+      .trim()
+      .isEmpty) {
     _error("Name Required", "Please enter your name");
     return false;
   }
@@ -2411,7 +3616,12 @@ bool _validateAllFields({
     return false;
   }
 
-  if (Get.find<DashBoardController>().addressController.text.trim().isEmpty) {
+  if (Get
+      .find<DashBoardController>()
+      .addressController
+      .text
+      .trim()
+      .isEmpty) {
     _error("Address Required", "Please select address");
     return false;
   }
@@ -2478,18 +3688,20 @@ void _error(String title, String message) {
   );
 }
 
-makeDigitalPayment(
-    {required String bookingId,
-    required Function? onPressed,
-    required Map<String, dynamic> data,
-    required int isPartial}) async {
+makeDigitalPayment({required String bookingId,
+  required Function? onPressed,
+  required Map<String, dynamic> data,
+  required int isPartial}) async {
   String url = '';
   SharedPreferences preferences = await SharedPreferences.getInstance();
   ApiClient apiClient = ApiClient(
       appBaseUrl: AppConstants.baseUrl, sharedPreferences: preferences);
   String zoneId = apiClient.mainHeaders['zone_id'] ??
       "e8554d44-dcf2-47c7-8cf9-400d05a1340f";
-  String userId = Get.find<DashBoardController>().userModel.id;
+  String userId = Get
+      .find<DashBoardController>()
+      .userModel
+      .id;
 
   String platform = "app";
   Map<String, dynamic> address = {
@@ -2520,12 +3732,15 @@ makeDigitalPayment(
   final formatted = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
   debugPrint("encodedError $encodedAddress");
   url =
-      '${AppConstants.baseUrl}payment?payment_method=razor_pay&access_token=${base64Url.encode(utf8.encode(userId))}&zone_id=$zoneId'
+  '${AppConstants
+      .baseUrl}payment?payment_method=razor_pay&access_token=${base64Url.encode(
+      utf8.encode(userId))}&zone_id=$zoneId'
       '&service_schedule=${formatted}&service_address_id=null&callback=https://panel.dofix.in&service_address=$encodedAddress&new_user_info=null&message=$userMessage&is_partial=$isPartial&payment_platform=$platform';
 
   log("url_with_digital_payment:$url");
 
-  await Get.to(() => PaymentScreen(
+  await Get.to(() =>
+      PaymentScreen(
         url: url,
         fromPage: "switch-payment-method",
         onPressed: onPressed,
