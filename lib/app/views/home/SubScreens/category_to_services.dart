@@ -355,7 +355,6 @@ class CategoryToServices extends StatelessWidget {
                                       .data ??
                                   [];
 
-                          // Agar services available hain, tab hi name dikhao
                           if (services.isNotEmpty) {
                             return Row(
                               children: [
