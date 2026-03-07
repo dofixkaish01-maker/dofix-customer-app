@@ -105,90 +105,132 @@ class SearchScreen extends StatelessWidget {
                       itemBuilder: (_, index) {
                         final item = dashboard.serviceModelSearchList[index];
 
-                        return InkWell(
-                            onTap: () async {
-                              await dashboard.getServicesDetails(item.id ?? "");
-                            },
+                        return GestureDetector(
+                          onTap: () async {
+                            await dashboard.getServicesDetails(item.id ?? "");
+                          },
                           child: Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            padding: const EdgeInsets.all(12),
+                            margin: const EdgeInsets.only(bottom: 14),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
+                                  color: Colors.black.withOpacity(0.06),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
                                 ),
                               ],
                             ),
-                            child: Row(
-                              children: [
-                                /// IMAGE
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: SizedBox(
-                                    width: 70,
-                                    height: 70,
-                                    child: NetworkImageWithShimmer(
-                                      imageUrl: item.coverImageFullPath ?? "",
-                                      borderRadius: BorderRadius.circular(8),
+
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  /// IMAGE
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: SizedBox(
+                                      width: 85,
+                                      height: 85,
+                                      child: NetworkImageWithShimmer(
+                                        imageUrl: item.coverImageFullPath ?? "",
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
 
-                                /// TEXT
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
+                                  const SizedBox(width: 12),
 
-                                      Text(
-                                        item.name ?? "",
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
+                                  /// CONTENT
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+
+                                        /// SERVICE NAME
+                                        Text(
+                                          item.name ?? "",
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                      ),
 
-                                      const SizedBox(height: 4),
+                                        const SizedBox(height: 6),
 
-                                      Text(
-                                        item.subCategory?.name ?? "",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.blueGrey,
-                                          fontWeight: FontWeight.w500,
+                                        /// DESCRIPTION
+                                        Text(
+                                          item.shortDescription ?? "",
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey.shade600,
+                                          ),
                                         ),
-                                      ),
 
-                                      const SizedBox(height: 4),
+                                        const SizedBox(height: 10),
 
-                                      Text(
-                                        item.shortDescription ?? "",
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey.shade600,
-                                        ),
-                                      ),
-                                    ],
+                                        /// BOTTOM ROW
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+
+                                            /// OPTIONAL TAG
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF207FA8)
+                                                    .withOpacity(0.1),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: const Text(
+                                                "Service",
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Color(0xFF207FA8),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+
+                                            /// VIEW BUTTON
+                                            GestureDetector(
+                                              onTap: () async {
+                                                await dashboard.getServicesDetails(item.id ?? "");
+                                              },
+                                              child: Container(
+                                                width: 90, // <-- width badhaya
+                                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xFF207FA8),
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: const Text(
+                                                  "View",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                /// VIEW BUTTON
-                                const Text(
-                                  "View",
-                                  style: TextStyle(
-                                    color: Color(0xFF207FA8),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -277,7 +319,7 @@ class SearchScreen extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 0.72,
+          childAspectRatio: 0.92,
         ),
         itemBuilder: (_, index) {
           final cat = list[index];
