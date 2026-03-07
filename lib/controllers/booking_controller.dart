@@ -32,10 +32,11 @@ class BookingController extends GetxController implements GetxService {
   String serviceId = '';
   Rxn<ReviewRatingModel> reviewRatingModel = Rxn<ReviewRatingModel>();
   List<BookingModel> bookingList = [];
-  Rxn<ServiceReviewsModel>? serviceReviewsModel = Rxn<ServiceReviewsModel>();
+  Rxn<ServiceReviewsModel> serviceReviewsModel = Rxn<ServiceReviewsModel>();
 
   int? selectedRating;
   bool recentlyAdded = false;
+  int totalReviews = 0;
 
   void setSelectedRating(int? rating) {
     selectedRating = rating;
@@ -55,7 +56,7 @@ class BookingController extends GetxController implements GetxService {
     }
     this.recentlyAdded = recentlyAdded;
     if (recentlyAdded) {
-      serviceReviewsModel?.value?.reviews?.sort((a, b) {
+      serviceReviewsModel.value?.reviews?.sort((a, b) {
         return b.updatedAt?.compareTo(a.updatedAt ?? DateTime.now()) ?? 0;
       });
     }
@@ -70,7 +71,7 @@ class BookingController extends GetxController implements GetxService {
         log("Booking review content: ${response.body}");
         reviewRatingModel.value = ReviewRatingModel.fromJson(response.body);
         hideLoading();
-        print("FULL API RESPONSE => ${response.body}");
+        log("FULL API RESPONSE => ${response.body}");
       } else {
         showCustomSnackBar("Failed to fetch review", isError: true);
       }
@@ -110,14 +111,14 @@ class BookingController extends GetxController implements GetxService {
     showLoading();
     try {
       starCounts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-      log("Service reviews: ${serviceId}");
+      log("Service reviews: $serviceId");
       Response response =
           await bookingRepo.fetchServiceReview(serviceId: serviceId);
       if (response.statusCode == 200) {
         log("yyyy Service reviews: ${response.body}");
-        serviceReviewsModel?.value =
+        serviceReviewsModel.value =
             ServiceReviewsModel.fromJson(jsonDecode(response.body));
-        List<ServiceReview> reviews = serviceReviewsModel?.value?.reviews ?? [];
+        List<ServiceReview> reviews = serviceReviewsModel.value?.reviews ?? [];
 
         for (ServiceReview review in reviews) {
           int rating = review.reviewRating ?? 0;
@@ -135,8 +136,8 @@ class BookingController extends GetxController implements GetxService {
 
         ratingAvg = count > 0 ? total / count : 0.0;
 
-        print('Average rating: $ratingAvg');
-        print('Star counts: $starCounts');
+        // print('Average rating: $ratingAvg');
+        // print('Star counts: $starCounts');
 
         update();
       } else {

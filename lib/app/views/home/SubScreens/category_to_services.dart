@@ -5,13 +5,12 @@ import 'package:do_fix/widgets/custom_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../controllers/dashboard_controller.dart';
-import '../../../../model/category_model.dart';
 import '../../../../utils/dimensions.dart';
 import '../../../../utils/styles.dart';
 import '../../../widgets/custom_appbar.dart';
 
 class CategoryToServices extends StatelessWidget {
-  CategoryToServices({super.key});
+  const CategoryToServices({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -580,7 +579,7 @@ class CategoryToServices extends StatelessWidget {
                                                                   const SizedBox(
                                                                       width: 4),
                                                                   Text(
-                                                                    "${service.avgRating?.toStringAsFixed(1) ?? "0.0"}",
+                                                                    service.avgRating?.toStringAsFixed(1) ?? "0.0",
                                                                     style:
                                                                         const TextStyle(
                                                                       fontSize:
