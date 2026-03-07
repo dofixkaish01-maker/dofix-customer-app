@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Placeholder grid height calculation
             final placeholderItemSize = categoryWidth;
-            final placeholderHeight = (placeholderItemSize * 2) + 8;
+            final placeholderHeight = (placeholderItemSize * 2) + 55;
 
             return Align(
               alignment: Alignment.topCenter,
@@ -269,17 +269,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisCount: categoryColumns,
                                 crossAxisSpacing: 8,
                                 mainAxisSpacing: 8,
-                                childAspectRatio: 1.2,
+                                childAspectRatio: 0.75,
                               ),
                               itemCount: categoryColumns * 2,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                );
-                              },
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+
+                                      /// CONTAINER
+                                      Container(
+                                        height: 110,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 6),
+
+                                      /// TEXT PLACEHOLDER
+                                      Container(
+                                        height: 10,
+                                        width: double.infinity, // container jitni width
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
                             ),
                           ),
                         ),
@@ -360,7 +381,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 scale: 1.10,
                                                 child: Image.asset(
                                                   banner.image,
-                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
                                             ),

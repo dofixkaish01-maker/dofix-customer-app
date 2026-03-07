@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> initAppsFlyer() async {
     final AppsFlyerOptions options = AppsFlyerOptions(
       afDevKey: "QPsc9zfWKAjutYjJgPVLWi",
-      appId: "com.dofix.appcustomer", // iOS App ID
+      appId: "6748050890", // iOS App ID
       showDebug: true,
     );
 

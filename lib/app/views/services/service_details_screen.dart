@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:do_fix/app/widgets/custom_floating_cart_widget.dart';
 import 'package:do_fix/app/widgets/service_container.dart';
@@ -39,11 +38,6 @@ class _ServiceDetailsState extends State<ServiceDetails>
   @override
   void initState() {
     super.initState();
-
-    @override
-    void initState() {
-      super.initState();
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final dashboardController = Get.find<DashBoardController>();
         final args = Get.arguments;
@@ -56,8 +50,6 @@ class _ServiceDetailsState extends State<ServiceDetails>
               .getServiceReview(serviceId: serviceId);
         }
       });
-    }
-
     _controller = AnimationController(
       duration: Duration(milliseconds: 500), // faster
       vsync: this,
@@ -525,17 +517,17 @@ class _ServiceDetailsState extends State<ServiceDetails>
 void showBookingSheet(
   BuildContext context,
 ) {
-  GoogleMapController? _mapController;
-  LatLng _selectedLatLng = LatLng(28.7041, 77.1025); // Default to Delhi
+  // GoogleMapController? _mapController;
+  LatLng selectedLatLng = LatLng(28.7041, 77.1025); // Default to Delhi
   // DateTime selectedDate = DateTime.now();
   // TimeOfDay? selectedTime;
 
-  Future<void> _getCurrentLocation() async {
+  Future<void> getCurrentLocation() async {
     // Mock function: You can implement actual location fetching using Geolocator
-    _selectedLatLng = LatLng(28.7041, 77.1025); // Mocking location to Delhi
+    selectedLatLng = LatLng(28.7041, 77.1025); // Mocking location to Delhi
     Get.find<DashBoardController>().updateLatLong(
-      _selectedLatLng.latitude.toString(),
-      _selectedLatLng.longitude.toString(),
+      selectedLatLng.latitude.toString(),
+      selectedLatLng.longitude.toString(),
     );
   }
 
@@ -550,7 +542,7 @@ void showBookingSheet(
     builder: (context) {
       return StatefulBuilder(
         builder: (context, setState) {
-          _getCurrentLocation();
+          getCurrentLocation();
 
           return FractionallySizedBox(
             heightFactor: 0.95, // 95% of available height
@@ -568,8 +560,8 @@ void showReviewFilterBottomSheet(
   bool recentlyAdded = false,
   required Function(int? rating, bool recentlyAdded) onApply,
 }) {
-  int? _selectedRating = selectedRating;
-  bool _recentlyAdded = recentlyAdded;
+  int? selectedRating0 = selectedRating;
+  bool recentlyAdded0 = recentlyAdded;
 
   Get.bottomSheet(
     StatefulBuilder(
@@ -594,9 +586,9 @@ void showReviewFilterBottomSheet(
             Row(
               children: [
                 Checkbox(
-                  value: _recentlyAdded,
+                  value: recentlyAdded0,
                   onChanged: (val) =>
-                      setState(() => _recentlyAdded = val ?? false),
+                      setState(() => recentlyAdded0 = val ?? false),
                 ),
                 const Text('Recently Added'),
               ],
@@ -608,9 +600,9 @@ void showReviewFilterBottomSheet(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(5, (index) {
                 int rating = index + 1;
-                bool isSelected = _selectedRating == rating;
+                bool isSelected = selectedRating0 == rating;
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedRating = rating),
+                  onTap: () => setState(() => selectedRating0 = rating),
                   child: Container(
                     width: 40,
                     height: 40,
@@ -643,7 +635,7 @@ void showReviewFilterBottomSheet(
               child: ElevatedButton(
                 onPressed: () {
                   Get.back();
-                  onApply(_selectedRating, _recentlyAdded);
+                  onApply(selectedRating0, recentlyAdded0);
                 },
                 child: const Text('Apply Filter'),
               ),
@@ -758,7 +750,7 @@ void ShowAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
                               ),
                             ),
                             Text(
-                              "₹ " + price,
+                              "₹ $price",
                               style: TextStyle(
                                 color: Colors.blue,
                                 fontSize: 16,
