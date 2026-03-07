@@ -247,6 +247,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
   }
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Column(
         children: [

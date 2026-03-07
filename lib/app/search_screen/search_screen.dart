@@ -5,7 +5,7 @@ import '../../../../../controllers/dashboard_controller.dart';
 import '../../../../widgets/networkimg_summerize/network_Image_with_shimmer.dart';
 
 class SearchScreen extends StatelessWidget {
-  SearchScreen({Key? key}) : super(key: key);
+  SearchScreen({super.key});
 
   final SearchController controller =
       Get.put(SearchController(apiClient: Get.find()));
@@ -105,79 +105,91 @@ class SearchScreen extends StatelessWidget {
                       itemBuilder: (_, index) {
                         final item = dashboard.serviceModelSearchList[index];
 
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              /// IMAGE
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: SizedBox(
-                                  width: 70,
-                                  height: 70,
-                                  child: NetworkImageWithShimmer(
-                                    imageUrl: item.coverImageFullPath ?? "",
-                                    borderRadius: BorderRadius.circular(8),
+                        return InkWell(
+                            onTap: () async {
+                              await dashboard.getServicesDetails(item.id ?? "");
+                            },
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                /// IMAGE
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: SizedBox(
+                                    width: 70,
+                                    height: 70,
+                                    child: NetworkImageWithShimmer(
+                                      imageUrl: item.coverImageFullPath ?? "",
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
+                                const SizedBox(width: 12),
 
-                              /// TEXT
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.name ?? "",
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
+                                /// TEXT
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+
+                                      Text(
+                                        item.name ?? "",
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      item.shortDescription ?? "",
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade600,
+
+                                      const SizedBox(height: 4),
+
+                                      Text(
+                                        item.subCategory?.name ?? "",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.blueGrey,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+
+                                      const SizedBox(height: 4),
+
+                                      Text(
+                                        item.shortDescription ?? "",
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-
-                              /// VIEW BUTTON
-                              TextButton(
-                                onPressed: () async {
-                                  await dashboard
-                                      .getServicesDetails(item.id ?? "");
-                                },
-                                child: const Text(
+                                /// VIEW BUTTON
+                                const Text(
                                   "View",
                                   style: TextStyle(
                                     color: Color(0xFF207FA8),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },

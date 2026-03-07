@@ -360,7 +360,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 scale: 1.10,
                                                 child: Image.asset(
                                                   banner.image,
-                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
                                             ),
