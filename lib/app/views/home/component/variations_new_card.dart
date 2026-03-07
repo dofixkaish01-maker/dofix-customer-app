@@ -185,17 +185,15 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            /// 1st Column: Image
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(Dimensions.radius10),
                   child: Image.network(
                     coverVariantImagePath + widget.serviceCoverImage,
-                    width: isTablet ? 180 : 130, // keep width fixed if needed
-                    fit: BoxFit.contain, // <-- shows full image without cropping
+                    width: isTablet ? 180 : 130,
+                    fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) => Container(
                       height: isTablet ? 160 : 180,
                       width: isTablet ? 200 : 160,
@@ -204,82 +202,81 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                     ),
                   ),
                 ),
-                /// 1st Line: Title
-                SizedBox(width: 10,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
 
-                    Text(
-                      widget.serviceVariationName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: isTablet ? Dimensions.fontSize15 : Dimensions.fontSize14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black.withOpacity(0.9),
-                        height: 1.2,
+                const SizedBox(width: 10),
+
+                /// FIX HERE
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      Text(
+                        widget.serviceVariationName,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: isTablet ? Dimensions.fontSize15 : Dimensions.fontSize14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(0.9),
+                          height: 1.2,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    /// 3rd Line: Rating and Price in one row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        /// Rating
-                        Row(
-                          children: [
-                            if (widget.serviceRatings != "0.0") ...[
-                              const Icon(Icons.star, size: 14, color: Color(0xFFFFAC33)),
-                              const SizedBox(width: 4),
-                              Text(
-                                widget.serviceRatings,
-                                style: const TextStyle(
-                                  fontSize: Dimensions.fontSize12,
-                                  fontWeight: FontWeight.w600,
-                                ),
+
+                      const SizedBox(height: 4),
+
+                      Row(
+                        children: [
+                          if (widget.serviceRatings != "0.0") ...[
+                            const Icon(Icons.star, size: 14, color: Color(0xFFFFAC33)),
+                            const SizedBox(width: 4),
+                            Text(
+                              widget.serviceRatings,
+                              style: const TextStyle(
+                                fontSize: Dimensions.fontSize12,
+                                fontWeight: FontWeight.w600,
                               ),
-                              Text(
-                                " (${widget.serviceReviewCount})",
-                                style: TextStyle(
-                                  fontSize: Dimensions.fontSize10,
-                                  color: Colors.black.withOpacity(0.45),
-                                ),
+                            ),
+                            Text(
+                              " (${widget.serviceReviewCount})",
+                              style: TextStyle(
+                                fontSize: Dimensions.fontSize10,
+                                color: Colors.black.withOpacity(0.45),
                               ),
-                            ],
+                            ),
                           ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    /// Price Section
-                    Row(
-                      children: [
-                        Text(
-                          "₹${widget.serviceDiscountedPrice}",
-                          style: TextStyle(
-                            fontSize: isTablet ? Dimensions.fontSize18 : Dimensions.fontSize15,
-                            fontWeight: FontWeight.w800,
-                            color: const Color(0xFF207FA8),
-                          ),
-                        ),
-                        if (widget.serviceMrpPrice != "0.0" &&
-                            widget.serviceMrpPrice != "null" &&
-                            widget.serviceMrpPrice != "0") ...[
-                          const SizedBox(width: 6),
+                        ],
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      Row(
+                        children: [
                           Text(
-                            "₹${widget.serviceMrpPrice}",
+                            "₹${widget.serviceDiscountedPrice}",
                             style: TextStyle(
-                              fontSize: Dimensions.fontSize10,
-                              decoration: TextDecoration.lineThrough,
-                              color: Colors.black.withOpacity(0.4),
+                              fontSize: isTablet ? Dimensions.fontSize18 : Dimensions.fontSize15,
+                              fontWeight: FontWeight.w800,
+                              color: const Color(0xFF207FA8),
                             ),
                           ),
+                          if (widget.serviceMrpPrice != "0.0" &&
+                              widget.serviceMrpPrice != "null" &&
+                              widget.serviceMrpPrice != "0") ...[
+                            const SizedBox(width: 6),
+                            Text(
+                              "₹${widget.serviceMrpPrice}",
+                              style: TextStyle(
+                                fontSize: Dimensions.fontSize10,
+                                decoration: TextDecoration.lineThrough,
+                                color: Colors.black.withOpacity(0.4),
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
