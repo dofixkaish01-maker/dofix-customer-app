@@ -344,9 +344,9 @@ class _CartScreenState extends State<CartScreen> {
                                       priceRow(
                                           "Coupon Discount", couponDiscount,
                                           color: Colors.green),
-                                      priceRow(
-                                          "Service Charge", couponDiscount,
-                                          color: Colors.green),
+                                      // priceRow(
+                                      //     "Service Charge", couponDiscount,
+                                      //     color: Colors.green),
                                       priceRow("Tax & Fee", tax),
                                       const Divider(height: 20),
                                       priceRow("Total Amount", grandTotal,
