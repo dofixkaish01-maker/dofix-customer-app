@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:do_fix/model/variation_model.dart';
 import 'category_model.dart';
 

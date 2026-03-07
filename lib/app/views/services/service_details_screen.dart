@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:do_fix/app/views/services/rating_summary.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:do_fix/app/widgets/custom_floating_cart_widget.dart';
 import 'package:do_fix/app/widgets/service_container.dart';
@@ -352,9 +353,13 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                       avergeRating: bookingController.ratingAvg,
                                       starCounts: bookingController.starCounts,
                                     ),
+                                    // RatingSummary(
+                                    //   avergeRating: double.parse(bookingController.ratingAvg.toStringAsFixed(1)),
+                                    //   starCounts: bookingController.starCounts,
+                                    // ),
                                     const SizedBox(height: 20),
                                     if (bookingController
-                                            .serviceReviewsModel?.value !=
+                                            .serviceReviewsModel.value !=
                                         null)
                                       Row(
                                         mainAxisAlignment:
@@ -403,18 +408,18 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                         ],
                                       ),
                                     if (bookingController
-                                            .serviceReviewsModel?.value !=
+                                            .serviceReviewsModel.value !=
                                         null)
                                       const SizedBox(height: 10),
                                     if (bookingController
-                                            .serviceReviewsModel?.value !=
+                                            .serviceReviewsModel.value !=
                                         null)
                                       (bookingController.serviceReviewsModel
-                                                      ?.value !=
+                                                      .value !=
                                                   null &&
                                               bookingController
                                                       .serviceReviewsModel
-                                                      ?.value
+                                                      .value
                                                       ?.reviews
                                                       ?.length !=
                                                   0)
@@ -425,7 +430,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                                     BouncingScrollPhysics(),
                                                 itemCount: bookingController
                                                         .serviceReviewsModel
-                                                        ?.value
+                                                        .value
                                                         ?.reviews
                                                         ?.length ??
                                                     0,
@@ -433,7 +438,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                                   final ServiceReview review =
                                                       bookingController
                                                               .serviceReviewsModel
-                                                              ?.value
+                                                              .value
                                                               ?.reviews?[index] ??
                                                           ServiceReview();
                                                   return ReviewCard(
