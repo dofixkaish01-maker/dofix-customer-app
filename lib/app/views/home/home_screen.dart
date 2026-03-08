@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Placeholder grid height calculation
             final placeholderItemSize = categoryWidth;
-            final placeholderHeight = (placeholderItemSize * 2) + 55;
+            final placeholderHeight = (placeholderItemSize * 2) + 65;
 
             return Align(
               alignment: Alignment.topCenter,
