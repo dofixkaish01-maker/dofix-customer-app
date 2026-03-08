@@ -1,3 +1,4 @@
+import 'package:do_fix/widgets/custom_dot_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../utils/theme.dart';
@@ -39,7 +40,7 @@ Widget GlobalLoader() {
     return Container(
       color: Colors.black.withOpacity(0.3),
       child: const Center(
-        child: CircularProgressIndicator(),
+        child: DotWaveLoader(),
       ),
     );
   });
