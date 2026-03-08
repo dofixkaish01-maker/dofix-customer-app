@@ -234,7 +234,9 @@ class _CartScreenState extends State<CartScreen> {
                           double itemTotal = 0.0;
                           double discount = 0.0;
                           double couponDiscount = 0.0;
-                          double tax = 0.0;
+
+                          /// API se tax
+                          double tax = (content?.taxAmount ?? 0).toDouble();
 
                           if (cart != null &&
                               cart.data != null &&
@@ -243,11 +245,10 @@ class _CartScreenState extends State<CartScreen> {
 
                             for (var item in items) {
                               itemTotal += (item.serviceCost.toDouble() *
-                                  item.quantity?.toDouble());
+                                  item.quantity!.toDouble());
 
                               discount += item.discountAmount.toDouble();
                               couponDiscount += item.couponDiscount.toDouble();
-                              tax += item.taxAmount.toDouble();
                             }
                           }
 
@@ -331,7 +332,7 @@ class _CartScreenState extends State<CartScreen> {
 
                                 const SizedBox(height: 14),
 
-                                ///  CARD BOX
+                                /// CARD BOX
                                 Container(
                                   padding: const EdgeInsets.all(14),
                                   decoration: BoxDecoration(
@@ -344,9 +345,6 @@ class _CartScreenState extends State<CartScreen> {
                                       priceRow(
                                           "Coupon Discount", couponDiscount,
                                           color: Colors.green),
-                                      // priceRow(
-                                      //     "Service Charge", couponDiscount,
-                                      //     color: Colors.green),
                                       priceRow("Tax & Fee", tax),
                                       const Divider(height: 20),
                                       priceRow("Total Amount", grandTotal,
@@ -355,7 +353,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 ),
 
-                                ///  WALLET + REFERRAL
+                                /// WALLET + REFERRAL
                                 if (wallet > 0 || referral > 0) ...[
                                   const SizedBox(height: 10),
                                   Container(
@@ -377,20 +375,9 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                 ],
 
-                                // const SizedBox(height: 8),
-
-                                // ///  SAVING TEXT
-                                // Text(
-                                //   "You saved ₹${(discount + couponDiscount).toStringAsFixed(0)} on this order",
-                                //   style: const TextStyle(
-                                //     color: Colors.green,
-                                //     fontWeight: FontWeight.w600,
-                                //   ),
-                                // ),
-
                                 const SizedBox(height: 14),
 
-                                ///  TOTAL PAY BAR
+                                /// TOTAL PAY BAR
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 14, vertical: 12),
@@ -423,12 +410,13 @@ class _CartScreenState extends State<CartScreen> {
 
                                 const SizedBox(height: 18),
 
-                                ///  CONTINUE BUTTON (MODERN)
+                                /// CONTINUE BUTTON
                                 InkWell(
                                   borderRadius: BorderRadius.circular(14),
                                   onTap: () {
-                                    Get.to(BookingScreen(
-                                        cartTotalPrice: grandTotal));
+                                    Get.to(
+                                      BookingScreen(cartTotalPrice: grandTotal),
+                                    );
                                   },
                                   child: Container(
                                     height: 54,

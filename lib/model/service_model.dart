@@ -227,12 +227,14 @@ class CartContent {
   final dynamic totalCost;
   final dynamic referralAmount;
   final dynamic walletBalance;
+  final dynamic taxAmount;
   final CartData? cart;
 
   CartContent({
     this.totalCost,
     this.referralAmount,
     this.walletBalance,
+    this.taxAmount,
     this.cart,
   });
 
@@ -241,6 +243,7 @@ class CartContent {
       totalCost: json['total_cost'],
       referralAmount: json['referral_amount'],
       walletBalance: json['wallet_balance'],
+      taxAmount: json['tax_amount'],
       cart: json['cart'] != null ? CartData.fromJson(json['cart']) : null,
     );
   }
@@ -368,7 +371,7 @@ class CartItem {
       couponCode: json['coupon_code'],
       couponDiscount: json['coupon_discount'],
       campaignDiscount: json['campaign_discount'],
-      taxAmount: json['tax_amount'],
+      taxAmount: json['tax_amount'],//
       totalCost: json['total_cost'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
