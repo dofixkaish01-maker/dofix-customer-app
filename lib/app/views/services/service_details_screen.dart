@@ -18,7 +18,6 @@ import '../../../controllers/booking_controller.dart';
 import '../../../widgets/HtmlToFlutter.dart';
 import '../cart_screen/SubScreen/final_screen.dart';
 import '../home/component/variations_new_card.dart';
-import 'widgets/rating_summary_widget.dart';
 import 'widgets/review_card_widget.dart';
 
 class ServiceDetails extends StatefulWidget {

@@ -54,7 +54,7 @@ class DashBoardController extends GetxController implements GetxService {
   bool _isLoginLoading = false;
   bool isCategoryServiceLoading = false;
   bool isSubCategoryLoading = false;
-
+  String selectedCategoryName = "";
   bool get isLoginLoading => _isLoginLoading;
   CategoryModel? categoryList = CategoryModel(data: []);
   CategoryModel? allCategories = CategoryModel(data: []); // For ServiceScreens

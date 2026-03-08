@@ -5,6 +5,7 @@ import 'package:do_fix/widgets/custom_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../controllers/dashboard_controller.dart';
+import '../../../../model/category_model.dart';
 import '../../../../utils/dimensions.dart';
 import '../../../../utils/styles.dart';
 import '../../../widgets/custom_appbar.dart';
@@ -14,6 +15,7 @@ class CategoryToServices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var categoryDetails=CategoryModel().data;
     return GetBuilder<DashBoardController>(builder: (controller) {
       return SafeArea(
         top: false,
@@ -52,9 +54,8 @@ class CategoryToServices extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            controller.selectedSubCategories.isNotEmpty
-                                ? controller.selectedSubCategories[0].name ??
-                                    "Category"
+                            controller.selectedCategoryName.isNotEmpty
+                                ? controller.selectedCategoryName
                                 : "Category",
                             style: albertSansRegular.copyWith(
                               fontSize: 18,
@@ -360,7 +361,7 @@ class CategoryToServices extends StatelessWidget {
                               children: [
                                 Text(
                                   controller.selectedSubCategories.isNotEmpty
-                                      ? "${controller.selectedSubCategories[0].name} Services"
+                                      ? "${controller.selectedSubCategories[0].name}"
                                       : "Services",
                                   style: const TextStyle(
                                     fontSize: 16,
