@@ -525,6 +525,7 @@ class DashBoardController extends GetxController implements GetxService {
               .contains("Successfully data fetched")) {
         final newData = CategoryModel.fromJson(responseData['content']);
 
+        // YAHI MAIN FIX HAI
         if (offset == 1) {
           categoryList?.data?.clear(); // OLD DATA CLEAR
           categoryList = newData; // NEW DATA SET
@@ -662,14 +663,9 @@ class DashBoardController extends GetxController implements GetxService {
             .contains("Successfully data fetched")) {
           serviceModel = sv.ServiceModel.fromJson(responseData['content']);
           debugPrint("Service Model: ${serviceModel.variations?.length}");
-          update(); // UI refresh first
           hideLoading();
-          Get.to(
-                () => ServiceDetails(),
-            arguments: {
-              "service_id": id,
-            },
-          );
+          Get.to(() => ServiceDetails());
+          update();
         } else {
           hideLoading();
 
