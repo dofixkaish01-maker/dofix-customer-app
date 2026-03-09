@@ -66,14 +66,25 @@ class BookingController extends GetxController implements GetxService {
   Future<void> getBookingReview(String bookingId) async {
     try {
       Response response =
-          await bookingRepo.fetchBookingReview(bookingId: bookingId);
+      await bookingRepo.fetchBookingReview(bookingId: bookingId);
+
       if (response.statusCode == 200) {
-        log("Booking review content: ${response.body}");
-        reviewRatingModel.value = ReviewRatingModel.fromJson(response.body);
-        hideLoading();
-        log("FULL API RESPONSE => ${response.body}");
-      } else {
-        showCustomSnackBar("Failed to fetch review", isError: true);
+
+        log("API RESPONSE: ${response.body}");
+
+        if (response.body["content"] != null) {
+          reviewRatingModel.value =
+              ReviewRatingModel.fromJson(response.body);
+
+          totalReviews =
+              reviewRatingModel.value?.content?.first.ratingCount ?? 0;
+
+          ratingAvg =
+              (reviewRatingModel.value?.content?.first.avgRating ?? 0).toDouble();
+        } else {
+          totalReviews = 0;
+          ratingAvg = 0.0;
+        }
       }
     } catch (e) {
       showCustomSnackBar("Error: $e", isError: true);
@@ -108,25 +119,45 @@ class BookingController extends GetxController implements GetxService {
   }
 
   Future<void> getServiceReview({required String serviceId}) async {
+
+    serviceReviewsModel.value = null;
+    ratingAvg = 0.0;
+    starCounts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+
+    update();
+
     showLoading();
     try {
-      starCounts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-      log("Service reviews: $serviceId");
-      Response response =
-          await bookingRepo.fetchServiceReview(serviceId: serviceId);
-      if (response.statusCode == 200) {
-        log("yyyy Service reviews: ${response.body}");
-        serviceReviewsModel.value =
-            ServiceReviewsModel.fromJson(jsonDecode(response.body));
-        List<ServiceReview> reviews = serviceReviewsModel.value?.reviews ?? [];
 
+      log("Service reviews: $serviceId");
+
+      Response response =
+      await bookingRepo.fetchServiceReview(serviceId: serviceId);
+
+      log("API RESPONSE: ${response.body}");
+
+      if (response.statusCode == 200) {
+
+        final decoded = jsonDecode(response.body);
+
+        serviceReviewsModel.value =
+            ServiceReviewsModel.fromJson(decoded["content"]);
+
+        List<ServiceReview> reviews =
+            serviceReviewsModel.value?.reviews ?? [];
+
+        log("REVIEWS: ${decoded["content"]["reviews"]}");
+
+        /// ⭐ count stars
         for (ServiceReview review in reviews) {
           int rating = review.reviewRating ?? 0;
+
           if (starCounts.containsKey(rating)) {
             starCounts[rating] = starCounts[rating]! + 1;
           }
         }
 
+        /// ⭐ calculate average
         int total = 0;
         int count = reviews.length;
 
@@ -136,22 +167,28 @@ class BookingController extends GetxController implements GetxService {
 
         ratingAvg = count > 0 ? total / count : 0.0;
 
-        // print('Average rating: $ratingAvg');
-        // print('Star counts: $starCounts');
+        print('Average rating: $ratingAvg');
+        print('Star counts: $starCounts');
 
         update();
+
       } else {
         showCustomSnackBar('Failed to fetch reviews');
       }
+
     } catch (e) {
+
       log("Error fetching service reviews: $e");
-      showCustomSnackBar('Failed to fetch reviews due to an error $e',
-          isError: true);
+
+      showCustomSnackBar(
+        'Failed to fetch reviews due to an error $e',
+        isError: true,
+      );
+
     } finally {
       hideLoading();
     }
   }
-
   Rxn<BookingSetupModel> bookingSetupModel = Rxn<BookingSetupModel>();
   RxDouble partialPaymentPercentage = 0.0.obs;
   RxDouble cancellationChargesPercentage = 0.0.obs;

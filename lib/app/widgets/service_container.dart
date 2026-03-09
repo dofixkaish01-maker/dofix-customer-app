@@ -30,15 +30,15 @@ class ServiceContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 500),
-      tween: Tween(begin: 0.95, end: 1),
+      tween: Tween(begin: 0.0, end: 1.0),
       curve: Curves.easeOutBack,
       builder: (context, value, child) {
         return Transform.scale(
           scale: value,
-          child: Opacity(
-            opacity: value,
+          child:Opacity(
+            opacity: value.clamp(0.0, 1.0),
             child: child,
-          ),
+          )
         );
       },
       child: Material(
@@ -49,7 +49,7 @@ class ServiceContainer extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
 
-            // 🔥 Premium Layered Shadow
+            // Premium Layered Shadow
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.08),
@@ -69,7 +69,7 @@ class ServiceContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                /// 🔥 IMAGE SECTION WITH GRADIENT OVERLAY
+                /// IMAGE SECTION WITH GRADIENT OVERLAY
                 Stack(
                   children: [
                     SizedBox(
@@ -84,7 +84,7 @@ class ServiceContainer extends StatelessWidget {
                       ),
                     ),
 
-                    /// 🔥 Soft Gradient for Premium Feel
+                    /// Soft Gradient for Premium Feel
                     Container(
                       height: MediaQuery.of(context).size.height * 0.23,
                       decoration: BoxDecoration(
@@ -99,7 +99,7 @@ class ServiceContainer extends StatelessWidget {
                       ),
                     ),
 
-                    /// 🔥 Service Name on Image
+                    /// Service Name on Image
                     Positioned(
                       bottom: 16,
                       left: 16,
@@ -118,7 +118,7 @@ class ServiceContainer extends StatelessWidget {
                   ],
                 ),
 
-                /// 🔥 CONTENT SECTION
+                /// CONTENT SECTION
                 Padding(
                   padding: const EdgeInsets.all(18),
                   child: Column(

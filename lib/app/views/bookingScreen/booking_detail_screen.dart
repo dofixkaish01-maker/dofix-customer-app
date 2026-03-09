@@ -580,12 +580,20 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: GestureDetector(
-                              onTap: () async {
-                                // Fetch service details for clicked item
-                                await Get.find<DashBoardController>()
-                                    .getServicesDetails(detail.serviceId ?? "");
-
-                                },
+                              // onTap: () async {
+                              //   // Fetch service details for clicked item
+                              //   await Get.find<DashBoardController>()
+                              //       .getServicesDetails(detail.serviceId ?? "");
+                              //
+                              //   },
+                              onTap: () {
+                                Get.to(
+                                      () => ServiceDetails(),
+                                  arguments: {
+                                    "service_id": detail.serviceId,
+                                  },
+                                );
+                              },
                               child: CustomBookingDetailsItems(detail: detail),
                             ),
                           );
