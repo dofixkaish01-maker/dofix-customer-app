@@ -7,9 +7,10 @@ class ServiceReviewsModel {
 
   factory ServiceReviewsModel.fromJson(Map<String, dynamic> json) {
     return ServiceReviewsModel(
-      reviews: (json['reviews'] as List)
-          .map((e) => ServiceReview.fromJson(e))
-          .toList(),
+      reviews: json['reviews'] != null
+          ? List<ServiceReview>.from(
+          json['reviews'].map((e) => ServiceReview.fromJson(e)))
+          : [],
     );
   }
 }
@@ -48,31 +49,52 @@ class ServiceReview {
   });
 
   factory ServiceReview.fromJson(Map<String, dynamic> json) {
+
+    /// DEBUG PRINTS
+    print("--------- REVIEW🦚DATA ---------");
+    print("ID: ${json['id']}");
+    print("Rating Raw: ${json['review_rating']}");
+    print("Comment: ${json['review_comment']}");
+    print("Customer: ${json['customer']}");
+    print("-------------------------------");
+
     return ServiceReview(
       id: json['id'],
       readableId: json['readable_id'],
       bookingId: json['booking_id'],
       serviceId: json['service_id'],
       providerId: json['provider_id'],
-      reviewRating: json['review_rating'],
+
+      reviewRating: json['review_rating'] != null
+          ? int.tryParse(json['review_rating'].toString())
+          : null,
+
       reviewComment: json['review_comment'],
       reviewImages: json['review_images'],
+
       bookingDate: json['booking_date'] != null
           ? DateTime.parse(json['booking_date'])
           : null,
+
       isActive: json['is_active'],
+
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : null,
+
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'])
           : null,
+
       customerId: json['customer_id'],
-      customer:
-          json['customer'] != null ? Customer.fromJson(json['customer']) : null,
+
+      customer: json['customer'] != null
+          ? Customer.fromJson(json['customer'])
+          : null,
     );
   }
 }
+
 
 class Customer {
   final String? id;
