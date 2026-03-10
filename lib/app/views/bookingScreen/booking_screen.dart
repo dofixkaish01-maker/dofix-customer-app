@@ -25,6 +25,7 @@ import '../../../../utils/app_constants.dart';
 import '../../../../utils/date_converter.dart';
 import '../../../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button_widget.dart';
+import '../SuccessFullScreen/success_full_screen.dart';
 
 // DashBoardController, DateConverter, formatTimeOfDay24Hour
 //use for open razor pay payment getway
@@ -2277,39 +2278,25 @@ class _BookingScreenState extends State<BookingScreen> {
         index: 22,
         child: CustomButtonWidget(
           onPressed: () async {
+            final dashController = Get.find<DashBoardController>();
+
             final name =
-                "${Get
-                .find<DashBoardController>()
-                .userModel
-                .firstName} ${Get
-                .find<DashBoardController>()
-                .userModel
-                .lastName}";
-            var mobile = Get
-                .find<DashBoardController>()
-                .userModel
-                .phone;
+                "${dashController.userModel.firstName} ${dashController.userModel.lastName}";
+
+            var mobile = dashController.userModel.phone;
             if (mobile.startsWith("+91")) {
               mobile = mobile.substring(3);
             }
-            final email = Get
-                .find<DashBoardController>()
-                .userModel
-                .email;
-            final address =
-            Get
-                .find<DashBoardController>()
-                .addressController
-                .text
-                .trim();
+
+            final email = dashController.userModel.email;
+            final address = dashController.addressController.text.trim();
             final message = messageController.text.trim();
 
-            final dashController = Get.find<DashBoardController>();
             if (!_validateAllFields(
               name: name,
               mobile: mobile,
               email: email,
-              address: addressController.text,
+              address: address,
               selectedLatLng: _selectedLatLng,
               zoneId: dashController.zoneIdForBooking,
               selectedDate: selectedDate,
@@ -2326,49 +2313,58 @@ class _BookingScreenState extends State<BookingScreen> {
             )) return;
 
             if (selected == "COD") {
-              dashboardController.createBookingLoader.value = true;
-              log("rrrr Date date date: ${DateConverter.dateTimeForCoupon(
-                  selectedDate).toString()}");
-              log("rrrr Date date time: ${formatTimeOfDay24Hour(
-                  selectedTime ?? TimeOfDay.now()).toString()}");
-              await dashController.postOrder({
-                "name": name,
-                "mobile_number": mobile,
-                "address_label": addressType.toString(),
-                "email": email,
-                "address": address,
-                "lat": _selectedLatLng.latitude,
-                "lng": _selectedLatLng.longitude,
-                "zone_id": dashController.zoneIdForBooking,
-                "message": message,
-                "date":
-                DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
-                    .toString(),
-                "payment_method": getPaymentMethodForApi(),
-                "city": city,
-                "zip_code": postalCode,
-                "country": country,
-                "street": street,
-                "service_preference": servicePreference,
-                "assign_customer_name": assignNameController.text.trim(),
-                "assign_customer_phone": assignPhoneController.text.trim(),
-                "assign_customer_email": assignEmailController.text.trim(),
-              }, dashController.selectedVariations, showLoader: false);
+              try {
+                dashboardController.createBookingLoader.value = true;
 
-              await dashController.getCartListing(
-                limit: "100",
-                offset: "1",
-                isRoute: false,
-                showLoader: false,
-              );
+                final success = await dashController.postOrder(
+                  {
+                    "name": name,
+                    "mobile_number": mobile,
+                    "address_label": addressType.toString(),
+                    "email": email,
+                    "address": address,
+                    "lat": _selectedLatLng.latitude,
+                    "lng": _selectedLatLng.longitude,
+                    "zone_id": dashController.zoneIdForBooking,
+                    "message": message,
+                    "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+                    "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
+                    "payment_method": getPaymentMethodForApi(),
+                    "city": city,
+                    "zip_code": postalCode,
+                    "country": country,
+                    "street": street,
+                    "service_preference": servicePreference,
+                    "assign_customer_name": assignNameController.text.trim(),
+                    "assign_customer_phone": assignPhoneController.text.trim(),
+                    "assign_customer_email": assignEmailController.text.trim(),
+                    "house": houseController.text.trim(),
+                    "floor": floorController.text.trim(),
+                  },
+                  dashController.selectedVariations,
+                  showLoader: false,
+                );
 
-              dashboardController.createBookingLoader.value = false;
+                if (success) {
+                  dashboardController.createBookingLoader.value = false;
+                  Get.offAll(() => SuccessFullScreen());
+
+                  // background refresh
+                  dashController.getCartListing(
+                    limit: "100",
+                    offset: "1",
+                    isRoute: false,
+                    showLoader: false,
+                  );
+                }
+              } catch (e) {
+                debugPrint("Create booking error: $e");
+              } finally {
+                dashboardController.createBookingLoader.value = false;
+              }
             } else {
-              log("Date date date: ${DateConverter.dateTimeForCoupon(
-                  selectedDate).toString()}");
-              log("Date date time: ${formatTimeOfDay24Hour(
-                  selectedTime ?? TimeOfDay.now()).toString()}");
+              log("Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
+              log("Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
 
               makeDigitalPayment(
                 isPartial: 0,
@@ -2383,10 +2379,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   "lng": _selectedLatLng.longitude,
                   "zone_id": dashController.zoneIdForBooking,
                   "message": message,
-                  "date":
-                  DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                  "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
-                      .toString(),
+                  "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+                  "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
                   "payment_method": "razor_pay",
                   "city": city,
                   "zip_code": postalCode,
@@ -2395,42 +2389,59 @@ class _BookingScreenState extends State<BookingScreen> {
                   "service_preference": servicePreference,
                   "house": houseController.text.trim(),
                   "floor": floorController.text.trim(),
+                  "assign_customer_name": assignNameController.text.trim(),
+                  "assign_customer_phone": assignPhoneController.text.trim(),
+                  "assign_customer_email": assignEmailController.text.trim(),
                 },
                 onPressed: () async {
-                  log("Date date date: ${DateConverter.dateTimeForCoupon(
-                      selectedDate).toString()}");
-                  log("Date date time: ${formatTimeOfDay24Hour(
-                      selectedTime ?? TimeOfDay.now()).toString()}");
-                  debugPrint("OnPressed Called====>");
-                  await dashController.postOrder({
-                    "name": name,
-                    "mobile_number": mobile,
-                    "address_label": addressType.toString(),
-                    "email": email,
-                    "address": address,
-                    "lat": _selectedLatLng.latitude,
-                    "lng": _selectedLatLng.longitude,
-                    "zone_id": dashController.zoneIdForBooking,
-                    "message": message,
-                    "date": DateConverter.dateTimeForCoupon(selectedDate)
-                        .toString(),
-                    "time":
-                    formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
-                        .toString(),
-                    "payment_method": "razor_pay",
-                    "city": city,
-                    "zip_code": postalCode,
-                    "country": country,
-                    "street": street,
-                    "service_preference": servicePreference
-                  }, dashController.selectedVariations, showLoader: true);
+                  try {
+                    dashboardController.createBookingLoader.value = true;
 
-                  await dashboardController.getCartListing(
-                    limit: "100",
-                    offset: "1",
-                    isRoute: false,
-                    showLoader: true,
-                  );
+                    final success = await dashController.postOrder(
+                      {
+                        "name": name,
+                        "mobile_number": mobile,
+                        "address_label": addressType.toString(),
+                        "email": email,
+                        "address": address,
+                        "lat": _selectedLatLng.latitude,
+                        "lng": _selectedLatLng.longitude,
+                        "zone_id": dashController.zoneIdForBooking,
+                        "message": message,
+                        "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+                        "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
+                        "payment_method": "razor_pay",
+                        "city": city,
+                        "zip_code": postalCode,
+                        "country": country,
+                        "street": street,
+                        "service_preference": servicePreference,
+                        "house": houseController.text.trim(),
+                        "floor": floorController.text.trim(),
+                        "assign_customer_name": assignNameController.text.trim(),
+                        "assign_customer_phone": assignPhoneController.text.trim(),
+                        "assign_customer_email": assignEmailController.text.trim(),
+                      },
+                      dashController.selectedVariations,
+                      showLoader: false,
+                    );
+
+                    if (success) {
+                      dashboardController.createBookingLoader.value = false;
+                      Get.offAll(() => SuccessFullScreen());
+
+                      dashboardController.getCartListing(
+                        limit: "100",
+                        offset: "1",
+                        isRoute: false,
+                        showLoader: false,
+                      );
+                    }
+                  } catch (e) {
+                    debugPrint("Digital payment booking error: $e");
+                  } finally {
+                    dashboardController.createBookingLoader.value = false;
+                  }
                 },
               );
             }

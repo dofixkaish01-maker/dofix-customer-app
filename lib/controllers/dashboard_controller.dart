@@ -55,6 +55,7 @@ class DashBoardController extends GetxController implements GetxService {
   bool isCategoryServiceLoading = false;
   bool isSubCategoryLoading = false;
   String selectedCategoryName = "";
+
   bool get isLoginLoading => _isLoginLoading;
   CategoryModel? categoryList = CategoryModel(data: []);
   CategoryModel? allCategories = CategoryModel(data: []); // For ServiceScreens
@@ -921,12 +922,172 @@ class DashBoardController extends GetxController implements GetxService {
     return [];
   }
 
-  Future<void> postOrder(dynamic body, List<String> selectedVariations,
-      {required bool showLoader}) async {
+  // Future<void> postOrder(dynamic body, List<String> selectedVariations,
+  //     {required bool showLoader}) async {
+  //   log("Starting postOrder request...");
+  //   ApiClient apiClient = ApiClient(
+  //       appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
+  //   //
+  //   // if (showLoader) {
+  //   //   showLoading();
+  //   //   update();
+  //   // }
+  //
+  //   var headers = {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': apiClient.mainHeaders["Authorization"] ?? "",
+  //   };
+  //
+  //   var request = http.Request(
+  //     'POST',
+  //     Uri.parse(AppConstants.baseUrl + AppConstants.bookingRequest),
+  //   );
+  //   request.body = json.encode({
+  //     "booking_type": "daily",
+  //     "dates": null,
+  //     "message": "${body["message"]}",
+  //     "guest_id": "",
+  //     "partialPayment": "",
+  //     "is_partial": 0,
+  //     "new_user_info": null,
+  //     "payment_method": body['payment_method'],
+  //     // NEW KEYS ADD HERE
+  //     "assign_customer_name": "${body["assign_customer_name"]}",
+  //     "assign_customer_phone": "${body["assign_customer_phone"]}",
+  //     "assign_customer_email": "${body["assign_customer_email"]}",
+  //     "service_address": json.encode(
+  //       {
+  //         "id": null,
+  //         "address_type": "service",
+  //         "address_label": "${body["address_label"]}",
+  //         "contact_person_name": "${body["name"]}",
+  //         "contact_person_number": "+91${body["mobile_number"]}",
+  //         "address": "${body["address"]}",
+  //         "lat": "${body["lat"]}",
+  //         "lon": "${body["lng"]}",
+  //         "city": "${body["city"]}",
+  //         "zip_code": "${body["zip_code"]}",
+  //         "country": "${body["country"]}",
+  //         "zone_id": "${body["zone_id"]}",
+  //         "_method": null,
+  //         "street": "${body["street"]}",
+  //         "house": "",
+  //         "floor": "",
+  //         "available_service_count": null
+  //       },
+  //     ),
+  //     "service_address_id": null,
+  //     "service_schedule": "${body["date"]} ${body["time"]}",
+  //     "service_type": "regular",
+  //     "zone_id": apiClient.mainHeaders["zoneID"] ?? "",
+  //     "service_preference": "${body["service_preference"]}",
+  //   });
+  //
+  //   request.headers.addAll(headers);
+  //   log("Booking Request Body: ${request.body}");
+  //   log("Sending booking request to server...");
+  //   try {
+  //     // Add timeout to prevent hanging requests
+  //     http.StreamedResponse response = await request.send().timeout(
+  //       Duration(seconds: 120),
+  //       onTimeout: () {
+  //         throw Exception('Request timed out after 120 seconds');
+  //       },
+  //     );
+  //     log("Received response from server with status: ${response.statusCode}");
+  //     String responseBody = await response.stream.bytesToString();
+  //     log("Booking Response: $responseBody");
+  //
+  //     if (response.statusCode == 200) {
+  //       // Parse response to check the flag
+  //       try {
+  //         Map<String, dynamic> responseJson = json.decode(responseBody);
+  //         String flag = responseJson['flag'] ?? '';
+  //         String message = responseJson['message'] ?? '';
+  //
+  //         if (flag != 'failed') {
+  //           // Success case
+  //           // hideLoading();
+  //           // update();
+  //           Get.offAll(() => SuccessFullScreen());
+  //           // print("Success Response: $responseBody");
+  //         } else {
+  //           // API returned failed flag
+  //           // hideLoading();
+  //           // update();
+  //           // print("API returned failed flag: $message");
+  //           showCustomSnackBar(
+  //               message.isNotEmpty
+  //                   ? message
+  //                   : "Booking request failed. Please try again.",
+  //               isError: true);
+  //         }
+  //       } catch (parseError) {
+  //         // If response parsing fails, treat as error
+  //         hideLoading();
+  //         update();
+  //         // print("Failed to parse response: $parseError");
+  //         // print("Response Body: $responseBody");
+  //         showCustomSnackBar("Invalid response from server. Please try again.",
+  //             isError: true);
+  //       }
+  //     } else {
+  //       // hideLoading();
+  //       // update();
+  //       // print(" API Error ${response.statusCode}");
+  //       // print(" Response Reason: ${response.reasonPhrase}");
+  //       // print(" Response Body: $responseBody");
+  //       // print(" Headers: ${response.headers}");
+  //
+  //       // Show error message to user
+  //       showCustomSnackBar(
+  //           response.reasonPhrase ??
+  //               "Booking request failed. Please try again.",
+  //           isError: true);
+  //     }
+  //   } catch (e, stackTrace) {
+  //     log(" Booking request failed with exception: $e");
+  //     // hideLoading();
+  //     // update();
+  //     debugPrint("Exception: $e");
+  //     debugPrint("Stack Trace: $stackTrace");
+  //
+  //     // Show specific error message to user
+  //     String errorMessage =
+  //         "Network error occurred. Please check your connection and try again.";
+  //     if (e.toString().contains('timeout') ||
+  //         e.toString().contains('TimeoutException')) {
+  //       errorMessage =
+  //           "Booking request timed out. This might be due to server overload. Please try again in a few moments.";
+  //       log("Request timed out after 30 seconds");
+  //     } else if (e.toString().contains('connection') ||
+  //         e.toString().contains('SocketException')) {
+  //       errorMessage =
+  //           "Connection failed. Please check your internet connection and try again.";
+  //       log("Connection error detected");
+  //     } else if (e.toString().contains('FormatException')) {
+  //       errorMessage = "Server response format error. Please try again later.";
+  //       log("Response format error");
+  //     }
+  //
+  //     log("Showing error message to user: $errorMessage");
+  //     showCustomSnackBar(errorMessage, isError: true);
+  //   }
+  // }
+
+  Future<bool> postOrder(
+    dynamic body,
+    List<String> selectedVariations, {
+    required bool showLoader,
+  }) async {
     log("Starting postOrder request...");
+
     ApiClient apiClient = ApiClient(
-        appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
-    //
+      appBaseUrl: AppConstants.baseUrl,
+      sharedPreferences: sharedPreferences,
+    );
+
+    // OLD LOADER LOGIC - intentionally kept commented
     // if (showLoader) {
     //   showLoading();
     //   update();
@@ -937,11 +1098,7 @@ class DashBoardController extends GetxController implements GetxService {
       'Authorization': apiClient.mainHeaders["Authorization"] ?? "",
     };
 
-    var request = http.Request(
-      'POST',
-      Uri.parse(AppConstants.baseUrl + AppConstants.bookingRequest),
-    );
-    request.body = json.encode({
+    final Map<String, dynamic> requestBody = {
       "booking_type": "daily",
       "dates": null,
       "message": "${body["message"]}",
@@ -950,115 +1107,172 @@ class DashBoardController extends GetxController implements GetxService {
       "is_partial": 0,
       "new_user_info": null,
       "payment_method": body['payment_method'],
-      // NEW KEYS ADD HERE
+
+      // NEW KEYS
       "assign_customer_name": "${body["assign_customer_name"]}",
       "assign_customer_phone": "${body["assign_customer_phone"]}",
       "assign_customer_email": "${body["assign_customer_email"]}",
-      "service_address": json.encode(
-        {
-          "id": null,
-          "address_type": "service",
-          "address_label": "${body["address_label"]}",
-          "contact_person_name": "${body["name"]}",
-          "contact_person_number": "+91${body["mobile_number"]}",
-          "address": "${body["address"]}",
-          "lat": "${body["lat"]}",
-          "lon": "${body["lng"]}",
-          "city": "${body["city"]}",
-          "zip_code": "${body["zip_code"]}",
-          "country": "${body["country"]}",
-          "zone_id": "${body["zone_id"]}",
-          "_method": null,
-          "street": "${body["street"]}",
-          "house": "",
-          "floor": "",
-          "available_service_count": null
-        },
-      ),
+
+      // service_address backend ke liye encoded string me hi bhejna hai
+      "service_address": json.encode({
+        "id": null,
+        "address_type": "service",
+        "address_label": "${body["address_label"]}",
+        "contact_person_name": "${body["name"]}",
+        "contact_person_number": "+91${body["mobile_number"]}",
+        "address": "${body["address"]}",
+        "lat": "${body["lat"]}",
+        "lon": "${body["lng"]}",
+        "city": "${body["city"]}",
+        "zip_code": "${body["zip_code"]}",
+        "country": "${body["country"]}",
+        "zone_id": "${body["zone_id"]}",
+        "_method": null,
+        "street": "${body["street"]}",
+        "house": "${body["house"] ?? ""}",
+        "floor": "${body["floor"] ?? ""}",
+        "available_service_count": null
+      }),
+
+      // OLD OBJECT FORMAT - intentionally kept commented
+      // "service_address": {
+      //   "id": null,
+      //   "address_type": "service",
+      //   "address_label": "${body["address_label"]}",
+      //   "contact_person_name": "${body["name"]}",
+      //   "contact_person_number": "+91${body["mobile_number"]}",
+      //   "address": "${body["address"]}",
+      //   "lat": "${body["lat"]}",
+      //   "lon": "${body["lng"]}",
+      //   "city": "${body["city"]}",
+      //   "zip_code": "${body["zip_code"]}",
+      //   "country": "${body["country"]}",
+      //   "zone_id": "${body["zone_id"]}",
+      //   "_method": null,
+      //   "street": "${body["street"]}",
+      //   "house": "${body["house"] ?? ""}",
+      //   "floor": "${body["floor"] ?? ""}",
+      //   "available_service_count": null,
+      // },
+
       "service_address_id": null,
       "service_schedule": "${body["date"]} ${body["time"]}",
       "service_type": "regular",
-      "zone_id": apiClient.mainHeaders["zoneID"] ?? "",
-      "service_preference": "${body["service_preference"]}",
-    });
 
-    request.headers.addAll(headers);
-    log("Booking Request Body: ${request.body}");
+      // IMPORTANT FIX
+      "zone_id": "${body["zone_id"]}",
+
+      // OLD ZONE SOURCE - intentionally kept commented
+      // "zone_id": apiClient.mainHeaders["zoneID"] ?? "",
+
+      "service_preference": "${body["service_preference"]}",
+
+      /// Agar backend ko variations chahiye to uncomment kar sakte ho
+      // "selected_variations": selectedVariations,
+    };
+
+    log("Booking Request Body: ${json.encode(requestBody)}");
     log("Sending booking request to server...");
+
     try {
-      // Add timeout to prevent hanging requests
-      http.StreamedResponse response = await request.send().timeout(
-        Duration(seconds: 120),
+      final stopwatch = Stopwatch()..start();
+
+      final http.Response response = await http
+          .post(
+        Uri.parse(AppConstants.baseUrl + AppConstants.bookingRequest),
+        headers: headers,
+        body: json.encode(requestBody),
+      )
+          .timeout(
+        const Duration(seconds: 100),
         onTimeout: () {
-          throw Exception('Request timed out after 120 seconds');
+          throw Exception('Request timed out after 100 seconds');
         },
       );
+
+      final String responseBody = response.body;
+
       log("Received response from server with status: ${response.statusCode}");
-      String responseBody = await response.stream.bytesToString();
+      log("Response received in ${stopwatch.elapsedMilliseconds} ms");
       log("Booking Response: $responseBody");
 
       if (response.statusCode == 200) {
-        // Parse response to check the flag
         try {
           Map<String, dynamic> responseJson = json.decode(responseBody);
-          String flag = responseJson['flag'] ?? '';
-          String message = responseJson['message'] ?? '';
+          String flag = responseJson['flag']?.toString() ?? '';
+          String message = responseJson['message']?.toString() ?? '';
+
+          log("Parsed response in ${stopwatch.elapsedMilliseconds} ms");
+          log("Response flag: $flag");
+          log("Response message: $message");
 
           if (flag != 'failed') {
-            // Success case
+            // OLD LOADER HIDE LOGIC - intentionally kept commented
             // hideLoading();
             // update();
-            Get.offAll(() => SuccessFullScreen());
-            // print("Success Response: $responseBody");
+
+            // OLD NAVIGATION LOGIC - intentionally kept commented
+            // Get.offAll(() => SuccessFullScreen());
+
+            return true;
           } else {
-            // API returned failed flag
-            // hideLoading();
-            // update();
-            // print("API returned failed flag: $message");
             showCustomSnackBar(
-                message.isNotEmpty
-                    ? message
-                    : "Booking request failed. Please try again.",
-                isError: true);
+              message.isNotEmpty
+                  ? message
+                  : "Booking request failed. Please try again.",
+              isError: true,
+            );
+            return false;
           }
-        } catch (parseError) {
-          // If response parsing fails, treat as error
-          hideLoading();
-          update();
-          // print("Failed to parse response: $parseError");
-          // print("Response Body: $responseBody");
-          showCustomSnackBar("Invalid response from server. Please try again.",
-              isError: true);
+        } catch (parseError, parseStack) {
+          log("Failed to parse response: $parseError");
+          debugPrint("Parse Stack Trace: $parseStack");
+          debugPrint("Response Body: $responseBody");
+
+          // OLD LOGIC - intentionally kept commented
+          // hideLoading();
+          // update();
+
+          showCustomSnackBar(
+            "Invalid response from server. Please try again.",
+            isError: true,
+          );
+          return false;
         }
       } else {
+        // OLD LOADER HIDE LOGIC - intentionally kept commented
         // hideLoading();
         // update();
-        // print(" API Error ${response.statusCode}");
-        // print(" Response Reason: ${response.reasonPhrase}");
-        // print(" Response Body: $responseBody");
-        // print(" Headers: ${response.headers}");
 
-        // Show error message to user
+        log("API Error ${response.statusCode}");
+        log("Response Reason: ${response.reasonPhrase}");
+        log("Response Body: $responseBody");
+        log("Headers: ${response.headers}");
+
         showCustomSnackBar(
-            response.reasonPhrase ??
-                "Booking request failed. Please try again.",
-            isError: true);
+          response.reasonPhrase ?? "Booking request failed. Please try again.",
+          isError: true,
+        );
+        return false;
       }
     } catch (e, stackTrace) {
-      log("❌ Booking request failed with exception: $e");
+      log("Booking request failed with exception: $e");
+
+      // OLD LOADER HIDE LOGIC - intentionally kept commented
       // hideLoading();
       // update();
+
       debugPrint("Exception: $e");
       debugPrint("Stack Trace: $stackTrace");
 
-      // Show specific error message to user
       String errorMessage =
           "Network error occurred. Please check your connection and try again.";
-      if (e.toString().contains('timeout') ||
+
+      if (e.toString().toLowerCase().contains('timeout') ||
           e.toString().contains('TimeoutException')) {
         errorMessage =
             "Booking request timed out. This might be due to server overload. Please try again in a few moments.";
-        log("Request timed out after 30 seconds");
+        log("Request timed out after 100 seconds");
       } else if (e.toString().contains('connection') ||
           e.toString().contains('SocketException')) {
         errorMessage =
@@ -1071,6 +1285,7 @@ class DashBoardController extends GetxController implements GetxService {
 
       log("Showing error message to user: $errorMessage");
       showCustomSnackBar(errorMessage, isError: true);
+      return false;
     }
   }
 
