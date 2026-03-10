@@ -38,19 +38,18 @@ class _ServiceDetailsState extends State<ServiceDetails>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final dashboardController = Get.find<DashBoardController>();
-      final args = Get.arguments;
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = Get.arguments;
       final serviceId = args?["service_id"];
 
       if (serviceId != null) {
-        dashboardController.getServicesDetails(serviceId);
         Get.find<BookingController>().getServiceReview(serviceId: serviceId);
       }
     });
+
     _controller = AnimationController(
-      duration: Duration(milliseconds: 500), // faster
+      duration: Duration(milliseconds: 500),
       vsync: this,
     );
 
@@ -338,133 +337,223 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                       ),
                               ),
                             ),
+                            // Obx(() {
+                            //   return Padding(
+                            //     padding: const EdgeInsets.all(16.0),
+                            //     child: Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                            //       children: [
+                            //         Text(
+                            //           'Rating',
+                            //           style: TextStyle(
+                            //               fontSize: 16,
+                            //               fontWeight: FontWeight.w500),
+                            //         ),
+                            //         RatingSummary(
+                            //           avergeRating: bookingController.ratingAvg.toDouble(),
+                            //           starCounts: bookingController.starCounts,
+                            //         ),
+                            //         // RatingSummary(
+                            //         //   avergeRating: double.parse(bookingController.ratingAvg.toStringAsFixed(1)),
+                            //         //   starCounts: bookingController.starCounts,
+                            //         // ),
+                            //         const SizedBox(height: 20),
+                            //         if (bookingController
+                            //                 .serviceReviewsModel.value !=
+                            //             null)
+                            //           Row(
+                            //             mainAxisAlignment:
+                            //                 MainAxisAlignment.spaceBetween,
+                            //             children: [
+                            //               const Text(
+                            //                 'Reviews',
+                            //                 style: TextStyle(
+                            //                   fontSize: 16,
+                            //                   fontWeight: FontWeight.w500,
+                            //                 ),
+                            //               ),
+                            //               // InkWell(
+                            //               //   onTap: () {
+                            //               //     showReviewFilterBottomSheet(
+                            //               //       context,
+                            //               //       selectedRating:
+                            //               //           bookingController.selectedRating,
+                            //               //       recentlyAdded:
+                            //               //           bookingController.recentlyAdded,
+                            //               //       onApply: (rating, recentlyAdded) {
+                            //               //         bookingController.applyReviewFilter(
+                            //               //           rating: rating ?? 0,
+                            //               //           recentlyAdded: recentlyAdded,
+                            //               //         );
+                            //               //       },
+                            //               //     );
+                            //               //   },
+                            //               //   child: const Row(
+                            //               //     children: [
+                            //               //       Icon(
+                            //               //         Icons.filter_list,
+                            //               //         color: primaryBlue,
+                            //               //       ),
+                            //               //       Text(
+                            //               //         'Filter',
+                            //               //         style: TextStyle(
+                            //               //           fontSize: 14,
+                            //               //           fontWeight: FontWeight.w400,
+                            //               //           color: primaryBlue,
+                            //               //         ),
+                            //               //       )
+                            //               //     ],
+                            //               //   ),
+                            //               // ),
+                            //             ],
+                            //           ),
+                            //         if (bookingController
+                            //                 .serviceReviewsModel.value !=
+                            //             null)
+                            //           const SizedBox(height: 10),
+                            //         if (bookingController
+                            //                 .serviceReviewsModel.value !=
+                            //             null)
+                            //           (bookingController.serviceReviewsModel
+                            //                           .value !=
+                            //                       null &&
+                            //                   bookingController
+                            //                           .serviceReviewsModel
+                            //                           .value
+                            //                           ?.reviews
+                            //                           ?.length !=
+                            //                       0)
+                            //               ? SizedBox(
+                            //                   height: 300,
+                            //                   child: ListView.builder(
+                            //                     physics:
+                            //                         BouncingScrollPhysics(),
+                            //                     itemCount: bookingController
+                            //                             .serviceReviewsModel
+                            //                             .value
+                            //                             ?.reviews
+                            //                             ?.length ??
+                            //                         0,
+                            //                     itemBuilder: (context, index) {
+                            //                       final ServiceReview review =
+                            //                           bookingController
+                            //                                   .serviceReviewsModel
+                            //                                   .value
+                            //                                   ?.reviews?[index] ??
+                            //                               ServiceReview();
+                            //                       return ReviewCard(
+                            //                         review: review,
+                            //                       );
+                            //                     },
+                            //                   ),
+                            //                 )
+                            //               : SizedBox(
+                            //                   height: 100,
+                            //                   child: Center(
+                            //                     child: Text(
+                            //                       "No reviews yet",
+                            //                       style: TextStyle(
+                            //                         fontSize: 16,
+                            //                         color: Colors.grey,
+                            //                       ),
+                            //                     ),
+                            //                   ),
+                            //                 ),
+                            //         sizedBox65()
+                            //       ],
+                            //     ),
+                            //   );
+                            // }),
                             Obx(() {
                               return Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'Rating',
                                       style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    RatingSummary(
-                                      avergeRating: bookingController.ratingAvg,
-                                      starCounts: bookingController.starCounts,
-                                    ),
-                                    // RatingSummary(
-                                    //   avergeRating: double.parse(bookingController.ratingAvg.toStringAsFixed(1)),
-                                    //   starCounts: bookingController.starCounts,
-                                    // ),
-                                    const SizedBox(height: 20),
-                                    if (bookingController
-                                            .serviceReviewsModel.value !=
-                                        null)
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            'Reviews',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          // InkWell(
-                                          //   onTap: () {
-                                          //     showReviewFilterBottomSheet(
-                                          //       context,
-                                          //       selectedRating:
-                                          //           bookingController.selectedRating,
-                                          //       recentlyAdded:
-                                          //           bookingController.recentlyAdded,
-                                          //       onApply: (rating, recentlyAdded) {
-                                          //         bookingController.applyReviewFilter(
-                                          //           rating: rating ?? 0,
-                                          //           recentlyAdded: recentlyAdded,
-                                          //         );
-                                          //       },
-                                          //     );
-                                          //   },
-                                          //   child: const Row(
-                                          //     children: [
-                                          //       Icon(
-                                          //         Icons.filter_list,
-                                          //         color: primaryBlue,
-                                          //       ),
-                                          //       Text(
-                                          //         'Filter',
-                                          //         style: TextStyle(
-                                          //           fontSize: 14,
-                                          //           fontWeight: FontWeight.w400,
-                                          //           color: primaryBlue,
-                                          //         ),
-                                          //       )
-                                          //     ],
-                                          //   ),
-                                          // ),
-                                        ],
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                    // if (bookingController
-                                    //         .serviceReviewsModel.value !=
-                                    //     null)
-                                    const SizedBox(height: 10),
-                                    if (bookingController
-                                            .serviceReviewsModel.value !=
-                                        null)
-                                      (bookingController.serviceReviewsModel
-                                                      .value !=
-                                                  null &&
-                                              bookingController
-                                                      .serviceReviewsModel
-                                                      .value
-                                                      ?.reviews
-                                                      ?.length !=
-                                                  0)
-                                          ? SizedBox(
-                                              height: 300,
-                                              child: ListView.builder(
-                                                physics:
-                                                    BouncingScrollPhysics(),
-                                                itemCount: bookingController
+                                    ),
+
+                                    RatingSummary(
+                                      averageRating:
+                                          controller.serviceModel.avgRating ??
+                                              0.0, //4.8
+                                      ratingCount:
+                                          controller.serviceModel.ratingCount ??
+                                              0, //24
+                                    ),
+
+                                    const SizedBox(height: 20),
+
+                                    /// Reviews Title
+                                    if ((controller.serviceModel.ratingCount ??
+                                            0) >
+                                        0)
+                                      const Text(
+                                        'Reviews',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+
+                                    if ((bookingController.serviceReviewsModel
+                                            .value?.reviews?.isNotEmpty ??
+                                        false))
+                                      const SizedBox(height: 10),
+
+                                    /// Reviews List
+                                    if ((bookingController.serviceReviewsModel
+                                            .value?.reviews?.isNotEmpty ??
+                                        false))
+                                      SizedBox(
+                                        height: 300,
+                                        child: ListView.builder(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemCount: bookingController
+                                                  .serviceReviewsModel
+                                                  .value
+                                                  ?.reviews
+                                                  ?.length ??
+                                              0,
+                                          itemBuilder: (context, index) {
+                                            final ServiceReview review =
+                                                bookingController
                                                         .serviceReviewsModel
                                                         .value
-                                                        ?.reviews
-                                                        ?.length ??
-                                                    0,
-                                                itemBuilder: (context, index) {
-                                                  final ServiceReview review =
-                                                      bookingController
-                                                              .serviceReviewsModel
-                                                              .value
-                                                              ?.reviews?[index] ??
-                                                          ServiceReview();
-                                                  return ReviewCard(
-                                                    review: review,
-                                                  );
-                                                },
-                                              ),
-                                            )
-                                          : SizedBox(
-                                              height: 100,
-                                              child: Center(
-                                                child: Text(
-                                                  "No reviews yet",
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                              ),
+                                                        ?.reviews?[index] ??
+                                                    ServiceReview();
+
+                                            return ReviewCard(
+                                              review: review,
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    else
+                                      const SizedBox(
+                                        height: 100,
+                                        child: Center(
+                                          child: Text(
+                                            "No reviews yet",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey,
                                             ),
-                                    sizedBox65()
+                                          ),
+                                        ),
+                                      ),
+
+                                    sizedBox65(),
                                   ],
                                 ),
                               );
-                            }),
+                            })
                           ],
                         ),
                       ),
@@ -836,7 +925,6 @@ void ShowAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
                                     "category_id": serviceModel.categoryId,
                                     "sub_category_id":
                                         serviceModel.subCategoryId,
-                                    "tax_amount":79
                                   },
                                   Get.find<DashBoardController>()
                                       .selectedVariations,
