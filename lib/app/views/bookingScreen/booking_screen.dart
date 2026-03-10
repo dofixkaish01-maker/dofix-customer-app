@@ -2736,27 +2736,24 @@ class _BookingScreenState extends State<BookingScreen> {
                       readOnly: true,
                       isEnabled: true,
                       onTap: () async {
-                        // Ensure keyboard is hidden to prevent iOS freeze
                         FocusScope.of(context).unfocus();
-
-                        // Wait one frame for UI to render
-                        await Future.delayed(Duration.zero);
 
                         final dashController = Get.find<DashBoardController>();
 
-                        // Show loader safely
-                        Get.dialog(
-                          const Center(
-                              child:
-                                  CupertinoActivityIndicator()), // iOS friendly
-                          barrierDismissible: false,
-                        );
+                        /// Agar address already load hai to API call mat karo
+                        if (dashController.addressResponse.data.isEmpty) {
+                          await Future.delayed(Duration.zero);
 
-                        try {
-                          await dashController.getAddressLists();
-                        } finally {
-                          // Close loader
-                          if (Get.isDialogOpen ?? false) Get.back();
+                          Get.dialog(
+                            const Center(child: CupertinoActivityIndicator()),
+                            barrierDismissible: false,
+                          );
+
+                          try {
+                            await dashController.getAddressLists();
+                          } finally {
+                            if (Get.isDialogOpen ?? false) Get.back();
+                          }
                         }
 
                         if (dashController.addressResponse.data.isEmpty) {
@@ -2764,7 +2761,6 @@ class _BookingScreenState extends State<BookingScreen> {
                           return;
                         }
 
-                        // Show address selection dialog
                         showAddressChoiceDialog(
                           context,
                           dashController.addressResponse.data,
@@ -2772,6 +2768,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             setState(() {
                               _selectedLatLng =
                                   LatLng(address.lat, address.lon);
+
                               dashController.addressController.text =
                                   address.address;
 
