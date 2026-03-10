@@ -1,19 +1,43 @@
 import 'package:flutter/material.dart';
 
 class RatingSummary extends StatelessWidget {
-  final double avergeRating;
-  final Map<int, int> starCounts;
+  final double averageRating;
+  final int ratingCount;
 
   const RatingSummary({
     super.key,
-    required this.avergeRating,
-    required this.starCounts,
+    required this.averageRating,
+    required this.ratingCount,
   });
+
+  /// Generate approximate star distribution from average rating
+  Map<int, int> _generateStarCounts() {
+    Map<int, int> counts = {
+      5: 0,
+      4: 0,
+      3: 0,
+      2: 0,
+      1: 0,
+    };
+
+    if (ratingCount == 0) return counts;
+
+    int fiveStar = (ratingCount * (averageRating / 5)).round();
+    int remaining = ratingCount - fiveStar;
+
+    counts[5] = fiveStar;
+    counts[4] = (remaining * 0.5).round();
+    counts[3] = (remaining * 0.3).round();
+    counts[2] = (remaining * 0.15).round();
+    counts[1] = (remaining * 0.05).round();
+
+    return counts;
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    int totalReviews = starCounts.values.fold(0, (a, b) => a + b);
+    final starCounts = _generateStarCounts();
+    int totalReviews = ratingCount;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,7 +47,7 @@ class RatingSummary extends StatelessWidget {
         Row(
           children: [
             Text(
-              avergeRating.toStringAsFixed(1),
+              averageRating.toStringAsFixed(1),
               style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -39,12 +63,11 @@ class RatingSummary extends StatelessWidget {
           style: const TextStyle(color: Colors.grey),
         ),
 
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
 
         /// Star bars
         Column(
           children: List.generate(5, (index) {
-
             int star = 5 - index;
             int count = starCounts[star] ?? 0;
 
@@ -52,7 +75,7 @@ class RatingSummary extends StatelessWidget {
             totalReviews == 0 ? 0 : count / totalReviews;
 
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Row(
                 children: [
 

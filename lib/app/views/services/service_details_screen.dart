@@ -477,14 +477,14 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                     ),
 
                                     RatingSummary(
-                                      avergeRating: bookingController.ratingAvg.toDouble(),
-                                      starCounts: bookingController.starCounts,
+                                      averageRating: controller.serviceModel.avgRating ?? 0.0,//4.8
+                                      ratingCount: controller.serviceModel.ratingCount ?? 0,//24
                                     ),
 
                                     const SizedBox(height: 20),
 
                                     /// Reviews Title
-                                    if ((bookingController.serviceReviewsModel.value?.reviews?.isNotEmpty ?? false))
+                                    if ((controller.serviceModel.ratingCount ?? 0) > 0)
                                       const Text(
                                         'Reviews',
                                         style: TextStyle(
