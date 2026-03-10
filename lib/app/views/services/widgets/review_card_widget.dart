@@ -22,24 +22,33 @@ class ReviewCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 20,
-                  child: Icon(Icons.person),
+                  backgroundColor: Colors.grey.shade200,
+                  backgroundImage: review.customer?.profileImageFullPath != null
+                      ? NetworkImage(review.customer!.profileImageFullPath.toString())
+                      : null,
+                  child: review.customer?.profileImageFullPath == null
+                      ? const Icon(Icons.person, color: Colors.grey)
+                      : null,
+
                 ),
+
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${review.customer?.firstName} ${review.customer?.lastName}',
-                      style: TextStyle(
+                      '${review.customer?.firstName ?? ''} ${review.customer?.lastName ?? ''}',
+                      style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
                       ),
                     ),
+
                     Text(
                       review.updatedAt != null
-                          ? '${DateFormat('dd-MM-yyyy').format(review.updatedAt!.toLocal())}'
+                          ? DateFormat('dd-MM-yyyy').format(review.updatedAt!.toLocal())
                           : 'Reviewed on N/A',
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.70),
@@ -52,20 +61,16 @@ class ReviewCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Row(
-                  children: [
-                    Text(
-                      (review.reviewRating ?? 0).toString(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                      ),
-                    ),
-                    Icon(
-                      Icons.star_rounded,
+                  children: List.generate(
+                    5,
+                        (index) => Icon(
+                      index < (review.reviewRating ?? 0)
+                          ? Icons.star_rounded
+                          : Icons.star_border_rounded,
                       color: ratingsOrange,
                       size: 18,
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
