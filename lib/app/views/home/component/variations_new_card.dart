@@ -19,6 +19,7 @@ class VariationsNewCard extends StatefulWidget {
   final String serviceDescription;
   final String variantKey;
   final ServiceModel serviceModel;
+  final int taxAmount;
 
   const VariationsNewCard({
     super.key,
@@ -32,6 +33,7 @@ class VariationsNewCard extends StatefulWidget {
     required this.serviceTimeDuration,
     required this.variantKey,
     required this.serviceModel,
+    required this.taxAmount
   });
 
   @override
@@ -113,6 +115,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
           "service_id": widget.serviceModel.id,
           "category_id": widget.serviceModel.categoryId,
           "sub_category_id": widget.serviceModel.subCategoryId,
+          // "tax_amount":79,
           "quantity": "1",
         },
         dashboardController.selectedVariations,

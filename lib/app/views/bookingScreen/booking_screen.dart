@@ -104,10 +104,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
     addressController.text = "";
     streetController.text = "";
-    Get
-        .find<DashBoardController>()
-        .addressController
-        .text = "";
+    Get.find<DashBoardController>().addressController.text = "";
     _lastValidLatLng = _selectedLatLng;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -120,15 +117,16 @@ class _BookingScreenState extends State<BookingScreen> {
     return _allowedCities.contains(cityName.trim().toLowerCase());
   }
 
-  Future<void> _applyPlacemarkToFields(Placemark place,
-      StateSetter modalSetState,) async {
+  Future<void> _applyPlacemarkToFields(
+    Placemark place,
+    StateSetter modalSetState,
+  ) async {
     modalSetState(() {
       floorController.text = "";
       houseController.text = "";
       streetController.text = place.street ?? place.name ?? "";
       mapController.text =
-          "${place.street ?? place.name ?? ''}, ${place.locality ?? ''}, ${place
-              .country ?? ''}"
+          "${place.street ?? place.name ?? ''}, ${place.locality ?? ''}, ${place.country ?? ''}"
               .replaceAll(RegExp(r'(, )+'), ', ')
               .replaceAll(RegExp(r'^, |, $'), '');
 
@@ -169,9 +167,9 @@ class _BookingScreenState extends State<BookingScreen> {
       final place = placemarks.first;
 
       final cityName = (place.locality ??
-          place.subAdministrativeArea ??
-          place.administrativeArea ??
-          "")
+              place.subAdministrativeArea ??
+              place.administrativeArea ??
+              "")
           .trim()
           .toLowerCase();
 
@@ -199,9 +197,11 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  Future<void> _handleSearchSelection(double lat,
-      double lng,
-      StateSetter modalSetState,) async {
+  Future<void> _handleSearchSelection(
+    double lat,
+    double lng,
+    StateSetter modalSetState,
+  ) async {
     modalSetState(() {
       _selectedLatLng = LatLng(lat, lng);
     });
@@ -388,7 +388,7 @@ class _BookingScreenState extends State<BookingScreen> {
   Future<void> _getAddressFromLatLng(LatLng position) async {
     try {
       List<Placemark> placemarks =
-      await placemarkFromCoordinates(position.latitude, position.longitude);
+          await placemarkFromCoordinates(position.latitude, position.longitude);
 
       if (placemarks.isEmpty) {
         hideLoading();
@@ -398,9 +398,9 @@ class _BookingScreenState extends State<BookingScreen> {
       Placemark place = placemarks.first;
 
       final cityName = (place.locality ??
-          place.subAdministrativeArea ??
-          place.administrativeArea ??
-          "")
+              place.subAdministrativeArea ??
+              place.administrativeArea ??
+              "")
           .trim()
           .toLowerCase();
 
@@ -411,10 +411,7 @@ class _BookingScreenState extends State<BookingScreen> {
         regionMessage = allowed ? "" : "Service not available in this region";
 
         addressController.text = "";
-        Get
-            .find<DashBoardController>()
-            .addressController
-            .text = "";
+        Get.find<DashBoardController>().addressController.text = "";
 
         city = place.locality ?? place.subAdministrativeArea ?? "";
         state = place.administrativeArea ?? "";
@@ -423,8 +420,7 @@ class _BookingScreenState extends State<BookingScreen> {
         postalCode = place.postalCode ?? "";
 
         mapController.text =
-            "${place.street ?? place.name ?? ''}, ${place.locality ??
-                ''}, ${place.country ?? ''}"
+            "${place.street ?? place.name ?? ''}, ${place.locality ?? ''}, ${place.country ?? ''}"
                 .replaceAll(RegExp(r'(, )+'), ', ')
                 .replaceAll(RegExp(r'^, |, $'), '');
       });
@@ -482,16 +478,18 @@ class _BookingScreenState extends State<BookingScreen> {
     return child;
   }
 
-  void showAddressChoiceDialog(BuildContext context,
-      List<AddressData> addressList,
-      Function(AddressData) onSelectAddress,) {
+  void showAddressChoiceDialog(
+    BuildContext context,
+    List<AddressData> addressList,
+    Function(AddressData) onSelectAddress,
+  ) {
     if (addressList.isEmpty) {
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: const Text(
               "No Saved Addresses",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -533,17 +531,13 @@ class _BookingScreenState extends State<BookingScreen> {
           child: StatefulBuilder(
             builder: (context, setState) {
               return Container(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.75,
+                height: MediaQuery.of(context).size.height * 0.75,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
                 ),
                 child: Column(
                   children: [
-
                     /// Drag Handle
                     Container(
                       margin: const EdgeInsets.only(top: 10, bottom: 8),
@@ -625,19 +619,19 @@ class _BookingScreenState extends State<BookingScreen> {
                                 children: [
                                   Icon(
                                     Icons.location_on,
-                                    color: isSelected ? Colors.blue : Colors
-                                        .grey,
+                                    color:
+                                        isSelected ? Colors.blue : Colors.grey,
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           CommonFunctions()
                                               .capitalizeFirstLetter(
-                                              address.addressLabel),
+                                                  address.addressLabel),
                                           style: const TextStyle(
                                               fontWeight: FontWeight.w600),
                                         ),
@@ -854,19 +848,15 @@ class _BookingScreenState extends State<BookingScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (sheetContext) =>
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              16,
-              16,
-              16,
-              MediaQuery
-                  .of(sheetContext)
-                  .viewInsets
-                  .bottom + 16,
-            ),
-            child: buildGoogleMapWithDetailsDialog(sheetContext),
-          ),
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          16,
+          16,
+          16,
+          MediaQuery.of(sheetContext).viewInsets.bottom + 16,
+        ),
+        child: buildGoogleMapWithDetailsDialog(sheetContext),
+      ),
     );
   }
 
@@ -909,7 +899,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius:
-                        const BorderRadius.all(Radius.circular(10)),
+                            const BorderRadius.all(Radius.circular(10)),
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
@@ -936,9 +926,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                         zoom: 15,
                                       ),
                                       cameraTargetBounds:
-                                      CameraTargetBounds(_allowedBounds),
+                                          CameraTargetBounds(_allowedBounds),
                                       minMaxZoomPreference:
-                                      const MinMaxZoomPreference(10, 18),
+                                          const MinMaxZoomPreference(10, 18),
                                       onMapCreated: (controller) {
                                         _mapController = controller;
                                       },
@@ -954,7 +944,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                       },
                                       gestureRecognizers: {
                                         Factory<OneSequenceGestureRecognizer>(
-                                              () => EagerGestureRecognizer(),
+                                          () => EagerGestureRecognizer(),
                                         ),
                                       },
                                     ),
@@ -974,7 +964,7 @@ class _BookingScreenState extends State<BookingScreen> {
                               focusNode: mapFocus,
                               textEditingController: mapController,
                               googleAPIKey:
-                              "AIzaSyBLI5I6o95GqluNuRh0YT3zRj5yqoix8zA",
+                                  "AIzaSyBLI5I6o95GqluNuRh0YT3zRj5yqoix8zA",
                               inputDecoration: InputDecoration(
                                 hintText: "Search location",
                                 fillColor: Colors.white,
@@ -986,9 +976,9 @@ class _BookingScreenState extends State<BookingScreen> {
                               debounceTime: 600,
                               itemClick: (prediction) async {
                                 final lat =
-                                double.tryParse(prediction.lat ?? "");
+                                    double.tryParse(prediction.lat ?? "");
                                 final lng =
-                                double.tryParse(prediction.lng ?? "");
+                                    double.tryParse(prediction.lng ?? "");
 
                                 if (lat == null || lng == null) return;
 
@@ -1007,9 +997,9 @@ class _BookingScreenState extends State<BookingScreen> {
                               },
                               getPlaceDetailWithLatLng: (prediction) async {
                                 final lat =
-                                double.tryParse(prediction.lat ?? "");
+                                    double.tryParse(prediction.lat ?? "");
                                 final lng =
-                                double.tryParse(prediction.lng ?? "");
+                                    double.tryParse(prediction.lng ?? "");
 
                                 if (lat == null || lng == null) return;
 
@@ -1244,51 +1234,37 @@ class _BookingScreenState extends State<BookingScreen> {
                           return;
                         }
 
-                        if (streetController.text
-                            .trim()
-                            .isEmpty) {
+                        if (streetController.text.trim().isEmpty) {
                           showCustomSnackBar("Please enter street");
                           return;
                         }
 
-                        if (stateController.text
-                            .trim()
-                            .isEmpty) {
+                        if (stateController.text.trim().isEmpty) {
                           showCustomSnackBar("Please enter state");
                           return;
                         }
 
-                        if (postalController.text
-                            .trim()
-                            .isEmpty) {
+                        if (postalController.text.trim().isEmpty) {
                           showCustomSnackBar("Please enter zip/postal code");
                           return;
                         }
 
-                        if (countryController.text
-                            .trim()
-                            .isEmpty) {
+                        if (countryController.text.trim().isEmpty) {
                           showCustomSnackBar("Please enter country");
                           return;
                         }
 
-                        if (houseController.text
-                            .trim()
-                            .isEmpty) {
+                        if (houseController.text.trim().isEmpty) {
                           showCustomSnackBar("Please enter house number");
                           return;
                         }
 
-                        if (floorController.text
-                            .trim()
-                            .isEmpty) {
+                        if (floorController.text.trim().isEmpty) {
                           showCustomSnackBar("Please enter floor number");
                           return;
                         }
 
-                        if (addressType
-                            .trim()
-                            .isEmpty) {
+                        if (addressType.trim().isEmpty) {
                           showCustomSnackBar("Please select address type");
                           return;
                         }
@@ -1303,30 +1279,18 @@ class _BookingScreenState extends State<BookingScreen> {
                           zipCode: postalController.text.trim(),
                           country: countryController.text.trim(),
                           address:
-                          "${houseController.text.trim()},${floorController.text
-                              .trim()},${streetController.text.trim()},${city
-                              .trim()},${stateController.text
-                              .trim()},${postalController.text.trim()}",
+                              "${houseController.text.trim()},${floorController.text.trim()},${streetController.text.trim()},${city.trim()},${stateController.text.trim()},${postalController.text.trim()}",
                           createdAt: DateTime.now().toString(),
                           updatedAt: DateTime.now().toString(),
                           addressType: addressType,
                           contactPersonName:
-                          "${Get
-                              .find<DashBoardController>()
-                              .userModel
-                              .firstName ?? ''} "
-                              "${Get
-                              .find<DashBoardController>()
-                              .userModel
-                              .lastName ?? ''}",
-                          contactPersonNumber: Get
-                              .find<DashBoardController>()
-                              .userModel
-                              .phone,
+                              "${Get.find<DashBoardController>().userModel.firstName ?? ''} "
+                              "${Get.find<DashBoardController>().userModel.lastName ?? ''}",
+                          contactPersonNumber:
+                              Get.find<DashBoardController>().userModel.phone,
                           addressLabel: addressType,
-                          zoneId: Get
-                              .find<DashBoardController>()
-                              .zoneIdForBooking,
+                          zoneId:
+                              Get.find<DashBoardController>().zoneIdForBooking,
                           isGuest: false,
                           house: houseController.text.trim(),
                           floor: floorController.text.trim(),
@@ -1335,8 +1299,8 @@ class _BookingScreenState extends State<BookingScreen> {
                         try {
                           showLoading();
 
-                          final dashController = Get.find<
-                              DashBoardController>();
+                          final dashController =
+                              Get.find<DashBoardController>();
 
                           await dashController.addAddress(newAddress);
                           await Future.delayed(
@@ -1371,16 +1335,16 @@ class _BookingScreenState extends State<BookingScreen> {
                             matchedAddress =
                                 addresses.cast<AddressData?>().firstWhere(
                                       (a) =>
-                                  a != null &&
-                                      a.lat == newAddress.lat &&
-                                      a.lon == newAddress.lon &&
-                                      (a.house ?? "") ==
-                                          (newAddress.house ?? "") &&
-                                      (a.floor ?? "") ==
-                                          (newAddress.floor ?? "") &&
-                                      (a.street ?? "") ==
-                                          (newAddress.street ?? ""),
-                                );
+                                          a != null &&
+                                          a.lat == newAddress.lat &&
+                                          a.lon == newAddress.lon &&
+                                          (a.house ?? "") ==
+                                              (newAddress.house ?? "") &&
+                                          (a.floor ?? "") ==
+                                              (newAddress.floor ?? "") &&
+                                          (a.street ?? "") ==
+                                              (newAddress.street ?? ""),
+                                    );
                           } catch (_) {
                             matchedAddress = null;
                           }
@@ -1614,10 +1578,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       //   }
                       // },
                       buttonText: 'Save Address',
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
+                      width: MediaQuery.of(context).size.width,
                     ),
                   ),
                 ),
@@ -2171,49 +2132,46 @@ class _BookingScreenState extends State<BookingScreen> {
           final horizontalPadding = isTablet
               ? 24.0
               : isLandscape
-              ? 12.0
-              : 16.0;
+                  ? 12.0
+                  : 16.0;
 
           final maxContentWidth = isTablet ? 760.0 : double.infinity;
 
           return Scaffold(
             backgroundColor: const Color(0xFFF7F9FC),
             resizeToAvoidBottomInset: true,
-            bottomNavigationBar: MediaQuery
-                .of(context)
-                .viewInsets
-                .bottom > 0
+            bottomNavigationBar: MediaQuery.of(context).viewInsets.bottom > 0
                 ? null
                 : SafeArea(
-              top: false,
-              child: Container(
-                padding: EdgeInsets.fromLTRB(
-                  horizontalPadding,
-                  10,
-                  horizontalPadding,
-                  14,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
-                      blurRadius: 16,
-                      offset: const Offset(0, -4),
-                    ),
-                  ],
-                  border: Border(
-                    top: BorderSide(
-                      color: Colors.grey.withOpacity(0.12),
+                    top: false,
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(
+                        horizontalPadding,
+                        10,
+                        horizontalPadding,
+                        14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.06),
+                            blurRadius: 16,
+                            offset: const Offset(0, -4),
+                          ),
+                        ],
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.grey.withOpacity(0.12),
+                          ),
+                        ),
+                      ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: maxContentWidth),
+                        child: _buildBottomActionBar(context),
+                      ),
                     ),
                   ),
-                ),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxContentWidth),
-                  child: _buildBottomActionBar(context),
-                ),
-              ),
-            ),
             body: Align(
               alignment: Alignment.topCenter,
               child: ConstrainedBox(
@@ -2226,7 +2184,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   child: SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
                     keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     child: Column(
                       children: [
                         const SizedBox(height: 10),
@@ -2279,6 +2237,8 @@ class _BookingScreenState extends State<BookingScreen> {
         child: CustomButtonWidget(
           onPressed: () async {
             final dashController = Get.find<DashBoardController>();
+            // final double finalAmount =
+            //     double.tryParse(widget.cartTotalPrice.toString()) ?? 0.0;
 
             final name =
                 "${dashController.userModel.firstName} ${dashController.userModel.lastName}";
@@ -2327,8 +2287,11 @@ class _BookingScreenState extends State<BookingScreen> {
                     "lng": _selectedLatLng.longitude,
                     "zone_id": dashController.zoneIdForBooking,
                     "message": message,
-                    "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                    "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
+                    "date": DateConverter.dateTimeForCoupon(selectedDate)
+                        .toString(),
+                    "time":
+                        formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
+                            .toString(),
                     "payment_method": getPaymentMethodForApi(),
                     "city": city,
                     "zip_code": postalCode,
@@ -2379,8 +2342,10 @@ class _BookingScreenState extends State<BookingScreen> {
                   "lng": _selectedLatLng.longitude,
                   "zone_id": dashController.zoneIdForBooking,
                   "message": message,
-                  "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                  "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
+                  "date":
+                      DateConverter.dateTimeForCoupon(selectedDate).toString(),
+                  "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
+                      .toString(),
                   "payment_method": "razor_pay",
                   "city": city,
                   "zip_code": postalCode,
@@ -2408,8 +2373,11 @@ class _BookingScreenState extends State<BookingScreen> {
                         "lng": _selectedLatLng.longitude,
                         "zone_id": dashController.zoneIdForBooking,
                         "message": message,
-                        "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                        "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
+                        "date": DateConverter.dateTimeForCoupon(selectedDate)
+                            .toString(),
+                        "time": formatTimeOfDay24Hour(
+                                selectedTime ?? TimeOfDay.now())
+                            .toString(),
                         "payment_method": "razor_pay",
                         "city": city,
                         "zip_code": postalCode,
@@ -2418,9 +2386,12 @@ class _BookingScreenState extends State<BookingScreen> {
                         "service_preference": servicePreference,
                         "house": houseController.text.trim(),
                         "floor": floorController.text.trim(),
-                        "assign_customer_name": assignNameController.text.trim(),
-                        "assign_customer_phone": assignPhoneController.text.trim(),
-                        "assign_customer_email": assignEmailController.text.trim(),
+                        "assign_customer_name":
+                            assignNameController.text.trim(),
+                        "assign_customer_phone":
+                            assignPhoneController.text.trim(),
+                        "assign_customer_email":
+                            assignEmailController.text.trim(),
                       },
                       dashController.selectedVariations,
                       showLoader: false,
@@ -2447,10 +2418,7 @@ class _BookingScreenState extends State<BookingScreen> {
             }
           },
           buttonText: 'Create Booking',
-          width: MediaQuery
-              .of(context)
-              .size
-              .width - 40,
+          width: MediaQuery.of(context).size.width - 40,
         ),
       );
     }
@@ -2503,9 +2471,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
               /// STEP 2 VALIDATION
               if (_currentStep == 1) {
-                if (assignNameController.text
-                    .trim()
-                    .isEmpty) {
+                if (assignNameController.text.trim().isEmpty) {
                   _error("Customer Name", "Please enter customer name");
                   return;
                 }
@@ -2521,8 +2487,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   return;
                 }
 
-                if (Get
-                    .find<DashBoardController>()
+                if (Get.find<DashBoardController>()
                     .addressController
                     .text
                     .trim()
@@ -2584,7 +2549,8 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildCurrentStepContent(BuildContext context, {
+  Widget _buildCurrentStepContent(
+    BuildContext context, {
     required bool isTablet,
     Key? key,
   }) {
@@ -2657,7 +2623,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       separatorBuilder: (_, __) => const SizedBox(width: 10),
                       itemBuilder: (context, index) {
                         DateTime date =
-                        DateTime.now().add(Duration(days: index));
+                            DateTime.now().add(Duration(days: index));
 
                         bool isSelected = selectedDate.year == date.year &&
                             selectedDate.month == date.month &&
@@ -2776,10 +2742,10 @@ class _BookingScreenState extends State<BookingScreen> {
                           assignPhoneController.text = value.substring(0, 12);
                           assignPhoneController.selection =
                               TextSelection.fromPosition(
-                                TextPosition(
-                                  offset: assignPhoneController.text.length,
-                                ),
-                              );
+                            TextPosition(
+                              offset: assignPhoneController.text.length,
+                            ),
+                          );
                         }
                       },
                     ),
@@ -2809,9 +2775,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     const SizedBox(height: 12),
                     CustomTextField(
                       controller:
-                      Get
-                          .find<DashBoardController>()
-                          .addressController,
+                          Get.find<DashBoardController>().addressController,
                       hintText: "Select an Address",
                       focusNode: addressFocus,
                       isEnabled: true,
@@ -2821,17 +2785,14 @@ class _BookingScreenState extends State<BookingScreen> {
 
                         showAddressChoiceDialog(
                           context,
-                          Get
-                              .find<DashBoardController>()
-                              .addressResponse
-                              .data,
-                              (address) {
+                          Get.find<DashBoardController>().addressResponse.data,
+                          (address) {
                             setState(() {
                               _selectedLatLng =
                                   LatLng(address.lat, address.lon);
 
-                              final controller = Get.find<
-                                  DashBoardController>();
+                              final controller =
+                                  Get.find<DashBoardController>();
                               controller.addressController.text =
                                   address.address;
 
@@ -2919,7 +2880,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             showAddressChoiceDialog(
                               context,
                               controller.addressResponse.data,
-                                  (address) {
+                              (address) {
                                 setState(() {
                                   _selectedLatLng =
                                       LatLng(address.lat, address.lon);
@@ -2994,8 +2955,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    if (Get
-                        .find<DashBoardController>()
+                    if (Get.find<DashBoardController>()
                         .addressController
                         .text
                         .trim()
@@ -3020,8 +2980,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                Get
-                                    .find<DashBoardController>()
+                                Get.find<DashBoardController>()
                                     .addressController
                                     .text,
                                 style: const TextStyle(
@@ -3052,7 +3011,7 @@ class _BookingScreenState extends State<BookingScreen> {
               _buildSectionCard(
                 title: "Step 3 • Payment & Review",
                 subtitle:
-                "Choose payment method, add notes and confirm booking",
+                    "Choose payment method, add notes and confirm booking",
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -3220,8 +3179,7 @@ class _BookingScreenState extends State<BookingScreen> {
           selectedDate = date;
           selectedTime = null;
 
-          log("Select Date: ${selectedDate.toLocal().toString().split(
-              ' ')[0]}");
+          log("Select Date: ${selectedDate.toLocal().toString().split(' ')[0]}");
         });
       },
       child: AnimatedContainer(
@@ -3291,8 +3249,8 @@ class _BookingScreenState extends State<BookingScreen> {
                         color: isDone
                             ? const Color(0xFF207FA7)
                             : isActive
-                            ? const Color(0xFF207FA7)
-                            : Colors.white,
+                                ? const Color(0xFF207FA7)
+                                : Colors.white,
                         border: Border.all(
                           color: isActive || isDone
                               ? const Color(0xFF207FA7)
@@ -3301,27 +3259,27 @@ class _BookingScreenState extends State<BookingScreen> {
                         ),
                         boxShadow: isActive
                             ? [
-                          BoxShadow(
-                            color:
-                            const Color(0xFF207FA7).withOpacity(0.20),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          )
-                        ]
+                                BoxShadow(
+                                  color:
+                                      const Color(0xFF207FA7).withOpacity(0.20),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                )
+                              ]
                             : null,
                       ),
                       child: Center(
                         child: isDone
                             ? const Icon(Icons.check,
-                            color: Colors.white, size: 18)
+                                color: Colors.white, size: 18)
                             : Text(
-                          "${index + 1}",
-                          style: TextStyle(
-                            color:
-                            isActive ? Colors.white : Colors.black87,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                                "${index + 1}",
+                                style: TextStyle(
+                                  color:
+                                      isActive ? Colors.white : Colors.black87,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -3331,9 +3289,9 @@ class _BookingScreenState extends State<BookingScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight:
-                        isActive ? FontWeight.w700 : FontWeight.w500,
+                            isActive ? FontWeight.w700 : FontWeight.w500,
                         color:
-                        isActive ? const Color(0xFF207FA7) : Colors.black54,
+                            isActive ? const Color(0xFF207FA7) : Colors.black54,
                       ),
                     ),
                   ],
@@ -3357,14 +3315,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget _buildSummaryCard() {
     final selectedAddress =
-    Get
-        .find<DashBoardController>()
-        .addressController
-        .text
-        .trim();
+        Get.find<DashBoardController>().addressController.text.trim();
     final selectedDateText = DateFormat("dd MMM yyyy").format(selectedDate);
     final selectedTimeText =
-    selectedTime == null ? "--" : _formatTimeOfDay(selectedTime!);
+        selectedTime == null ? "--" : _formatTimeOfDay(selectedTime!);
 
     return Container(
       width: double.infinity,
@@ -3395,9 +3349,7 @@ class _BookingScreenState extends State<BookingScreen> {
           _buildReviewRow(
             icon: Icons.person_outline_rounded,
             title: "Assigned Customer",
-            value: assignNameController.text
-                .trim()
-                .isEmpty
+            value: assignNameController.text.trim().isEmpty
                 ? "--"
                 : assignNameController.text.trim(),
           ),
@@ -3553,16 +3505,12 @@ bool _validateAllFields({
 }) {
   /// ASSIGN CUSTOMER VALIDATION
 
-  if (assignCustomerName
-      .trim()
-      .isEmpty) {
+  if (assignCustomerName.trim().isEmpty) {
     _error("Customer Name Required", "Please enter assigned customer name");
     return false;
   }
 
-  if (assignCustomerName
-      .trim()
-      .length < 3) {
+  if (assignCustomerName.trim().length < 3) {
     _error("Invalid Name", "Customer name must be at least 3 characters");
     return false;
   }
@@ -3578,9 +3526,7 @@ bool _validateAllFields({
     return false;
   }
 
-  if (name
-      .trim()
-      .isEmpty) {
+  if (name.trim().isEmpty) {
     _error("Name Required", "Please enter your name");
     return false;
   }
@@ -3627,12 +3573,7 @@ bool _validateAllFields({
     return false;
   }
 
-  if (Get
-      .find<DashBoardController>()
-      .addressController
-      .text
-      .trim()
-      .isEmpty) {
+  if (Get.find<DashBoardController>().addressController.text.trim().isEmpty) {
     _error("Address Required", "Please select address");
     return false;
   }
@@ -3699,20 +3640,18 @@ void _error(String title, String message) {
   );
 }
 
-makeDigitalPayment({required String bookingId,
-  required Function? onPressed,
-  required Map<String, dynamic> data,
-  required int isPartial}) async {
+makeDigitalPayment(
+    {required String bookingId,
+    required Function? onPressed,
+    required Map<String, dynamic> data,
+    required int isPartial}) async {
   String url = '';
   SharedPreferences preferences = await SharedPreferences.getInstance();
   ApiClient apiClient = ApiClient(
       appBaseUrl: AppConstants.baseUrl, sharedPreferences: preferences);
   String zoneId = apiClient.mainHeaders['zone_id'] ??
       "e8554d44-dcf2-47c7-8cf9-400d05a1340f";
-  String userId = Get
-      .find<DashBoardController>()
-      .userModel
-      .id;
+  String userId = Get.find<DashBoardController>().userModel.id;
 
   String platform = "app";
   Map<String, dynamic> address = {
@@ -3743,15 +3682,12 @@ makeDigitalPayment({required String bookingId,
   final formatted = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
   debugPrint("encodedError $encodedAddress");
   url =
-  '${AppConstants
-      .baseUrl}payment?payment_method=razor_pay&access_token=${base64Url.encode(
-      utf8.encode(userId))}&zone_id=$zoneId'
+      '${AppConstants.baseUrl}payment?payment_method=razor_pay&access_token=${base64Url.encode(utf8.encode(userId))}&zone_id=$zoneId'
       '&service_schedule=${formatted}&service_address_id=null&callback=https://panel.dofix.in&service_address=$encodedAddress&new_user_info=null&message=$userMessage&is_partial=$isPartial&payment_platform=$platform';
 
   log("url_with_digital_payment:$url");
 
-  await Get.to(() =>
-      PaymentScreen(
+  await Get.to(() => PaymentScreen(
         url: url,
         fromPage: "switch-payment-method",
         onPressed: onPressed,

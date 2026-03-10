@@ -284,6 +284,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                           serviceModel: controller.serviceModel,
                                           serviceCoverImage:
                                               variation?.coverImage ?? "",
+                                          taxAmount: 79,
                                         );
                                       },
                                     );
@@ -410,7 +411,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                     // if (bookingController
                                     //         .serviceReviewsModel.value !=
                                     //     null)
-                                      const SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     if (bookingController
                                             .serviceReviewsModel.value !=
                                         null)
