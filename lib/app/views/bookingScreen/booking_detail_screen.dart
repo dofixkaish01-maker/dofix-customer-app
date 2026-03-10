@@ -262,130 +262,130 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   //   );
   // }
 
-  void _showStaticQrDialog() {
-    const supportNumber = "8383849293";
-    final bookingId = widget.booking?.id ?? "N/A";
-
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const Text(
-              "Scan & Pay",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                "assets/images/dofix_qr.jpeg",
-                height: 220,
-                width: 220,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Scan this QR code to complete your payment.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: Dimensions.fontSize14,
-                color: Colors.black.withOpacity(0.7),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "After successful payment, please share the payment screenshot with our support team for confirmation.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: Dimensions.fontSize12,
-                color: Colors.black54,
-                height: 1.4,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            /// Share Screenshot on WhatsApp
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () async {
-                  final Uri uri = Uri.parse(
-                    "https://wa.me/91$supportNumber?text="
-                    "Hi, I have completed the payment for Booking ID: $bookingId. "
-                    "I am sharing the payment screenshot for confirmation.",
-                  );
-
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(
-                      uri,
-                      mode: LaunchMode.externalApplication,
-                    );
-                  }
-                },
-                icon: const Icon(
-                  Icons.share,
-                  color: Color(0xFF207FA8),
-                ),
-                label: const Text(
-                  "Share Screenshot",
-                  style: TextStyle(
-                    color: Color(0xFF207FA8),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF207FA8)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Get.back(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF207FA8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  "Done",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      isScrollControlled: true,
-    );
-  }
+  // void _showStaticQrDialog() {
+  //   const supportNumber = "8383849293";
+  //   final bookingId = widget.booking?.id ?? "N/A";
+  //
+  //   Get.bottomSheet(
+  //     Container(
+  //       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+  //       decoration: const BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //       ),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Container(
+  //             width: 40,
+  //             height: 4,
+  //             margin: const EdgeInsets.only(bottom: 12),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey.shade300,
+  //               borderRadius: BorderRadius.circular(2),
+  //             ),
+  //           ),
+  //           const Text(
+  //             "Scan & Pay",
+  //             style: TextStyle(
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 16),
+  //           ClipRRect(
+  //             borderRadius: BorderRadius.circular(12),
+  //             child: Image.asset(
+  //               "assets/images/dofix_qr.jpeg",
+  //               height: 220,
+  //               width: 220,
+  //               fit: BoxFit.cover,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 16),
+  //           Text(
+  //             "Scan this QR code to complete your payment.",
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(
+  //               fontSize: Dimensions.fontSize14,
+  //               color: Colors.black.withOpacity(0.7),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 8),
+  //           Text(
+  //             "After successful payment, please share the payment screenshot with our support team for confirmation.",
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(
+  //               fontSize: Dimensions.fontSize12,
+  //               color: Colors.black54,
+  //               height: 1.4,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 16),
+  //
+  //           /// Share Screenshot on WhatsApp
+  //           SizedBox(
+  //             width: double.infinity,
+  //             child: OutlinedButton.icon(
+  //               onPressed: () async {
+  //                 final Uri uri = Uri.parse(
+  //                   "https://wa.me/91$supportNumber?text="
+  //                   "Hi, I have completed the payment for Booking ID: $bookingId. "
+  //                   "I am sharing the payment screenshot for confirmation.",
+  //                 );
+  //
+  //                 if (await canLaunchUrl(uri)) {
+  //                   await launchUrl(
+  //                     uri,
+  //                     mode: LaunchMode.externalApplication,
+  //                   );
+  //                 }
+  //               },
+  //               icon: const Icon(
+  //                 Icons.share,
+  //                 color: Color(0xFF207FA8),
+  //               ),
+  //               label: const Text(
+  //                 "Share Screenshot",
+  //                 style: TextStyle(
+  //                   color: Color(0xFF207FA8),
+  //                   fontWeight: FontWeight.w600,
+  //                 ),
+  //               ),
+  //               style: OutlinedButton.styleFrom(
+  //                 side: const BorderSide(color: Color(0xFF207FA8)),
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //                 padding: const EdgeInsets.symmetric(vertical: 14),
+  //               ),
+  //             ),
+  //           ),
+  //
+  //           const SizedBox(height: 10),
+  //
+  //           SizedBox(
+  //             width: double.infinity,
+  //             child: ElevatedButton(
+  //               onPressed: () => Get.back(),
+  //               style: ElevatedButton.styleFrom(
+  //                 backgroundColor: const Color(0xFF207FA8),
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //               ),
+  //               child: const Text(
+  //                 "Done",
+  //                 style: TextStyle(color: Colors.white),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     isScrollControlled: true,
+  //   );
+  // }
 
   // Map<String, dynamic> _buildPaymentData() {
   //   final booking = widget.booking!;
@@ -540,28 +540,62 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: const Text("Scan QR code and complete payment"),
-              onTap: () async {
-                final uri = Uri(
-                  scheme: 'upi',
-                  host: 'pay',
-                  queryParameters: {
-                    'pa': 'rzpdofixtechnologi410020.rzp@ypbiz',
-                    'pn': 'Dofix Technologies Pvt Ltd',
-                    'am': '1416.00',
-                    'cu': 'INR',
-                    'tn': 'Registration Fees',
-                  },
-                );
+                // onTap: () async {
+                //
+                //   final bookingId = widget.booking?.id ?? "";
+                //
+                //   final amount =
+                //       dashBoardController.bookingResponse?.content?.totalBookingAmount ?? 0;
+                //
+                //   final uri = Uri.parse(
+                //     'upi://pay?pa=yespay.mabs0736619ikit1232@yesbankltd'
+                //         '&pn=Dofix%20Technologies%20Private%20Limited'
+                //         '&am=$amount'
+                //         '&cu=INR'
+                //         '&tn=Dofix%20Service%20Booking%20$bookingId',
+                //   );
+                //
+                //   try {
+                //     final launched = await launchUrl(
+                //       uri,
+                //       mode: LaunchMode.externalApplication,
+                //     );
+                //
+                //     if (!launched) {
+                //       showCustomSnackBar("Unable to open UPI app");
+                //     }
+                //   } catch (e) {
+                //     showCustomSnackBar("Unable to open UPI app");
+                //   }
+                // }
+                onTap: () async {
 
-                try {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                } catch (e) {
-                  showCustomSnackBar("Unable to open UPI app");
+                  final bookingId = widget.booking?.id ?? "";
+
+                  final amount =
+                      dashBoardController.bookingResponse?.content?.totalBookingAmount ?? 0;
+
+                  final uri = Uri.parse(
+                    'upi://pay?pa=yespay.mabs0736619ikit1232@yesbankltd'
+                        '&pn=Dofix%20Technologies%20Private%20Limited'
+                        '&am=$amount'
+                        '&cu=INR'
+                        '&tn=Dofix%20Service%20Booking%20$bookingId',
+                  );
+
+                  try {
+                    final launched = await launchUrl(
+                      uri,
+                      mode: LaunchMode.externalApplication,
+                    );
+
+                    if (!launched) {
+                      showCustomSnackBar("Unable to open UPI app");
+                    }
+                  } catch (e) {
+                    showCustomSnackBar("Unable to open UPI app");
+                  }
                 }
-
-                // Get.back();
-                // _showStaticQrDialog();
-              },
             ),
             const SizedBox(height: 8),
             ListTile(
@@ -646,6 +680,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             final isUnpaid = widget.booking?.isPaid == 0;
             final isCompleted = bookingStatus == "completed";
             final isCancelled = bookingStatus == "canceled";
+            final isPending = bookingStatus == "pending";
 
             final isOnline = paymentMethod == "razor_pay";
             final isCash = paymentMethod == "cash" ||
@@ -684,33 +719,34 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
                 child: InkWell(
                   onTap: () async {
-                    // _showPaymentOptionsBottomSheet();
+                    _showPaymentOptionsBottomSheet();
 
-                    final bookingId = widget.booking?.id ?? "";
-                    final totalAmount = dashBoardController
-                        .bookingResponse?.content?.totalBookingAmount
-                        .toString();
-                    final uri = Uri.parse(
-                      'upi://pay?pa=merchantaumb100007568@aubank'
-                      '&pn=Dofix%20Technologies%20Private%20Limited'
-                      '&am=$totalAmount'
-                      '&cu=INR'
-                      '&tn=Dofix%20Service%20Booking%20$bookingId',
-                    );
-
-                    try {
-                      final launched = await launchUrl(
-                        uri,
-                        mode: LaunchMode.externalApplication,
-                      );
-
-                      if (!launched) {
-                        showCustomSnackBar("Unable to open UPI app");
-                      }
-                    } catch (e) {
-                      showCustomSnackBar("Unable to open UPI app");
-                    }
+                    // final bookingId = widget.booking?.id ?? "";
+                    // final totalAmount = dashBoardController
+                    //     .bookingResponse?.content?.totalBookingAmount
+                    //     .toString();
+                    // final uri = Uri.parse(
+                    //   'upi://pay?pa=merchantaumb100007568@aubank'
+                    //   '&pn=Dofix%20Technologies%20Private%20Limited'
+                    //   '&am=$totalAmount'
+                    //   '&cu=INR'
+                    //   '&tn=Dofix%20Service%20Booking%20$bookingId',
+                    // );
+                    //
+                    // try {
+                    //   final launched = await launchUrl(
+                    //     uri,
+                    //     mode: LaunchMode.externalApplication,
+                    //   );
+                    //
+                    //   if (!launched) {
+                    //     showCustomSnackBar("Unable to open UPI app");
+                    //   }
+                    // } catch (e) {
+                    //   showCustomSnackBar("Unable to open UPI app");
+                    // }
                   },
+
                   child: Container(
                     height: 48,
                     decoration: BoxDecoration(
@@ -737,15 +773,43 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
                 child: InkWell(
+                  // onTap: () async {
+                  //   final bookingId = widget.booking?.id ?? "";
+                  //   final totalAmount = dashBoardController
+                  //       .bookingResponse?.content?.totalBookingAmount
+                  //       .toString();
+                  //   final uri = Uri.parse(
+                  //     'upi://pay?pa=merchantaumb100007568@aubank'
+                  //     '&pn=Dofix%20Technologies%20Private%20Limited'
+                  //     '&am=$totalAmount'
+                  //     '&cu=INR'
+                  //     '&tn=Dofix%20Service%20Booking%20$bookingId',
+                  //   );
+                  //
+                  //   try {
+                  //     final launched = await launchUrl(
+                  //       uri,
+                  //       mode: LaunchMode.externalApplication,
+                  //     );
+                  //
+                  //     if (!launched) {
+                  //       showCustomSnackBar("Unable to open UPI app");
+                  //     }
+                  //   } catch (e) {
+                  //     showCustomSnackBar("Unable to open UPI app");
+                  //   }
+                  // },
                   onTap: () async {
                     final bookingId = widget.booking?.id ?? "";
-                    final totalAmount = dashBoardController
+
+                    final amount = dashBoardController
                         .bookingResponse?.content?.totalBookingAmount
                         .toString();
+
                     final uri = Uri.parse(
-                      'upi://pay?pa=merchantaumb100007568@aubank'
+                      'upi://pay?pa=yespay.mabs0736619ikit1232@yesbankltd'
                       '&pn=Dofix%20Technologies%20Private%20Limited'
-                      '&am=$totalAmount'
+                      '&am=$amount'
                       '&cu=INR'
                       '&tn=Dofix%20Service%20Booking%20$bookingId',
                     );
