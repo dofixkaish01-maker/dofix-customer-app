@@ -1372,9 +1372,9 @@ class DashBoardController extends GetxController implements GetxService {
   //   }
   // }
   Future<void> addToCart(
-      dynamic body,
-      List<String> selectedVariations,
-      ) async {
+    dynamic body,
+    List<String> selectedVariations,
+  ) async {
     ApiClient apiClient = ApiClient(
       appBaseUrl: AppConstants.baseUrl,
       sharedPreferences: sharedPreferences,
@@ -1400,8 +1400,8 @@ class DashBoardController extends GetxController implements GetxService {
       "sub_category_id": body["sub_category_id"],
       "quantity": body["quantity"] ?? "1",
       "variant_key":
-      selectedVariations.isNotEmpty ? selectedVariations.first : "",
-      "tax_amount": 79,
+          selectedVariations.isNotEmpty ? selectedVariations.first : "",
+      "tax_amount": body["tax_amount"] ?? 79,
     };
 
     debugPrint("Add to cart body: ${jsonEncode(requestBody)}");
@@ -1411,6 +1411,9 @@ class DashBoardController extends GetxController implements GetxService {
     try {
       http.StreamedResponse response = await request.send();
       String responseBody = await response.stream.bytesToString();
+
+      print("Incoming body: $body");
+      print("Final requestBody: $requestBody");
 
       if (response.statusCode == 200) {
         debugPrint("Success Response: $responseBody");
@@ -1449,6 +1452,7 @@ class DashBoardController extends GetxController implements GetxService {
       update();
     }
   }
+
   Future<void> getZone() async {
     ApiClient apiClient = ApiClient(
         appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);

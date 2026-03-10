@@ -115,7 +115,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
           "service_id": widget.serviceModel.id,
           "category_id": widget.serviceModel.categoryId,
           "sub_category_id": widget.serviceModel.subCategoryId,
-          // "tax_amount":79,
+          "tax_amount":79,
           "quantity": "1",
         },
         dashboardController.selectedVariations,

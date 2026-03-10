@@ -171,6 +171,7 @@ class _AddExtraServiceSheetState extends State<AddExtraServiceSheet> {
                     "category_id": widget.service.categoryId,
                     "sub_category_id": widget.service.subCategoryId,
                     "quantity": "1",
+                      "tax_amount":79
                     },
                     widget.variantKey != null ? [widget.variantKey!] : [],
                     );
@@ -226,6 +227,7 @@ class _AddExtraServiceSheetState extends State<AddExtraServiceSheet> {
                           "category_id": widget.service.categoryId,
                           "sub_category_id": widget.service.subCategoryId,
                           "quantity": "1",
+                          "tax_amount":79,
                           "extras": selected.map((v) => v.toJson()).toList(),
                         },
                         widget.variantKey != null ? [widget.variantKey!] : [],

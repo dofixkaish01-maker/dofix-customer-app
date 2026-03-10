@@ -836,6 +836,7 @@ void ShowAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
                                     "category_id": serviceModel.categoryId,
                                     "sub_category_id":
                                         serviceModel.subCategoryId,
+                                    "tax_amount":79
                                   },
                                   Get.find<DashBoardController>()
                                       .selectedVariations,
