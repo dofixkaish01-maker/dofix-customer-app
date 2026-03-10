@@ -1368,6 +1368,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                         "sub_category_id":
                                             widget.serviceModel.subCategoryId,
                                         "quantity": "1",
+                                        "tax_amount":79,
                                         "extras": [],
                                       },
                                       [widget.variantKey],

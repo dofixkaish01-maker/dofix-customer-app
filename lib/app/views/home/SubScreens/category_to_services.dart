@@ -15,7 +15,7 @@ class CategoryToServices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var categoryDetails=CategoryModel().data;
+    var categoryDetails = CategoryModel().data;
     return GetBuilder<DashBoardController>(builder: (controller) {
       return SafeArea(
         top: false,
@@ -150,7 +150,8 @@ class CategoryToServices extends StatelessWidget {
                                         .data ??
                                     [];
                             if (controller.isServiceListingLoading) {
-                              return const SizedBox(height: 120); // ya loader widget
+                              return const SizedBox(
+                                  height: 120); // ya loader widget
                               // return const Center(child: CircularProgressIndicator());
                             }
 
@@ -197,8 +198,7 @@ class CategoryToServices extends StatelessWidget {
                                   ),
                                 ],
                               );
-                            }
-                            else {
+                            } else {
                               return const SizedBox();
                             }
                           })),
@@ -579,7 +579,9 @@ class CategoryToServices extends StatelessWidget {
                                                                   const SizedBox(
                                                                       width: 4),
                                                                   Text(
-                                                                    service.avgRating?.toStringAsFixed(1) ?? "0.0",
+                                                                    service.avgRating
+                                                                            ?.toStringAsFixed(1) ??
+                                                                        "0.0",
                                                                     style:
                                                                         const TextStyle(
                                                                       fontSize:

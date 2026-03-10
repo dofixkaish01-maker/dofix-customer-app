@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+
 // import 'package:do_fix/app/views/bookingScreen/widgets/custom_cancel_button.dart';
 import 'package:do_fix/app/views/bookingScreen/widgets/custom_invoide_button.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
@@ -10,20 +11,23 @@ import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/booking_model.dart';
 import 'package:do_fix/utils/app_constants.dart';
 import 'package:do_fix/utils/string_extensions.dart';
+
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 // import 'package:do_fix/app/widgets/custom_payment_method_widget.dart';
 import '../../../utils/date_converter.dart';
 import '../../../utils/dimensions.dart';
 import '../../../utils/theme.dart';
+import '../../../widgets/custom_snack_bar.dart';
 import '../PaymentScreen/payment_Screen.dart';
 import '../cart_screen/SubScreen/final_screen.dart';
+
 // import '../home/component/variations_new_card.dart';
 import '../services/service_details_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 //use for open razor pay payment getway
 
@@ -188,6 +192,434 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   //   );
   // }
 
+  // void _showStaticQrDialog() {
+  //   Get.bottomSheet(
+  //     Container(
+  //       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+  //       decoration: const BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //       ),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Container(
+  //             width: 40,
+  //             height: 4,
+  //             margin: const EdgeInsets.only(bottom: 12),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey.shade300,
+  //               borderRadius: BorderRadius.circular(2),
+  //             ),
+  //           ),
+  //           const Text(
+  //             "Scan & Pay",
+  //             style: TextStyle(
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 16),
+  //           ClipRRect(
+  //             borderRadius: BorderRadius.circular(12),
+  //             child: Image.asset(
+  //               "assets/images/dofix_qr.jpeg",
+  //               height: 220,
+  //               width: 220,
+  //               fit: BoxFit.cover,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 16),
+  //           Text(
+  //             "Scan this QR code to complete your payment.",
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(
+  //               fontSize: Dimensions.fontSize14,
+  //               color: Colors.black.withOpacity(0.7),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 10),
+  //           SizedBox(
+  //             width: double.infinity,
+  //             child: ElevatedButton(
+  //               onPressed: () => Get.back(),
+  //               style: ElevatedButton.styleFrom(
+  //                 backgroundColor: const Color(0xFF207FA8),
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //               ),
+  //               child: const Text(
+  //                 "Done",
+  //                 style: TextStyle(color: Colors.white),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     isScrollControlled: true,
+  //   );
+  // }
+
+  // void _showStaticQrDialog() {
+  //   const supportNumber = "8383849293";
+  //   final bookingId = widget.booking?.id ?? "N/A";
+  //
+  //   Get.bottomSheet(
+  //     Container(
+  //       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+  //       decoration: const BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //       ),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Container(
+  //             width: 40,
+  //             height: 4,
+  //             margin: const EdgeInsets.only(bottom: 12),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey.shade300,
+  //               borderRadius: BorderRadius.circular(2),
+  //             ),
+  //           ),
+  //           const Text(
+  //             "Scan & Pay",
+  //             style: TextStyle(
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 16),
+  //           ClipRRect(
+  //             borderRadius: BorderRadius.circular(12),
+  //             child: Image.asset(
+  //               "assets/images/dofix_qr.jpeg",
+  //               height: 220,
+  //               width: 220,
+  //               fit: BoxFit.cover,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 16),
+  //           Text(
+  //             "Scan this QR code to complete your payment.",
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(
+  //               fontSize: Dimensions.fontSize14,
+  //               color: Colors.black.withOpacity(0.7),
+  //             ),
+  //           ),
+  //           const SizedBox(height: 8),
+  //           Text(
+  //             "After successful payment, please share the payment screenshot with our support team for confirmation.",
+  //             textAlign: TextAlign.center,
+  //             style: TextStyle(
+  //               fontSize: Dimensions.fontSize12,
+  //               color: Colors.black54,
+  //               height: 1.4,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 16),
+  //
+  //           /// Share Screenshot on WhatsApp
+  //           SizedBox(
+  //             width: double.infinity,
+  //             child: OutlinedButton.icon(
+  //               onPressed: () async {
+  //                 final Uri uri = Uri.parse(
+  //                   "https://wa.me/91$supportNumber?text="
+  //                   "Hi, I have completed the payment for Booking ID: $bookingId. "
+  //                   "I am sharing the payment screenshot for confirmation.",
+  //                 );
+  //
+  //                 if (await canLaunchUrl(uri)) {
+  //                   await launchUrl(
+  //                     uri,
+  //                     mode: LaunchMode.externalApplication,
+  //                   );
+  //                 }
+  //               },
+  //               icon: const Icon(
+  //                 Icons.share,
+  //                 color: Color(0xFF207FA8),
+  //               ),
+  //               label: const Text(
+  //                 "Share Screenshot",
+  //                 style: TextStyle(
+  //                   color: Color(0xFF207FA8),
+  //                   fontWeight: FontWeight.w600,
+  //                 ),
+  //               ),
+  //               style: OutlinedButton.styleFrom(
+  //                 side: const BorderSide(color: Color(0xFF207FA8)),
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //                 padding: const EdgeInsets.symmetric(vertical: 14),
+  //               ),
+  //             ),
+  //           ),
+  //
+  //           const SizedBox(height: 10),
+  //
+  //           SizedBox(
+  //             width: double.infinity,
+  //             child: ElevatedButton(
+  //               onPressed: () => Get.back(),
+  //               style: ElevatedButton.styleFrom(
+  //                 backgroundColor: const Color(0xFF207FA8),
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //               ),
+  //               child: const Text(
+  //                 "Done",
+  //                 style: TextStyle(color: Colors.white),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     isScrollControlled: true,
+  //   );
+  // }
+
+  // Map<String, dynamic> _buildPaymentData() {
+  //   final booking = widget.booking!;
+  //   final dashController = Get.find<DashBoardController>();
+  //   final address = booking.serviceAddress;
+  //
+  //   return {
+  //     "service_address_id": booking.serviceAddressId,
+  //     "contact_person_name": address?.contactPersonName ??
+  //         "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+  //     "contact_person_number":
+  //     address?.contactPersonNumber ?? dashController.userModel.phone,
+  //     "name": address?.contactPersonName ??
+  //         "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+  //     "mobile_number": address?.contactPersonNumber?.replaceAll("+91", "") ??
+  //         dashController.userModel.phone.replaceAll("+91", ""),
+  //     "email": dashController.userModel.email,
+  //     "address_label": address?.addressLabel,
+  //     "address": address?.address,
+  //     "lat": address?.lat,
+  //     "lon": address?.lon,
+  //     "zone_id": booking.zoneId,
+  //     "message": booking.message,
+  //     "date": widget.formattedDate ?? "",
+  //     "time": widget.formattedTime ?? "",
+  //   };
+  // }
+  Map<String, dynamic> _buildPaymentData() {
+    final booking = widget.booking!;
+    final dashController = Get.find<DashBoardController>();
+    final address = booking.serviceAddress;
+
+    return {
+      "service_address_id": booking.serviceAddressId,
+      "contact_person_name": address?.contactPersonName ??
+          "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+      "contact_person_number":
+          address?.contactPersonNumber ?? dashController.userModel.phone,
+      "name": address?.contactPersonName ??
+          "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+      "mobile_number": address?.contactPersonNumber?.replaceAll("+91", "") ??
+          dashController.userModel.phone.replaceAll("+91", ""),
+      "email": dashController.userModel.email,
+      "address_label": address?.addressLabel,
+      "address": address?.address,
+      "lat": address?.lat,
+      "lon": address?.lon,
+      "lng": address?.lon,
+      "zone_id": booking.zoneId,
+      "message": booking.message,
+      "payment_method": "razor_pay",
+      "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+      "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
+    };
+  }
+
+  // Future<void> _payWithRazorpay() async {
+  //   final booking = widget.booking!;
+  //   final dashController = Get.find<DashBoardController>();
+  //
+  //   if (booking.serviceAddressId == null) {
+  //     log("ERROR: serviceAddressId is null");
+  //     return;
+  //   }
+  //
+  //   await dashController.getUserInfo(false);
+  //
+  //   final paymentData = _buildPaymentData();
+  //   log("RAZORPAY PAYMENT DATA => ${jsonEncode(paymentData)}");
+  //
+  //   await makeDigitalPayment(
+  //     bookingId: booking.id!,
+  //     isPartial: 0,
+  //     data: paymentData,
+  //     onPressed: () async {
+  //       await dashController.getBookingDetails(booking.id!);
+  //       setState(() {});
+  //     },
+  //   );
+  // }
+
+  Future<void> _payWithRazorpay() async {
+    final booking = widget.booking!;
+    final dashController = Get.find<DashBoardController>();
+
+    if (booking.serviceAddressId == null) {
+      log("ERROR: serviceAddressId is null");
+      return;
+    }
+
+    await dashController.getUserInfo(false);
+
+    final paymentData = _buildPaymentData();
+
+    log("RAZORPAY PAYMENT DATA => ${jsonEncode(paymentData)}");
+    log("BOOKING ID => ${booking.id}");
+    log("SERVICE ADDRESS ID => ${booking.serviceAddressId}");
+    log("ZONE ID => ${booking.zoneId}");
+
+    try {
+      await makeDigitalPayment(
+        bookingId: booking.id!,
+        isPartial: 0,
+        data: paymentData,
+        onPressed: () async {
+          await dashController.getBookingDetails(booking.id!);
+          setState(() {});
+        },
+      );
+      log("makeDigitalPayment called from Razorpay option");
+    } catch (e, st) {
+      log("Razorpay click error => $e");
+      debugPrintStack(stackTrace: st);
+    }
+  }
+
+  void _showPaymentOptionsBottomSheet() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const Text(
+              "Choose Payment Option",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Color(0xFFE8F5E9),
+                child: Icon(Icons.qr_code, color: Colors.green),
+              ),
+              title: const Text(
+                "Pay via QR",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: const Text("Scan QR code and complete payment"),
+                // onTap: () async {
+                //
+                //   final bookingId = widget.booking?.id ?? "";
+                //
+                //   final amount =
+                //       dashBoardController.bookingResponse?.content?.totalBookingAmount ?? 0;
+                //
+                //   final uri = Uri.parse(
+                //     'upi://pay?pa=yespay.mabs0736619ikit1232@yesbankltd'
+                //         '&pn=Dofix%20Technologies%20Private%20Limited'
+                //         '&am=$amount'
+                //         '&cu=INR'
+                //         '&tn=Dofix%20Service%20Booking%20$bookingId',
+                //   );
+                //
+                //   try {
+                //     final launched = await launchUrl(
+                //       uri,
+                //       mode: LaunchMode.externalApplication,
+                //     );
+                //
+                //     if (!launched) {
+                //       showCustomSnackBar("Unable to open UPI app");
+                //     }
+                //   } catch (e) {
+                //     showCustomSnackBar("Unable to open UPI app");
+                //   }
+                // }
+                onTap: () async {
+
+                  final bookingId = widget.booking?.id ?? "";
+
+                  final amount =
+                      dashBoardController.bookingResponse?.content?.totalBookingAmount ?? 0;
+
+                  final uri = Uri.parse(
+                    'upi://pay?pa=yespay.mabs0736619ikit1232@yesbankltd'
+                        '&pn=Dofix%20Technologies%20Private%20Limited'
+                        '&am=$amount'
+                        '&cu=INR'
+                        '&tn=Dofix%20Service%20Booking%20$bookingId',
+                  );
+
+                  try {
+                    final launched = await launchUrl(
+                      uri,
+                      mode: LaunchMode.externalApplication,
+                    );
+
+                    if (!launched) {
+                      showCustomSnackBar("Unable to open UPI app");
+                    }
+                  } catch (e) {
+                    showCustomSnackBar("Unable to open UPI app");
+                  }
+                }
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Color(0xFFE3F2FD),
+                child: Icon(Icons.account_balance_wallet, color: Colors.blue),
+              ),
+              title: const Text(
+                "Razorpay",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: const Text("Pay online using Razorpay"),
+              onTap: () async {
+                Get.back();
+                await _payWithRazorpay();
+              },
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
   Color _getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
       case 'completed':
@@ -204,9 +636,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
         return Colors.grey;
     }
   }
+
   @override
   Widget build(BuildContext context) {
-
     log("📦 SERVICE ADDRESS OBJECT => ${widget.booking?.serviceAddress}");
 
     log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
@@ -238,280 +670,473 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        bottomNavigationBar:
-        // CANCELLED → NOTHING
-        (widget.booking?.bookingStatus == 'canceled')
-            ? const SizedBox.shrink()
+        bottomNavigationBar: Builder(
+          builder: (context) {
+            final bookingStatus =
+                (widget.booking?.bookingStatus ?? "").toLowerCase();
+            final paymentMethod =
+                (widget.booking?.paymentMethod ?? "").toLowerCase();
+            final isPaid = widget.booking?.isPaid == 1;
+            final isUnpaid = widget.booking?.isPaid == 0;
+            final isCompleted = bookingStatus == "completed";
+            final isCancelled = bookingStatus == "canceled";
+            final isPending = bookingStatus == "pending";
 
-        // PAYMENT NOT DONE → PAY NOW
-            : (widget.booking?.isPaid == 0 && widget.booking?.paymentMethod=='razor_pay')
-            ? Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
-          child: InkWell(
-            // onTap: () async {
-            //   final booking = widget.booking!;
-            //   final dashController = Get.find<DashBoardController>();
-            //
-            //   log("BOOKING ID : ${booking.id}");
-            //   log("IS PAID : ${booking.isPaid}");
-            //
-            //   await makeDigitalPayment(
-            //     bookingId: booking.id!, //  IMPORTANT
-            //     isPartial: 0,
-            //     data: {
-            //       "name":
-            //       "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
-            //       "mobile_number": dashController
-            //           .userModel.phone
-            //           .replaceFirst("+91", ""),
-            //       "email": dashController.userModel.email,
-            //       "address_label": "service",
-            //       "address": widget.locationAddress,
-            //       "lat": booking.serviceAddress?.lat,
-            //       "lng": booking.serviceAddress?.lon,
-            //       "zone_id": booking.zoneId,
-            //       "message": booking.message ?? "",
-            //       "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
-            //       "time": formatTimeOfDay24Hour(
-            //         selectedTime ?? TimeOfDay.now(),
-            //       ).toString(),
-            //       "city": booking.serviceAddress?.city,
-            //       "zip_code": booking.serviceAddress?.zipCode,
-            //       "country": booking.serviceAddress?.country,
-            //       "street": booking.serviceAddress?.street,
-            //       "house": booking.serviceAddress?.house,
-            //       "floor": booking.serviceAddress?.floor,
-            //     },
-            //       onPressed: () async {
-            //       await dashController.getBookingDetails(booking.id!);
-            //       setState(() {});
-            //     },
-            //
-            //   );
-            //   log("makeDigitalPayment CALLED");
-            // },
-            // onTap: () async {
-            //   final booking = widget.booking!;
-            //
-            //   if (booking.serviceAddressId == null) {
-            //     log("ERROR: serviceAddressId is null");
-            //     return;
-            //   }
-            //
-            //   await makeBookingPayment(
-            //     bookingId: booking.id!,
-            //     serviceAddressId: booking.serviceAddressId.toString(),
-            //     zoneId: booking.zoneId.toString(),
-            //   );
-            //   log("SERVICE ADDRESS ID: ${widget.booking?.serviceAddressId}");
-            //   log("BOOKING ID TYPE: ${booking.id.runtimeType}");
-            //   log("ZONE ID TYPE: ${booking.zoneId.runtimeType}");
-            //
-            // },
-            // onTap: () async {
-            //   final booking = widget.booking!;
-            //   final dashController = Get.find<DashBoardController>();
-            //
-            //   log("🔥 BUTTON TAPPED");
-            //
-            //   if (booking.serviceAddressId == null) {
-            //     log("❌ ERROR: serviceAddressId is null");
-            //     return;
-            //   }
-            //
-            //   log("✅ SERVICE ADDRESS ID: ${booking.serviceAddressId}");
-            //
-            //   // Build data map
-            //   final Map<String, dynamic> paymentData = {
-            //     "service_address_id": booking.serviceAddressId,
-            //
-            //     "name":
-            //     "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
-            //     "mobile_number":
-            //     dashController.userModel.phone.replaceFirst("+91", ""),
-            //     "email": dashController.userModel.email,
-            //     "address_label": "service",
-            //     "address": widget.locationAddress,
-            //     "lat": booking.serviceAddress?.lat,
-            //     "lng": booking.serviceAddress?.lon,
-            //     "zone_id": booking.zoneId,
-            //     "message": booking.message ?? "",
-            //     "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
-            //     "time": formatTimeOfDay24Hour(
-            //       selectedTime ?? TimeOfDay.now(),
-            //     ).toString(),
-            //     "city": booking.serviceAddress?.city,
-            //     "zip_code": booking.serviceAddress?.zipCode,
-            //     "country": booking.serviceAddress?.country,
-            //     "street": booking.serviceAddress?.street,
-            //     "house": booking.serviceAddress?.house,
-            //     "floor": booking.serviceAddress?.floor,
-            //   };
-            //
-            //   // 🔍 PRINT FULL DATA
-            //   log("📦 PAYMENT DATA => ${jsonEncode(paymentData)}");
-            //
-            //   // 🔍 Individual important fields
-            //   log("📍 LAT => ${paymentData["lat"]}");
-            //   log("📍 LNG => ${paymentData["lng"]}");
-            //   log("🏷 ADDRESS LABEL => ${paymentData["address_label"]}");
-            //   log("🏠 ADDRESS => ${paymentData["address"]}");
-            //   log("👤 NAME => ${paymentData["name"]}");
-            //   log("📞 MOBILE => ${paymentData["mobile_number"]}");
-            //   log("🆔 SERVICE ADDRESS ID => ${paymentData["service_address_id"]}");
-            //
-            //   await makeDigitalPayment(
-            //     bookingId: booking.id!,
-            //     isPartial: 0,
-            //     data: paymentData,
-            //     onPressed: () async {
-            //       await dashController.getBookingDetails(booking.id!);
-            //       setState(() {});
-            //     },
-            //   );
-            //
-            //   log("🚀 makeDigitalPayment CALLED");
-            // },
+            final isOnline = paymentMethod == "razor_pay";
+            final isCash = paymentMethod == "cash" ||
+                paymentMethod == "cash_after_service" ||
+                paymentMethod == "cash_on_delivery";
 
-            onTap: () async {
-              // "lat": null,
-              // "lon": null,
-              // "address_label": null,
-              // "address": null,
+            // 1. Cancelled -> nothing
+            if (isCancelled) {
+              return const SizedBox.shrink();
+            }
 
-              log("📍 LON RAW => ${widget.booking?.serviceAddress?.lon}");
-              log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
-              log("📍 ADDRESS LABEL RAW => ${widget.booking?.serviceAddress?.lon}");
-              log("📍 ADDRESS RAW => ${widget.booking?.serviceAddress?.lon}");
-              // log("SERVICE ADDRESS OBJECT => ${widget.booking?.serviceAddress}");
-              // log("SERVICE ADDRESS ID => ${widget.booking?.serviceAddressId}");
-              // log("✔️ BOOKING OBJECT => ${jsonEncode(widget.booking)}");
-
-              final booking = widget.booking!;
-              final dashController = Get.find<DashBoardController>();
-
-              log("BUTTON TAPPED");
-              log("log lng: ${widget.booking?.serviceAddress?.lon}");
-
-              if (booking.serviceAddressId == null) {
-                log("ERROR: serviceAddressId is null");
-                return;
-              }
-
-              await dashController.getUserInfo(false);
-
-              final address = booking.serviceAddress;
-
-              log("ADDRESS MODEL => ${jsonEncode(address?.toJson())}");
-
-              final Map<String, dynamic> paymentData = {
-                "service_address_id": booking.serviceAddressId,
-
-                "contact_person_name": address?.contactPersonName ??
-                    "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
-
-                "contact_person_number": address?.contactPersonNumber ??
-                    dashController.userModel.phone,
-
-                "name": address?.contactPersonName ??
-                    "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
-
-                "mobile_number": address?.contactPersonNumber
-                    ?.replaceAll("+91", "") ??
-                    dashController.userModel.phone.replaceAll("+91", ""),
-
-                "email": dashController.userModel.email,
-
-                //*********** Working ***********
-                "address_label": address?.addressLabel,
-                "address": address?.address,
-
-                "lat": address?.lat,
-                "lon": address?.lon,
-
-                "zone_id": booking.zoneId,
-                "message": booking.message,
-
-                "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString(),
-              };
-
-              log("PAYMENT DATA => ${jsonEncode(paymentData)}");
-
-              await makeDigitalPayment(
-                bookingId: booking.id!,
-                isPartial: 0,
-                data: paymentData,
-                onPressed: () async {
-                  await dashController.getBookingDetails(booking.id!);
-                  setState(() {});
-                },
+            // 2. Paid + completed -> show invoice
+            if (isPaid && isCompleted) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          final uri =
+                              "${AppConstants.baseUrl}${AppConstants.regularBookingInvoiceUrl}${widget.booking?.id}";
+                          _launchUrl(uri);
+                        },
+                        child: CustomInvoiceButton(),
+                      ),
+                    ),
+                  ],
+                ),
               );
+            }
 
-              log("makeDigitalPayment CALLED");
-            },
+            // 3. Unpaid + completed + online -> Pay Now -> open bottomsheet with QR + Razorpay
+            if (isUnpaid && isCompleted && isOnline) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+                child: InkWell(
+                  onTap: () async {
+                    _showPaymentOptionsBottomSheet();
 
-            child: Container(
-              height: 48,
-              decoration: BoxDecoration(
-                color: const Color(0xFF207FA8),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(
-                child: Text(
-                  "Pay Now",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: Dimensions.fontSizeDefault,
-                    fontWeight: FontWeight.w600,
+                    // final bookingId = widget.booking?.id ?? "";
+                    // final totalAmount = dashBoardController
+                    //     .bookingResponse?.content?.totalBookingAmount
+                    //     .toString();
+                    // final uri = Uri.parse(
+                    //   'upi://pay?pa=merchantaumb100007568@aubank'
+                    //   '&pn=Dofix%20Technologies%20Private%20Limited'
+                    //   '&am=$totalAmount'
+                    //   '&cu=INR'
+                    //   '&tn=Dofix%20Service%20Booking%20$bookingId',
+                    // );
+                    //
+                    // try {
+                    //   final launched = await launchUrl(
+                    //     uri,
+                    //     mode: LaunchMode.externalApplication,
+                    //   );
+                    //
+                    //   if (!launched) {
+                    //     showCustomSnackBar("Unable to open UPI app");
+                    //   }
+                    // } catch (e) {
+                    //   showCustomSnackBar("Unable to open UPI app");
+                    // }
+                  },
+
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF207FA8),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Pay Now",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: Dimensions.fontSizeDefault,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
-        )
-        /// CASE 2: PAYMENT DONE + SERVICE COMPLETED → SHOW INVOICE
-            : (widget.booking?.isPaid == 1 &&
-            widget.booking?.bookingStatus == 'completed')
-            ? Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
-          child: Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    final uri =
-                        "${AppConstants.baseUrl}${AppConstants.regularBookingInvoiceUrl}${widget.booking?.id}";
-                    _launchUrl(uri);
-                  },
-                  child: CustomInvoiceButton(),
-                ),
-              ),
-              // ---- Cancel button (COMMENTED as requested) ----
-              // Visibility(
-              //   visible: ((widget.booking?.bookingStatus == 'pending') &&
-              //       widget.booking?.isPaid == 0),
-              //   child: Expanded(
-              //     child: InkWell(
-              //       onTap: () async {
-              //         await bookController
-              //             .cancelBookingController(widget.booking?.id);
-              //         await Get.find<DashBoardController>()
-              //             .getBookingDetails(widget.booking?.id ?? "");
-              //         await Get.find<BookingController>()
-              //             .getBookingReview(widget.booking?.id ?? "");
-              //         Get.back();
-              //       },
-              //       child: CustomCancelledButton(),
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
-        )
+              );
+            }
 
-        /// ⚪ ELSE → NOTHING
-            : const SizedBox.shrink(),
+            // 4. Unpaid + completed + cash -> Pay Now -> only QR
+            if (isUnpaid && isCompleted && isCash) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+                child: InkWell(
+                  // onTap: () async {
+                  //   final bookingId = widget.booking?.id ?? "";
+                  //   final totalAmount = dashBoardController
+                  //       .bookingResponse?.content?.totalBookingAmount
+                  //       .toString();
+                  //   final uri = Uri.parse(
+                  //     'upi://pay?pa=merchantaumb100007568@aubank'
+                  //     '&pn=Dofix%20Technologies%20Private%20Limited'
+                  //     '&am=$totalAmount'
+                  //     '&cu=INR'
+                  //     '&tn=Dofix%20Service%20Booking%20$bookingId',
+                  //   );
+                  //
+                  //   try {
+                  //     final launched = await launchUrl(
+                  //       uri,
+                  //       mode: LaunchMode.externalApplication,
+                  //     );
+                  //
+                  //     if (!launched) {
+                  //       showCustomSnackBar("Unable to open UPI app");
+                  //     }
+                  //   } catch (e) {
+                  //     showCustomSnackBar("Unable to open UPI app");
+                  //   }
+                  // },
+                  onTap: () async {
+                    final bookingId = widget.booking?.id ?? "";
+
+                    final amount = dashBoardController
+                        .bookingResponse?.content?.totalBookingAmount
+                        .toString();
+
+                    final uri = Uri.parse(
+                      'upi://pay?pa=yespay.mabs0736619ikit1232@yesbankltd'
+                      '&pn=Dofix%20Technologies%20Private%20Limited'
+                      '&am=$amount'
+                      '&cu=INR'
+                      '&tn=Dofix%20Service%20Booking%20$bookingId',
+                    );
+
+                    try {
+                      final launched = await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
+
+                      if (!launched) {
+                        showCustomSnackBar("Unable to open UPI app");
+                      }
+                    } catch (e) {
+                      showCustomSnackBar("Unable to open UPI app");
+                    }
+                  },
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Pay Now",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: Dimensions.fontSizeDefault,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            // 5. बाकी cases -> nothing
+            return const SizedBox.shrink();
+          },
+        ),
+        // bottomNavigationBar:
+        //     // CANCELLED → NOTHING
+        //     (widget.booking?.bookingStatus == 'canceled')
+        //         ? const SizedBox.shrink()
+        //
+        //         // PAYMENT NOT DONE → PAY NOW
+        //         : (widget.booking?.isPaid == 0 &&
+        //                 widget.booking?.paymentMethod == 'razor_pay')
+        //             ? Padding(
+        //                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+        //                 child: InkWell(
+        //                   // onTap: () async {
+        //                   //   final booking = widget.booking!;
+        //                   //   final dashController = Get.find<DashBoardController>();
+        //                   //
+        //                   //   log("BOOKING ID : ${booking.id}");
+        //                   //   log("IS PAID : ${booking.isPaid}");
+        //                   //
+        //                   //   await makeDigitalPayment(
+        //                   //     bookingId: booking.id!, //  IMPORTANT
+        //                   //     isPartial: 0,
+        //                   //     data: {
+        //                   //       "name":
+        //                   //       "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+        //                   //       "mobile_number": dashController
+        //                   //           .userModel.phone
+        //                   //           .replaceFirst("+91", ""),
+        //                   //       "email": dashController.userModel.email,
+        //                   //       "address_label": "service",
+        //                   //       "address": widget.locationAddress,
+        //                   //       "lat": booking.serviceAddress?.lat,
+        //                   //       "lng": booking.serviceAddress?.lon,
+        //                   //       "zone_id": booking.zoneId,
+        //                   //       "message": booking.message ?? "",
+        //                   //       "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+        //                   //       "time": formatTimeOfDay24Hour(
+        //                   //         selectedTime ?? TimeOfDay.now(),
+        //                   //       ).toString(),
+        //                   //       "city": booking.serviceAddress?.city,
+        //                   //       "zip_code": booking.serviceAddress?.zipCode,
+        //                   //       "country": booking.serviceAddress?.country,
+        //                   //       "street": booking.serviceAddress?.street,
+        //                   //       "house": booking.serviceAddress?.house,
+        //                   //       "floor": booking.serviceAddress?.floor,
+        //                   //     },
+        //                   //       onPressed: () async {
+        //                   //       await dashController.getBookingDetails(booking.id!);
+        //                   //       setState(() {});
+        //                   //     },
+        //                   //
+        //                   //   );
+        //                   //   log("makeDigitalPayment CALLED");
+        //                   // },
+        //                   // onTap: () async {
+        //                   //   final booking = widget.booking!;
+        //                   //
+        //                   //   if (booking.serviceAddressId == null) {
+        //                   //     log("ERROR: serviceAddressId is null");
+        //                   //     return;
+        //                   //   }
+        //                   //
+        //                   //   await makeBookingPayment(
+        //                   //     bookingId: booking.id!,
+        //                   //     serviceAddressId: booking.serviceAddressId.toString(),
+        //                   //     zoneId: booking.zoneId.toString(),
+        //                   //   );
+        //                   //   log("SERVICE ADDRESS ID: ${widget.booking?.serviceAddressId}");
+        //                   //   log("BOOKING ID TYPE: ${booking.id.runtimeType}");
+        //                   //   log("ZONE ID TYPE: ${booking.zoneId.runtimeType}");
+        //                   //
+        //                   // },
+        //                   // onTap: () async {
+        //                   //   final booking = widget.booking!;
+        //                   //   final dashController = Get.find<DashBoardController>();
+        //                   //
+        //                   //   log("🔥 BUTTON TAPPED");
+        //                   //
+        //                   //   if (booking.serviceAddressId == null) {
+        //                   //     log("❌ ERROR: serviceAddressId is null");
+        //                   //     return;
+        //                   //   }
+        //                   //
+        //                   //   log("✅ SERVICE ADDRESS ID: ${booking.serviceAddressId}");
+        //                   //
+        //                   //   // Build data map
+        //                   //   final Map<String, dynamic> paymentData = {
+        //                   //     "service_address_id": booking.serviceAddressId,
+        //                   //
+        //                   //     "name":
+        //                   //     "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+        //                   //     "mobile_number":
+        //                   //     dashController.userModel.phone.replaceFirst("+91", ""),
+        //                   //     "email": dashController.userModel.email,
+        //                   //     "address_label": "service",
+        //                   //     "address": widget.locationAddress,
+        //                   //     "lat": booking.serviceAddress?.lat,
+        //                   //     "lng": booking.serviceAddress?.lon,
+        //                   //     "zone_id": booking.zoneId,
+        //                   //     "message": booking.message ?? "",
+        //                   //     "date": DateConverter.dateTimeForCoupon(selectedDate).toString(),
+        //                   //     "time": formatTimeOfDay24Hour(
+        //                   //       selectedTime ?? TimeOfDay.now(),
+        //                   //     ).toString(),
+        //                   //     "city": booking.serviceAddress?.city,
+        //                   //     "zip_code": booking.serviceAddress?.zipCode,
+        //                   //     "country": booking.serviceAddress?.country,
+        //                   //     "street": booking.serviceAddress?.street,
+        //                   //     "house": booking.serviceAddress?.house,
+        //                   //     "floor": booking.serviceAddress?.floor,
+        //                   //   };
+        //                   //
+        //                   //   // 🔍 PRINT FULL DATA
+        //                   //   log("📦 PAYMENT DATA => ${jsonEncode(paymentData)}");
+        //                   //
+        //                   //   // 🔍 Individual important fields
+        //                   //   log("📍 LAT => ${paymentData["lat"]}");
+        //                   //   log("📍 LNG => ${paymentData["lng"]}");
+        //                   //   log("🏷 ADDRESS LABEL => ${paymentData["address_label"]}");
+        //                   //   log("🏠 ADDRESS => ${paymentData["address"]}");
+        //                   //   log("👤 NAME => ${paymentData["name"]}");
+        //                   //   log("📞 MOBILE => ${paymentData["mobile_number"]}");
+        //                   //   log("🆔 SERVICE ADDRESS ID => ${paymentData["service_address_id"]}");
+        //                   //
+        //                   //   await makeDigitalPayment(
+        //                   //     bookingId: booking.id!,
+        //                   //     isPartial: 0,
+        //                   //     data: paymentData,
+        //                   //     onPressed: () async {
+        //                   //       await dashController.getBookingDetails(booking.id!);
+        //                   //       setState(() {});
+        //                   //     },
+        //                   //   );
+        //                   //
+        //                   //   log("🚀 makeDigitalPayment CALLED");
+        //                   // },
+        //
+        //                   onTap: () async {
+        //                     // "lat": null,
+        //                     // "lon": null,
+        //                     // "address_label": null,
+        //                     // "address": null,
+        //
+        //                     log("📍 LON RAW => ${widget.booking?.serviceAddress?.lon}");
+        //                     log("📍 LAT RAW => ${widget.booking?.serviceAddress?.lat}");
+        //                     log("📍 ADDRESS LABEL RAW => ${widget.booking?.serviceAddress?.lon}");
+        //                     log("📍 ADDRESS RAW => ${widget.booking?.serviceAddress?.lon}");
+        //                     // log("SERVICE ADDRESS OBJECT => ${widget.booking?.serviceAddress}");
+        //                     // log("SERVICE ADDRESS ID => ${widget.booking?.serviceAddressId}");
+        //                     // log("✔️ BOOKING OBJECT => ${jsonEncode(widget.booking)}");
+        //
+        //                     final booking = widget.booking!;
+        //                     final dashController =
+        //                         Get.find<DashBoardController>();
+        //
+        //                     log("BUTTON TAPPED");
+        //                     log("log lng: ${widget.booking?.serviceAddress?.lon}");
+        //
+        //                     if (booking.serviceAddressId == null) {
+        //                       log("ERROR: serviceAddressId is null");
+        //                       return;
+        //                     }
+        //
+        //                     await dashController.getUserInfo(false);
+        //
+        //                     final address = booking.serviceAddress;
+        //
+        //                     log("ADDRESS MODEL => ${jsonEncode(address?.toJson())}");
+        //
+        //                     final Map<String, dynamic> paymentData = {
+        //                       "service_address_id": booking.serviceAddressId,
+        //
+        //                       "contact_person_name": address
+        //                               ?.contactPersonName ??
+        //                           "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+        //
+        //                       "contact_person_number":
+        //                           address?.contactPersonNumber ??
+        //                               dashController.userModel.phone,
+        //
+        //                       "name": address?.contactPersonName ??
+        //                           "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
+        //
+        //                       "mobile_number": address?.contactPersonNumber
+        //                               ?.replaceAll("+91", "") ??
+        //                           dashController.userModel.phone
+        //                               .replaceAll("+91", ""),
+        //
+        //                       "email": dashController.userModel.email,
+        //
+        //                       //*********** Working ***********
+        //                       "address_label": address?.addressLabel,
+        //                       "address": address?.address,
+        //
+        //                       "lat": address?.lat,
+        //                       "lon": address?.lon,
+        //
+        //                       "zone_id": booking.zoneId,
+        //                       "message": booking.message,
+        //
+        //                       "date":
+        //                           DateConverter.dateTimeForCoupon(selectedDate)
+        //                               .toString(),
+        //                       "time": formatTimeOfDay24Hour(
+        //                               selectedTime ?? TimeOfDay.now())
+        //                           .toString(),
+        //                     };
+        //
+        //                     log("PAYMENT DATA => ${jsonEncode(paymentData)}");
+        //
+        //                     await makeDigitalPayment(
+        //                       bookingId: booking.id!,
+        //                       isPartial: 0,
+        //                       data: paymentData,
+        //                       onPressed: () async {
+        //                         await dashController
+        //                             .getBookingDetails(booking.id!);
+        //                         setState(() {});
+        //                       },
+        //                     );
+        //
+        //                     log("makeDigitalPayment CALLED");
+        //                   },
+        //
+        //                   child: Container(
+        //                     height: 48,
+        //                     decoration: BoxDecoration(
+        //                       color: const Color(0xFF207FA8),
+        //                       borderRadius: BorderRadius.circular(8),
+        //                     ),
+        //                     child: const Center(
+        //                       child: Text(
+        //                         "Pay Now",
+        //                         style: TextStyle(
+        //                           color: Colors.white,
+        //                           fontSize: Dimensions.fontSizeDefault,
+        //                           fontWeight: FontWeight.w600,
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ),
+        //               )
+        //
+        //             /// CASE 2: PAYMENT DONE + SERVICE COMPLETED → SHOW INVOICE
+        //             : (widget.booking?.isPaid == 1 &&
+        //                     widget.booking?.bookingStatus == 'completed')
+        //                 ? Padding(
+        //                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 19),
+        //                     child: Row(
+        //                       children: [
+        //                         Expanded(
+        //                           child: InkWell(
+        //                             onTap: () {
+        //                               final uri =
+        //                                   "${AppConstants.baseUrl}${AppConstants.regularBookingInvoiceUrl}${widget.booking?.id}";
+        //                               _launchUrl(uri);
+        //                             },
+        //                             child: CustomInvoiceButton(),
+        //                           ),
+        //                         ),
+        //                         // ---- Cancel button (COMMENTED as requested) ----
+        //                         // Visibility(
+        //                         //   visible: ((widget.booking?.bookingStatus == 'pending') &&
+        //                         //       widget.booking?.isPaid == 0),
+        //                         //   child: Expanded(
+        //                         //     child: InkWell(
+        //                         //       onTap: () async {
+        //                         //         await bookController
+        //                         //             .cancelBookingController(widget.booking?.id);
+        //                         //         await Get.find<DashBoardController>()
+        //                         //             .getBookingDetails(widget.booking?.id ?? "");
+        //                         //         await Get.find<BookingController>()
+        //                         //             .getBookingReview(widget.booking?.id ?? "");
+        //                         //         Get.back();
+        //                         //       },
+        //                         //       child: CustomCancelledButton(),
+        //                         //     ),
+        //                         //   ),
+        //                         // ),
+        //                       ],
+        //                     ),
+        //                   )
+        //
+        //                 /// ⚪ ELSE → NOTHING
+        //                 : const SizedBox.shrink(),
         appBar: CustomAppBar(
           title: 'Booking Details',
           isSearchButtonExist: false,
@@ -584,8 +1209,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                 // Fetch service details for clicked item
                                 await Get.find<DashBoardController>()
                                     .getServicesDetails(detail.serviceId ?? "");
-
-                                },
+                              },
                               child: CustomBookingDetailsItems(detail: detail),
                             ),
                           );
@@ -747,7 +1371,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       fontSize: Dimensions.fontSize12,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF000000).withAlpha((0.6 * 255).toInt())),
-                  ),
+                ),
                 SizedBox(
                   height: 16,
                 ),
@@ -774,54 +1398,84 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 6,
                 ),
+                // Text(
+                //   widget.paymentMethod == "razor_pay"
+                //       ? (widget.booking?.isPaid == 1
+                //           ? "Online Payment"
+                //           : "Online Payment")
+                //       : "Cash Payment",
+                //   style: TextStyle(
+                //     fontSize: Dimensions.fontSize12,
+                //     fontWeight: FontWeight.w500,
+                //     color: widget.booking?.isPaid == 1
+                //         ? Colors.green // paid
+                //         : Colors.orange, // pending
+                //   ),
+                // ),
                 Text(
-                  widget.paymentMethod == "razor_pay"
-                      ? (widget.booking?.isPaid == 1
+                  (widget.booking?.paymentMethod ?? "").toLowerCase() ==
+                          "razor_pay"
                       ? "Online Payment"
-                      : "Online Payment")
                       : "Cash Payment",
                   style: TextStyle(
                     fontSize: Dimensions.fontSize12,
                     fontWeight: FontWeight.w500,
-                    color: widget.booking?.isPaid == 1
-                        ? Colors.green // paid
-                        : Colors.orange, // pending
+                    color:
+                        (widget.booking?.paymentMethod ?? "").toLowerCase() ==
+                                "razor_pay"
+                            ? const Color(0xFF207FA8)
+                            : Colors.orange,
                   ),
                 ),
                 SizedBox(height: 10),
                 Row(
-                      children: [
-                        Icon(
-                          Icons.payments_outlined,
-                          size: 16,
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text(
-                          // "Payment Method",
-                          "Payment Status",
-                          style: TextStyle(
-                            fontSize: Dimensions.fontSize14,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF000000),
-                          ),
-                        ),
-                      ],
+                  children: [
+                    Icon(
+                      Icons.payments_outlined,
+                      size: 16,
                     ),
+                    SizedBox(
+                      width: 3,
+                    ),
+                    Text(
+                      // "Payment Method",
+                      "Payment Status",
+                      style: TextStyle(
+                        fontSize: Dimensions.fontSize14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF000000),
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(
                   height: 6,
                 ),
+                // Text(
+                //   widget.booking?.isPaid == 1 ? "Paid" : "Pending",
+                //   style: TextStyle(
+                //     fontSize: Dimensions.fontSize12,
+                //     fontWeight: FontWeight.w500,
+                //     color: widget.booking?.isPaid == 1
+                //         ? Colors.green
+                //         : Colors.orange,
+                //   ),
+                // ),
                 Text(
-                      widget.booking?.isPaid == 1 ? "Paid" : "Pending",
-                      style: TextStyle(
-                        fontSize: Dimensions.fontSize12,
-                        fontWeight: FontWeight.w500,
-                        color: widget.booking?.isPaid == 1
-                            ? Colors.green
-                            : Colors.orange,
-                      ),
-                    ),
+                  widget.booking?.isPaid == 1
+                      ? "Paid"
+                      : widget.booking?.bookingStatus?.toLowerCase() ==
+                              "completed"
+                          ? "Pending Payment"
+                          : "Pending",
+                  style: TextStyle(
+                    fontSize: Dimensions.fontSize12,
+                    fontWeight: FontWeight.w500,
+                    color: widget.booking?.isPaid == 1
+                        ? Colors.green
+                        : Colors.orange,
+                  ),
+                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -847,7 +1501,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 6,
                 ),
-                // 🔵🟡🟢🔴 Status wise color handling
+                // Status wise color handling
                 Text(
                   widget.booking?.bookingStatus?.toLowerCase() == "canceled"
                       ? "Cancelled"
@@ -1143,7 +1797,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -1151,6 +1804,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       ),
     );
   }
+
   void _showHelpBottomSheet() {
     const supportNumber = "8383849293";
     final bookingId = widget.booking?.id ?? "N/A";
@@ -1221,7 +1875,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               onTap: () async {
                 final Uri uri = Uri.parse(
                   "https://wa.me/91$supportNumber?text="
-                      "Hi, I need help with booking ID: $bookingId",
+                  "Hi, I need help with booking ID: $bookingId",
                 );
 
                 if (await canLaunchUrl(uri)) {

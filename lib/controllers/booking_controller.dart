@@ -148,7 +148,7 @@ class BookingController extends GetxController implements GetxService {
 
         log("REVIEWS: ${decoded["content"]["reviews"]}");
 
-        /// ⭐ count stars
+        ///  count stars
         for (ServiceReview review in reviews) {
           int rating = review.reviewRating ?? 0;
 
@@ -157,7 +157,7 @@ class BookingController extends GetxController implements GetxService {
           }
         }
 
-        /// ⭐ calculate average
+        ///  calculate average
         int total = 0;
         int count = reviews.length;
 

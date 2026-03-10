@@ -44,8 +44,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
       final serviceId = args?["service_id"];
 
       if (serviceId != null) {
-        Get.find<BookingController>()
-            .getServiceReview(serviceId: serviceId);
+        Get.find<BookingController>().getServiceReview(serviceId: serviceId);
       }
     });
 
@@ -157,7 +156,8 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                           return ServiceContainer(
                                             showReviews: true,
                                             isButtonShow: true,
-                                            serviceModel: controller.serviceModel,
+                                            serviceModel:
+                                                controller.serviceModel,
                                           );
                                         },
                                       ),
@@ -166,7 +166,6 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                 );
                               },
                             ),
-
 
                             // AnimatedBuilder(
                             //   animation: _slideAnimation,
@@ -219,6 +218,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                 ),
                               ),
                             ),
+
                             /// Available Services
                             //******* working ********
                             AnimatedOpacity(
@@ -281,7 +281,9 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                           variantKey:
                                               variation?.variantKey ?? "",
                                           serviceModel: controller.serviceModel,
-                                          serviceCoverImage:variation?.coverImage ?? "" ,
+                                          serviceCoverImage:
+                                              variation?.coverImage ?? "",
+                                          taxAmount: 79,
                                         );
                                       },
                                     );
@@ -314,25 +316,25 @@ class _ServiceDetailsState extends State<ServiceDetails>
                               opacity: _visible ? 1.0 : 0.0,
                               child: Padding(
                                 padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: controller.serviceModel.description !=
-                                    null &&
-                                    HtmlUtils.containsHtml(controller
-                                        .serviceModel.description!)
+                                            null &&
+                                        HtmlUtils.containsHtml(controller
+                                            .serviceModel.description!)
                                     ? HtmlToFlutter(
-                                  htmlText: controller
-                                      .serviceModel.description ??
-                                      "",
-                                )
+                                        htmlText: controller
+                                                .serviceModel.description ??
+                                            "",
+                                      )
                                     : Text(
-                                  HtmlUtils.stripHtmlIfPresent(controller
-                                      .serviceModel.description ??
-                                      ""),
-                                  style: TextStyle(
-                                    color: Colors.black.withOpacity(0.6),
-                                    fontSize: 14,
-                                  ),
-                                ),
+                                        HtmlUtils.stripHtmlIfPresent(controller
+                                                .serviceModel.description ??
+                                            ""),
+                                        style: TextStyle(
+                                          color: Colors.black.withOpacity(0.6),
+                                          fontSize: 14,
+                                        ),
+                                      ),
                               ),
                             ),
                             // Obx(() {
@@ -477,14 +479,20 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                     ),
 
                                     RatingSummary(
-                                      averageRating: controller.serviceModel.avgRating ?? 0.0,//4.8
-                                      ratingCount: controller.serviceModel.ratingCount ?? 0,//24
+                                      averageRating:
+                                          controller.serviceModel.avgRating ??
+                                              0.0, //4.8
+                                      ratingCount:
+                                          controller.serviceModel.ratingCount ??
+                                              0, //24
                                     ),
 
                                     const SizedBox(height: 20),
 
                                     /// Reviews Title
-                                    if ((controller.serviceModel.ratingCount ?? 0) > 0)
+                                    if ((controller.serviceModel.ratingCount ??
+                                            0) >
+                                        0)
                                       const Text(
                                         'Reviews',
                                         style: TextStyle(
@@ -493,21 +501,32 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                         ),
                                       ),
 
-                                    if ((bookingController.serviceReviewsModel.value?.reviews?.isNotEmpty ?? false))
+                                    if ((bookingController.serviceReviewsModel
+                                            .value?.reviews?.isNotEmpty ??
+                                        false))
                                       const SizedBox(height: 10),
 
                                     /// Reviews List
-                                    if ((bookingController.serviceReviewsModel.value?.reviews?.isNotEmpty ?? false))
+                                    if ((bookingController.serviceReviewsModel
+                                            .value?.reviews?.isNotEmpty ??
+                                        false))
                                       SizedBox(
                                         height: 300,
                                         child: ListView.builder(
-                                          physics: const BouncingScrollPhysics(),
+                                          physics:
+                                              const BouncingScrollPhysics(),
                                           itemCount: bookingController
-                                              .serviceReviewsModel.value?.reviews?.length ??
+                                                  .serviceReviewsModel
+                                                  .value
+                                                  ?.reviews
+                                                  ?.length ??
                                               0,
                                           itemBuilder: (context, index) {
                                             final ServiceReview review =
-                                                bookingController.serviceReviewsModel.value?.reviews?[index] ??
+                                                bookingController
+                                                        .serviceReviewsModel
+                                                        .value
+                                                        ?.reviews?[index] ??
                                                     ServiceReview();
 
                                             return ReviewCard(
@@ -874,8 +893,8 @@ void ShowAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
                                           serviceModel.categoryId &&
                                       item.subCategoryId ==
                                           serviceModel.subCategoryId &&
-                                      item.variantKey ==
-                                          selectedVariation, // <-- compare variation too
+                                      item.variantKey == selectedVariation,
+                                  // <-- compare variation too
                                   orElse: () => CartItem(
                                     serviceId: "null",
                                     categoryId: "null",
