@@ -31,6 +31,7 @@ import '../data/api/api.dart';
 import '../data/repo/auth_repo.dart';
 import '../helper/gi_dart.dart';
 import '../model/address_model.dart';
+import '../model/all_category_model.dart';
 import '../model/booking_response.dart';
 import '../model/notification_model.dart';
 import '../model/pages_model.dart';
@@ -509,6 +510,29 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
+  RxBool isAllCategoryLoading = false.obs;
+  AllCategoryModel? allCategoryModel;
+
+  Future<void> fetchAllCategories({String limit = "50", String offset = "1"}) async {
+    isAllCategoryLoading.value = true;
+
+    try {
+      Response response = await authRepo.getAllCategories(limit: limit, offset: offset);
+
+      if (response.statusCode == 200 && response.body['response_code'] == "default_200") {
+        allCategoryModel = AllCategoryModel.fromJson(response.body);
+        debugPrint("Total categories fetched: ${allCategoryModel?.content?.data?.length}");
+      } else {
+        Get.snackbar("Error", response.body['message'] ?? "Something went wrong");
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isAllCategoryLoading.value = false;
+    }
+  }
+
+  ///
   Future<void> getData(int limit, int offset,
       [bool isShowLoading = false]) async {
     if (isFetchingCategories) return;

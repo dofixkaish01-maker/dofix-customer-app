@@ -60,6 +60,7 @@ class ApiClient extends GetxController implements GetxService {
   //   }
   // }
 
+  //
   Future<Response> getData(
       String uri, {
         Map<String, dynamic>? query,

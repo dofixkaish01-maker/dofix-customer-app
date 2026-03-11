@@ -220,16 +220,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: () async {
                                 // final dash = Get.find<DashBoardController>();
                                 //
-                                // // Fetch data without showing loading
-                                // await dash.getFeaturedCategories(
+                                // // Optional: fetch categories before switching pages
+                                // await dash.fetchAllCategories(
                                 //   limit: "50",
                                 //   offset: "1",
-                                //   isShowLoading: false,
                                 // );
 
-                                // Switch to page 1 on the existing dashboard
-                                DashboardScreen.globalKey.currentState
-                                    ?.setPage(1);
+                                // Switch to page 1 on Dashboard
+                                DashboardScreen.globalKey.currentState?.setPage(1);
                               },
                               child: const Text(
                                 "See All",
@@ -239,8 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ),
-                          ],
+                            ),                          ],
                         ),
                       ),
 

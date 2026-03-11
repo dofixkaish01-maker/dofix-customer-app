@@ -113,6 +113,20 @@ class AuthRepo {
         headers: headers);
   }
 
+  Future<Response> getAllCategories({
+    String? limit,
+    String? offset,
+  }) async {
+    return await apiClient.getData(
+      AppConstants.category,
+      query: {
+        "limit": limit,
+        "offset": offset,
+      },
+      method: "GET",
+    );
+  }
+
   Future<Response> categories(
     int? limit,
     int? offset,
