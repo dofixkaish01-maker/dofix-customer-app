@@ -1,3 +1,4 @@
+import 'package:do_fix/widgets/custom_dot_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/dashboard_controller.dart';
@@ -98,7 +99,7 @@ class _ServiceScreensState extends State<ServiceScreens> {
       body: Obx(() {
         // Show loader while fetching
         if (dashboard.isAllCategoryLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: DotWaveLoader());
         }
 
         // Empty state

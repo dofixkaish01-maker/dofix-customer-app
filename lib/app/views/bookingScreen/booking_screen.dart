@@ -7,6 +7,7 @@ import 'package:do_fix/app/widgets/custom_selection_widget.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/utils/common_functions.dart';
 import 'package:do_fix/widgets/common_loading.dart';
+import 'package:do_fix/widgets/custom_dot_loader.dart';
 import 'package:do_fix/widgets/custom_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -2112,12 +2113,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 20),
-                    Text(
-                      "Booking is in Progress, Please wait!",
-                      style: TextStyle(color: Colors.black),
-                    )
+                    DotWaveLoader(text: "Booking is in Progress, Please wait!",),
                   ],
                 ),
               ),

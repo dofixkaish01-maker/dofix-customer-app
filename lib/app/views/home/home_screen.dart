@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/views/home/component/category_components.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -200,44 +201,41 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       /// Heading Row
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: horizontalPadding),
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Row(
-                              children: [
-                                Text(
-                                  "All Services",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                            const Text(
+                              "All Services",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            GestureDetector(
-                              onTap: () async {
-                                // final dash = Get.find<DashBoardController>();
-                                //
-                                // // Optional: fetch categories before switching pages
-                                // await dash.fetchAllCategories(
-                                //   limit: "50",
-                                //   offset: "1",
-                                // );
 
-                                // Switch to page 1 on Dashboard
+                            InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () {
                                 DashboardScreen.globalKey.currentState?.setPage(1);
                               },
-                              child: const Text(
-                                "See All",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w600,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                child: const Row(
+                                  children: [
+                                    Text(
+                                      "See All",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),                          ],
+                            ),
+                          ],
                         ),
                       ),
 
