@@ -18,9 +18,9 @@ class SearchController extends GetxController {
 
   /// STATIC TRENDING SEARCH
   RxList<String> trendingSearches = <String>[
-    "AC Repair",
-    "Plumber",
-    "Electrician",
+    "AC Service, Repair & Installation",
+    "Plumber Services",
+    "Electrician Service",
     "Carpenter",
     "Home Cleaning",
     "Bathroom Cleaning",
@@ -41,6 +41,7 @@ class SearchController extends GetxController {
   }
 
   void clearSearch() {
+    textController.clear(); // <-- TextField ka text clear karega
     searchText.value = '';
     isSearching.value = false;
     isSearchCompleted.value = false;
@@ -100,6 +101,14 @@ class SearchController extends GetxController {
     if (recentSearches.length > 8) {
       recentSearches.removeLast();
     }
+
+    await prefs.setStringList("recent_search", recentSearches);
+  }
+
+  Future<void> removeRecentSearch(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    recentSearches.remove(value);
 
     await prefs.setStringList("recent_search", recentSearches);
   }
