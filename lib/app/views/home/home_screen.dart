@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/views/home/component/category_components.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -235,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 "See All",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.blue,
+                                  color: primaryColor,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

@@ -53,7 +53,7 @@ class _CartScreenState extends State<CartScreen> {
     _items.removeAt(index);
     _listKey.currentState?.removeItem(
       index,
-          (context, animation) => SlideTransition(
+      (context, animation) => SlideTransition(
         position: Tween<Offset>(
           begin: Offset.zero,
           end: const Offset(1.0, 0.0), // slide out to right
@@ -73,7 +73,6 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DashBoardController>(builder: (controller) {
-
       final cartModel = controller.cartModel;
       final content = cartModel.content;
       final cart = content?.cart;
@@ -89,7 +88,8 @@ class _CartScreenState extends State<CartScreen> {
         final items = cart.data!;
 
         for (var item in items) {
-          itemTotal += (item.serviceCost.toDouble() * item.quantity!.toDouble());
+          itemTotal +=
+              (item.serviceCost.toDouble() * item.quantity!.toDouble());
 
           discount += item.discountAmount.toDouble();
           couponDiscount += item.couponDiscount.toDouble();
@@ -150,106 +150,106 @@ class _CartScreenState extends State<CartScreen> {
           ),
 
           ///  FIXED BOTTOM BAR
-            bottomNavigationBar: showBottomBar
-                ? SafeArea(
-              top: false,
-              child: Container(
-                constraints: BoxConstraints(maxWidth: maxContentWidth),
-                padding: EdgeInsets.fromLTRB(
-                  horizontalPadding,
-                  12,
-                  horizontalPadding,
-                  14,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    top: BorderSide(
-                      color: Colors.grey.withOpacity(0.12),
+          bottomNavigationBar: showBottomBar
+              ? SafeArea(
+                  top: false,
+                  child: Container(
+                    constraints: BoxConstraints(maxWidth: maxContentWidth),
+                    padding: EdgeInsets.fromLTRB(
+                      horizontalPadding,
+                      12,
+                      horizontalPadding,
+                      14,
                     ),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 18,
-                      offset: const Offset(0, -4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            "To Pay",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            "₹ ${grandTotal.toStringAsFixed(0)}",
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF207FA7),
-                            ),
-                          ),
-                        ],
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        top: BorderSide(
+                          color: Colors.grey.withOpacity(0.12),
+                        ),
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 18,
+                          offset: const Offset(0, -4),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
-                        onTap: () {
-                          Get.to(
-                            BookingScreen(cartTotalPrice: grandTotal),
-                          );
-                        },
-                        child: Container(
-                          height: 54,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF207FA7),
-                                Color(0xFF2FA4D9),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(14),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF207FA7)
-                                    .withOpacity(0.35),
-                                blurRadius: 12,
-                                offset: const Offset(0, 6),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                "To Pay",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                "₹ ${grandTotal.toStringAsFixed(0)}",
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF207FA7),
+                                ),
                               ),
                             ],
                           ),
-                          child: const Center(
-                            child: Text(
-                              "Continue to Booking",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.2,
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          flex: 2,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(14),
+                            onTap: () {
+                              Get.to(
+                                BookingScreen(cartTotalPrice: grandTotal),
+                              );
+                            },
+                            child: Container(
+                              height: 54,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF207FA7),
+                                    Color(0xFF2FA4D9),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF207FA7)
+                                        .withOpacity(0.35),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Continue to Booking",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-          )
+                  ),
+                )
               : null,
 
           body: Align(
@@ -267,203 +267,199 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   child: _items.isEmpty
                       ? SizedBox(
-                    height: Get.size.height * 0.8,
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _isLoading
-                            ? DotWaveLoader(
-                          text: 'Loading cart..',
+                          height: Get.size.height * 0.8,
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _isLoading
+                                  ? DotWaveLoader(
+                                      text: 'Loading cart..',
+                                    )
+                                  : Column(
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 24),
+                                          padding: const EdgeInsets.all(24),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFF4F8FB),
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                height: 90,
+                                                width: 90,
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.white,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.shopping_cart_outlined,
+                                                  size: 50,
+                                                  color: Color(0xFF207FA7),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 16),
+                                              const Text(
+                                                "Your cart is empty",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 6),
+                                              const Text(
+                                                "Looks like you haven’t added any service yet",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 24),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Get.to(() =>
+                                                DashboardScreen(pageIndex: 0));
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 32,
+                                              vertical: 12,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF207FA7),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: const Text(
+                                              "Add Service",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            ],
+                          ),
                         )
-                            : Column(
+                      : Column(
                           children: [
-                            Container(
-                              margin:
-                              const EdgeInsets.symmetric(horizontal: 24),
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF4F8FB),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: 90,
-                                    width: 90,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
+                            const SizedBox(height: 8),
+                            AnimatedList(
+                              key: _listKey,
+                              initialItemCount: _items.length,
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (context, index, animation) {
+                                return Column(
+                                  children: [
+                                    SlideTransition(
+                                      position: Tween<Offset>(
+                                        begin: const Offset(1.0, 0.0),
+                                        end: Offset.zero,
+                                      ).animate(
+                                        CurvedAnimation(
+                                          parent: animation,
+                                          curve: Curves.easeOut,
+                                        ),
+                                      ),
+                                      child: HeaderComponent(
+                                        serviceModel: _items[index],
+                                        function: (i) {
+                                          removeItem(index);
+                                        },
+                                      ),
                                     ),
-                                    child: const Icon(
-                                      Icons.shopping_cart_outlined,
-                                      size: 50,
-                                      color: Color(0xFF207FA7),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    "Your cart is empty",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  const Text(
-                                    "Looks like you haven’t added any service yet",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            GestureDetector(
-                              onTap: () {
-                                Get.to(() => DashboardScreen(pageIndex: 0));
+                                    const SizedBox(height: 8),
+                                  ],
+                                );
                               },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 32,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF207FA7),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Text(
-                                  "Add Service",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                            ),
+                            const SizedBox(height: 16),
+                            Column(
+                              children: [
+                                /// PRICE DETAILS HEADER
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Price Details ($itemCount items)",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ),
+
+                                /// BILLING CARD
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF7FAFC),
+                                    borderRadius: BorderRadius.circular(7),
+                                    border: Border.all(
+                                        color: const Color(0xFFE6EBEF)),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      priceRow("Item Total", itemTotal),
+                                      const SizedBox(height: 6),
+                                      priceRow(
+                                        "Coupon Discount",
+                                        couponDiscount,
+                                        color: Colors.green,
+                                      ),
+                                      const SizedBox(height: 6),
+                                      priceRow("Tax & Fee", tax),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 14),
+                                        child: DottedBorder(
+                                          color: const Color(0xFFD0D7DE),
+                                          strokeWidth: 1,
+                                          dashPattern: const [6, 4],
+                                          customPath: (size) {
+                                            return Path()
+                                              ..moveTo(0, 0)
+                                              ..lineTo(size.width, 0);
+                                          },
+                                          child: const SizedBox(
+                                            width: double.infinity,
+                                            height: 1,
+                                          ),
+                                        ),
+                                      ),
+                                      priceRow(
+                                        "Total Amount",
+                                        grandTotal,
+                                        isBold: true,
+                                        color: const Color(0xFF207FA7),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
                         ),
-                      ],
-                    ),
-                  )
-                      : Column(
-                    children: [
-                      const SizedBox(height: 8),
-
-                      AnimatedList(
-                        key: _listKey,
-                        initialItemCount: _items.length,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index, animation) {
-
-                          return Column(
-                            children: [
-                              SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(1.0, 0.0),
-                                  end: Offset.zero,
-                                ).animate(
-                                  CurvedAnimation(
-                                    parent: animation,
-                                    curve: Curves.easeOut,
-                                  ),
-                                ),
-                                child: HeaderComponent(
-                                  serviceModel: _items[index],
-                                  function: (i) {
-                                    removeItem(index);
-                                  },
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 16),
-                      Column(
-                        children: [
-
-                          /// PRICE DETAILS HEADER
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Price Details ($itemCount items)",
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          /// BILLING CARD
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF7FAFC),
-                              borderRadius: BorderRadius.circular(7),
-                              border: Border.all(color: const Color(0xFFE6EBEF)),
-                            ),
-                            child: Column(
-                              children: [
-                                priceRow("Item Total", itemTotal),
-                                const SizedBox(height: 6),
-
-                                priceRow(
-                                  "Coupon Discount",
-                                  couponDiscount,
-                                  color: Colors.green,
-                                ),
-
-                                const SizedBox(height: 6),
-
-                                priceRow("Tax & Fee", tax),
-
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
-                                  child: DottedBorder(
-                                    color: const Color(0xFFD0D7DE),
-                                    strokeWidth: 1,
-                                    dashPattern: const [6, 4],
-                                    customPath: (size) {
-                                      return Path()
-                                        ..moveTo(0, 0)
-                                        ..lineTo(size.width, 0);
-                                    },
-                                    child: const SizedBox(
-                                      width: double.infinity,
-                                      height: 1,
-                                    ),
-                                  ),
-                                ),
-
-                                priceRow(
-                                  "Total Amount",
-                                  grandTotal,
-                                  isBold: true,
-                                  color: const Color(0xFF207FA7),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
                 ),
               ),
             ),
@@ -561,9 +557,6 @@ Widget _row(String title, double amount, {bool isBold = false, Color? color}) {
     ),
   );
 }
-
-
-
 
 // import 'package:do_fix/app/views/bookingScreen/booking_screen.dart';
 // import 'package:do_fix/app/views/home/home_screen.dart';

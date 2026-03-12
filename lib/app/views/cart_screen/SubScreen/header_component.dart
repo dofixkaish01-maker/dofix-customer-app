@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../controllers/dashboard_controller.dart';
 import '../../../../widgets/custom_image_viewer.dart';
+
 class HeaderComponent extends StatefulWidget {
   final CartItem? serviceModel;
   final Function(dynamic index) function;
@@ -55,16 +56,13 @@ class _HeaderComponentState extends State<HeaderComponent> {
               ),
             ],
           ),
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               /// IMAGE + DETAILS
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   /// IMAGE
                   Container(
                     height: 100,
@@ -77,7 +75,8 @@ class _HeaderComponentState extends State<HeaderComponent> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: CustomNetworkImageWidget(
-                        image: widget.serviceModel?.category?.imageFullPath ?? "",
+                        image:
+                            widget.serviceModel?.category?.imageFullPath ?? "",
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -90,7 +89,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         /// CATEGORY NAME
                         Text(
                           widget.serviceModel?.category?.name ?? "",
@@ -138,7 +136,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-
                   /// QUANTITY CONTROLLER
                   Container(
                     height: 36,
@@ -151,7 +148,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-
                         _circleButton(
                           icon: Icons.remove,
                           onTap: () {
@@ -164,7 +160,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                                 widget.serviceModel?.id ?? "",
                               );
                             } else {
-
                               /// REMOVE DIALOG
                               Get.dialog(
                                 Dialog(
@@ -176,7 +171,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-
                                         const Text(
                                           "Remove Item?",
                                           style: TextStyle(
@@ -184,44 +178,37 @@ class _HeaderComponentState extends State<HeaderComponent> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-
                                         const SizedBox(height: 12),
-
                                         const Text(
                                           "Do you want to remove this item from your cart?",
                                           textAlign: TextAlign.center,
                                         ),
-
                                         const SizedBox(height: 20),
-
                                         Row(
                                           children: [
-
                                             Expanded(
                                               child: OutlinedButton(
                                                 onPressed: () {
                                                   Navigator.of(context,
-                                                      rootNavigator: true)
+                                                          rootNavigator: true)
                                                       .pop();
                                                 },
                                                 child: const Text("Cancel"),
                                               ),
                                             ),
-
                                             const SizedBox(width: 12),
-
                                             Expanded(
                                               child: ElevatedButton(
                                                 onPressed: () {
-
                                                   Navigator.of(context,
-                                                      rootNavigator: true)
+                                                          rootNavigator: true)
                                                       .pop();
 
-                                                  Get.find<DashBoardController>()
-                                                      .removeItem(
-                                                      widget.serviceModel
-                                                          ?.id ??
+                                                  Get.find<
+                                                          DashBoardController>()
+                                                      .removeItem(widget
+                                                              .serviceModel
+                                                              ?.id ??
                                                           "");
 
                                                   widget.function(null);
@@ -243,7 +230,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                             }
                           },
                         ),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           child: Text(
@@ -255,7 +241,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
                             ),
                           ),
                         ),
-
                         _circleButton(
                           icon: Icons.add,
                           onTap: () {
@@ -276,8 +261,7 @@ class _HeaderComponentState extends State<HeaderComponent> {
                   /// VIEW DETAILS
                   GestureDetector(
                     onTap: () async {
-                      await Get.find<DashBoardController>()
-                          .getServicesDetails(
+                      await Get.find<DashBoardController>().getServicesDetails(
                           widget.serviceModel?.serviceId ?? "");
                     },
                     child: Row(
@@ -333,7 +317,6 @@ class _HeaderComponentState extends State<HeaderComponent> {
     );
   }
 }
-
 
 // class HeaderComponent extends StatefulWidget {
 //   final CartItem? serviceModel;
