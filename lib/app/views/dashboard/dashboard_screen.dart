@@ -81,15 +81,24 @@ class DashboardScreenState extends State<DashboardScreen> {
             extendBody: true,
             resizeToAvoidBottomInset: false,
             appBar: CustomAppBar(
-              title: currentPage == 3 ? 'Account' : 'Booking History',
+              title: currentPage == 4
+                  ? 'Account'
+                  : currentPage == 3
+                  ? 'Booking History'
+                  : currentPage == 2
+                  ? 'Instant Service'
+                  : '',
               drawerButton: Image.asset(
                 Images.iclogo,
                 height: 70,
                 width: 70,
               ),
+
               isSearchButtonExist:
-                  (currentPage == 0 || currentPage == 1) ? true : false,
-              showTitle: (currentPage == 3 || currentPage == 2),
+              (currentPage == 0 || currentPage == 1) ? true : false,
+
+              showTitle:
+              (currentPage == 4 || currentPage == 3 || currentPage == 2),
             ),
             bottomNavigationBar: !GetPlatform.isMobile
                 ? const SizedBox()

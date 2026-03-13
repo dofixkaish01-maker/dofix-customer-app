@@ -25,6 +25,7 @@ import '../app/views/cart_screen/cart_screen.dart';
 import '../app/views/home/SubScreens/category_to_services.dart';
 import '../app/views/home/component/banner_widget.dart';
 import '../app/views/home/home_screen.dart';
+import '../app/views/instantService/instant_service_screen.dart';
 import '../app/views/no_service_screen.dart';
 import '../app/views/services/services.dart';
 import '../data/api/api.dart';
@@ -2122,6 +2123,7 @@ class DashBoardController extends GetxController implements GetxService {
   List<Widget> screens = [
     HomeScreen(),
     const ServiceScreens(),
+    const InstantServiceScreen(),   // NEW SCREEN
     const BookingHostoryScreen(),
     const AccountScreen(),
   ];

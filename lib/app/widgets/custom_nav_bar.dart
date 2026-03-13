@@ -60,11 +60,22 @@ class CustomBottomNavBar extends StatelessWidget {
               activeColor: activeColor,
               inactiveColor: inactiveColor,
             ),
+
+            _NavItem(
+              icon: Images.icBooking,
+              label: "Instant",
+              index: 2,
+              isSelected: currentIndex == 2,
+              onTap: onTap,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
+            ),
+
             _NavItem(
               icon: Images.icBooking,
               label: "Booking",
-              index: 2,
-              isSelected: currentIndex == 2,
+              index: 3,
+              isSelected: currentIndex == 3,
               onTap: onTap,
               activeColor: activeColor,
               inactiveColor: inactiveColor,
@@ -72,8 +83,8 @@ class CustomBottomNavBar extends StatelessWidget {
             _NavItem(
               icon: Images.icProfile,
               label: "Account",
-              index: 3,
-              isSelected: currentIndex == 3,
+              index: 4,
+              isSelected: currentIndex == 4,
               onTap: onTap,
               activeColor: activeColor,
               inactiveColor: inactiveColor,
