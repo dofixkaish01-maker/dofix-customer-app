@@ -470,13 +470,15 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Rating',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
+                                    /// Title Row
+                                        Text(
+                                          "Ratings & Reviews",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                    const SizedBox(height: 10),
 
                                     RatingSummary(
                                       averageRating:
