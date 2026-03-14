@@ -44,47 +44,47 @@ class _ServiceScreensState extends State<ServiceScreens> {
   void _scrollListener() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      _loadMoreData();
+      // _loadMoreData();
     }
   }
 
-  Future<void> _loadMoreData() async {
-    if (isLoading) return;
-
-    setState(() {
-      isLoading = true;
-    });
-
-    int previousOffset = currentOffset;
-    currentOffset += 1;
-
-    await dashboard.getData(10, currentOffset);
-
-    if ((dashboard.servicesListing?.data ?? []).isEmpty) {
-      // No more data, revert
-      setState(() {
-        currentOffset = previousOffset;
-      });
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("No more services available"),
-            duration: Duration(seconds: 2),
-          ),
-        );
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent - 200,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOut,
-        );
-      });
-    }
-
-    setState(() {
-      isLoading = false;
-    });
-  }
+  // Future<void> _loadMoreData() async {
+  //   if (isLoading) return;
+  //
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   int previousOffset = currentOffset;
+  //   currentOffset += 1;
+  //
+  //   await dashboard.getData(10, currentOffset);
+  //
+  //   if ((dashboard.servicesListing?.data ?? []).isEmpty) {
+  //     // No more data, revert
+  //     setState(() {
+  //       currentOffset = previousOffset;
+  //     });
+  //
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text("No more services available"),
+  //           duration: Duration(seconds: 2),
+  //         ),
+  //       );
+  //       _scrollController.animateTo(
+  //         _scrollController.position.maxScrollExtent - 200,
+  //         duration: const Duration(milliseconds: 500),
+  //         curve: Curves.easeOut,
+  //       );
+  //     });
+  //   }
+  //
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
 
   @override
   void dispose() {
