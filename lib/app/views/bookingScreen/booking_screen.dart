@@ -2794,59 +2794,43 @@ class _BookingScreenState extends State<BookingScreen> {
                         child: IconButton(
                           icon: const Icon(Icons.edit, size: 20),
                           color: Colors.blue,
-                          onPressed: () async {
-                            // Hide keyboard
-                            FocusScope.of(context).unfocus();
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
 
-                            final dashController =
-                                Get.find<DashBoardController>();
+                              final dashController = Get.find<DashBoardController>();
 
-                            // Loader
-                            await Future.delayed(Duration.zero);
-                            Get.dialog(
-                              const Center(child: CupertinoActivityIndicator()),
-                              barrierDismissible: false,
-                            );
-
-                            try {
                               await dashController.getAddressLists();
-                            } finally {
-                              if (Get.isDialogOpen ?? false) Get.back();
+
+                              if (dashController.addressResponse.data.isEmpty) {
+                                Get.snackbar("No Address", "No saved address found");
+                                return;
+                              }
+
+                              showAddressChoiceDialog(
+                                context,
+                                dashController.addressResponse.data,
+                                    (address) {
+                                  setState(() {
+                                    _selectedLatLng = LatLng(address.lat, address.lon);
+                                    dashController.addressController.text = address.address;
+
+                                    city = address.city;
+                                    stateController.text = address.city;
+                                    houseController.text = address.house;
+                                    floorController.text = address.floor;
+                                    postalController.text = address.zipCode;
+                                    countryController.text = address.country;
+                                    streetController.text = address.street;
+
+                                    country = address.country;
+                                    street = address.street;
+                                    postalCode = address.zipCode;
+                                  });
+
+                                  dashController.update();
+                                },
+                              );
                             }
-
-                            if (dashController.addressResponse.data.isEmpty) {
-                              Get.snackbar(
-                                  "No Address", "No saved address found");
-                              return;
-                            }
-
-                            showAddressChoiceDialog(
-                              context,
-                              dashController.addressResponse.data,
-                              (address) {
-                                setState(() {
-                                  _selectedLatLng =
-                                      LatLng(address.lat, address.lon);
-                                  dashController.addressController.text =
-                                      address.address;
-
-                                  city = address.city;
-                                  stateController.text = address.city;
-                                  houseController.text = address.house;
-                                  floorController.text = address.floor;
-                                  postalController.text = address.zipCode;
-                                  countryController.text = address.country;
-                                  streetController.text = address.street;
-
-                                  country = address.country;
-                                  street = address.street;
-                                  postalCode = address.zipCode;
-                                });
-
-                                dashController.update();
-                              },
-                            );
-                          },
                         ),
                       ),
                     ),
@@ -3776,3 +3760,76 @@ makeDigitalPayment(
         data: data,
       ));
 }
+
+
+
+
+// @override
+// void initState() {
+//   super.initState();
+//   Get.find<DashBoardController>().getAddressLists();
+// }
+
+// CustomTextField(
+// controller: Get.find<DashBoardController>().addressController,
+// hintText: "Select an Address",
+// focusNode: addressFocus,
+// readOnly: true,
+// isEnabled: true,
+// onTap: () => _openAddressDialog(context),
+//
+// suffixIcon: Container(
+// margin: const EdgeInsets.all(6),
+// decoration: BoxDecoration(
+// color: Colors.blue.withOpacity(0.1),
+// shape: BoxShape.circle,
+// ),
+// child: IconButton(
+// icon: const Icon(Icons.edit, size: 20),
+// color: Colors.blue,
+// onPressed: () => _openAddressDialog(context),
+// ),
+// ),
+// )
+
+// Future<void> _openAddressDialog(BuildContext context) async {
+//   FocusScope.of(context).unfocus();
+//
+//   final dashController = Get.find<DashBoardController>();
+//
+//   // Agar address empty hai tabhi API call
+//   if (dashController.addressResponse.data.isEmpty) {
+//     await dashController.getAddressLists();
+//   }
+//
+//   if (dashController.addressResponse.data.isEmpty) {
+//     Get.snackbar("No Address", "No saved address found");
+//     return;
+//   }
+//
+//   showAddressChoiceDialog(
+//     context,
+//     dashController.addressResponse.data,
+//         (address) {
+//       setState(() {
+//         _selectedLatLng = LatLng(address.lat, address.lon);
+//
+//         dashController.addressController.text = address.address;
+//
+//         city = address.city;
+//         stateController.text = address.city;
+//         houseController.text = address.house;
+//         floorController.text = address.floor;
+//         postalController.text = address.zipCode;
+//         countryController.text = address.country;
+//         streetController.text = address.street;
+//
+//         country = address.country;
+//         street = address.street;
+//         postalCode = address.zipCode;
+//       });
+//
+//       dashController.update();
+//     },
+//   );
+// }
