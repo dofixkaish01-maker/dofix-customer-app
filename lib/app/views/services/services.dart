@@ -67,12 +67,12 @@ class _ServiceScreensState extends State<ServiceScreens> {
       });
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("No more services available"),
-            duration: Duration(seconds: 2),
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content: Text("No more services available"),
+        //     duration: Duration(seconds: 2),
+        //   ),
+        // );
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent - 200,
           duration: const Duration(milliseconds: 500),
