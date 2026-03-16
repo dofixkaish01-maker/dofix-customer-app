@@ -5,6 +5,7 @@ class Images {
   static const String iclogoWhite = 'assets/icons/ic_logo_white.png';
   static const String icHome = 'assets/icons/ic_home.png';
   static const String icServices = 'assets/icons/ic_services.png';
+  static const String icInstant = 'assets/icons/ic_instant.png';
   static const String icBooking = 'assets/icons/ic_explore.png';
   static const String icProfile = 'assets/icons/ic_profile.png';
   static const String icImages = 'assets/icons/ic_cart.png';

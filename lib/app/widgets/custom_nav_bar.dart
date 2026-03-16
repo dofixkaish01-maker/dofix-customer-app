@@ -62,7 +62,7 @@ class CustomBottomNavBar extends StatelessWidget {
             ),
 
             _NavItem(
-              icon: Images.icBooking,
+              icon: Images.icInstant,
               label: "Instant",
               index: 2,
               isSelected: currentIndex == 2,
@@ -133,37 +133,85 @@ class _NavItem extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 6),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? activeColor.withOpacity(.10)
-                    : Colors.transparent,
+                color: isSelected ? activeColor.withOpacity(.10) : Colors.transparent,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AnimatedScale(
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOutCubic,
-                    scale: isSelected ? 1.08 : 1.0,
-                    child: ImageIcon(
-                      AssetImage(icon),
-                      size: 22,
-                      color: isSelected ? activeColor : inactiveColor,
-                    ),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+
+                      // ICON
+                      AnimatedScale(
+                        duration: const Duration(milliseconds: 220),
+                        curve: Curves.easeOutCubic,
+                        scale: isSelected ? 1.08 : 1.0,
+                        child: ImageIcon(
+                          AssetImage(icon),
+                          size: 22,
+                          color: isSelected ? activeColor : inactiveColor,
+                        ),
+                      ),
+
+                      // NEW Badge for Instant Tab
+                      if (index == 2)
+                        Positioned(
+                          top: -12, // moved higher than before
+                          right: -4,
+                          child: TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 1.0, end: 1.2),
+                            duration: const Duration(milliseconds: 800),
+                            curve: Curves.easeInOut,
+                            builder: (context, scale, child) {
+                              return Transform.scale(
+                                scale: scale,
+                                child: child,
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.white, width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 3,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                              child: const Text(
+                                "NEW",
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  height: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
+
                   const SizedBox(height: 5),
+
+                  // LABEL
                   AnimatedDefaultTextStyle(
                     duration: const Duration(milliseconds: 220),
                     curve: Curves.easeOutCubic,
                     style: TextStyle(
                       fontSize: 11,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                       color: isSelected ? activeColor : inactiveColor,
                       height: 1.1,
                     ),
-                    child: Text(label,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                    child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
                   ),
                 ],
               ),
