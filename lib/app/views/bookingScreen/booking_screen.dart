@@ -27,6 +27,7 @@ import '../../../../utils/app_constants.dart';
 import '../../../../utils/date_converter.dart';
 import '../../../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button_widget.dart';
+import '../SuccessFullScreen/success_full_screen.dart';
 
 // DashBoardController, DateConverter, formatTimeOfDay24Hour
 //use for open razor pay payment getway
@@ -2113,7 +2114,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    DotWaveLoader(text: "Booking is in Progress, Please wait!",),
+                    DotWaveLoader(
+                      text: "Booking is in Progress, Please wait!",
+                    ),
                   ],
                 ),
               ),
@@ -2264,43 +2267,97 @@ class _BookingScreenState extends State<BookingScreen> {
               assignCustomerEmail: assignEmailController.text.trim(),
             )) return;
 
+            // if (selected == "COD") {
+            //   dashboardController.createBookingLoader.value = true;
+            //   log("rrrr Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
+            //   log("rrrr Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
+            //   await dashController.postOrder({
+            //     "name": name,
+            //     "mobile_number": mobile,
+            //     "address_label": addressType.toString(),
+            //     "email": email,
+            //     "address": address,
+            //     "lat": _selectedLatLng.latitude,
+            //     "lng": _selectedLatLng.longitude,
+            //     "zone_id": dashController.zoneIdForBooking,
+            //     "message": message,
+            //     "date":
+            //         DateConverter.dateTimeForCoupon(selectedDate).toString(),
+            //     "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
+            //         .toString(),
+            //     "payment_method": getPaymentMethodForApi(),
+            //     "city": city,
+            //     "zip_code": postalCode,
+            //     "country": country,
+            //     "street": street,
+            //     "service_preference": servicePreference,
+            //     "assign_customer_name": assignNameController.text.trim(),
+            //     "assign_customer_phone": assignPhoneController.text.trim(),
+            //     "assign_customer_email": assignEmailController.text.trim(),
+            //   }, dashController.selectedVariations, showLoader: false);
+            //
+            //   await dashController.getCartListing(
+            //     limit: "100",
+            //     offset: "1",
+            //     isRoute: false,
+            //     showLoader: false,
+            //   );
+            //
+            //   dashboardController.createBookingLoader.value = false;
+            // }
             if (selected == "COD") {
-              dashboardController.createBookingLoader.value = true;
-              log("rrrr Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
-              log("rrrr Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
-              await dashController.postOrder({
-                "name": name,
-                "mobile_number": mobile,
-                "address_label": addressType.toString(),
-                "email": email,
-                "address": address,
-                "lat": _selectedLatLng.latitude,
-                "lng": _selectedLatLng.longitude,
-                "zone_id": dashController.zoneIdForBooking,
-                "message": message,
-                "date":
-                    DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
-                    .toString(),
-                "payment_method": getPaymentMethodForApi(),
-                "city": city,
-                "zip_code": postalCode,
-                "country": country,
-                "street": street,
-                "service_preference": servicePreference,
-                "assign_customer_name": assignNameController.text.trim(),
-                "assign_customer_phone": assignPhoneController.text.trim(),
-                "assign_customer_email": assignEmailController.text.trim(),
-              }, dashController.selectedVariations, showLoader: false);
+              try {
+                dashboardController.createBookingLoader.value = true;
 
-              await dashController.getCartListing(
-                limit: "100",
-                offset: "1",
-                isRoute: false,
-                showLoader: false,
-              );
+                final success = await dashController.postOrder(
+                  {
+                    "name": name,
+                    "mobile_number": mobile,
+                    "address_label": addressType.toString(),
+                    "email": email,
+                    "address": address,
+                    "lat": _selectedLatLng.latitude,
+                    "lng": _selectedLatLng.longitude,
+                    "zone_id": dashController.zoneIdForBooking,
+                    "message": message,
+                    "date": DateConverter.dateTimeForCoupon(selectedDate)
+                        .toString(),
+                    "time":
+                        formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
+                            .toString(),
+                    "payment_method": getPaymentMethodForApi(),
+                    "city": city,
+                    "zip_code": postalCode,
+                    "country": country,
+                    "street": street,
+                    "service_preference": servicePreference,
+                    "assign_customer_name": assignNameController.text.trim(),
+                    "assign_customer_phone": assignPhoneController.text.trim(),
+                    "assign_customer_email": assignEmailController.text.trim(),
+                    "house": houseController.text.trim(),
+                    "floor": floorController.text.trim(),
+                  },
+                  dashController.selectedVariations,
+                  showLoader: false,
+                );
 
-              dashboardController.createBookingLoader.value = false;
+                if (success) {
+                  await dashController.getCartListing(
+                    limit: "100",
+                    offset: "1",
+                    isRoute: false,
+                    showLoader: false,
+                  );
+
+                  dashboardController.createBookingLoader.value = false;
+
+                  Get.offAll(() => const SuccessFullScreen());
+                }
+              } catch (e) {
+                debugPrint("COD booking error: $e");
+              } finally {
+                dashboardController.createBookingLoader.value = false;
+              }
             } else {
               log("Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
               log("Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
@@ -2736,26 +2793,33 @@ class _BookingScreenState extends State<BookingScreen> {
 
                         final dashController = Get.find<DashBoardController>();
 
-                        /// Agar address already load hai to API call mat karo
                         if (dashController.addressResponse.data.isEmpty) {
-                          await Future.delayed(Duration.zero);
-
-                          Get.dialog(
-                            const Center(child: CupertinoActivityIndicator()),
+                          showDialog(
+                            context: context,
                             barrierDismissible: false,
+                            builder: (_) => const Center(
+                              child: CupertinoActivityIndicator(),
+                            ),
                           );
 
                           try {
                             await dashController.getAddressLists();
+                          } catch (e) {
+                            debugPrint("Address list error: $e");
+                            Get.snackbar("Error", "Failed to load addresses");
                           } finally {
-                            if (Get.isDialogOpen ?? false) Get.back();
+                            if (mounted &&
+                                Navigator.of(context, rootNavigator: true)
+                                    .canPop()) {
+                              Navigator.of(context, rootNavigator: true).pop();
+                            }
                           }
                         }
-
-                        if (dashController.addressResponse.data.isEmpty) {
-                          Get.snackbar("No Address", "No saved address found");
-                          return;
-                        }
+                        //
+                        // if (dashController.addressResponse.data.isEmpty) {
+                        //   Get.snackbar("No Address", "No saved address found");
+                        //   return;
+                        // }
 
                         showAddressChoiceDialog(
                           context,
@@ -2792,27 +2856,31 @@ class _BookingScreenState extends State<BookingScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.edit, size: 20),
-                          color: Colors.blue,
+                            icon: const Icon(Icons.edit, size: 20),
+                            color: Colors.blue,
                             onPressed: () async {
                               FocusScope.of(context).unfocus();
 
-                              final dashController = Get.find<DashBoardController>();
+                              final dashController =
+                                  Get.find<DashBoardController>();
 
                               await dashController.getAddressLists();
 
                               if (dashController.addressResponse.data.isEmpty) {
-                                Get.snackbar("No Address", "No saved address found");
+                                Get.snackbar(
+                                    "No Address", "No saved address found");
                                 return;
                               }
 
                               showAddressChoiceDialog(
                                 context,
                                 dashController.addressResponse.data,
-                                    (address) {
+                                (address) {
                                   setState(() {
-                                    _selectedLatLng = LatLng(address.lat, address.lon);
-                                    dashController.addressController.text = address.address;
+                                    _selectedLatLng =
+                                        LatLng(address.lat, address.lon);
+                                    dashController.addressController.text =
+                                        address.address;
 
                                     city = address.city;
                                     stateController.text = address.city;
@@ -2830,8 +2898,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                   dashController.update();
                                 },
                               );
-                            }
-                        ),
+                            }),
                       ),
                     ),
                     // CustomTextField(
@@ -3760,9 +3827,6 @@ makeDigitalPayment(
         data: data,
       ));
 }
-
-
-
 
 // @override
 // void initState() {
