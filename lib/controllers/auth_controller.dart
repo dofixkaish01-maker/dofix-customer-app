@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:do_fix/helper/gi_dart.dart';
 import 'package:do_fix/model/check_user_model.dart';
 import 'package:do_fix/utils/app_constants.dart';
@@ -9,17 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../app/views/services/notification/fcm_service.dart';
 import '../data/api/api.dart';
 import '../data/repo/auth_repo.dart';
 import '../helper/route_helper.dart';
 import '../widgets/custom_snack_bar.dart';
+import 'dashboard_controller.dart';
 
 class AuthController extends GetxController implements GetxService {
   final AuthRepo authRepo;
   final SharedPreferences sharedPreferences;
   final RxString phoneNumber = ''.obs;
+
   // String? _firebaseVerificationId;
   CheckUserModel? checkUserInfo;
 
@@ -31,6 +31,7 @@ class AuthController extends GetxController implements GetxService {
   DateTime? lastBackPressTime;
 
   String? token;
+
   Future<bool> handleOnWillPop() async {
     final now = DateTime.now();
 
@@ -282,8 +283,118 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
+  // Future<void> checkIfGuest() async {
+  //   String? token = await getCurrentToken();
+  //   if (token == AppConstants.guestToken) {
+  //     Get.dialog(
+  //       Dialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(16),
+  //         ),
+  //         child: Container(
+  //           padding: EdgeInsets.all(20),
+  //           decoration: BoxDecoration(
+  //             color: Colors.white,
+  //             borderRadius: BorderRadius.circular(16),
+  //           ),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Container(
+  //                 padding: EdgeInsets.only(bottom: 16),
+  //                 child: Text(
+  //                   "Login Required",
+  //                   style: TextStyle(
+  //                     fontSize: 18,
+  //                     fontWeight: FontWeight.bold,
+  //                     color: Colors.black,
+  //                   ),
+  //                 ),
+  //               ),
+  //               Container(
+  //                 padding: EdgeInsets.only(bottom: 24),
+  //                 child: Text(
+  //                   "Please login to access this feature.",
+  //                   textAlign: TextAlign.center,
+  //                   style: TextStyle(
+  //                     fontSize: 14,
+  //                     color: Colors.black87,
+  //                   ),
+  //                 ),
+  //               ),
+  //               Container(
+  //                 child: Row(
+  //                   children: [
+  //                     Expanded(
+  //                       child: Container(
+  //                         margin: EdgeInsets.only(right: 8),
+  //                         child: GestureDetector(
+  //                           onTap: () {
+  //                             Get.back();
+  //                           },
+  //                           child: Container(
+  //                             padding: EdgeInsets.symmetric(vertical: 12),
+  //                             decoration: BoxDecoration(
+  //                               color: Colors.grey[300],
+  //                               borderRadius: BorderRadius.circular(8),
+  //                             ),
+  //                             child: Center(
+  //                               child: Text(
+  //                                 "Cancel",
+  //                                 style: TextStyle(
+  //                                   fontSize: 14,
+  //                                   fontWeight: FontWeight.w500,
+  //                                   color: Colors.black54,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     Expanded(
+  //                       child: Container(
+  //                         margin: EdgeInsets.only(left: 8),
+  //                         child: GestureDetector(
+  //                           onTap: () {
+  //                             Get.back();
+  //                             logout();
+  //                           },
+  //                           child: Container(
+  //                             padding: EdgeInsets.symmetric(vertical: 12),
+  //                             decoration: BoxDecoration(
+  //                               color: Color(0xFF207FA7),
+  //                               borderRadius: BorderRadius.circular(8),
+  //                             ),
+  //                             child: Center(
+  //                               child: Text(
+  //                                 "Login",
+  //                                 style: TextStyle(
+  //                                   fontSize: 14,
+  //                                   fontWeight: FontWeight.w500,
+  //                                   color: Colors.white,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //       barrierDismissible: true,
+  //     );
+  //   }
+  // }
+
   Future<void> checkIfGuest() async {
     String? token = await getCurrentToken();
+
     if (token == AppConstants.guestToken) {
       Get.dialog(
         Dialog(
@@ -291,7 +402,7 @@ class AuthController extends GetxController implements GetxService {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -299,7 +410,7 @@ class AuthController extends GetxController implements GetxService {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
+                const Padding(
                   padding: EdgeInsets.only(bottom: 16),
                   child: Text(
                     "Login Required",
@@ -310,7 +421,7 @@ class AuthController extends GetxController implements GetxService {
                     ),
                   ),
                 ),
-                Container(
+                const Padding(
                   padding: EdgeInsets.only(bottom: 24),
                   child: Text(
                     "Please login to access this feature.",
@@ -321,66 +432,70 @@ class AuthController extends GetxController implements GetxService {
                     ),
                   ),
                 ),
-                Container(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8),
-                          child: GestureDetector(
-                            onTap: () {
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            if (Get.isDialogOpen ?? false) {
                               Get.back();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black54,
-                                  ),
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54,
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(left: 8),
-                          child: GestureDetector(
-                            onTap: () {
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 8),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            if (Get.isDialogOpen ?? false) {
                               Get.back();
-                              logout();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: Color(0xFF207FA7),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white,
-                                  ),
+                            }
+                            Get.toNamed('/login');
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF207FA7),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -390,6 +505,7 @@ class AuthController extends GetxController implements GetxService {
       );
     }
   }
+
 
   Future<void> VerifyOtp(String phone, String otp) async {
     ApiClient apiClient = ApiClient(
@@ -412,17 +528,14 @@ class AuthController extends GetxController implements GetxService {
 
       /// STEP 2: Verify OTP API (FCM token ke sath)
       Response response =
-      await authRepo.verifyOtp(phone.trim(), otp.trim(), fcmToken ?? "");
+          await authRepo.verifyOtp(phone.trim(), otp.trim(), fcmToken ?? "");
 
       var responseData = jsonDecode(response.body);
       debugPrint("Verify OTP Response: $responseData");
 
-      /// ❌ Invalid / Expired OTP
+      ///  Invalid / Expired OTP
       if (responseData['error'] != null &&
-          (responseData['error']
-              .toString()
-              .toLowerCase()
-              .contains('invalid') ||
+          (responseData['error'].toString().toLowerCase().contains('invalid') ||
               responseData['error']
                   .toString()
                   .toLowerCase()
@@ -450,14 +563,18 @@ class AuthController extends GetxController implements GetxService {
             );
           });
 
-          /// 🟢 STEP 4: Registration flow
+          /// DashboardController refresh
+          final dashController = Get.find<DashBoardController>();
+          dashController.isGuest.value = false;
+
+          ///  STEP 4: Registration flow
           if (responseData['content']['RegisterComplete'] == 0) {
             token = responseData['content']['token'];
             update();
             Get.offAllNamed(RouteHelper.getAccountSetup(phone.trim()));
           } else {
             await authRepo.saveUserToken(responseData['content']['token']);
-             apiClient.updateHeader(responseData['content']['token']);
+            apiClient.updateHeader(responseData['content']['token']);
             init();
             Get.offAllNamed(RouteHelper.getDashboardRoute());
           }
@@ -477,14 +594,13 @@ class AuthController extends GetxController implements GetxService {
     } catch (e) {
       hideLoading();
       showCustomSnackBar(
-        "Something went wrong. Please try again. $e",
+        "Something went wrong: $e",
         isError: true,
       );
     } finally {
       update();
     }
   }
-
 
   // Future<void> VerifyOtp(String phone, String otp) async {
   //   ApiClient apiClient = ApiClient(
@@ -643,7 +759,6 @@ class AuthController extends GetxController implements GetxService {
     isLoggedIn();
   }
 
-
   Future<void> isLoggedIn() async {
     bool value = await authRepo.isLoggedIn();
 
@@ -653,6 +768,7 @@ class AuthController extends GetxController implements GetxService {
       Get.offAllNamed(RouteHelper.getLoginRoute());
     }
   }
+
   // Future<void> isLoggedIn() async {
   //   bool value = await authRepo.isLoggedIn();
   //   if (value) {

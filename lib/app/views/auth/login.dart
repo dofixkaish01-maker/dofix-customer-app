@@ -1,7 +1,5 @@
 import 'package:do_fix/app/widgets/custom_button_widget.dart';
-import 'package:do_fix/app/widgets/custom_textfield.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
-import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/utils/dimensions.dart';
 import 'package:do_fix/utils/images.dart';
 import 'package:do_fix/utils/sizeboxes.dart';
@@ -10,9 +8,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-
-import '../../../model/pages_model.dart';
-import '../HtmlPage/html_pages.dart';
 import '../account/account_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -37,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
               image: AssetImage(Images.icLoginBg),
               fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
-                Color(0xff227FA8).withOpacity(0.25), // 👈 shadow color
+                Color(0xff227FA8).withOpacity(0.25),
                 BlendMode.srcATop,
               ),
             ),
@@ -95,12 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               maxLength: 10,
                               cursorColor: const Color(0xff227FA8),
 
-                              /// 🔒 INPUT CONTROL (MAIN FIX)
+                              /// INPUT CONTROL (MAIN FIX)
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
-                                // ❌ -, alphabets block
+                                // -, alphabets block
                                 LengthLimitingTextInputFormatter(10),
-                                // ✅ only 10 digits
+                                // only 10 digits
                               ],
                               style: const TextStyle(
                                 // color: Color(0xff227FA8),
@@ -111,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               decoration: InputDecoration(
                                 counterText: "",
 
-                                /// 👇 PHONE ICON
+                                ///  PHONE ICON
                                 // prefixIcon: Padding(
                                 //   padding: const EdgeInsets.symmetric(horizontal: 12),
                                 //   child: Text(

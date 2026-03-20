@@ -4,14 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/dashboard_controller.dart';
-import '../../../model/pages_model.dart';
 import '../../../utils/dimensions.dart';
 import '../../../utils/sizeboxes.dart';
 import '../../../utils/styles.dart';
 import '../../../utils/theme.dart';
 import '../HtmlPage/html_pages.dart';
-import 'package:do_fix/app/views/home/refer screen/refer_earn_screen.dart';
-
 import '../helpSupport/help_and_support_screen.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -205,7 +202,6 @@ class _AccountScreenState extends State<AccountScreen> {
       return SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-
           floatingActionButton: LayoutBuilder(
             builder: (context, constraints) {
               final w = constraints.maxWidth;
@@ -221,7 +217,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   },
                   label: Row(
                     children: [
-                      const Icon(Icons.support_agent_rounded, color: Colors.white),
+                      const Icon(Icons.support_agent_rounded,
+                          color: Colors.white),
                       const SizedBox(width: 7),
                       Text(
                         'Help & Support',
@@ -233,7 +230,6 @@ class _AccountScreenState extends State<AccountScreen> {
               );
             },
           ),
-
           body: LayoutBuilder(
             builder: (context, constraints) {
               final shortest = MediaQuery.of(context).size.shortestSide;
@@ -244,8 +240,8 @@ class _AccountScreenState extends State<AccountScreen> {
               final contentMaxWidth = isLargeTablet
                   ? 760.0
                   : isTablet
-                  ? 620.0
-                  : double.infinity;
+                      ? 620.0
+                      : double.infinity;
 
               // responsive paddings + max width for tablet/iPad
               final horizontalPadding = isTablet ? 24.0 : 16.0;
@@ -255,7 +251,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: contentMaxWidth),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: horizontalPadding),
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       child: ConstrainedBox(
@@ -271,8 +268,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
                               GestureDetector(
                                 onTap: () async {
-                                  final authController = Get.find<AuthController>();
-                                  bool isGuest = await authController.returnIsGuest();
+                                  final authController =
+                                      Get.find<AuthController>();
+                                  bool isGuest =
+                                      await authController.returnIsGuest();
                                   if (isGuest) {
                                     authController.checkIfGuest();
                                   } else {
@@ -281,7 +280,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                 },
                                 //Profile setting
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -336,13 +336,15 @@ class _AccountScreenState extends State<AccountScreen> {
                                 onTap: () async {
                                   await controller.getPagesData();
                                   Get.to(() => HtmlContentScreen(
-                                    title: "About DoFix",
-                                    htmlContent:
-                                    controller.apiResponse.content.aboutUs?.value ?? "",
-                                  ));
+                                        title: "About DoFix",
+                                        htmlContent: controller.apiResponse
+                                                .content.aboutUs?.value ??
+                                            "",
+                                      ));
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -369,7 +371,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                   openUrl("https://dofix.in/privacy-policy");
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -396,7 +399,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                   openUrl("https://dofix.in/terms");
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -420,8 +424,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
                               GestureDetector(
                                 onTap: () async {
-                                  final authController = Get.find<AuthController>();
-                                  bool isGuest = await authController.returnIsGuest();
+                                  final authController =
+                                      Get.find<AuthController>();
+                                  bool isGuest =
+                                      await authController.returnIsGuest();
                                   if (isGuest) {
                                     authController.checkIfGuest();
                                   } else {
@@ -429,7 +435,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                   }
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: Text(
@@ -456,25 +463,25 @@ class _AccountScreenState extends State<AccountScreen> {
                               Spacer(),
 
                               Obx(
-                                    () => controller.isGuest.value
+                                () => controller.isGuest.value
                                     ? NewCustomButtonWidget(
-                                  buttonText: 'Log In',
-                                  onPressed: () {
-                                    Get.toNamed('/login');
-                                  },
-                                  transparent: true,
-                                  borderSideColor: primaryBlue,
-                                  textColor: primaryBlue,
-                                )
+                                        buttonText: 'Log In',
+                                        onPressed: () {
+                                          Get.toNamed('/login');
+                                        },
+                                        transparent: true,
+                                        borderSideColor: primaryBlue,
+                                        textColor: primaryBlue,
+                                      )
                                     : NewCustomButtonWidget(
-                                  buttonText: 'Log Out',
-                                  onPressed: () {
-                                    showLogoutDialog(); //  FIXED
-                                  },
-                                  transparent: true,
-                                  borderSideColor: darkRed,
-                                  textColor: darkRed,
-                                ),
+                                        buttonText: 'Log Out',
+                                        onPressed: () {
+                                          showLogoutDialog();
+                                        },
+                                        transparent: true,
+                                        borderSideColor: darkRed,
+                                        textColor: darkRed,
+                                      ),
                               ),
 
                               sizedBox20(),

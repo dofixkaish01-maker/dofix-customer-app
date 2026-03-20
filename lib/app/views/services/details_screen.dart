@@ -339,15 +339,18 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  Text(
-                                    "₹${widget.mrpPrice}",
-                                    style: TextStyle(
-                                      decoration: TextDecoration.lineThrough,
-                                      color: secondaryText,
-                                      fontSize: mrpSize,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
+                                  widget.mrpPrice == '0.0'
+                                      ? SizedBox.shrink()
+                                      : Text(
+                                          "₹${widget.mrpPrice}",
+                                          style: TextStyle(
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            color: secondaryText,
+                                            fontSize: mrpSize,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
                                   const SizedBox(width: 10),
                                   if (percentOff > 0)
                                     Text(
@@ -1368,7 +1371,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                         "sub_category_id":
                                             widget.serviceModel.subCategoryId,
                                         "quantity": "1",
-                                        "tax_amount":79,
+                                        "tax_amount": 79,
                                         "extras": [],
                                       },
                                       [widget.variantKey],
