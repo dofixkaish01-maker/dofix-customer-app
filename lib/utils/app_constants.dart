@@ -67,6 +67,7 @@ class AppConstants {
   static const String getBookingSetupApi =
       'api/v1/admin/business-settings/get-booking-setup';
   static const String saveCustomerReview = 'api/v1/customer/review/submit';
+
   static const String showServiceReviews =
-      'api/v1/customer/review/services-review';
+      'api/v1/customer/service/review';
 }
