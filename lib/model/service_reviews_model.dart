@@ -157,6 +157,7 @@ class Customer {
   final String? profileImage;
   final dynamic profileImageFullPath;
 
+
   Customer({
     this.id,
     this.firstName,
@@ -171,7 +172,7 @@ class Customer {
       firstName: json['first_name'],
       lastName: json['last_name'],
       profileImage: json['profile_image'],
-      profileImageFullPath: json['profile_image_full_path'],
+      profileImageFullPath: json['full_profile_path'],
     );
   }
 }

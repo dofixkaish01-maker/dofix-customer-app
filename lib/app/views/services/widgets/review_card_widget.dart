@@ -13,6 +13,14 @@ class ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    /// SAFE IMAGE URL
+    final imageUrl =
+        review.customer?.profileImageFullPath?.toString() ?? "";
+
+    /// DEBUG (optional)
+    debugPrint("PROFILE IMAGE URL: $imageUrl");
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
@@ -20,21 +28,24 @@ class ReviewCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
+            ///  TOP ROW
             Row(
               children: [
+                ///  PROFILE IMAGE
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: Colors.grey.shade200,
-                  backgroundImage: review.customer?.profileImageFullPath != null
-                      ? NetworkImage(review.customer!.profileImageFullPath.toString())
-                      : null,
-                  child: review.customer?.profileImageFullPath == null
+                  backgroundImage:
+                  imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+                  child: imageUrl.isEmpty
                       ? const Icon(Icons.person, color: Colors.grey)
                       : null,
-
                 ),
 
                 const SizedBox(width: 10),
+
+                /// NAME + DATE
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -48,18 +59,21 @@ class ReviewCard extends StatelessWidget {
 
                     Text(
                       review.updatedAt != null
-                          ? DateFormat('dd-MM-yyyy').format(review.updatedAt!.toLocal())
+                          ? DateFormat('dd-MM-yyyy')
+                          .format(review.updatedAt!.toLocal())
                           : 'Reviewed on N/A',
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.70),
                         fontStyle: FontStyle.italic,
                         fontSize: 12,
-                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
                 ),
+
                 const Spacer(),
+
+                /// RATING
                 Row(
                   children: List.generate(
                     5,
@@ -74,7 +88,10 @@ class ReviewCard extends StatelessWidget {
                 ),
               ],
             ),
+
             const SizedBox(height: 10),
+
+            /// COMMENT
             Padding(
               padding: const EdgeInsets.only(left: 50.0),
               child: Text(
