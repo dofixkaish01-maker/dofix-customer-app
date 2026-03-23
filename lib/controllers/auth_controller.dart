@@ -151,73 +151,149 @@ class AuthController extends GetxController implements GetxService {
   //   }
   // }
 
+
+  RxString otpErrorMessage = ''.obs;
+
   Future<void> sendOtpApi(String phone) async {
-    if (phone.trim().length != 10) {
-      showCustomSnackBar("Please enter valid phone number.", isError: true);
+    final String cleanPhone = phone.trim();
+
+    otpErrorMessage.value = '';
+
+    if (cleanPhone.length != 10) {
+      otpErrorMessage.value = "Please enter a valid 10-digit phone number.";
+      update();
       return;
     }
+
     showLoading();
     update();
+
     try {
-      debugPrint("Error sending OTP: 10 ${phone}");
-      debugPrint("Error sending OTP: 10 ${phone.trim()}");
-      Response response = await authRepo.sendOtpRepo(phone.trim());
-      var responseData = jsonDecode(response.body);
-      log("Error sending OTP: 100 ${response.body}");
-      if (responseData == null) {
-        throw Exception("Response data is null");
+      final Response response = await authRepo.sendOtpRepo(cleanPhone);
+
+      debugPrint("Raw send OTP response: ${response.body}");
+
+      Map<String, dynamic>? responseData;
+
+      if (response.body is Map<String, dynamic>) {
+        responseData = response.body as Map<String, dynamic>;
+      } else if (response.body is String) {
+        responseData = jsonDecode(response.body) as Map<String, dynamic>;
       }
-      debugPrint("Response: ${responseData["message"]}");
-      if (response.statusCode == 200) {
-        if (responseData["message"]
-                ?.toString()
-                .contains("OTP sent successfully") ??
-            false) {
-          // Check if account is deleted (is_active = 0)
-          if (responseData['userData'] != null &&
-              responseData['userData']['is_active'] == 0) {
-            hideLoading();
-            showCustomSnackBar("Your account is deleted", isError: true);
-            return;
-          }
 
-//TODO : hidden for release
-          debugPrint("OTP: ${responseData['OTP']}");
+      if (responseData == null) {
+        hideLoading();
+        otpErrorMessage.value = "Invalid response from server.";
+        update();
+        return;
+      }
+
+      final String message =
+      responseData["message"]?.toString().trim().isNotEmpty == true
+          ? responseData["message"].toString().trim()
+          : "Something went wrong. Please try again.";
+
+      debugPrint("Parsed message: $message");
+
+      if (response.statusCode == 200 &&
+          message.toLowerCase().contains("otp sent successfully")) {
+        if (responseData['userData'] != null &&
+            responseData['userData']['is_active'] == 0) {
           hideLoading();
-
-          phoneNumber.value = phone;
-          debugPrint("Phone Number: ${phoneNumber.value}");
-
-          // Close any existing snackbars before navigation
-          closeSnackBarIfActive();
-
-          // Navigate to OTP screen immediately
-          Get.toNamed(RouteHelper.getVerifyOtpRoute(phone));
-
-          // Show success message after navigation
-          showCustomSnackBar("OTP Sent Successfully!",
-              isError: false, isSuccess: true);
-        } else {
-          closeSnackBarIfActive();
-
-          debugPrint("Showing error snackbar...");
-          showCustomSnackBar(responseData['message'], isError: false);
+          otpErrorMessage.value = "Your account has been deleted.";
+          update();
+          return;
         }
+
+        phoneNumber.value = cleanPhone;
+
+        hideLoading();
+        otpErrorMessage.value = '';
+        update();
+
+        Get.toNamed(RouteHelper.getVerifyOtpRoute(cleanPhone));
       } else {
-        debugPrint('Failed to send OTP: ${responseData['message']}');
-        closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
+        hideLoading();
+        otpErrorMessage.value = message;
+        update();
+        return;
       }
     } catch (e) {
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
-      debugPrint("Error sending OTP: 1 $e");
-    } finally {
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
       hideLoading();
-      // update();
+      otpErrorMessage.value = "Something went wrong. Please try again.";
+      debugPrint("Error sending OTP: $e");
+      update();
     }
   }
+
+
+//   Future<void> sendOtpApi(String phone) async {
+//     if (phone.trim().length != 10) {
+//       showCustomSnackBar("Please enter valid phone number.", isError: true);
+//       return;
+//     }
+//     showLoading();
+//     update();
+//     try {
+//       debugPrint("Error sending OTP: 10 ${phone}");
+//       debugPrint("Error sending OTP: 10 ${phone.trim()}");
+//       Response response = await authRepo.sendOtpRepo(phone.trim());
+//       var responseData = jsonDecode(response.body);
+//       log("Error sending OTP: 100 ${response.body}");
+//       if (responseData == null) {
+//         throw Exception("Response data is null");
+//       }
+//       debugPrint("Response: ${responseData["message"]}");
+//       if (response.statusCode == 200) {
+//         if (responseData["message"]
+//                 ?.toString()
+//                 .contains("OTP sent successfully") ??
+//             false) {
+//           // Check if account is deleted (is_active = 0)
+//           if (responseData['userData'] != null &&
+//               responseData['userData']['is_active'] == 0) {
+//             hideLoading();
+//             showCustomSnackBar("Your account is deleted", isError: true);
+//             return;
+//           }
+//
+// //TODO : hidden for release
+//           debugPrint("OTP: ${responseData['OTP']}");
+//           hideLoading();
+//
+//           phoneNumber.value = phone;
+//           debugPrint("Phone Number: ${phoneNumber.value}");
+//
+//           // Close any existing snackbars before navigation
+//           closeSnackBarIfActive();
+//
+//           // Navigate to OTP screen immediately
+//           Get.toNamed(RouteHelper.getVerifyOtpRoute(phone));
+//
+//           // Show success message after navigation
+//           showCustomSnackBar("OTP Sent Successfully!",
+//               isError: false, isSuccess: true);
+//         } else {
+//           closeSnackBarIfActive();
+//
+//           debugPrint("Showing error snackbar...");
+//           showCustomSnackBar(responseData['message'], isError: false);
+//         }
+//       } else {
+//         debugPrint('Failed to send OTP: ${responseData['message']}');
+//         closeSnackBarIfActive();
+//         showCustomSnackBar(responseData['message'], isError: true);
+//       }
+//     } catch (e) {
+//       showCustomSnackBar("Something went wrong. Please try again. $e",
+//           isError: true);
+//       debugPrint("Error sending OTP: 1 $e");
+//     } finally {
+//       // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+//       hideLoading();
+//       // update();
+//     }
+//   }
 
   Future<void> loginAsGuest() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

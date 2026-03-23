@@ -85,6 +85,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             /// PHONE FIELD (LOGIN SCREEN ONLY STYLE)
                             TextFormField(
+                              onChanged: (value) {
+                                Get.find<AuthController>()
+                                    .otpErrorMessage
+                                    .value = '';
+                                Get.find<AuthController>().update();
+                              },
                               controller: _phoneController,
                               keyboardType: TextInputType.number,
                               maxLength: 10,
@@ -193,6 +199,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                   return 'Enter valid 10 digit number';
                                 }
                                 return null;
+                              },
+                            ),
+                            sizedBox12(),
+                            GetBuilder<AuthController>(
+                              builder: (controller) {
+                                final error = controller.otpErrorMessage.value;
+
+                                if (error.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    error,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             sizedBox30(),
@@ -322,7 +352,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: const Text(
                                 'Continue as Guest',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Color(0xff227FA8),
                                   fontSize: 13,
                                 ),

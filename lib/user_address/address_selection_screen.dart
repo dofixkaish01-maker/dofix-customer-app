@@ -75,7 +75,8 @@ class AddressSelectionScreen extends StatelessWidget {
                   title: Text("Use Current Location"),
                   onTap: () async {
                     await controller.requestLocationPermission();
-                    Get.back();
+                    // Get.back();
+                    Navigator.of(context).pop();
                   },
                 ),
 
@@ -111,7 +112,8 @@ class AddressSelectionScreen extends StatelessWidget {
                                   address["subtitle"] ?? "";
 
                               controller.update();
-                              Get.back();
+                              // Get.back();
+                              Navigator.of(context).pop();
                             },
                           );
                         }).toList(),
@@ -144,7 +146,8 @@ class AddressSelectionScreen extends StatelessWidget {
                                 address.addressType ?? "";
 
                             controller.update();
-                            Get.back();
+                            // Get.back();
+                            Navigator.of(context).pop();
                           },
                         );
                       }).toList(),
