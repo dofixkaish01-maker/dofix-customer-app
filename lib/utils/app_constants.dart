@@ -70,4 +70,5 @@ class AppConstants {
 
   static const String showServiceReviews =
       'api/v1/customer/service/review';
+
 }
