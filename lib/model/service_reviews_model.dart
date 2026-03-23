@@ -155,7 +155,7 @@ class Customer {
   final String? firstName;
   final String? lastName;
   final String? profileImage;
-  final dynamic profileImageFullPath;
+  final String? profileImageFullPath;
 
 
   Customer({
@@ -172,7 +172,7 @@ class Customer {
       firstName: json['first_name'],
       lastName: json['last_name'],
       profileImage: json['profile_image'],
-      profileImageFullPath: json['full_profile_path'],
+      profileImageFullPath: json['full_profile_path']?.toString(),
     );
   }
 }
@@ -193,6 +193,8 @@ class ProviderData {
   });
 
   factory ProviderData.fromJson(Map<String, dynamic> json) {
+    print("CUSTOMER DATA: ${json['customer']}");
+    print("IMAGE URL: ${json['customer']?['full_profile_path']}");
     return ProviderData(
       id: json['id'],
       fullName: json['full_name'],

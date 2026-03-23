@@ -33,20 +33,42 @@ class BookingRepo {
     );
   }
 
+  // Future<Response> saveBookingReview  ({
+  //   required String bookingId,
+  //   required String serviceId,
+  //   required String reviewRating,
+  //   String? reviewComment,
+  // }) async {
+  //   return await apiClient.postData(
+  //     AppConstants.saveCustomerReview,
+  //     {
+  //       'booking_id': bookingId,
+  //       'service_id': serviceId,
+  //       'review_rating': reviewRating,
+  //     },
+  //   );
+  // }
+
   Future<Response> saveBookingReview({
     required String bookingId,
     required String serviceId,
     required String reviewRating,
-    required String reviewComment,
+    String? reviewComment,
   }) async {
+
+    Map<String, String> body = {
+      'booking_id': bookingId,
+      'service_id': serviceId,
+      'review_rating': reviewRating,
+    };
+
+    if (reviewComment != null && reviewComment.isNotEmpty) {
+      body['review_comment'] = reviewComment;
+    }
+
     return await apiClient.postData(
       AppConstants.saveCustomerReview,
-      {
-        'booking_id': bookingId,
-        'service_id': serviceId,
-        'review_rating': reviewRating,
-        'review_comment': reviewComment,
-      },
+      body,
     );
   }
 

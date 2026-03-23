@@ -66,11 +66,23 @@ class SearchController extends GetxController {
 
         await dashboard.getSearchList(query);
 
+        /// SORTING
+        final list = dashboard.serviceModelSearchList;
+        final lowerQuery = query.toLowerCase();
+
+        list.sort((a, b) {
+          int scoreA = _getScore(a.name ?? "", lowerQuery);
+          int scoreB = _getScore(b.name ?? "", lowerQuery);
+
+          return scoreB.compareTo(scoreA);
+        });
+
         isSearching.value = false;
         isSearchCompleted.value = true;
 
-
-        addRecentSearch(query);
+        if (query.length > 2) {
+          addRecentSearch(query);
+        }
       } else {
         dashboard.serviceModelSearchList.clear();
         isSearchCompleted.value = false;
@@ -123,5 +135,18 @@ class SearchController extends GetxController {
   void onClose() {
     _debounce?.cancel();
     super.onClose();
+  }
+}
+int _getScore(String name, String query) {
+  final lowerName = name.toLowerCase();
+
+  if (lowerName == query) {
+    return 3; // exact match
+  } else if (lowerName.startsWith(query)) {
+    return 2; // best match
+  } else if (lowerName.contains(query)) {
+    return 1; // related
+  } else {
+    return 0;
   }
 }
