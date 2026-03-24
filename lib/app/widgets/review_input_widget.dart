@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/utils/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import '../views/helpSupport/faq_support_screen.dart';
 
 class ReviewScreen extends StatefulWidget {
   final String bookingId;
@@ -32,72 +34,67 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Write a Review"),
-        centerTitle: true,
+        backgroundColor: primaryColor,
+        title: const Text("Write a Review"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Please rate your experience',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+
+            /// Rating Bar
+            RatingBar.builder(
+              unratedColor: Colors.grey,
+              initialRating: bookingController.userRating.toDouble(),
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 40,
+              itemBuilder: (context, _) => const Icon(
+                Icons.star,
+                color: Colors.amber,
               ),
+              onRatingUpdate: (rating) {
+                bookingController.userRating = rating.toInt();
+              },
             ),
 
-            SizedBox(height: 12),
+            const SizedBox(height: 20),
 
-            /// ⭐ Rating Stars
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                5,
-                    (index) => IconButton(
-                  iconSize: 35,
-                  icon: Icon(
-                    index < bookingController.userRating
-                        ? Icons.star
-                        : Icons.star_border,
-                    color: Colors.amber,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      bookingController.userRating = index + 1;
-                    });
-                  },
-                ),
-              ),
-            ),
-
-            SizedBox(height: 20),
-
-            /// 📝 Review Input
+            /// Review Input
             TextField(
               controller: bookingController.reviewController,
               maxLines: 4,
+              maxLength: 200,
               decoration: InputDecoration(
                 hintText: "Share your experience (optional)...",
+                filled: true,
+                fillColor: Colors.grey.shade100,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                contentPadding: EdgeInsets.all(12),
+                contentPadding: const EdgeInsets.all(12),
               ),
             ),
 
-            Spacer(),
+            const Spacer(),
 
-            /// 🔘 Submit Button
-            SizedBox(
+            /// Submit Button
+            Obx(() => SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryBlue,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 onPressed: bookingController.isSubmittingReview.value
@@ -118,11 +115,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
                   await bookingController.saveBookingReview();
 
-                  /// ✅ Success Bottom Sheet (better than dialog)
                   Get.bottomSheet(
                     Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(20),
@@ -130,7 +126,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: const [
                           Icon(Icons.check_circle,
                               color: Colors.green, size: 60),
                           SizedBox(height: 10),
@@ -154,20 +150,33 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     widget.bookingId,
                   );
 
-                  /// auto close after 2 sec
-                  Future.delayed(Duration(seconds: 2), () {
+                  Future.delayed(const Duration(seconds: 2), () {
                     Get.back(); // close bottom sheet
                     Get.back(); // close screen
                   });
                 },
                 child: bookingController.isSubmittingReview.value
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
+                    ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text("Submitting...")
+                  ],
+                )
+                    : const Text(
                   "Submit Review",
                   style: TextStyle(fontSize: 16),
                 ),
               ),
-            ),
+            )),
           ],
         ),
       ),
