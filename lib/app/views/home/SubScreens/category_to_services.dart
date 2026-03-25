@@ -82,8 +82,12 @@ class CategoryToServices extends StatelessWidget {
                               width: (Get.size.width - 16 * 2 - 10 * 2) / 3,
                               child: GestureDetector(
                                 onTap: () {
-                                  controller.isServiceListingLoading = true;
-                                  controller.update();
+                                  if (controller.isServiceListingLoading) return;
+
+                                  print("🔄 Starting load for: ${subCategory.name}");
+
+                                  controller.selectedSubCategories.clear();
+                                  controller.selectedSubCategories.add(subCategory);
 
                                   controller.getCategoriesToServices(
                                     id: subCategory.id.toString(),
@@ -91,9 +95,22 @@ class CategoryToServices extends StatelessWidget {
                                     offset: "1",
                                     isLoading: true,
                                   );
-                                  controller.selectedSubCategories.clear();
-                                  controller.selectedSubCategories.add(subCategory);
                                 },
+                                // ... rest same
+                                // onTap: () {
+                                //   controller.isServiceListingLoading = true;
+                                //   controller.update();
+                                //
+                                //   controller.getCategoriesToServices(
+                                //     id: subCategory.id.toString(),
+                                //     limit: '50',
+                                //     offset: "1",
+                                //     isLoading: true,
+                                //   );
+                                //   controller.selectedSubCategories.clear();
+                                //   controller.selectedSubCategories
+                                //       .add(subCategory);
+                                // },
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -144,9 +161,11 @@ class CategoryToServices extends StatelessWidget {
                       // bathroom
                       Container(
                         color: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                         width: Get.size.width,
-                        height: controller.isServiceListingLoading ? 250.0 : null,
+                        height:
+                            controller.isServiceListingLoading ? 250.0 : null,
                         child: Builder(
                           builder: (context) {
                             final services =
@@ -154,6 +173,19 @@ class CategoryToServices extends StatelessWidget {
                                             Services(data: []))
                                         .data ??
                                     [];
+                            print("DEBUG START");
+                            print(" Total Services: ${services.length}");
+                            if (services.isNotEmpty) {
+                              final firstService = services.first;
+                              print(
+                                  "🏷 First Service Name: ${firstService.name}");
+                              print(
+                                  " startingPrice: '${firstService.startingPrice}' (${firstService.startingPrice.runtimeType})");
+                              print(
+                                  " servicCost: '${firstService.serviceCost}' (${firstService.serviceCost.runtimeType})");
+                              print(" All fields: ${firstService.toJson()}");
+                            }
+                            print(" DEBUG END ");
 
                             if (controller.isServiceListingLoading) {
                               return const Center(
@@ -337,7 +369,93 @@ class CategoryToServices extends StatelessWidget {
                                                                       .black87,
                                                                 ),
                                                               ),
-
+                                                              // STARTING PRICE
+                                                              if (service.startingPrice !=
+                                                                      null &&
+                                                                  service.startingPrice! >
+                                                                      0) ...[
+                                                                const SizedBox(
+                                                                    height: 8),
+                                                                // Fixed
+                                                                Container(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          6),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      colors: [
+                                                                        const Color(0xFF207FA7)
+                                                                            .withOpacity(0.15),
+                                                                        const Color(0xFF207FA7)
+                                                                            .withOpacity(0.05),
+                                                                      ],
+                                                                      begin: Alignment
+                                                                          .centerLeft,
+                                                                      end: Alignment
+                                                                          .centerRight,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border:
+                                                                        Border
+                                                                            .all(
+                                                                      color: const Color(
+                                                                              0xFF207FA7)
+                                                                          .withOpacity(
+                                                                              0.3),
+                                                                    ),
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .trending_up_rounded,
+                                                                        size:
+                                                                            14,
+                                                                        color: const Color(
+                                                                            0xFF207FA7),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              4),
+                                                                      Text(
+                                                                        "₹${service.startingPrice!.toStringAsFixed(0)}",
+                                                                        // ✅ Safe access
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              Color(0xFF207FA7),
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        " onwards",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              const Color(0xFF207FA7).withOpacity(0.8),
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
                                                               const SizedBox(
                                                                   height: 10),
 

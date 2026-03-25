@@ -8,10 +8,11 @@ class ServiceModel {
   final String? description;
   final String? coverImage;
   final String? thumbnail;
-  final String? servicCost;
+  final String? serviceCost;
   final String? categoryId;
   final String? subCategoryId;
   final double? tax;
+  final double? startingPrice;
   final int? orderCount;
   final int? isActive;
   final int? ratingCount;
@@ -25,17 +26,18 @@ class ServiceModel {
   final SubCategory? subCategory;
   final List<Variation>? variations;
 
-  ServiceModel( {
+  ServiceModel({
     this.id,
     this.name,
     this.shortDescription,
-    this.servicCost,
+    this.serviceCost,
     this.description,
     this.coverImage,
     this.thumbnail,
     this.categoryId,
     this.subCategoryId,
     this.tax,
+    this.startingPrice,
     this.orderCount,
     this.isActive,
     this.ratingCount,
@@ -51,32 +53,40 @@ class ServiceModel {
   });
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
-    return ServiceModel(
-      id: json['id'],
-      name: json['name'],
-      shortDescription: json['short_description'],
-      servicCost: json['service_cost'].toString(),
-      description: json['description'],
-      coverImage: json['cover_image'],
-      thumbnail: json['thumbnail'],
-      categoryId: json['category_id'],
-      subCategoryId: json['sub_category_id'],
-      tax: json['tax'] != null ? (json['tax'] as num).toDouble() : null,
-      orderCount: json['order_count'],
-      isActive: json['is_active'],
-      ratingCount: json['rating_count'],
-        quantity: json['quantity'].toString(),
-      avgRating: json['avg_rating'] != null ? (json['avg_rating'] as num).toDouble() : null,
-      minBiddingPrice: json['min_bidding_price'],
-      isFavorite: json['is_favorite'],
-      thumbnailFullPath: json['thumbnail_full_path'],
-      coverImageFullPath: json['cover_image_full_path'],
-      category: json['category'] != null ? Category.fromJson(json['category']) : null,
-      subCategory: json['sub_category'] != null ? SubCategory.fromJson(json['sub_category']) : null,
-      variations: json['variations'] != null
-          ? (json['variations'] as List).map((e) => Variation.fromJson(e)).toList()
-          : [],
-    );
+    try {
+      return ServiceModel(
+        id: json['id']?.toString(),
+        name: json['name']?.toString(),
+        shortDescription: json['short_description']?.toString(),
+        serviceCost: json['service_cost']?.toString(),  // ✅ SAFE
+        description: json['description']?.toString(),
+        coverImage: json['cover_image']?.toString(),
+        thumbnail: json['thumbnail']?.toString(),
+        categoryId: json['category_id']?.toString(),
+        subCategoryId: json['sub_category_id']?.toString(),
+        tax: json['tax'] != null ? (json['tax'] as num).toDouble() : null,
+        startingPrice: json['starting_price'] != null ? (json['starting_price'] as num).toDouble() : null,
+        orderCount: json['order_count']?.toString().parseIntOrNull(),
+        isActive: json['is_active']?.toString().parseIntOrNull(),
+        ratingCount: json['rating_count']?.toString().parseIntOrNull(),
+        avgRating: json['avg_rating'] != null ? (json['avg_rating'] as num).toDouble() : null,
+        minBiddingPrice: json['min_bidding_price']?.toString(),
+        quantity: json['quantity']?.toString(),  // ✅ SAFE
+        isFavorite: json['is_favorite']?.toString().parseIntOrNull(),
+        thumbnailFullPath: json['thumbnail_full_path']?.toString(),
+        coverImageFullPath: json['cover_image_full_path']?.toString(),
+        category: json['category'] != null ? Category.fromJson(json['category']) : null,
+        subCategory: json['sub_category'] != null ? SubCategory.fromJson(json['sub_category']) : null,
+        variations: json['variations'] != null
+            ? (json['variations'] as List?)?.map((e) => Variation.fromJson(e)).toList() ?? []
+            : [],
+      );
+    } catch (e) {
+      print("❌ ServiceModel.fromJson ERROR: $e");
+      print("❌ JSON: $json");
+      // Return empty model instead of crashing
+      return ServiceModel();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -90,11 +100,13 @@ class ServiceModel {
       'category_id': categoryId,
       'sub_category_id': subCategoryId,
       'tax': tax,
+      'starting_price': startingPrice,
       'order_count': orderCount,
       'is_active': isActive,
       'rating_count': ratingCount,
       'avg_rating': avgRating,
       'min_bidding_price': minBiddingPrice,
+      'quantity': quantity,
       'is_favorite': isFavorite,
       'thumbnail_full_path': thumbnailFullPath,
       'cover_image_full_path': coverImageFullPath,
@@ -104,39 +116,71 @@ class ServiceModel {
   }
 }
 
+// ✅ HELPER EXTENSIONS
+extension NumParsing on String {
+  int? parseIntOrNull() {
+    if (isEmpty) return null;
+    try {
+      return int.parse(this);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  double? parseDoubleOrNull() {
+    if (isEmpty) return null;
+    try {
+      return double.parse(this);
+    } catch (e) {
+      return null;
+    }
+  }
+}
+
 class Services {
   List<ServiceModel>? data;
+  String? message;
+  String? responseCode;
+  bool? success;
 
-  Services({this.data});
+  Services({this.data, this.message, this.responseCode, this.success});
 
   factory Services.fromJson(Map<String, dynamic> json) {
     try {
-      print("RAW JSON RECEIVED => $json");
+      print("🔍 RAW JSON RECEIVED => ${json.toString().substring(0, 500)}..."); // Truncated log
 
-      var rawData = json['data'];
+      // Handle different response structures
+      var rawData = json['data'] ?? json;
 
-      //  CASE 1: Agar data ke andar fir se data ho
+      print("📦 Raw Data Type: ${rawData.runtimeType}");
+
+      // CASE 1: Nested data.data
       if (rawData is Map<String, dynamic> && rawData['data'] is List) {
-        print("Nested data found -> data['data']");
+        print("✅ Nested data found");
         rawData = rawData['data'];
       }
 
-      //  CASE 2: Normal list ho
+      // CASE 2: Direct list
       if (rawData is List) {
-        return Services(
-          data: rawData.map((e) {
-            print("PARSING ITEM => $e");
-            return ServiceModel.fromJson(e);
-          }).toList(),
-        );
+        print("✅ Direct list found: ${rawData.length} items");
+        final services = <ServiceModel>[];
+        for (var item in rawData) {
+          try {
+            services.add(ServiceModel.fromJson(item));
+          } catch (e) {
+            print("⚠️ Failed to parse item: $e");
+          }
+        }
+        return Services(data: services);
       }
 
-      print("DATA FORMAT WRONG => ${rawData.runtimeType}");
+      // CASE 3: Empty or error response
+      print("⚠️ No valid data found. Returning empty list.");
       return Services(data: []);
 
     } catch (e, stack) {
-      print("SERVICES MODEL ERROR => $e");
-      print(stack);
+      print("💥 SERVICES MODEL CRASH => $e");
+      print("Stack: $stack");
       return Services(data: []);
     }
   }
@@ -146,8 +190,12 @@ class Services {
       'data': data?.map((e) => e.toJson()).toList(),
     };
   }
+
+  bool get isEmpty => (data ?? []).isEmpty;
+  bool get isNotEmpty => (data ?? []).isNotEmpty;
 }
 
+// Rest of your classes remain same...
 class SubCategoryModel {
   List<SubCategory>? data;
 
@@ -183,9 +231,9 @@ class SubCategory {
 
   factory SubCategory.fromJson(Map<String, dynamic> json) {
     return SubCategory(
-      id: json['id'],
-      name: json['name'],
-      thumbnailFullPath: json['image_full_path'],
+      id: json['id']?.toString(),
+      name: json['name']?.toString(),
+      thumbnailFullPath: json['image_full_path']?.toString(),
     );
   }
 
@@ -198,6 +246,7 @@ class SubCategory {
   }
 }
 
+// ... Rest of Cart classes remain EXACTLY same (no changes needed)
 class CartResponseModel {
   final String? responseCode;
   final String? message;

@@ -121,7 +121,7 @@ class ReviewCard extends StatelessWidget {
             ),
 
             /// REVIEW IMAGES (if any)
-            if ((review.reviewImages?.isNotEmpty ?? false) && review.reviewImages!.length > 0)
+            if ((review.reviewImages?.isNotEmpty ?? false) && review.reviewImages!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 12, left: 74),
                 child: SizedBox(
