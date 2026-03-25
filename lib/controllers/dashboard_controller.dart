@@ -570,58 +570,134 @@ class DashBoardController extends GetxController implements GetxService {
 
   double discount = 0.0;
 
-  Future<void> getCartListing(
-      {required String limit,
-      required String offset,
-      required bool showLoader,
-      required bool? isRoute}) async {
+  Future<void> getCartListing({
+    required String limit,
+    required String offset,
+    required bool showLoader,
+    required bool? isRoute,
+  }) async {
     try {
+      if (showLoader) {
+        showLoading('get cart list loading');
+      }
+
+      final userToken = authRepo.getUserToken();
+      if (userToken.isEmpty) {
+        debugPrint("Skipping cart API: token not ready");
+        return;
+      }
+
       Response response = await authRepo.cart(limit, offset);
-      var responseData = response.body;
+      final responseData = response.body;
+
       log("get cart Response data: $responseData");
+
       if (responseData == null) {
         throw Exception("Response data is null");
       }
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          cartModel = sv.CartResponseModel.fromJson(responseData);
-          discount = calculateDiscount(
-              cartList: cartModel.content?.cart?.data ?? [],
-              discountType: DiscountType.general);
-          vat = calculateVat(
-            cartList: cartModel.content?.cart?.data ?? [],
-          );
-          subTotal = calculateSubTotal(
-            cartList: cartModel.content?.cart?.data ?? [],
-          );
-          debugPrint("Discount: $discount");
-          if (isRoute ?? true) {
-            Get.to(() => CartScreen());
-          }
-          update();
-        } else {
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
+        cartModel = sv.CartResponseModel.fromJson(responseData);
+
+        discount = calculateDiscount(
+          cartList: cartModel.content?.cart?.data ?? [],
+          discountType: DiscountType.general,
+        );
+
+        vat = calculateVat(
+          cartList: cartModel.content?.cart?.data ?? [],
+        );
+
+        subTotal = calculateSubTotal(
+          cartList: cartModel.content?.cart?.data ?? [],
+        );
+
+        debugPrint("Discount: $discount");
+
+        if (isRoute ?? true) {
+          Get.to(() => CartScreen());
         }
+
+        update();
       } else {
-        closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
+        showCustomSnackBar(
+          responseData['message']?.toString() ??
+              "Something went wrong. Please try again.",
+          isError: true,
+        );
       }
-    } catch (e) {
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
+    } catch (e, stackTrace) {
       debugPrint("Error fetching cartItem: $e");
-      closeSnackBarIfActive();
+      debugPrintStack(stackTrace: stackTrace);
+
+      showCustomSnackBar(
+        "Something went wrong. Please try again.",
+        isError: true,
+      );
     } finally {
       _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      if (showLoader) hideLoading();
-      // update();
+      if (showLoader) {
+        hideLoading('get cart list loading finnaly');
+      }
+      update();
     }
   }
+
+  // Future<void> getCartListing(
+  //     {required String limit,
+  //     required String offset,
+  //     required bool showLoader,
+  //     required bool? isRoute}) async {
+  //   try {
+  //     Response response = await authRepo.cart(limit, offset);
+  //     var responseData = response.body;
+  //     log("get cart Response data: $responseData");
+  //     if (responseData == null) {
+  //       throw Exception("Response data is null");
+  //     }
+  //
+  //     if (response.statusCode == 200) {
+  //       if (responseData['message']
+  //           .toString()
+  //           .contains("Successfully data fetched")) {
+  //         cartModel = sv.CartResponseModel.fromJson(responseData);
+  //         discount = calculateDiscount(
+  //             cartList: cartModel.content?.cart?.data ?? [],
+  //             discountType: DiscountType.general);
+  //         vat = calculateVat(
+  //           cartList: cartModel.content?.cart?.data ?? [],
+  //         );
+  //         subTotal = calculateSubTotal(
+  //           cartList: cartModel.content?.cart?.data ?? [],
+  //         );
+  //         debugPrint("Discount: $discount");
+  //         if (isRoute ?? true) {
+  //           Get.to(() => CartScreen());
+  //         }
+  //         update();
+  //       } else {
+  //         closeSnackBarIfActive();
+  //         showCustomSnackBar(responseData['message'], isError: true);
+  //       }
+  //     } else {
+  //       closeSnackBarIfActive();
+  //       showCustomSnackBar(responseData['message'], isError: true);
+  //     }
+  //   } catch (e) {
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     debugPrint("Error fetching cartItem: $e");
+  //     closeSnackBarIfActive();
+  //   } finally {
+  //     _isLoginLoading = false;
+  //     // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+  //     if (showLoader) hideLoading();
+  //     // update();
+  //   }
+  // }
 
   Future<void> getServices(String limit, String offset) async {
     showLoading();
@@ -717,52 +793,103 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
+
   Future<void> getAddressLists() async {
-    showLoading();
+    showLoading('get address loading..');
     update();
+
     try {
+      final userToken = authRepo.getUserToken();
+      if (userToken.isEmpty) {
+        debugPrint("Skipping address API: token not ready");
+        return;
+      }
+
       Response response = await authRepo.addressLists();
-      var responseData = response.body;
+      final responseData = response.body;
 
       if (responseData == null) {
         throw Exception("Response data is null");
       }
+
       log("Response data Address: $responseData");
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          addressResponse = AddressResponse.fromJson(responseData['content']);
-          log("Address List Length: ${addressResponse.data.length}");
-          debugPrint("Service Model: ${serviceModel.variations?.length}");
-          hideLoading();
-          update();
-        } else {
-          hideLoading();
-
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
-        }
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
+        addressResponse = AddressResponse.fromJson(responseData['content']);
+        log("Address List Length: ${addressResponse.data.length}");
+        debugPrint("Service Model: ${serviceModel.variations?.length}");
+        update();
       } else {
-        hideLoading();
-
-        closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
+        showCustomSnackBar(
+          responseData['message']?.toString() ??
+              "Something went wrong. Please try again.",
+          isError: true,
+        );
       }
-    } catch (e) {
-      hideLoading();
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
+    } catch (e, stackTrace) {
       debugPrint("Error fetching address: $e");
-      closeSnackBarIfActive();
+      debugPrintStack(stackTrace: stackTrace);
+
+      showCustomSnackBar(
+        "Something went wrong. Please try again.",
+        isError: true,
+      );
     } finally {
       _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      hideLoading();
-      // update();
+      hideLoading('get adrress loading finnaly');
+      update();
     }
   }
+
+  // Future<void> getAddressLists() async {
+  //   showLoading();
+  //   update();
+  //   try {
+  //     Response response = await authRepo.addressLists();
+  //     var responseData = response.body;
+  //
+  //     if (responseData == null) {
+  //       throw Exception("Response data is null");
+  //     }
+  //     log("Response data Address: $responseData");
+  //
+  //     if (response.statusCode == 200) {
+  //       if (responseData['message']
+  //           .toString()
+  //           .contains("Successfully data fetched")) {
+  //         addressResponse = AddressResponse.fromJson(responseData['content']);
+  //         log("Address List Length: ${addressResponse.data.length}");
+  //         debugPrint("Service Model: ${serviceModel.variations?.length}");
+  //         hideLoading();
+  //         update();
+  //       } else {
+  //         hideLoading();
+  //
+  //         closeSnackBarIfActive();
+  //         showCustomSnackBar(responseData['message'], isError: true);
+  //       }
+  //     } else {
+  //       hideLoading();
+  //
+  //       closeSnackBarIfActive();
+  //       showCustomSnackBar(responseData['message'], isError: true);
+  //     }
+  //   } catch (e) {
+  //     hideLoading();
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     debugPrint("Error fetching address: $e");
+  //     closeSnackBarIfActive();
+  //   } finally {
+  //     _isLoginLoading = false;
+  //     // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+  //     hideLoading();
+  //     // update();
+  //   }
+  // }
 
   Future<bool> addAddress(AddressData data) async {
     showLoading();
@@ -2010,7 +2137,7 @@ class DashBoardController extends GetxController implements GetxService {
   void openExternalLink(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
     } else {
       // Handle error
       log('Could not launch $url');

@@ -583,100 +583,182 @@ class AuthController extends GetxController implements GetxService {
   }
 
 
-  Future<void> VerifyOtp(String phone, String otp) async {
-    ApiClient apiClient = ApiClient(
-      appBaseUrl: AppConstants.baseUrl,
-      sharedPreferences: sharedPreferences,
-    );
+  // Future<void> verifyOtp(String phone, String otp) async {
+  //   ApiClient apiClient = ApiClient(
+  //     appBaseUrl: AppConstants.baseUrl,
+  //     sharedPreferences: sharedPreferences,
+  //   );
+  //
+  //   if (otp.length != 4) {
+  //     showCustomSnackBar("Please enter a valid 4-digit OTP", isError: true);
+  //     return;
+  //   }
+  //
+  //   showLoading();
+  //   update();
+  //
+  //   try {
+  //     ///  STEP 1: Get FCM Token
+  //     String? fcmToken = await FcmService.getToken();
+  //     debugPrint("FCM Token while verify: $fcmToken");
+  //
+  //     /// STEP 2: Verify OTP API (FCM token ke sath)
+  //     Response response =
+  //         await authRepo.verifyOtp(phone.trim(), otp.trim(), fcmToken ?? "");
+  //
+  //     var responseData = jsonDecode(response.body);
+  //     debugPrint("Verify OTP Response: $responseData");
+  //
+  //     ///  Invalid / Expired OTP
+  //     if (responseData['error'] != null &&
+  //         (responseData['error'].toString().toLowerCase().contains('invalid') ||
+  //             responseData['error']
+  //                 .toString()
+  //                 .toLowerCase()
+  //                 .contains('expired'))) {
+  //       hideLoading();
+  //       update();
+  //       showCustomSnackBar("Invalid or expired OTP", isError: true);
+  //       return;
+  //     }
+  //
+  //     /// SUCCESS
+  //     if (response.statusCode == 200) {
+  //       if (responseData["message"]
+  //           .toString()
+  //           .contains("Successfully registered")) {
+  //         hideLoading();
+  //
+  //         ///  STEP 3: FCM Token Refresh Listener (IMPORTANT)
+  //         FcmService.onTokenRefresh((newToken) {
+  //           debugPrint("FCM Token refreshed: $newToken");
+  //           authRepo.verifyOtp(
+  //             phone.trim(),
+  //             otp.trim(),
+  //             newToken,
+  //           );
+  //         });
+  //
+  //         /// DashboardController refresh
+  //         final dashController = Get.find<DashBoardController>();
+  //         dashController.isGuest.value = false;
+  //
+  //         ///  STEP 4: Registration flow
+  //         if (responseData['content']['RegisterComplete'] == 0) {
+  //           token = responseData['content']['token'];
+  //           update();
+  //           Get.offAllNamed(RouteHelper.getAccountSetup(phone.trim()));
+  //         } else {
+  //           await authRepo.saveUserToken(responseData['content']['token']);
+  //           apiClient.updateHeader(responseData['content']['token']);
+  //           init();
+  //           Get.offAllNamed(RouteHelper.getDashboardRoute());
+  //         }
+  //
+  //         update();
+  //       } else {
+  //         hideLoading();
+  //         showCustomSnackBar(
+  //           "Something went wrong please try again later",
+  //           isError: true,
+  //         );
+  //       }
+  //     } else {
+  //       hideLoading();
+  //       showCustomSnackBar("Invalid OTP", isError: true);
+  //     }
+  //   } catch (e) {
+  //     hideLoading();
+  //     showCustomSnackBar(
+  //       "Something went wrong: $e",
+  //       isError: true,
+  //     );
+  //   } finally {
+  //     update();
+  //   }
+  // }
 
+  Future<void> VerifyOtp(String phone, String otp) async {
     if (otp.length != 4) {
       showCustomSnackBar("Please enter a valid 4-digit OTP", isError: true);
       return;
     }
 
-    showLoading();
+    showLoading('verify screen show loading');
     update();
 
     try {
-      ///  STEP 1: Get FCM Token
       String? fcmToken = await FcmService.getToken();
       debugPrint("FCM Token while verify: $fcmToken");
 
-      /// STEP 2: Verify OTP API (FCM token ke sath)
       Response response =
-          await authRepo.verifyOtp(phone.trim(), otp.trim(), fcmToken ?? "");
+      await authRepo.verifyOtp(phone.trim(), otp.trim(), fcmToken ?? "");
 
-      var responseData = jsonDecode(response.body);
+      final responseData = jsonDecode(response.body);
       debugPrint("Verify OTP Response: $responseData");
 
-      ///  Invalid / Expired OTP
-      if (responseData['error'] != null &&
-          (responseData['error'].toString().toLowerCase().contains('invalid') ||
-              responseData['error']
-                  .toString()
-                  .toLowerCase()
-                  .contains('expired'))) {
-        hideLoading();
-        update();
+      final errorText = responseData['error']?.toString().toLowerCase() ?? "";
+      if (errorText.contains('invalid') || errorText.contains('expired')) {
         showCustomSnackBar("Invalid or expired OTP", isError: true);
         return;
       }
 
-      /// SUCCESS
-      if (response.statusCode == 200) {
-        if (responseData["message"]
-            .toString()
-            .contains("Successfully registered")) {
-          hideLoading();
+      if (response.statusCode == 200 &&
+          responseData["message"]
+              .toString()
+              .contains("Successfully registered")) {
+        final receivedToken =
+            responseData['content']?['token']?.toString() ?? "";
 
-          ///  STEP 3: FCM Token Refresh Listener (IMPORTANT)
-          FcmService.onTokenRefresh((newToken) {
-            debugPrint("FCM Token refreshed: $newToken");
-            authRepo.verifyOtp(
-              phone.trim(),
-              otp.trim(),
-              newToken,
-            );
-          });
+        if (receivedToken.isEmpty) {
+          showCustomSnackBar("Token not found", isError: true);
+          return;
+        }
 
-          /// DashboardController refresh
-          final dashController = Get.find<DashBoardController>();
-          dashController.isGuest.value = false;
+        token = receivedToken;
 
-          ///  STEP 4: Registration flow
-          if (responseData['content']['RegisterComplete'] == 0) {
-            token = responseData['content']['token'];
-            update();
-            Get.offAllNamed(RouteHelper.getAccountSetup(phone.trim()));
-          } else {
-            await authRepo.saveUserToken(responseData['content']['token']);
-            apiClient.updateHeader(responseData['content']['token']);
-            init();
-            Get.offAllNamed(RouteHelper.getDashboardRoute());
-          }
+        // MOST IMPORTANT FIX
+        await authRepo.saveUserToken(receivedToken);
 
-          update();
-        } else {
-          hideLoading();
-          showCustomSnackBar(
-            "Something went wrong please try again later",
-            isError: true,
+        FcmService.onTokenRefresh((newToken) {
+          debugPrint("FCM Token refreshed: $newToken");
+          authRepo.verifyOtp(
+            phone.trim(),
+            otp.trim(),
+            newToken,
           );
+        });
+
+        final dashController = Get.find<DashBoardController>();
+        dashController.isGuest.value = false;
+
+        if (responseData['content']['RegisterComplete'] == 0) {
+          Get.offAllNamed(RouteHelper.getAccountSetup(phone.trim()));
+        } else {
+          init();
+          Get.offAllNamed(RouteHelper.getDashboardRoute());
         }
       } else {
-        hideLoading();
-        showCustomSnackBar("Invalid OTP", isError: true);
+        showCustomSnackBar(
+          responseData['message']?.toString() ??
+              "Something went wrong please try again later",
+          isError: true,
+        );
       }
-    } catch (e) {
-      hideLoading();
+    } catch (e, stackTrace) {
+      debugPrint("VerifyOtp Error: $e");
+      debugPrintStack(stackTrace: stackTrace);
+
       showCustomSnackBar(
-        "Something went wrong: $e",
+        "Something went wrong. Please try again.",
         isError: true,
       );
     } finally {
+      hideLoading('verify otp loading in finnaly block');
       update();
     }
   }
+
 
   // Future<void> VerifyOtp(String phone, String otp) async {
   //   ApiClient apiClient = ApiClient(

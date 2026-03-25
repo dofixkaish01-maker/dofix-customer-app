@@ -25,22 +25,29 @@ import '../utils/theme.dart';
 
 final RxBool _isLoading = false.obs;
 
-void showLoading() {
+void showLoading([String from = "unknown"]) {
+  debugPrint("SHOW LOADING FROM: $from");
   _isLoading.value = true;
 }
 
-void hideLoading() {
+void hideLoading([String from = "unknown"]) {
+  debugPrint("HIDE LOADING FROM: $from");
   _isLoading.value = false;
 }
 
-Widget GlobalLoader() {
+Widget globalLoader() {
   return Obx(() {
     if (!_isLoading.value) return const SizedBox.shrink();
 
-    return Container(
-      color: Colors.black.withOpacity(0.3),
-      child: const Center(
-        child: DotWaveLoader(),
+    return Positioned.fill(
+      child: AbsorbPointer(
+        absorbing: true,
+        child: ColoredBox(
+          color: Colors.black38,
+          child: const Center(
+            child: DotWaveLoader(),
+          ),
+        ),
       ),
     );
   });

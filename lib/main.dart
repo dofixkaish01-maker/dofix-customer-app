@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
             children: [
               widget!, // app screens
               const NetworkBanner(),
-              GlobalLoader(), //global loader overlay
+              globalLoader() //global loader overlay
             ],
           ),
         );
