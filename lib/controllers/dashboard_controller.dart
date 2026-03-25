@@ -2010,7 +2010,7 @@ class DashBoardController extends GetxController implements GetxService {
   void openExternalLink(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
     } else {
       // Handle error
       log('Could not launch $url');

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/service_model.dart';
 import 'package:do_fix/utils/html_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../utils/dimensions.dart';
 import 'get_rate_card_screen.dart';
 
@@ -315,10 +316,18 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                         children: [
                           /// Rate Card Link
                           GestureDetector(
-                            onTap: () {
-                              Get.to(() => GetRateCardScreen(
-                                categoryId: widget.serviceModel.categoryId ?? "",
-                              ));
+                            onTap: () async {
+                              final Uri url = Uri.parse(
+                                  "https://ac-repair-landing-page.dofix.in/rateCard.html");
+
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(
+                                  url,
+                                  mode: LaunchMode.inAppWebView, // browser me open hoga
+                                );
+                              } else {
+                                print("Could not launch $url");
+                              }
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 4),
@@ -333,7 +342,6 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                               ),
                             ),
                           ),
-
                           /// Add Button
                           GetBuilder<DashBoardController>(
                             id: 'cart_${widget.serviceModel.id}_${widget.variantKey}',
