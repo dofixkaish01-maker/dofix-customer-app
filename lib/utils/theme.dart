@@ -8,7 +8,7 @@ ThemeData light = ThemeData(
   secondaryHeaderColor: const Color(0xFF92B2DD),
   disabledColor: const Color(0xFF000000),
   brightness: Brightness.light,
-  highlightColor: Color(0xffA0Df6D),
+  // highlightColor: Color(0xffA0Df6D),
   hintColor: const Color(0xFF000000).withOpacity(0.60),
   cardColor: Colors.white,
   textButtonTheme: TextButtonThemeData(
@@ -17,6 +17,7 @@ ThemeData light = ThemeData(
           primary: Color(0xFF3B9EFB), secondary: Color(0xFF3B9EFB))
       .copyWith(error: const Color(0xFF3B9EFB)),
 );
+
 const Color blackColor = Color(0xff171414);
 const Color redColor = Colors.redAccent;
 const Color profileRedColor = Color(0xffD27D7D);
