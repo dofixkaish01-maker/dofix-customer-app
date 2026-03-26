@@ -720,6 +720,11 @@ class AuthController extends GetxController implements GetxService {
         // MOST IMPORTANT FIX
         await authRepo.saveUserToken(receivedToken);
 
+        final isRegisterComplete =
+            (responseData['content']['RegisterComplete'] ?? 0) == 1;
+
+        await authRepo.saveRegisterComplete(isRegisterComplete);
+
         FcmService.onTokenRefresh((newToken) {
           debugPrint("FCM Token refreshed: $newToken");
           authRepo.verifyOtp(
@@ -759,6 +764,28 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
+  // Future<void> saveRegisterComplete(bool value) async {
+  //   await authRepo.saveRegisterComplete(value);
+  // }
+  //
+  // bool isRegisterComplete() {
+  //   return authRepo.getRegisterComplete();
+  // }
+  //
+  // Future<bool> requireProfileComplete() async {
+  //   final isComplete = isRegisterComplete();
+  //
+  //   if (!isComplete) {
+  //     Get.bottomSheet(
+  //       const CompleteProfileBottomSheet(),
+  //       isScrollControlled: true,
+  //       backgroundColor: Colors.transparent,
+  //     );
+  //     return true; // stop current action
+  //   }
+  //
+  //   return false; // continue current action
+  // }
 
   // Future<void> VerifyOtp(String phone, String otp) async {
   //   ApiClient apiClient = ApiClient(

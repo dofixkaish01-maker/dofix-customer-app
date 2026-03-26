@@ -72,4 +72,6 @@ class AppConstants {
       'api/v1/customer/service/review';
   static const String rateCard = 'api/v1/customer/category/category-extra';
 
+  // user register complete kiya hai ye nhi shared_pref me save
+  static const String registerCompleteKey = 'register_complete';
 }

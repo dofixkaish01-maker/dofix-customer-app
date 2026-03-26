@@ -53,6 +53,12 @@ class ServiceModel {
   });
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
+    double? toDoubleOrNull(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value.toDouble();
+      return double.tryParse(value.toString());
+    }
+
     try {
       return ServiceModel(
         id: json['id']?.toString(),
@@ -64,12 +70,12 @@ class ServiceModel {
         thumbnail: json['thumbnail']?.toString(),
         categoryId: json['category_id']?.toString(),
         subCategoryId: json['sub_category_id']?.toString(),
-        tax: json['tax'] != null ? (json['tax'] as num).toDouble() : null,
-        startingPrice: json['starting_price'] != null ? (json['starting_price'] as num).toDouble() : null,
+        tax: toDoubleOrNull(json['tax']),
+        startingPrice: toDoubleOrNull(json['starting_price']),
         orderCount: json['order_count']?.toString().parseIntOrNull(),
         isActive: json['is_active']?.toString().parseIntOrNull(),
         ratingCount: json['rating_count']?.toString().parseIntOrNull(),
-        avgRating: json['avg_rating'] != null ? (json['avg_rating'] as num).toDouble() : null,
+        avgRating: toDoubleOrNull(json['avg_rating']),
         minBiddingPrice: json['min_bidding_price']?.toString(),
         quantity: json['quantity']?.toString(),  // ✅ SAFE
         isFavorite: json['is_favorite']?.toString().parseIntOrNull(),

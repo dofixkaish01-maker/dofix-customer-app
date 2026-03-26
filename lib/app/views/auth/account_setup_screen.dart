@@ -47,7 +47,7 @@ class AccountSetupScreen extends StatelessWidget {
                           topLeft: Radius.circular(Dimensions.radius40))),
                   child: Padding(
                     padding:
-                    const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                        const EdgeInsets.all(Dimensions.paddingSizeDefault),
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
@@ -64,16 +64,12 @@ class AccountSetupScreen extends StatelessWidget {
                             controller: _firstNameController,
                             hintText: "First Name",
                             validation: (value) {
-                              if (value == null || value
-                                  .trim()
-                                  .isEmpty) {
+                              if (value == null || value.trim().isEmpty) {
                                 return 'Please enter your First name';
                               } else if (!RegExp(r'^[A-Za-z ]+$')
                                   .hasMatch(value)) {
                                 return 'Name can only contain letters and spaces';
-                              } else if (value
-                                  .trim()
-                                  .length < 3) {
+                              } else if (value.trim().length < 3) {
                                 return 'Name must be at least 3 characters long';
                               }
                               return null;
@@ -86,16 +82,12 @@ class AccountSetupScreen extends StatelessWidget {
                             controller: _lastNameController,
                             hintText: "Last Name",
                             validation: (value) {
-                              if (value == null || value
-                                  .trim()
-                                  .isEmpty) {
+                              if (value == null || value.trim().isEmpty) {
                                 return 'Please enter your Last name';
                               } else if (!RegExp(r'^[A-Za-z ]+$')
                                   .hasMatch(value)) {
                                 return 'Name can only contain letters and spaces';
-                              } else if (value
-                                  .trim()
-                                  .length < 3) {
+                              } else if (value.trim().length < 3) {
                                 return 'Name must be at least 3 characters long';
                               }
                               return null;
@@ -124,12 +116,11 @@ class AccountSetupScreen extends StatelessWidget {
                                 Get.find<AuthController>().register(
                                     _emailController.text,
                                     _firstNameController.text,
-                                    _lastNameController.text, phone);
+                                    _lastNameController.text,
+                                    phone);
                               }
-                            }, width: MediaQuery
-                              .of(context)
-                              .size
-                              .width - 40,
+                            },
+                            width: MediaQuery.of(context).size.width - 40,
                           ),
                           sizedBox4(),
                         ],

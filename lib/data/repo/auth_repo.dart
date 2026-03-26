@@ -15,9 +15,9 @@ class AuthRepo {
 
   AuthRepo({required this.apiClient, required this.sharedPreferences});
 
-
   static const String _baseUrl =
       'https://panel.dofix.in/api/v1/customer/get-notifications';
+
   static Future<NotificationModel> fetchNotifications({
     required String token,
     required String userId,
@@ -45,7 +45,6 @@ class AuthRepo {
       );
     }
   }
-
 
   Future<bool> saveUserToken(
     String token,
@@ -113,6 +112,14 @@ class AuthRepo {
         headers: headers);
   }
 
+  Future<void> saveRegisterComplete(bool value) async {
+    await sharedPreferences.setBool(AppConstants.registerCompleteKey, value);
+  }
+
+  bool getRegisterComplete() {
+    return sharedPreferences.getBool(AppConstants.registerCompleteKey) ?? false;
+  }
+
   Future<Response> getAllCategories({
     String? limit,
     String? offset,
@@ -150,13 +157,15 @@ class AuthRepo {
         },
         method: "GET");
   }
+
   //
   Future<Response> getToprated(
-      String? limit,
-      String? offset,
-      ) async {
+    String? limit,
+    String? offset,
+  ) async {
     return await apiClient.getData(AppConstants.topRated, method: "GET");
   }
+
   // Future<Response> getToprated(
   //     String? limit,
   //     String? offset,
@@ -174,9 +183,9 @@ class AuthRepo {
   // }
 
   Future<Response> getQuickRepair(
-      String? limit,
-      String? offset,
-      ) async {
+    String? limit,
+    String? offset,
+  ) async {
     return await apiClient.getData(AppConstants.quickRepair, method: "GET");
   }
 
@@ -322,7 +331,6 @@ class AuthRepo {
       method: "POST",
     );
   }
-
 
   Future<Response> userInfo() async {
     return await apiClient.getData(AppConstants.user, method: "GET");
