@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
-// import 'package:do_fix/app/views/bookingScreen/widgets/custom_cancel_button.dart';
 import 'package:do_fix/app/views/bookingScreen/widgets/custom_invoide_button.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:do_fix/app/widgets/custom_booking_details_items.dart';
@@ -11,23 +9,17 @@ import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/booking_model.dart';
 import 'package:do_fix/utils/app_constants.dart';
 import 'package:do_fix/utils/string_extensions.dart';
-
-// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// import 'package:do_fix/app/widgets/custom_payment_method_widget.dart';
 import '../../../utils/date_converter.dart';
 import '../../../utils/dimensions.dart';
 import '../../../utils/theme.dart';
 import '../../../widgets/custom_snack_bar.dart';
-import '../PaymentScreen/payment_Screen.dart';
 import '../cart_screen/SubScreen/final_screen.dart';
 
 // import '../home/component/variations_new_card.dart';
 import '../services/service_details_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 //use for open razor pay payment getway
 
@@ -59,42 +51,14 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay? selectedTime;
   final bookingController = Get.find<BookingController>();
+  late String comment = widget.booking?.message ?? "";
 
   _showReviewDialog() {
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.grey,
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-              ReviewInputWidget(
-                serviceId: widget.booking?.servicemanId ?? "",
-                bookingId: widget.booking?.id ?? "",
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    Get.to(() => ReviewScreen(
+          bookingId: widget.booking?.id ?? "",
+          serviceId: widget.booking?.servicemanId ?? "",
+        ));
   }
-
   // void _showCancelBookingDialog() {
   //   Get.dialog(
   //     Dialog(
@@ -531,56 +495,28 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             ),
             const SizedBox(height: 20),
             ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: Color(0xFFE8F5E9),
-                child: Icon(Icons.qr_code, color: Colors.green),
-              ),
-              title: const Text(
-                "Pay via QR",
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: const Text("Scan QR code and complete payment"),
-                // onTap: () async {
-                //
-                //   final bookingId = widget.booking?.id ?? "";
-                //
-                //   final amount =
-                //       dashBoardController.bookingResponse?.content?.totalBookingAmount ?? 0;
-                //
-                //   final uri = Uri.parse(
-                //     'upi://pay?pa=yespay.mabs0736619ikit1232@yesbankltd'
-                //         '&pn=Dofix%20Technologies%20Private%20Limited'
-                //         '&am=$amount'
-                //         '&cu=INR'
-                //         '&tn=Dofix%20Service%20Booking%20$bookingId',
-                //   );
-                //
-                //   try {
-                //     final launched = await launchUrl(
-                //       uri,
-                //       mode: LaunchMode.externalApplication,
-                //     );
-                //
-                //     if (!launched) {
-                //       showCustomSnackBar("Unable to open UPI app");
-                //     }
-                //   } catch (e) {
-                //     showCustomSnackBar("Unable to open UPI app");
-                //   }
-                // }
+                leading: const CircleAvatar(
+                  backgroundColor: Color(0xFFE8F5E9),
+                  child: Icon(Icons.qr_code, color: Colors.green),
+                ),
+                title: const Text(
+                  "Pay via QR",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: const Text("Scan QR code and complete payment"),
                 onTap: () async {
-
                   final bookingId = widget.booking?.id ?? "";
 
-                  final amount =
-                      dashBoardController.bookingResponse?.content?.totalBookingAmount ?? 0;
+                  final amount = dashBoardController
+                          .bookingResponse?.content?.totalBookingAmount ??
+                      0;
 
                   final uri = Uri.parse(
                     'upi://pay?pa=yespay.mabs0736619ikit1232@yesbankltd'
-                        '&pn=Dofix%20Technologies%20Private%20Limited'
-                        '&am=$amount'
-                        '&cu=INR'
-                        '&tn=Dofix%20Service%20Booking%20$bookingId',
+                    '&pn=Dofix%20Technologies%20Private%20Limited'
+                    '&am=$amount'
+                    '&cu=INR'
+                    '&tn=Dofix%20Service%20Booking%20$bookingId',
                   );
 
                   try {
@@ -595,8 +531,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   } catch (e) {
                     showCustomSnackBar("Unable to open UPI app");
                   }
-                }
-            ),
+                }),
             const SizedBox(height: 8),
             ListTile(
               leading: const CircleAvatar(
@@ -656,16 +591,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     final details = dashBoardController.bookingResponse?.content?.detail ?? [];
     final mainServices = details.where((d) => d.isAddOn == 0).toList();
     final addOnServices = details.where((d) => d.isAddOn == 1).toList();
-    // final bookingDetails = dashBoardController.bookingResponse?.content;
-    // "log lat: ${bookingDetails?.serviceAddress?.lat}";
-    // "log lng: ${widget.booking?.serviceAddress?.lon}";
-
-    // "log address id: ${bookingDetails?.serviceAddress?.id}";
-    // final bookingDetails = dashBoardController.bookingResponse?.content;
-    //
-    // log("ADDRESS ID: ${bookingDetails?.serviceAddress?.id}");
-    // log("LAT: ${bookingDetails?.serviceAddress?.lat}");
-    // log("LNG: ${bookingDetails?.serviceAddress?.lon}");
 
     return SafeArea(
       top: false,
@@ -746,7 +671,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     //   showCustomSnackBar("Unable to open UPI app");
                     // }
                   },
-
                   child: Container(
                     height: 48,
                     decoration: BoxDecoration(
@@ -848,7 +772,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               );
             }
 
-            // 5. बाकी cases -> nothing
+            // 5. cases -> nothing
             return const SizedBox.shrink();
           },
         ),
@@ -1150,25 +1074,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ListView.builder(
-                //   shrinkWrap: true,
-                //   physics: NeverScrollableScrollPhysics(),
-                //   itemCount: dashBoardController
-                //           .bookingResponse?.content?.detail?.length ??
-                //       0,
-                //   itemBuilder: (context, index) {
-                //     final detail = dashBoardController
-                //         .bookingResponse?.content?.detail?[index];
-                //     if (detail == null) return const SizedBox.shrink();
-
-                //     return Padding(
-                //       padding: const EdgeInsets.only(bottom: 16.0),
-                //       child: CustomBookingDetailsItems(
-                //         detail: detail,
-                //       ),
-                //     );
-                //   },
-                // ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1247,7 +1152,15 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           final detail = addOnServices[index];
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
-                            child: CustomBookingDetailsItems(detail: detail),
+                            child: GestureDetector(
+                                onTap: () async {
+                                  // Fetch service details for clicked item
+                                  await Get.find<DashBoardController>()
+                                      .getServicesDetails(
+                                          detail.serviceId ?? "");
+                                },
+                                child:
+                                    CustomBookingDetailsItems(detail: detail)),
                           );
                         },
                       ),
@@ -1343,34 +1256,40 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 16,
                 ),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.comment,
-                      size: 14,
+                    Row(
+                      children: [
+                        Icon(Icons.comment, size: 14),
+                        SizedBox(width: 3),
+                        Text(
+                          "Additional Comment",
+                          style: TextStyle(
+                            fontSize: Dimensions.fontSize14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF000000),
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      width: 3,
-                    ),
+                    SizedBox(height: 6),
                     Text(
-                      "Additional Comment",
+                      comment.trim().isNotEmpty
+                          ? comment
+                          : "No additional comment provided.",
                       style: TextStyle(
-                        fontSize: Dimensions.fontSize14,
+                        fontSize: Dimensions.fontSize12,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF000000),
+                        color: comment.trim().isNotEmpty
+                            ? Color(0xFF000000).withAlpha((0.6 * 255).toInt())
+                            : Colors.grey, //  placeholder color
+                        fontStyle: comment.trim().isNotEmpty
+                            ? FontStyle.normal
+                            : FontStyle.italic,
                       ),
                     ),
                   ],
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Text(
-                  widget.booking?.message ?? "No Comments found",
-                  style: TextStyle(
-                      fontSize: Dimensions.fontSize12,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF000000).withAlpha((0.6 * 255).toInt())),
                 ),
                 SizedBox(
                   height: 16,
@@ -1398,20 +1317,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 6,
                 ),
-                // Text(
-                //   widget.paymentMethod == "razor_pay"
-                //       ? (widget.booking?.isPaid == 1
-                //           ? "Online Payment"
-                //           : "Online Payment")
-                //       : "Cash Payment",
-                //   style: TextStyle(
-                //     fontSize: Dimensions.fontSize12,
-                //     fontWeight: FontWeight.w500,
-                //     color: widget.booking?.isPaid == 1
-                //         ? Colors.green // paid
-                //         : Colors.orange, // pending
-                //   ),
-                // ),
                 Text(
                   (widget.booking?.paymentMethod ?? "").toLowerCase() ==
                           "razor_pay"
@@ -1451,16 +1356,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 6,
                 ),
-                // Text(
-                //   widget.booking?.isPaid == 1 ? "Paid" : "Pending",
-                //   style: TextStyle(
-                //     fontSize: Dimensions.fontSize12,
-                //     fontWeight: FontWeight.w500,
-                //     color: widget.booking?.isPaid == 1
-                //         ? Colors.green
-                //         : Colors.orange,
-                //   ),
-                // ),
                 Text(
                   widget.booking?.isPaid == 1
                       ? "Paid"
@@ -1607,14 +1502,25 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Ratings & Review',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: Dimensions.fontSizeDefault,
-                          fontFamily: 'Albert Sans',
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            'Ratings & Review',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Dimensions.fontSizeDefault,
+                              fontFamily: 'Albert Sans',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Container(
+                              height: 1,
+                              color: Colors.black.withOpacity(0.15),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 8),
                       Row(

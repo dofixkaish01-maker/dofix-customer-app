@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:do_fix/utils/app_constants.dart';
 import 'package:do_fix/widgets/app_snackbar.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -23,10 +24,11 @@ class DofixRateCardController extends GetxController {
 
     isLoading.value = true;
 
+    final rateCard=AppConstants.rateCard;
     try {
       final response = await http.post(
         Uri.parse(
-          "https://panel.dofix.in/api/v1/customer/category/category-extra",
+          "https://panel.dofix.in/$rateCard",
         ),
         headers: {
           "Content-Type": "application/json",
@@ -37,6 +39,11 @@ class DofixRateCardController extends GetxController {
           "category_id": categoryId,
         }),
       );
+
+      print("Rate Card URL: https://panel.dofix.in/$rateCard");
+      print("Rate Card Headers: ${response.headers}");
+      print("Rate Card Body: ${response.body}");
+
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);

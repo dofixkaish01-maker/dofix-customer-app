@@ -16,7 +16,7 @@ class AppConstants {
   static const String changeStatus = 'api/v1/customer/auth/change-status';
   static const String checkUser = 'api/v1/customer/auth/check-user';
   static const String register = 'api/v1/customer/auth/registration';
-  static const String category = 'api/v1/customer/category';
+  static const String category = 'api/v1/customer/category';//
   static const String featuredCategory = 'api/v1/customer/featured-categories';
   static const String topRated = 'api/v1/customer/top-rated-categories';
   static const String quickRepair = 'api/v1/customer/quick-repair-categories';
@@ -67,6 +67,9 @@ class AppConstants {
   static const String getBookingSetupApi =
       'api/v1/admin/business-settings/get-booking-setup';
   static const String saveCustomerReview = 'api/v1/customer/review/submit';
+
   static const String showServiceReviews =
-      'api/v1/customer/review/services-review';
+      'api/v1/customer/service/review';
+  static const String rateCard = 'api/v1/customer/category/category-extra';
+
 }

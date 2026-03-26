@@ -4,8 +4,23 @@ import '../../../../../controllers/search_controller.dart';
 import '../../../../../controllers/dashboard_controller.dart';
 import '../../../../widgets/networkimg_summerize/network_Image_with_shimmer.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   SearchScreen({super.key});
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Directly call fetch and update GetBuilder
+    dashboard.fetchAllCategories(limit: "50", offset: "1").then((_) {
+      dashboard.update(); // <-- make sure GetBuilder rebuilds
+    });
+  }
 
   final SearchController controller =
       Get.put(SearchController(apiClient: Get.find()));
@@ -57,13 +72,11 @@ class SearchScreen extends StatelessWidget {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
-                await dashboard.getFeaturedCategories(
-                    limit: "10",
-                    offset: "1",
-                    forDashboard: false); // categories refresh
-                controller.clearSearch(); // search reset
+                await dashboard.fetchAllCategories(limit: "50", offset: "1");
+                controller.clearSearch();
               },
               child: Obx(() {
+
                 /// EMPTY SEARCH
                 if (controller.searchText.value.isEmpty) {
                   return SingleChildScrollView(
@@ -71,13 +84,47 @@ class SearchScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
+                        /// TRENDING
                         _title("Trending Searches"),
                         _trendingList(),
+
+                        /// RECENT SEARCHES
                         if (controller.recentSearches.isNotEmpty) ...[
-                          _title("Recent Searches"),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+
+                                const Text(
+                                  "Recent Searches",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                TextButton(
+                                  onPressed: controller.clearRecentSearch,
+                                  child: const Text(
+                                    "Clear",
+                                    style: TextStyle(
+                                      color: Color(0xFF207FA8),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+
                           _recentSearch(),
                         ],
+
+                        /// CATEGORIES
                         _title("Browse Categories"),
+
                         GetBuilder<DashBoardController>(
                           builder: (dashboard) => _categoryGrid(dashboard),
                         ),
@@ -247,7 +294,6 @@ class SearchScreen extends StatelessWidget {
   }
 
   // ================= WIDGETS =================
-
   Widget _title(String text) => Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         child: Text(
@@ -268,14 +314,27 @@ class SearchScreen extends StatelessWidget {
                 final text = controller.trendingSearches[index];
 
                 return ActionChip(
+                  backgroundColor: Colors.grey.shade200, // subtle clean bg
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6), // nice spacing
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20), // smooth pill shape
+                  ),
                   label: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(text),
-                      const SizedBox(width: 4),
+                      Text(
+                        text,
+                        style: const TextStyle(
+                          fontSize: 13,           // readable font
+                          fontWeight: FontWeight.w500, // medium weight
+                          color: Colors.black87,  // clean color
+                        ),
+                      ),
+                      const SizedBox(width: 4),  // subtle spacing
                       const Icon(
                         Icons.arrow_forward_ios,
                         size: 14,
+                        color: Colors.black45,    // subtle arrow color
                       ),
                     ],
                   ),
@@ -286,24 +345,52 @@ class SearchScreen extends StatelessWidget {
       );
 
   Widget _recentSearch() => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Obx(() => Wrap(
-              spacing: 8,
-              children: controller.recentSearches
-                  .map((e) => ActionChip(
-                        avatar: const Icon(
-                          Icons.history,
-                          size: 18,
-                        ),
-                        label: Text(e),
-                        onPressed: () => controller.setSearchFromChip(e),
-                      ))
-                  .toList(),
-            )),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Obx(() => Wrap(
+      spacing: 8,
+      runSpacing: 6,
+      children: controller.recentSearches.map((e) {
+        return Material(
+          color: Colors.grey.shade200, // <-- background color fixed here
+          borderRadius: BorderRadius.circular(20),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: () {
+              controller.setSearchFromChip(e); // tap on chip
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.history, size: 18, color: Colors.grey),
+                  const SizedBox(width: 6),
+                  Text(
+                    e,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  GestureDetector(
+                    onTap: () {
+                      controller.removeRecentSearch(e);
+                    },
+                    child: const Icon(Icons.close, size: 18, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    )),
+  );
 
   Widget _categoryGrid(DashBoardController dashboard) {
-    final list = dashboard.categoryList?.data;
+    final list = dashboard.allCategoryModel?.content?.data;
 
     if (list == null || list.isEmpty) {
       return const SizedBox();
@@ -316,21 +403,32 @@ class SearchScreen extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: list.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: 3,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: 0.92,
+          childAspectRatio: 0.75, // thoda height increase
         ),
         itemBuilder: (_, index) {
           final cat = list[index];
 
           return InkWell(
+            borderRadius: BorderRadius.circular(10),
             onTap: () => controller.onSearchChanged(cat.name ?? ""),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                /// IMAGE
-                Expanded(
+
+                /// IMAGE (Fixed height)
+                Container(
+                  height: 100,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.grey.shade300,
+                      width: 0.5,
+                    ),
+                  ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: NetworkImageWithShimmer(
@@ -340,15 +438,18 @@ class SearchScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 6),
+                const SizedBox(height: 7),
 
-                /// TEXT
+                /// NAME
                 Text(
                   cat.name ?? "",
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -356,5 +457,4 @@ class SearchScreen extends StatelessWidget {
         },
       ),
     );
-  }
-}
+  }}

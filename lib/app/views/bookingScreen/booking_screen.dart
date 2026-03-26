@@ -7,6 +7,7 @@ import 'package:do_fix/app/widgets/custom_selection_widget.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/utils/common_functions.dart';
 import 'package:do_fix/widgets/common_loading.dart';
+import 'package:do_fix/widgets/custom_dot_loader.dart';
 import 'package:do_fix/widgets/custom_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -26,6 +27,7 @@ import '../../../../utils/app_constants.dart';
 import '../../../../utils/date_converter.dart';
 import '../../../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button_widget.dart';
+import '../SuccessFullScreen/success_full_screen.dart';
 
 // DashBoardController, DateConverter, formatTimeOfDay24Hour
 //use for open razor pay payment getway
@@ -2112,12 +2114,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 20),
-                    Text(
-                      "Booking is in Progress, Please wait!",
-                      style: TextStyle(color: Colors.black),
-                    )
+                    DotWaveLoader(
+                      text: "Booking is in Progress, Please wait!",
+                    ),
                   ],
                 ),
               ),
@@ -2268,43 +2267,97 @@ class _BookingScreenState extends State<BookingScreen> {
               assignCustomerEmail: assignEmailController.text.trim(),
             )) return;
 
+            // if (selected == "COD") {
+            //   dashboardController.createBookingLoader.value = true;
+            //   log("rrrr Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
+            //   log("rrrr Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
+            //   await dashController.postOrder({
+            //     "name": name,
+            //     "mobile_number": mobile,
+            //     "address_label": addressType.toString(),
+            //     "email": email,
+            //     "address": address,
+            //     "lat": _selectedLatLng.latitude,
+            //     "lng": _selectedLatLng.longitude,
+            //     "zone_id": dashController.zoneIdForBooking,
+            //     "message": message,
+            //     "date":
+            //         DateConverter.dateTimeForCoupon(selectedDate).toString(),
+            //     "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
+            //         .toString(),
+            //     "payment_method": getPaymentMethodForApi(),
+            //     "city": city,
+            //     "zip_code": postalCode,
+            //     "country": country,
+            //     "street": street,
+            //     "service_preference": servicePreference,
+            //     "assign_customer_name": assignNameController.text.trim(),
+            //     "assign_customer_phone": assignPhoneController.text.trim(),
+            //     "assign_customer_email": assignEmailController.text.trim(),
+            //   }, dashController.selectedVariations, showLoader: false);
+            //
+            //   await dashController.getCartListing(
+            //     limit: "100",
+            //     offset: "1",
+            //     isRoute: false,
+            //     showLoader: false,
+            //   );
+            //
+            //   dashboardController.createBookingLoader.value = false;
+            // }
             if (selected == "COD") {
-              dashboardController.createBookingLoader.value = true;
-              log("rrrr Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
-              log("rrrr Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
-              await dashController.postOrder({
-                "name": name,
-                "mobile_number": mobile,
-                "address_label": addressType.toString(),
-                "email": email,
-                "address": address,
-                "lat": _selectedLatLng.latitude,
-                "lng": _selectedLatLng.longitude,
-                "zone_id": dashController.zoneIdForBooking,
-                "message": message,
-                "date":
-                    DateConverter.dateTimeForCoupon(selectedDate).toString(),
-                "time": formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
-                    .toString(),
-                "payment_method": getPaymentMethodForApi(),
-                "city": city,
-                "zip_code": postalCode,
-                "country": country,
-                "street": street,
-                "service_preference": servicePreference,
-                "assign_customer_name": assignNameController.text.trim(),
-                "assign_customer_phone": assignPhoneController.text.trim(),
-                "assign_customer_email": assignEmailController.text.trim(),
-              }, dashController.selectedVariations, showLoader: false);
+              try {
+                dashboardController.createBookingLoader.value = true;
 
-              await dashController.getCartListing(
-                limit: "100",
-                offset: "1",
-                isRoute: false,
-                showLoader: false,
-              );
+                final success = await dashController.postOrder(
+                  {
+                    "name": name,
+                    "mobile_number": mobile,
+                    "address_label": addressType.toString(),
+                    "email": email,
+                    "address": address,
+                    "lat": _selectedLatLng.latitude,
+                    "lng": _selectedLatLng.longitude,
+                    "zone_id": dashController.zoneIdForBooking,
+                    "message": message,
+                    "date": DateConverter.dateTimeForCoupon(selectedDate)
+                        .toString(),
+                    "time":
+                        formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now())
+                            .toString(),
+                    "payment_method": getPaymentMethodForApi(),
+                    "city": city,
+                    "zip_code": postalCode,
+                    "country": country,
+                    "street": street,
+                    "service_preference": servicePreference,
+                    "assign_customer_name": assignNameController.text.trim(),
+                    "assign_customer_phone": assignPhoneController.text.trim(),
+                    "assign_customer_email": assignEmailController.text.trim(),
+                    "house": houseController.text.trim(),
+                    "floor": floorController.text.trim(),
+                  },
+                  dashController.selectedVariations,
+                  showLoader: false,
+                );
 
-              dashboardController.createBookingLoader.value = false;
+                if (success) {
+                  await dashController.getCartListing(
+                    limit: "100",
+                    offset: "1",
+                    isRoute: false,
+                    showLoader: false,
+                  );
+
+                  dashboardController.createBookingLoader.value = false;
+
+                  Get.offAll(() => const SuccessFullScreen());
+                }
+              } catch (e) {
+                debugPrint("COD booking error: $e");
+              } finally {
+                dashboardController.createBookingLoader.value = false;
+              }
             } else {
               log("Date date date: ${DateConverter.dateTimeForCoupon(selectedDate).toString()}");
               log("Date date time: ${formatTimeOfDay24Hour(selectedTime ?? TimeOfDay.now()).toString()}");
@@ -2740,26 +2793,33 @@ class _BookingScreenState extends State<BookingScreen> {
 
                         final dashController = Get.find<DashBoardController>();
 
-                        /// Agar address already load hai to API call mat karo
                         if (dashController.addressResponse.data.isEmpty) {
-                          await Future.delayed(Duration.zero);
-
-                          Get.dialog(
-                            const Center(child: CupertinoActivityIndicator()),
+                          showDialog(
+                            context: context,
                             barrierDismissible: false,
+                            builder: (_) => const Center(
+                              child: CupertinoActivityIndicator(),
+                            ),
                           );
 
                           try {
                             await dashController.getAddressLists();
+                          } catch (e) {
+                            debugPrint("Address list error: $e");
+                            Get.snackbar("Error", "Failed to load addresses");
                           } finally {
-                            if (Get.isDialogOpen ?? false) Get.back();
+                            if (mounted &&
+                                Navigator.of(context, rootNavigator: true)
+                                    .canPop()) {
+                              Navigator.of(context, rootNavigator: true).pop();
+                            }
                           }
                         }
-
-                        if (dashController.addressResponse.data.isEmpty) {
-                          Get.snackbar("No Address", "No saved address found");
-                          return;
-                        }
+                        //
+                        // if (dashController.addressResponse.data.isEmpty) {
+                        //   Get.snackbar("No Address", "No saved address found");
+                        //   return;
+                        // }
 
                         showAddressChoiceDialog(
                           context,
@@ -2796,62 +2856,49 @@ class _BookingScreenState extends State<BookingScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.edit, size: 20),
-                          color: Colors.blue,
-                          onPressed: () async {
-                            // Hide keyboard
-                            FocusScope.of(context).unfocus();
+                            icon: const Icon(Icons.edit, size: 20),
+                            color: Colors.blue,
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
 
-                            final dashController =
-                                Get.find<DashBoardController>();
+                              final dashController =
+                                  Get.find<DashBoardController>();
 
-                            // Loader
-                            await Future.delayed(Duration.zero);
-                            Get.dialog(
-                              const Center(child: CupertinoActivityIndicator()),
-                              barrierDismissible: false,
-                            );
-
-                            try {
                               await dashController.getAddressLists();
-                            } finally {
-                              if (Get.isDialogOpen ?? false) Get.back();
-                            }
 
-                            if (dashController.addressResponse.data.isEmpty) {
-                              Get.snackbar(
-                                  "No Address", "No saved address found");
-                              return;
-                            }
+                              if (dashController.addressResponse.data.isEmpty) {
+                                Get.snackbar(
+                                    "No Address", "No saved address found");
+                                return;
+                              }
 
-                            showAddressChoiceDialog(
-                              context,
-                              dashController.addressResponse.data,
-                              (address) {
-                                setState(() {
-                                  _selectedLatLng =
-                                      LatLng(address.lat, address.lon);
-                                  dashController.addressController.text =
-                                      address.address;
+                              showAddressChoiceDialog(
+                                context,
+                                dashController.addressResponse.data,
+                                (address) {
+                                  setState(() {
+                                    _selectedLatLng =
+                                        LatLng(address.lat, address.lon);
+                                    dashController.addressController.text =
+                                        address.address;
 
-                                  city = address.city;
-                                  stateController.text = address.city;
-                                  houseController.text = address.house;
-                                  floorController.text = address.floor;
-                                  postalController.text = address.zipCode;
-                                  countryController.text = address.country;
-                                  streetController.text = address.street;
+                                    city = address.city;
+                                    stateController.text = address.city;
+                                    houseController.text = address.house;
+                                    floorController.text = address.floor;
+                                    postalController.text = address.zipCode;
+                                    countryController.text = address.country;
+                                    streetController.text = address.street;
 
-                                  country = address.country;
-                                  street = address.street;
-                                  postalCode = address.zipCode;
-                                });
+                                    country = address.country;
+                                    street = address.street;
+                                    postalCode = address.zipCode;
+                                  });
 
-                                dashController.update();
-                              },
-                            );
-                          },
-                        ),
+                                  dashController.update();
+                                },
+                              );
+                            }),
                       ),
                     ),
                     // CustomTextField(
@@ -3780,3 +3827,73 @@ makeDigitalPayment(
         data: data,
       ));
 }
+
+// @override
+// void initState() {
+//   super.initState();
+//   Get.find<DashBoardController>().getAddressLists();
+// }
+
+// CustomTextField(
+// controller: Get.find<DashBoardController>().addressController,
+// hintText: "Select an Address",
+// focusNode: addressFocus,
+// readOnly: true,
+// isEnabled: true,
+// onTap: () => _openAddressDialog(context),
+//
+// suffixIcon: Container(
+// margin: const EdgeInsets.all(6),
+// decoration: BoxDecoration(
+// color: Colors.blue.withOpacity(0.1),
+// shape: BoxShape.circle,
+// ),
+// child: IconButton(
+// icon: const Icon(Icons.edit, size: 20),
+// color: Colors.blue,
+// onPressed: () => _openAddressDialog(context),
+// ),
+// ),
+// )
+
+// Future<void> _openAddressDialog(BuildContext context) async {
+//   FocusScope.of(context).unfocus();
+//
+//   final dashController = Get.find<DashBoardController>();
+//
+//   // Agar address empty hai tabhi API call
+//   if (dashController.addressResponse.data.isEmpty) {
+//     await dashController.getAddressLists();
+//   }
+//
+//   if (dashController.addressResponse.data.isEmpty) {
+//     Get.snackbar("No Address", "No saved address found");
+//     return;
+//   }
+//
+//   showAddressChoiceDialog(
+//     context,
+//     dashController.addressResponse.data,
+//         (address) {
+//       setState(() {
+//         _selectedLatLng = LatLng(address.lat, address.lon);
+//
+//         dashController.addressController.text = address.address;
+//
+//         city = address.city;
+//         stateController.text = address.city;
+//         houseController.text = address.house;
+//         floorController.text = address.floor;
+//         postalController.text = address.zipCode;
+//         countryController.text = address.country;
+//         streetController.text = address.street;
+//
+//         country = address.country;
+//         street = address.street;
+//         postalCode = address.zipCode;
+//       });
+//
+//       dashController.update();
+//     },
+//   );
+// }

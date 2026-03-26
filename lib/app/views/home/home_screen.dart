@@ -201,43 +201,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       /// Heading Row
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: horizontalPadding),
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Row(
-                              children: [
-                                Text(
-                                  "All Services",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                            const Text(
+                              "All Services",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            GestureDetector(
-                              onTap: () async {
-                                // final dash = Get.find<DashBoardController>();
-                                //
-                                // // Fetch data without showing loading
-                                // await dash.getFeaturedCategories(
-                                //   limit: "50",
-                                //   offset: "1",
-                                //   isShowLoading: false,
-                                // );
 
-                                // Switch to page 1 on the existing dashboard
-                                DashboardScreen.globalKey.currentState
-                                    ?.setPage(1);
+                            InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () {
+                                DashboardScreen.globalKey.currentState?.setPage(1);
                               },
-                              child: const Text(
-                                "See All",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.w600,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                child: const Row(
+                                  children: [
+                                    Text(
+                                      "See All",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),

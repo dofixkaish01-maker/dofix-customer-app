@@ -18,9 +18,9 @@ class SearchController extends GetxController {
 
   /// STATIC TRENDING SEARCH
   RxList<String> trendingSearches = <String>[
-    "AC Repair",
-    "Plumber",
-    "Electrician",
+    "AC Service, Repair & Installation",
+    "Plumber Services",
+    "Electrician Service",
     "Carpenter",
     "Home Cleaning",
     "Bathroom Cleaning",
@@ -41,6 +41,7 @@ class SearchController extends GetxController {
   }
 
   void clearSearch() {
+    textController.clear(); // <-- TextField ka text clear karega
     searchText.value = '';
     isSearching.value = false;
     isSearchCompleted.value = false;
@@ -65,11 +66,23 @@ class SearchController extends GetxController {
 
         await dashboard.getSearchList(query);
 
+        /// SORTING
+        final list = dashboard.serviceModelSearchList;
+        final lowerQuery = query.toLowerCase();
+
+        list.sort((a, b) {
+          int scoreA = _getScore(a.name ?? "", lowerQuery);
+          int scoreB = _getScore(b.name ?? "", lowerQuery);
+
+          return scoreB.compareTo(scoreA);
+        });
+
         isSearching.value = false;
         isSearchCompleted.value = true;
 
-
-        addRecentSearch(query);
+        if (query.length > 2) {
+          addRecentSearch(query);
+        }
       } else {
         dashboard.serviceModelSearchList.clear();
         isSearchCompleted.value = false;
@@ -104,6 +117,14 @@ class SearchController extends GetxController {
     await prefs.setStringList("recent_search", recentSearches);
   }
 
+  Future<void> removeRecentSearch(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    recentSearches.remove(value);
+
+    await prefs.setStringList("recent_search", recentSearches);
+  }
+
   Future<void> clearRecentSearch() async {
     final prefs = await SharedPreferences.getInstance();
     recentSearches.clear();
@@ -114,5 +135,18 @@ class SearchController extends GetxController {
   void onClose() {
     _debounce?.cancel();
     super.onClose();
+  }
+}
+int _getScore(String name, String query) {
+  final lowerName = name.toLowerCase();
+
+  if (lowerName == query) {
+    return 3; // exact match
+  } else if (lowerName.startsWith(query)) {
+    return 2; // best match
+  } else if (lowerName.contains(query)) {
+    return 1; // related
+  } else {
+    return 0;
   }
 }

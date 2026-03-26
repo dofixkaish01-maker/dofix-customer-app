@@ -1,23 +1,25 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/utils/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import '../views/helpSupport/faq_support_screen.dart';
 
-class ReviewInputWidget extends StatefulWidget {
-  // final Function(int rating, String review) onSubmit;
+class ReviewScreen extends StatefulWidget {
   final String bookingId;
   final String serviceId;
-  const ReviewInputWidget({
+
+  const ReviewScreen({
     super.key,
     required this.bookingId,
     required this.serviceId,
   });
 
   @override
-  State<ReviewInputWidget> createState() => _ReviewInputWidgetState();
+  State<ReviewScreen> createState() => _ReviewScreenState();
 }
 
-class _ReviewInputWidgetState extends State<ReviewInputWidget> {
+class _ReviewScreenState extends State<ReviewScreen> {
   final bookingController = Get.find<BookingController>();
 
   @override
@@ -30,83 +32,154 @@ class _ReviewInputWidgetState extends State<ReviewInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Please rate your experience',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            )),
-        SizedBox(height: 8),
-        Row(
-          children: List.generate(
-            5,
-            (index) => IconButton(
-              icon: Icon(
-                index < bookingController.userRating
-                    ? Icons.star
-                    : Icons.star_border,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: primaryColor,
+        title: const Text("Write a Review"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Please rate your experience',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+
+            /// Rating Bar
+            RatingBar.builder(
+              unratedColor: Colors.grey,
+              initialRating: bookingController.userRating.toDouble(),
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 40,
+              itemBuilder: (context, _) => const Icon(
+                Icons.star,
                 color: Colors.amber,
               ),
-              onPressed: () {
-                setState(() {
-                  bookingController.userRating = index + 1;
-                });
+              onRatingUpdate: (rating) {
+                bookingController.userRating = rating.toInt();
               },
             ),
-          ),
-        ),
-        SizedBox(height: 8),
-        TextField(
-          controller: bookingController.reviewController,
-          maxLines: 3,
-          decoration: InputDecoration(
-            hintText: "Share your experience...",
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 8,
+
+            const SizedBox(height: 20),
+
+            /// Review Input
+            TextField(
+              controller: bookingController.reviewController,
+              maxLines: 4,
+              maxLength: 200,
+              decoration: InputDecoration(
+                hintText: "Share your experience (optional)...",
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding: const EdgeInsets.all(12),
+              ),
             ),
-          ),
-        ),
-        SizedBox(height: 8),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all<Color>(primaryBlue),
-            ),
-            onPressed: bookingController.isSubmittingReview.value
-                ? null
-                : () async {
-                    if (bookingController.userRating == 0 ||
-                        bookingController.reviewController.text
-                            .trim()
-                            .isEmpty) {
-                      Get.snackbar(
-                        'Error',
-                        'Please provide a rating and review.',
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red.withOpacity(0.8),
-                        colorText: Colors.white,
-                      );
-                      return;
-                    }
-                    bookingController.isSubmittingReview.value = true;
-                    await bookingController.saveBookingReview();
-                    await bookingController.getBookingReview(
-                      widget.bookingId,
+
+            const Spacer(),
+
+            /// Submit Button
+            Obx(() => SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryBlue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: bookingController.isSubmittingReview.value
+                    ? null
+                    : () async {
+                  if (bookingController.userRating == 0) {
+                    Get.snackbar(
+                      'Error',
+                      'Please provide a rating.',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red.withOpacity(0.8),
+                      colorText: Colors.white,
                     );
-                    Navigator.of(context).pop();
-                  },
-            child: bookingController.isSubmittingReview.value
-                ? CircularProgressIndicator(color: Colors.white)
-                : Text('Submit'),
-          ),
+                    return;
+                  }
+
+                  bookingController.isSubmittingReview.value = true;
+
+                  await bookingController.saveBookingReview();
+
+                  Get.bottomSheet(
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.check_circle,
+                              color: Colors.green, size: 60),
+                          SizedBox(height: 10),
+                          Text(
+                            "Thank You!",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            "Your review has been submitted successfully 😊",
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+
+                  await bookingController.getBookingReview(
+                    widget.bookingId,
+                  );
+
+                  Future.delayed(const Duration(seconds: 2), () {
+                    Get.back(); // close bottom sheet
+                    Get.back(); // close screen
+                  });
+                },
+                child: bookingController.isSubmittingReview.value
+                    ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text("Submitting...")
+                  ],
+                )
+                    : const Text(
+                  "Submit Review",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            )),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

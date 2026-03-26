@@ -60,6 +60,7 @@ class ApiClient extends GetxController implements GetxService {
   //   }
   // }
 
+  //
   Future<Response> getData(
       String uri, {
         Map<String, dynamic>? query,
@@ -73,12 +74,12 @@ class ApiClient extends GetxController implements GetxService {
           : Uri.parse('$appBaseUrl$uri');
 
       log("==================================================");
-      log("🌍 API REQUEST START");
-      log("➡️ METHOD: ${method.toUpperCase()}");
-      log("➡️ URL: $uriWithQuery");
-      log("➡️ HEADERS: ${headers ?? mainHeaders}");
+      log(" API REQUEST START");
+      log("➡ METHOD: ${method.toUpperCase()}");
+      log("➡ URL: $uriWithQuery");
+      log("➡ HEADERS: ${headers ?? mainHeaders}");
       if (body != null) {
-        log("➡️ BODY: $body");
+        log("➡ BODY: $body");
       }
       log("==================================================");
 
@@ -116,9 +117,9 @@ class ApiClient extends GetxController implements GetxService {
       }
 
       log("==================================================");
-      log("✅ API RESPONSE RECEIVED");
-      log("⬅️ STATUS CODE: ${response.statusCode}");
-      log("⬅️ RESPONSE BODY: ${response.body}");
+      log(" API RESPONSE RECEIVED");
+      log("⬅ STATUS CODE: ${response.statusCode}");
+      log("⬅ RESPONSE BODY: ${response.body}");
       log("==================================================");
 
       return handleResponse(response, uri);
@@ -126,7 +127,7 @@ class ApiClient extends GetxController implements GetxService {
     } catch (e, stackTrace) {
 
       log("==================================================");
-      log("❌ API ERROR OCCURRED");
+      log(" API ERROR OCCURRED");
       log("Error: $e");
       log("StackTrace: $stackTrace");
       log("==================================================");

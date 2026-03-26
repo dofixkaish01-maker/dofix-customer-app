@@ -113,6 +113,20 @@ class AuthRepo {
         headers: headers);
   }
 
+  Future<Response> getAllCategories({
+    String? limit,
+    String? offset,
+  }) async {
+    return await apiClient.getData(
+      AppConstants.category,
+      query: {
+        "limit": limit,
+        "offset": offset,
+      },
+      method: "GET",
+    );
+  }
+
   Future<Response> categories(
     int? limit,
     int? offset,
@@ -210,7 +224,7 @@ class AuthRepo {
   }
 
   Future<Response> bookingDetails(String id) async {
-    return await apiClient.getData(AppConstants.bookingDetails + "$id",
+    return await apiClient.getData("${AppConstants.bookingDetails}$id",
         method: "GET");
   }
 
@@ -303,7 +317,7 @@ class AuthRepo {
       query: {
         "limit": "10",
         "offset": "1",
-        "search": searchText, // ✅ query param
+        "search": searchText,
       },
       method: "POST",
     );

@@ -31,6 +31,7 @@ import '../data/api/api.dart';
 import '../data/repo/auth_repo.dart';
 import '../helper/gi_dart.dart';
 import '../model/address_model.dart';
+import '../model/all_category_model.dart';
 import '../model/booking_response.dart';
 import '../model/notification_model.dart';
 import '../model/pages_model.dart';
@@ -97,11 +98,32 @@ class DashBoardController extends GetxController implements GetxService {
   @override
   void onInit() {
     super.onInit();
-    // Auto location fetch
-    _autoFetchLocation();
-    // Initial calls for Dashboard
-    getAddressLists();
+
+    final token = authRepo.getUserToken();
+    if (token.isEmpty) {
+      debugPrint("DashBoardController onInit skipped: token not ready");
+      return;
+    }
+
+    // Sirf tabhi jab dashboard really open ho
+    // _autoFetchLocation();
+    // getAddressLists();
   }
+
+  Future<void> loadDashboardData(BuildContext context) async {
+    await handleLocationPermission(context);
+    await getAddressLists();
+    await _autoFetchLocation();
+  }
+
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   // Auto location fetch
+  //   _autoFetchLocation();
+  //   // Initial calls for Dashboard
+  //   getAddressLists();
+  // }
 
   void filterAddresses(String query) {
     if (query.isEmpty) {
@@ -163,6 +185,8 @@ class DashBoardController extends GetxController implements GetxService {
   }
 
   Future<void> _autoFetchLocation() async {
+    print("AUTO FETCH START");
+
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
@@ -171,12 +195,30 @@ class DashBoardController extends GetxController implements GetxService {
 
     if (permission == LocationPermission.denied ||
         permission == LocationPermission.deniedForever) {
-      // print("Location permission not granted");
+      debugPrint("Permission denied");
       return;
     }
 
     await fetchUserLocation();
+
+    debugPrint("AUTO FETCH END");
   }
+
+  // Future<void> _autoFetchLocation() async {
+  //   LocationPermission permission = await Geolocator.checkPermission();
+  //
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //   }
+  //
+  //   if (permission == LocationPermission.denied ||
+  //       permission == LocationPermission.deniedForever) {
+  //     // print("Location permission not granted");
+  //     return;
+  //   }
+  //
+  //   await fetchUserLocation();
+  // }
 
   Future<void> getFeaturedCategories({
     required String limit,
@@ -509,6 +551,29 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
+  RxBool isAllCategoryLoading = false.obs;
+  AllCategoryModel? allCategoryModel;
+
+  Future<void> fetchAllCategories({String limit = "50", String offset = "1"}) async {
+    isAllCategoryLoading.value = true;
+
+    try {
+      Response response = await authRepo.getAllCategories(limit: limit, offset: offset);
+
+      if (response.statusCode == 200 && response.body['response_code'] == "default_200") {
+        allCategoryModel = AllCategoryModel.fromJson(response.body);
+        debugPrint("Total categories fetched: ${allCategoryModel?.content?.data?.length}");
+      } else {
+        Get.snackbar("Error", response.body['message'] ?? "Something went wrong");
+      }
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isAllCategoryLoading.value = false;
+    }
+  }
+
+  ///
   Future<void> getData(int limit, int offset,
       [bool isShowLoading = false]) async {
     if (isFetchingCategories) return;
@@ -546,58 +611,134 @@ class DashBoardController extends GetxController implements GetxService {
 
   double discount = 0.0;
 
-  Future<void> getCartListing(
-      {required String limit,
-      required String offset,
-      required bool showLoader,
-      required bool? isRoute}) async {
+  Future<void> getCartListing({
+    required String limit,
+    required String offset,
+    required bool showLoader,
+    required bool? isRoute,
+  }) async {
     try {
+      if (showLoader) {
+        showLoading('get cart list loading');
+      }
+
+      final userToken = authRepo.getUserToken();
+      if (userToken.isEmpty) {
+        debugPrint("Skipping cart API: token not ready");
+        return;
+      }
+
       Response response = await authRepo.cart(limit, offset);
-      var responseData = response.body;
+      final responseData = response.body;
+
       log("get cart Response data: $responseData");
+
       if (responseData == null) {
         throw Exception("Response data is null");
       }
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          cartModel = sv.CartResponseModel.fromJson(responseData);
-          discount = calculateDiscount(
-              cartList: cartModel.content?.cart?.data ?? [],
-              discountType: DiscountType.general);
-          vat = calculateVat(
-            cartList: cartModel.content?.cart?.data ?? [],
-          );
-          subTotal = calculateSubTotal(
-            cartList: cartModel.content?.cart?.data ?? [],
-          );
-          debugPrint("Discount: $discount");
-          if (isRoute ?? true) {
-            Get.to(() => CartScreen());
-          }
-          update();
-        } else {
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
+        cartModel = sv.CartResponseModel.fromJson(responseData);
+
+        discount = calculateDiscount(
+          cartList: cartModel.content?.cart?.data ?? [],
+          discountType: DiscountType.general,
+        );
+
+        vat = calculateVat(
+          cartList: cartModel.content?.cart?.data ?? [],
+        );
+
+        subTotal = calculateSubTotal(
+          cartList: cartModel.content?.cart?.data ?? [],
+        );
+
+        debugPrint("Discount: $discount");
+
+        if (isRoute ?? true) {
+          Get.to(() => CartScreen());
         }
+
+        update();
       } else {
-        closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
+        showCustomSnackBar(
+          responseData['message']?.toString() ??
+              "Something went wrong. Please try again.",
+          isError: true,
+        );
       }
-    } catch (e) {
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
+    } catch (e, stackTrace) {
       debugPrint("Error fetching cartItem: $e");
-      closeSnackBarIfActive();
+      debugPrintStack(stackTrace: stackTrace);
+
+      showCustomSnackBar(
+        "Something went wrong. Please try again.",
+        isError: true,
+      );
     } finally {
       _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      if (showLoader) hideLoading();
-      // update();
+      if (showLoader) {
+        hideLoading('get cart list loading finnaly');
+      }
+      update();
     }
   }
+
+  // Future<void> getCartListing(
+  //     {required String limit,
+  //     required String offset,
+  //     required bool showLoader,
+  //     required bool? isRoute}) async {
+  //   try {
+  //     Response response = await authRepo.cart(limit, offset);
+  //     var responseData = response.body;
+  //     log("get cart Response data: $responseData");
+  //     if (responseData == null) {
+  //       throw Exception("Response data is null");
+  //     }
+  //
+  //     if (response.statusCode == 200) {
+  //       if (responseData['message']
+  //           .toString()
+  //           .contains("Successfully data fetched")) {
+  //         cartModel = sv.CartResponseModel.fromJson(responseData);
+  //         discount = calculateDiscount(
+  //             cartList: cartModel.content?.cart?.data ?? [],
+  //             discountType: DiscountType.general);
+  //         vat = calculateVat(
+  //           cartList: cartModel.content?.cart?.data ?? [],
+  //         );
+  //         subTotal = calculateSubTotal(
+  //           cartList: cartModel.content?.cart?.data ?? [],
+  //         );
+  //         debugPrint("Discount: $discount");
+  //         if (isRoute ?? true) {
+  //           Get.to(() => CartScreen());
+  //         }
+  //         update();
+  //       } else {
+  //         closeSnackBarIfActive();
+  //         showCustomSnackBar(responseData['message'], isError: true);
+  //       }
+  //     } else {
+  //       closeSnackBarIfActive();
+  //       showCustomSnackBar(responseData['message'], isError: true);
+  //     }
+  //   } catch (e) {
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     debugPrint("Error fetching cartItem: $e");
+  //     closeSnackBarIfActive();
+  //   } finally {
+  //     _isLoginLoading = false;
+  //     // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+  //     if (showLoader) hideLoading();
+  //     // update();
+  //   }
+  // }
 
   Future<void> getServices(String limit, String offset) async {
     showLoading();
@@ -693,52 +834,103 @@ class DashBoardController extends GetxController implements GetxService {
     }
   }
 
+
   Future<void> getAddressLists() async {
-    showLoading();
+    showLoading('get address loading..');
     update();
+
     try {
+      final userToken = authRepo.getUserToken();
+      if (userToken.isEmpty) {
+        debugPrint("Skipping address API: token not ready");
+        return;
+      }
+
       Response response = await authRepo.addressLists();
-      var responseData = response.body;
+      final responseData = response.body;
 
       if (responseData == null) {
         throw Exception("Response data is null");
       }
+
       log("Response data Address: $responseData");
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          addressResponse = AddressResponse.fromJson(responseData['content']);
-          log("Address List Length: ${addressResponse.data.length}");
-          debugPrint("Service Model: ${serviceModel.variations?.length}");
-          hideLoading();
-          update();
-        } else {
-          hideLoading();
-
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
-        }
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
+        addressResponse = AddressResponse.fromJson(responseData['content']);
+        log("Address List Length: ${addressResponse.data.length}");
+        debugPrint("Service Model: ${serviceModel.variations?.length}");
+        update();
       } else {
-        hideLoading();
-
-        closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
+        showCustomSnackBar(
+          responseData['message']?.toString() ??
+              "Something went wrong. Please try again.",
+          isError: true,
+        );
       }
-    } catch (e) {
-      hideLoading();
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
+    } catch (e, stackTrace) {
       debugPrint("Error fetching address: $e");
-      closeSnackBarIfActive();
+      debugPrintStack(stackTrace: stackTrace);
+
+      showCustomSnackBar(
+        "Something went wrong. Please try again.",
+        isError: true,
+      );
     } finally {
       _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      hideLoading();
-      // update();
+      hideLoading('get adrress loading finnaly');
+      update();
     }
   }
+
+  // Future<void> getAddressLists() async {
+  //   showLoading();
+  //   update();
+  //   try {
+  //     Response response = await authRepo.addressLists();
+  //     var responseData = response.body;
+  //
+  //     if (responseData == null) {
+  //       throw Exception("Response data is null");
+  //     }
+  //     log("Response data Address: $responseData");
+  //
+  //     if (response.statusCode == 200) {
+  //       if (responseData['message']
+  //           .toString()
+  //           .contains("Successfully data fetched")) {
+  //         addressResponse = AddressResponse.fromJson(responseData['content']);
+  //         log("Address List Length: ${addressResponse.data.length}");
+  //         debugPrint("Service Model: ${serviceModel.variations?.length}");
+  //         hideLoading();
+  //         update();
+  //       } else {
+  //         hideLoading();
+  //
+  //         closeSnackBarIfActive();
+  //         showCustomSnackBar(responseData['message'], isError: true);
+  //       }
+  //     } else {
+  //       hideLoading();
+  //
+  //       closeSnackBarIfActive();
+  //       showCustomSnackBar(responseData['message'], isError: true);
+  //     }
+  //   } catch (e) {
+  //     hideLoading();
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     debugPrint("Error fetching address: $e");
+  //     closeSnackBarIfActive();
+  //   } finally {
+  //     _isLoginLoading = false;
+  //     // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+  //     hideLoading();
+  //     // update();
+  //   }
+  // }
 
   Future<bool> addAddress(AddressData data) async {
     showLoading();
@@ -1454,43 +1646,40 @@ class DashBoardController extends GetxController implements GetxService {
   }
 
   Future<void> getZone() async {
-    ApiClient apiClient = ApiClient(
-        appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
     try {
       Response response =
-          await authRepo.zones(latitude.toString(), longitude.toString());
-      var responseData = response.body;
+      await authRepo.zones(latitude.toString(), longitude.toString());
+
+      final responseData = response.body;
 
       if (responseData == null) {
-        hideLoading();
         throw Exception("Response data is null");
       }
-      log("dddd get zone Response data: $responseData");
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          log("dddd Zone: $responseData");
-          String? token =
-              sharedPreferences.getString(AppConstants.token).toString();
-          apiClient.updateHeader(
-              token, responseData['content']['zone']['id'].toString());
-          debugPrint(
-              "Zone ID: ${responseData['content']['zone']['id'].toString()}");
-          // debugPrint("Zone ID: ${apiClient.mainHeaders}");
-          await Future.delayed(Duration(milliseconds: 10));
-          // getLocationData();
-          update();
-        } else {
-          hideLoading();
-          closeSnackBarIfActive();
-          // showCustomSnackBar(responseData['message'], isError: true);
+      log("get zone Response data: $responseData");
+
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
+        log("Zone success: $responseData");
+
+        final token = sharedPreferences.getString(AppConstants.token) ?? "";
+        final zoneId = responseData['content']?['zone']?['id']?.toString() ?? "";
+
+        if (token.isNotEmpty && zoneId.isNotEmpty) {
+          authRepo.apiClient.updateHeader(token, zoneId);
+          debugPrint("Zone ID: $zoneId");
         }
+
+        await Future.delayed(const Duration(milliseconds: 10));
+
+        // Sirf success ke baad
+        await getLocationData();
+
+        update();
       } else {
         closeSnackBarIfActive();
-        hideLoading();
-        // showCustomSnackBar(responseData['message'], isError: true);
 
         screens = [
           NoServiceScreen(
@@ -1506,25 +1695,98 @@ class DashBoardController extends GetxController implements GetxService {
             message: responseData['message'].toString(),
           ),
         ];
+
         await init();
 
         Get.offAll(() => DashboardScreen(pageIndex: 0));
         update();
       }
-    } catch (e) {
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
-      debugPrint("Error fetching categories:7 $e");
-      closeSnackBarIfActive();
+    } catch (e, stackTrace) {
+      debugPrint("Error in getZone: $e");
+      debugPrintStack(stackTrace: stackTrace);
+
+      showCustomSnackBar(
+        "Something went wrong. Please try again.",
+        isError: true,
+      );
     } finally {
       _isLoginLoading = false;
-      await getLocationData();
       update();
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      // hideLoading();
-      // update();
     }
   }
+
+  // Future<void> getZone() async {
+  //   ApiClient apiClient = ApiClient(
+  //       appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
+  //   try {
+  //     Response response =
+  //         await authRepo.zones(latitude.toString(), longitude.toString());
+  //     var responseData = response.body;
+  //
+  //     if (responseData == null) {
+  //       hideLoading();
+  //       throw Exception("Response data is null");
+  //     }
+  //     log("dddd get zone Response data: $responseData");
+  //
+  //     if (response.statusCode == 200) {
+  //       if (responseData['message']
+  //           .toString()
+  //           .contains("Successfully data fetched")) {
+  //         log("dddd Zone: $responseData");
+  //         String? token =
+  //             sharedPreferences.getString(AppConstants.token);
+  //         apiClient.updateHeader(
+  //             token, responseData['content']['zone']['id'].toString());
+  //         debugPrint(
+  //             "Zone ID: ${responseData['content']['zone']['id'].toString()}");
+  //         // debugPrint("Zone ID: ${apiClient.mainHeaders}");
+  //         await Future.delayed(Duration(milliseconds: 10));
+  //         // getLocationData();
+  //         update();
+  //       } else {
+  //         hideLoading();
+  //         closeSnackBarIfActive();
+  //         // showCustomSnackBar(responseData['message'], isError: true);
+  //       }
+  //     } else {
+  //       closeSnackBarIfActive();
+  //       hideLoading();
+  //       // showCustomSnackBar(responseData['message'], isError: true);
+  //
+  //       screens = [
+  //         NoServiceScreen(
+  //           message: responseData['message'].toString(),
+  //         ),
+  //         NoServiceScreen(
+  //           message: responseData['message'].toString(),
+  //         ),
+  //         NoServiceScreen(
+  //           message: responseData['message'].toString(),
+  //         ),
+  //         NoServiceScreen(
+  //           message: responseData['message'].toString(),
+  //         ),
+  //       ];
+  //       await init();
+  //
+  //       Get.offAll(() => DashboardScreen(pageIndex: 0));
+  //       update();
+  //     }
+  //   } catch (e) {
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     debugPrint("Error fetching categories:7 $e");
+  //     closeSnackBarIfActive();
+  //   } finally {
+  //     _isLoginLoading = false;
+  //     await getLocationData();
+  //     update();
+  //     // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+  //     // hideLoading();
+  //     // update();
+  //   }
+  // }
 
   Future<void> getZoneIdForBooking() async {
     // ApiClient apiClient = ApiClient(appBaseUrl: AppConstants.baseUrl, sharedPreferences: sharedPreferences);
@@ -1870,8 +2132,8 @@ class DashBoardController extends GetxController implements GetxService {
     } finally {
       _isLoginLoading = false;
       // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      // hideLoading();
-      // update();
+      hideLoading();
+      update();
     }
   }
 
@@ -1986,7 +2248,7 @@ class DashBoardController extends GetxController implements GetxService {
   void openExternalLink(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
     } else {
       // Handle error
       log('Could not launch $url');

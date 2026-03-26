@@ -82,16 +82,35 @@ class CategoryToServices extends StatelessWidget {
                               width: (Get.size.width - 16 * 2 - 10 * 2) / 3,
                               child: GestureDetector(
                                 onTap: () {
+                                  if (controller.isServiceListingLoading) return;
+
+                                  print("🔄 Starting load for: ${subCategory.name}");
+
+                                  controller.selectedSubCategories.clear();
+                                  controller.selectedSubCategories.add(subCategory);
+
                                   controller.getCategoriesToServices(
                                     id: subCategory.id.toString(),
                                     limit: '50',
                                     offset: "1",
                                     isLoading: true,
                                   );
-                                  controller.selectedSubCategories.clear();
-                                  controller.selectedSubCategories
-                                      .add(subCategory);
                                 },
+                                // ... rest same
+                                // onTap: () {
+                                //   controller.isServiceListingLoading = true;
+                                //   controller.update();
+                                //
+                                //   controller.getCategoriesToServices(
+                                //     id: subCategory.id.toString(),
+                                //     limit: '50',
+                                //     offset: "1",
+                                //     isLoading: true,
+                                //   );
+                                //   controller.selectedSubCategories.clear();
+                                //   controller.selectedSubCategories
+                                //       .add(subCategory);
+                                // },
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -139,250 +158,14 @@ class CategoryToServices extends StatelessWidget {
                         ),
                       ),
                       sizedBox10(),
-
-                      // Services List or Placeholder
-                      Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Builder(builder: (context) {
-                            final services =
-                                (controller.categoriesToServiceListing ??
-                                            Services(data: []))
-                                        .data ??
-                                    [];
-                            if (controller.isServiceListingLoading) {
-                              return const SizedBox(
-                                  height: 120); // ya loader widget
-                              // return const Center(child: CircularProgressIndicator());
-                            }
-
-                            // if (services.isEmpty) {
-                            //   return Column(
-                            //     children: [
-                            //       const SizedBox(height: 50),
-                            //       Icon(
-                            //         Icons.info_outline,
-                            //         size: 60,
-                            //         color: Colors.grey.shade400,
-                            //       ),
-                            //       const SizedBox(height: 12),
-                            //       Text(
-                            //         "No services available for this sub-category.",
-                            //         style: albertSansRegular.copyWith(
-                            //           fontSize: 16,
-                            //           fontWeight: FontWeight.w500,
-                            //           color: Colors.grey.shade600,
-                            //         ),
-                            //         textAlign: TextAlign.center,
-                            //       ),
-                            //     ],
-                            //   );
-                            // }
-                            if (services.isEmpty) {
-                              return Column(
-                                children: [
-                                  const SizedBox(height: 50),
-                                  Icon(
-                                    Icons.info_outline,
-                                    size: 60,
-                                    color: Colors.grey.shade400,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    "No services available for this sub-category.",
-                                    style: albertSansRegular.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          })),
-
-                      // Container(
-                      //   padding: const EdgeInsets.symmetric(
-                      //       vertical: 15, horizontal: 16),
-                      //   decoration: ShapeDecoration(
-                      //     color: Colors.white,
-                      //     shape: RoundedRectangleBorder(
-                      //       side: BorderSide(
-                      //         width: 0,
-                      //         color: Colors.white,
-                      //         // color:Color(0xFF207FA7)
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(0),
-                      //     ),
-                      //   ),
-                      //   width: Get.size.width,
-                      //   height: 150,
-                      //   child: ListView.separated(
-                      //       scrollDirection: Axis.horizontal,
-                      //       shrinkWrap: true,
-                      //       itemBuilder: (context, i) {
-                      //         debugPrint(((controller.subCategoryModelListing ??
-                      //                             SubCategoryModel(data: []))
-                      //                         .data ??
-                      //                     [])[i]
-                      //                 .thumbnailFullPath ??
-                      //             "");
-                      //         return GestureDetector(
-                      //           onTap: () {
-                      //             controller.getCategoriesToServices(
-                      //                 id: ((controller.subCategoryModelListing ??
-                      //                                 SubCategoryModel(data: []))
-                      //                             .data ??
-                      //                         [])[i]
-                      //                     .id
-                      //                     .toString(),
-                      //                 limit: '10',
-                      //                 offset: "1",
-                      //                 isLoading: true);
-                      //             controller.selectedSubCategories.clear();
-                      //             controller.selectedSubCategories.add(
-                      //                 ((controller.subCategoryModelListing ??
-                      //                             SubCategoryModel(data: []))
-                      //                         .data ??
-                      //                     [])[i]);
-                      //           },
-                      //           child: Container(
-                      //             width: 106,
-                      //             height: 114,
-                      //             decoration: BoxDecoration(
-                      //               borderRadius: BorderRadius.circular(4),
-                      //             ),
-                      //             child: Column(
-                      //               mainAxisAlignment: MainAxisAlignment.center,
-                      //               crossAxisAlignment: CrossAxisAlignment.center,
-                      //               children: [
-                      //                 Padding(
-                      //                   padding: const EdgeInsets.symmetric(
-                      //                     horizontal: 8.0,
-                      //                   ),
-                      //                   child: Container(
-                      //                     width: 106,
-                      //                     height: 90,
-                      //                     decoration: BoxDecoration(
-                      //                       border: Border.all(
-                      //                           width: 3,
-                      //                           color: controller
-                      //                                   .selectedSubCategories
-                      //                                   .contains(((controller
-                      //                                                   .subCategoryModelListing ??
-                      //                                               SubCategoryModel(
-                      //                                                   data: []))
-                      //                                           .data ??
-                      //                                       [])[i])
-                      //                               ? Color(0xFF207FA7)
-                      //                               : Colors.white),
-                      //                       borderRadius:
-                      //                           BorderRadius.circular(7),
-                      //                     ),
-                      //                     child: ClipRRect(
-                      //                       borderRadius:
-                      //                           BorderRadius.circular(4),
-                      //                       child: Image.network(
-                      //                         ((controller.subCategoryModelListing ??
-                      //                                             SubCategoryModel(
-                      //                                                 data: []))
-                      //                                         .data ??
-                      //                                     [])[i]
-                      //                                 .thumbnailFullPath ??
-                      //                             "",
-                      //                         fit: BoxFit.cover,
-                      //                       ),
-                      //                     ),
-                      //                   ),
-                      //                 ),
-                      //                 SizedBox(
-                      //                   height: 2,
-                      //                 ),
-                      //                 Padding(
-                      //                   padding: const EdgeInsets.symmetric(
-                      //                       horizontal: 8.0),
-                      //                   child: Text(
-                      //                     ((controller.subCategoryModelListing ??
-                      //                                         SubCategoryModel(
-                      //                                             data: []))
-                      //                                     .data ??
-                      //                                 [])[i]
-                      //                             .name ??
-                      //                         "",
-                      //                     maxLines: 2,
-                      //                     overflow: TextOverflow.ellipsis,
-                      //                     textAlign: TextAlign.center,
-                      //                     style: albertSansRegular.copyWith(
-                      //                         fontSize: Dimensions.fontSize12,
-                      //                         decoration: TextDecoration.none,
-                      //                         color: controller
-                      //                                 .selectedSubCategories
-                      //                                 .contains(((controller
-                      //                                                 .subCategoryModelListing ??
-                      //                                             SubCategoryModel(
-                      //                                                 data: []))
-                      //                                         .data ??
-                      //                                     [])[i])
-                      //                             ? Color(0xFF207FA7)
-                      //                             : Colors.grey),
-                      //                   ),
-                      //                 )
-                      //               ],
-                      //             ),
-                      //           ),
-                      //         );
-                      //       },
-                      //       separatorBuilder: (context, i) {
-                      //         return SizedBox(
-                      //           width: 10,
-                      //         );
-                      //       },
-                      //       itemCount: ((controller.subCategoryModelListing ??
-                      //                       SubCategoryModel(data: []))
-                      //                   .data ??
-                      //               [])
-                      //           .length),
-                      // ),
-
-                      // SelectableButtonList(options: ((controller.subCategoryModelListing ?? SubCategoryModel(data: [])).data ?? []).map((looking) => looking.name).toList(), elementsPerRow: 0, onTap: (String ) {  }, buttonWidth: 87,buttonHeight: 89,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Builder(builder: (_) {
-                          final services =
-                              (controller.categoriesToServiceListing ??
-                                          Services(data: []))
-                                      .data ??
-                                  [];
-
-                          if (services.isNotEmpty) {
-                            return Row(
-                              children: [
-                                Text(
-                                  controller.selectedSubCategories.isNotEmpty
-                                      ? "${controller.selectedSubCategories[0].name}"
-                                      : "Services",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            );
-                          } else {
-                            return const SizedBox.shrink(); // Name hide
-                          }
-                        }),
-                      ),
-
                       // bathroom
                       Container(
                         color: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
                         width: Get.size.width,
+                        height:
+                            controller.isServiceListingLoading ? 250.0 : null,
                         child: Builder(
                           builder: (context) {
                             final services =
@@ -390,6 +173,31 @@ class CategoryToServices extends StatelessWidget {
                                             Services(data: []))
                                         .data ??
                                     [];
+                            print("DEBUG START");
+                            print(" Total Services: ${services.length}");
+                            if (services.isNotEmpty) {
+                              final firstService = services.first;
+                              print(
+                                  "🏷 First Service Name: ${firstService.name}");
+                              print(
+                                  " startingPrice: '${firstService.startingPrice}' (${firstService.startingPrice.runtimeType})");
+                              print(
+                                  " servicCost: '${firstService.serviceCost}' (${firstService.serviceCost.runtimeType})");
+                              print(" All fields: ${firstService.toJson()}");
+                            }
+                            print(" DEBUG END ");
+
+                            if (controller.isServiceListingLoading) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(40.0),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF207FA7)),
+                                  ),
+                                ),
+                              );
+                            }
 
                             final totalServices = services.length;
 
@@ -424,7 +232,7 @@ class CategoryToServices extends StatelessWidget {
                                         ),
                                       ),
 
-                                      /// Services List
+                                      /// Services List - COMPLETE CODE
                                       ...List.generate(
                                         services.length,
                                         (i) {
@@ -561,7 +369,93 @@ class CategoryToServices extends StatelessWidget {
                                                                       .black87,
                                                                 ),
                                                               ),
-
+                                                              // STARTING PRICE
+                                                              if (service.startingPrice !=
+                                                                      null &&
+                                                                  service.startingPrice! >
+                                                                      0) ...[
+                                                                const SizedBox(
+                                                                    height: 8),
+                                                                // Fixed
+                                                                Container(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          6),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      colors: [
+                                                                        const Color(0xFF207FA7)
+                                                                            .withOpacity(0.15),
+                                                                        const Color(0xFF207FA7)
+                                                                            .withOpacity(0.05),
+                                                                      ],
+                                                                      begin: Alignment
+                                                                          .centerLeft,
+                                                                      end: Alignment
+                                                                          .centerRight,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border:
+                                                                        Border
+                                                                            .all(
+                                                                      color: const Color(
+                                                                              0xFF207FA7)
+                                                                          .withOpacity(
+                                                                              0.3),
+                                                                    ),
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .trending_up_rounded,
+                                                                        size:
+                                                                            14,
+                                                                        color: const Color(
+                                                                            0xFF207FA7),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              4),
+                                                                      Text(
+                                                                        "₹${service.startingPrice!.toStringAsFixed(0)}",
+                                                                        // ✅ Safe access
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              Color(0xFF207FA7),
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        " onwards",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              const Color(0xFF207FA7).withOpacity(0.8),
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
                                                               const SizedBox(
                                                                   height: 10),
 
@@ -721,13 +615,10 @@ class CategoryToServices extends StatelessWidget {
                                       ),
                                     ],
                                   )
-                                : const SizedBox(
-                                    height: 150,
-                                  );
+                                : const SizedBox.shrink();
                           },
                         ),
                       ),
-
                       const SizedBox(height: 80),
                     ],
                   ),

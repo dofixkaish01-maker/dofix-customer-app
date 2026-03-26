@@ -5,6 +5,7 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../controllers/booking_controller.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../widgets/custom_appbar.dart';
@@ -339,15 +340,18 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  Text(
-                                    "₹${widget.mrpPrice}",
-                                    style: TextStyle(
-                                      decoration: TextDecoration.lineThrough,
-                                      color: secondaryText,
-                                      fontSize: mrpSize,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
+                                  widget.mrpPrice == '0.0'
+                                      ? SizedBox.shrink()
+                                      : Text(
+                                          "₹${widget.mrpPrice}",
+                                          style: TextStyle(
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            color: secondaryText,
+                                            fontSize: mrpSize,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
                                   const SizedBox(width: 10),
                                   if (percentOff > 0)
                                     Text(
@@ -1368,7 +1372,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                         "sub_category_id":
                                             widget.serviceModel.subCategoryId,
                                         "quantity": "1",
-                                        "tax_amount":79,
+                                        "tax_amount": 79,
                                         "extras": [],
                                       },
                                       [widget.variantKey],
@@ -1400,11 +1404,19 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
                             InkWell(
                               borderRadius: BorderRadius.circular(14),
-                              onTap: () {
-                                Get.to(() => GetRateCardScreen(
-                                      categoryId:
-                                          widget.serviceModel.categoryId ?? "",
-                                    ));
+                              onTap: () async {
+                                final Uri url = Uri.parse(
+                                  "https://ac-repair-landing-page.dofix.in/rateCard.html",
+                                );
+
+                                final launched = await launchUrl(
+                                  url,
+                                  mode: LaunchMode.inAppWebView,
+                                );
+
+                                if (!launched) {
+                                  debugPrint("Could not launch $url");
+                                }
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
