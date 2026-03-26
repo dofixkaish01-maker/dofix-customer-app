@@ -29,12 +29,13 @@ class ServiceDetails extends StatefulWidget {
   State<ServiceDetails> createState() => _ServiceDetailsState();
 }
 
-class _ServiceDetailsState extends State<ServiceDetails>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
-  bool _visible = false;
-  late List<AnimationController> _itemControllers;
+class _ServiceDetailsState extends State<ServiceDetails> {
+  // with TickerProviderStateMixin { // Removed animation mixin for better performance
+
+  // late AnimationController _controller; // Unused after removing top animation
+  // late Animation<Offset> _slideAnimation; // Unused after removing top animation
+  // bool _visible = false; // Unused after removing top animation
+  // late List<AnimationController> _itemControllers; // Unused after removing top animation
 
   final BookingController bookingController = Get.find<BookingController>();
 
@@ -55,51 +56,52 @@ class _ServiceDetailsState extends State<ServiceDetails>
       }
     });
 
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(1.0, 0.0),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    final int itemCount =
-        Get.find<DashBoardController>().serviceModel.variations?.length ?? 0;
-
-    _itemControllers = List.generate(
-      itemCount,
-          (index) => AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 400),
-      ),
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      for (int i = 0; i < _itemControllers.length; i++) {
-        Future.delayed(Duration(milliseconds: 100 + (i * 80)), () {
-          if (mounted) {
-            _itemControllers[i].forward();
-          }
-        });
-      }
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted) {
-          setState(() {
-            _visible = true;
-          });
-          _controller.forward();
-        }
-      });
-    });
+    // _controller = AnimationController(
+    //   duration: const Duration(milliseconds: 500),
+    //   vsync: this,
+    // );
+    //
+    // _slideAnimation = Tween<Offset>(
+    //   begin: const Offset(1.0, 0.0),
+    //   end: Offset.zero,
+    // ).animate(
+    //   CurvedAnimation(
+    //     parent: _controller,
+    //     curve: Curves.easeOutCubic,
+    //   ),
+    // );
+    //
+    // final int itemCount =
+    //     Get.find<DashBoardController>().serviceModel.variations?.length ?? 0;
+    //
+    // _itemControllers = List.generate(
+    //   itemCount,
+    //       (index) => AnimationController(
+    //     vsync: this,
+    //     duration: const Duration(milliseconds: 400),
+    //   ),
+    // );
+    //
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   for (int i = 0; i < _itemControllers.length; i++) {
+    //     Future.delayed(Duration(milliseconds: 100 + (i * 80)), () {
+    //       if (mounted) {
+    //         _itemControllers[i].forward();
+    //       }
+    //     });
+    //   }
+    //
+    //   Future.delayed(const Duration(milliseconds: 100), () {
+    //     if (mounted) {
+    //       setState(() {
+    //         _visible = true;
+    //       });
+    //       _controller.forward();
+    //     }
+    //   });
+    // });
   }
+
   // @override
   // void initState() {
   //   super.initState();
@@ -166,37 +168,42 @@ class _ServiceDetailsState extends State<ServiceDetails>
 
   @override
   void dispose() {
-    for (final controller in _itemControllers) {
-      controller.dispose();
-    }
-    _controller.dispose();
+    // for (final controller in _itemControllers) {
+    //   controller.dispose();
+    // }
+    // _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth >= 700;
+
     return GetBuilder<DashBoardController>(
       id: 'service_details',
       builder: (controller) {
         return Material(
+          color: const Color(0xFFF7F8FA),
           child: WillPopScope(
             onWillPop: () async {
-              for (final itemController in _itemControllers) {
-                itemController.reverse();
-              }
-
-              await _controller.reverse();
-
-              setState(() {
-                _visible = false;
-              });
-
-              await Future.delayed(const Duration(milliseconds: 300));
+              // for (final itemController in _itemControllers) {
+              //   itemController.reverse();
+              // }
+              //
+              // await _controller.reverse();
+              //
+              // setState(() {
+              //   _visible = false;
+              // });
+              //
+              // await Future.delayed(const Duration(milliseconds: 300));
               return true;
             },
             child: SafeArea(
               top: false,
               child: Scaffold(
+                backgroundColor: const Color(0xFFF7F8FA),
                 extendBody: true,
                 appBar: CustomAppBar(
                   title: controller.serviceModel.name ?? "",
@@ -206,86 +213,57 @@ class _ServiceDetailsState extends State<ServiceDetails>
                 body: Stack(
                   children: [
                     SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 25),
-
-                          /// Service Container
-                          AnimatedBuilder(
-                            animation: _slideAnimation,
-                            builder: (context, child) {
-                              return AnimatedSlide(
-                                offset: _slideAnimation.value,
-                                duration: const Duration(milliseconds: 400),
-                                child: AnimatedOpacity(
-                                  duration: const Duration(milliseconds: 200),
-                                  opacity: _visible ? 1.0 : 0.0,
-                                  child: Container(
-                                    width: double.infinity,
-                                    color: Colors.white,
-                                    child: GetBuilder<DashBoardController>(
-                                      id: 'service_container',
-                                      builder: (dashController) {
-                                        return ServiceContainer(
-                                          showReviews: true,
-                                          isButtonShow: true,
-                                          serviceModel:
-                                          controller.serviceModel,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                      padding: EdgeInsets.only(
+                        left: isTablet ? 24 : 14,
+                        right: isTablet ? 24 : 14,
+                        top: 14,
+                        bottom: 110,
+                      ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: isTablet ? 820 : double.infinity,
                           ),
-
-                          const SizedBox(height: 15),
-
-                          /// Available Services Title
-                          AnimatedOpacity(
-                            duration: const Duration(milliseconds: 300),
-                            opacity: _visible ? 1.0 : 0.0,
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'Available Services',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          /// Available Services List
-                          AnimatedOpacity(
-                            duration: const Duration(milliseconds: 300),
-                            opacity: _visible ? 1.0 : 0.0,
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: GetBuilder<DashBoardController>(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              /// Top Service Card
+                              GetBuilder<DashBoardController>(
                                 id: 'service_container',
                                 builder: (dashController) {
-                                  return ListView.builder(
+                                  return ServiceContainer(
+                                    showReviews: true,
+                                    isButtonShow: true,
+                                    serviceModel: controller.serviceModel,
+                                  );
+                                },
+                              ),
+
+                              const SizedBox(height: 18),
+
+                              /// Available Services
+                              _buildSectionHeader("Available Services"),
+                              const SizedBox(height: 10),
+                              GetBuilder<DashBoardController>(
+                                id: 'service_container',
+                                builder: (dashController) {
+                                  return ListView.separated(
                                     physics:
                                     const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount: controller
                                         .serviceModel.variations?.length ??
                                         0,
+                                    separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 8),
                                     itemBuilder: (context, index) {
                                       final variation = controller
                                           .serviceModel.variations?[index];
 
                                       return VariationsNewCard(
                                         serviceDescription:
-                                        (variation?.varDescription != null &&
+                                        (variation?.varDescription !=
+                                            null &&
                                             variation?.varDescription !=
                                                 "0")
                                             ? variation?.varDescription
@@ -318,8 +296,7 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                                 null)
                                             ? "${variation?.durationHour}:${variation?.durationMinute}"
                                             : "",
-                                        variantKey:
-                                        variation?.variantKey ?? "",
+                                        variantKey: variation?.variantKey ?? "",
                                         serviceModel: controller.serviceModel,
                                         serviceCoverImage:
                                         variation?.coverImage ?? "",
@@ -329,155 +306,169 @@ class _ServiceDetailsState extends State<ServiceDetails>
                                   );
                                 },
                               ),
-                            ),
-                          ),
 
-                          const SizedBox(height: 5),
+                              const SizedBox(height: 20),
 
-                          /// About Service Title
-                          AnimatedOpacity(
-                            duration: const Duration(milliseconds: 300),
-                            opacity: _visible ? 1.0 : 0.0,
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'About the Service:-',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w800,
+                              /// About Service
+                              _buildSectionHeader("About the Service"),
+                              const SizedBox(height: 10),
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(isTablet ? 18 : 14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(18),
+                                  border: Border.all(
+                                    color: Colors.black.withOpacity(0.05),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-
-                          /// About Service Description
-                          AnimatedOpacity(
-                            duration: const Duration(milliseconds: 300),
-                            opacity: _visible ? 1.0 : 0.0,
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: controller.serviceModel.description !=
-                                  null &&
-                                  HtmlUtils.containsHtml(
-                                    controller.serviceModel.description!,
-                                  )
-                                  ? HtmlToFlutter(
-                                htmlText:
-                                controller.serviceModel.description ??
-                                    "",
-                              )
-                                  : Text(
-                                HtmlUtils.stripHtmlIfPresent(
+                                child: controller.serviceModel.description !=
+                                    null &&
+                                    HtmlUtils.containsHtml(
+                                      controller.serviceModel.description!,
+                                    )
+                                    ? HtmlToFlutter(
+                                  htmlText:
                                   controller.serviceModel.description ??
                                       "",
-                                ),
-                                style: TextStyle(
-                                  color: Colors.black.withOpacity(0.6),
-                                  fontSize: 14,
+                                )
+                                    : Text(
+                                  HtmlUtils.stripHtmlIfPresent(
+                                    controller.serviceModel.description ??
+                                        "",
+                                  ),
+                                  style: TextStyle(
+                                    color:
+                                    Colors.black.withOpacity(0.68),
+                                    fontSize: isTablet ? 14.5 : 13.2,
+                                    height: 1.6,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
 
-                          /// Ratings & Reviews Section
-                          Obx(() {
-                            final List<ServiceReview> reviews =
-                                bookingController.serviceReviewsModel.value
-                                    ?.content?.reviews?.data??
-                                    [];
+                              const SizedBox(height: 20),
 
-                            final bool hasReviews = reviews.isNotEmpty;
+                              /// Ratings & Reviews
+                              _buildSectionHeader("Ratings & Reviews"),
+                              const SizedBox(height: 10),
+                              Obx(() {
+                                final List<ServiceReview> reviews =
+                                    bookingController.serviceReviewsModel.value
+                                        ?.content?.reviews?.data ??
+                                        [];
 
-                            return Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Ratings & Reviews",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
+                                final bool hasReviews = reviews.isNotEmpty;
 
-                                  RatingSummary(
-                                    averageRating:
-                                    controller.serviceModel.avgRating ??
-                                        0.0,
-                                    ratingCount:
-                                    controller.serviceModel.ratingCount ?? 0,
-                                  ),
-
-                                  const SizedBox(height: 20),
-
-                                  if ((controller.serviceModel.ratingCount ?? 0) >
-                                      0)
-                                    const Text(
-                                      'Reviews',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: isTablet ? 16 : 12,
+                                        vertical: isTablet ? 16 : 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(18),
+                                        border: Border.all(
+                                          color: const Color(0xFF207FA7)
+                                              .withOpacity(0.08),
+                                        ),
+                                      ),
+                                      child: RatingSummary(
+                                        averageRating:
+                                        controller.serviceModel.avgRating ??
+                                            0.0,
+                                        ratingCount:
+                                        controller.serviceModel.ratingCount ??
+                                            0,
                                       ),
                                     ),
 
-                                  if (hasReviews) const SizedBox(height: 10),
+                                    const SizedBox(height: 14),
 
-                                  if (hasReviews)
-                                    SizedBox(
-                                      height: 300,
-                                      child: ListView.builder(
+                                    if ((controller.serviceModel.ratingCount ??
+                                        0) >
+                                        0)
+                                      const Padding(
+                                        padding: EdgeInsets.only(left: 2),
+                                        child: Text(
+                                          'Reviews',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFF111827),
+                                          ),
+                                        ),
+                                      ),
+
+                                    if (hasReviews) const SizedBox(height: 12),
+
+                                    if (hasReviews)
+                                      ListView.separated(
                                         physics:
-                                        NeverScrollableScrollPhysics(),
+                                        const NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
                                         itemCount: reviews.length,
+                                        separatorBuilder: (_, __) =>
+                                        const SizedBox(height: 10),
                                         itemBuilder: (context, index) {
                                           final ServiceReview review =
                                           reviews[index];
                                           return ReviewCard(review: review);
                                         },
-                                      ),
-                                    )
-                                  else
-                                    const SizedBox(
-                                      height: 100,
-                                      child: Center(
-                                        child: Text(
-                                          "No reviews yet",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey,
+                                      )
+                                    else
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 28,
+                                          horizontal: 16,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(16),
+                                          border: Border.all(
+                                            color: Colors.grey.shade200,
+                                          ),
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            "No reviews yet",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
 
-                                  sizedBox65(),
-                                ],
-                              ),
-                            );
-                          }),
-                        ],
+                                    sizedBox65(),
+                                  ],
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
 
                     /// Floating Cart
                     Positioned(
                       bottom: 16,
-                      left: 0,
-                      right: 0,
+                      left: 12,
+                      right: 12,
                       child: GetBuilder<DashBoardController>(
                         id: 'cart_total',
                         builder: (controller) {
                           double totalAmount = 0;
                           int itemCount = 0;
 
-                          if (controller.cartModel.content?.cart?.data != null) {
+                          if (controller.cartModel.content?.cart?.data !=
+                              null) {
                             itemCount =
                                 controller.cartModel.content!.cart!.data!.length;
 
@@ -487,26 +478,38 @@ class _ServiceDetailsState extends State<ServiceDetails>
                             }
                           }
 
-                          return AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            transitionBuilder:
-                                (Widget child, Animation<double> animation) {
-                              return SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(0, 1),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                ),
-                              );
-                            },
-                            child: CustomFloatingCartWidget(
-                              totalAmount: totalAmount,
-                              itemCount: itemCount,
+                          return Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: isTablet ? 820 : double.infinity,
+                              ),
+                              child: CustomFloatingCartWidget(
+                                totalAmount: totalAmount,
+                                itemCount: itemCount,
+                              ),
                             ),
                           );
+
+                          // return AnimatedSwitcher(
+                          //   duration: const Duration(milliseconds: 300),
+                          //   transitionBuilder:
+                          //       (Widget child, Animation<double> animation) {
+                          //     return SlideTransition(
+                          //       position: Tween<Offset>(
+                          //         begin: const Offset(0, 1),
+                          //         end: Offset.zero,
+                          //       ).animate(animation),
+                          //       child: FadeTransition(
+                          //         opacity: animation,
+                          //         child: child,
+                          //       ),
+                          //     );
+                          //   },
+                          //   child: CustomFloatingCartWidget(
+                          //     totalAmount: totalAmount,
+                          //     itemCount: itemCount,
+                          //   ),
+                          // );
                         },
                       ),
                     ),
@@ -517,6 +520,20 @@ class _ServiceDetailsState extends State<ServiceDetails>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 2),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Color(0xFF111827),
+          fontSize: 17,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
     );
   }
 }
@@ -801,8 +818,8 @@ void ShowAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
                                   [];
 
                               if (data.isNotEmpty) {
-                                final selectedVariation = Get.find<
-                                    DashBoardController>()
+                                final selectedVariation =
+                                Get.find<DashBoardController>()
                                     .selectedVariations
                                     .isNotEmpty
                                     ? Get.find<DashBoardController>()
@@ -894,8 +911,6 @@ String formatTimeOfDay24Hour(TimeOfDay time) {
   DateTime(now.year, now.month, now.day, time.hour, time.minute);
   return DateFormat('HH:mm').format(dateTime);
 }
-
-
 
 // import 'dart:developer';
 // import 'package:do_fix/app/views/services/rating_summary.dart';

@@ -12,7 +12,8 @@ import '../../../../utils/dimensions.dart';
 class VariationsNewCard extends StatefulWidget {
   final String serviceVariationName;
   final String serviceRatings;
-  final String serviceCoverImage; // Removed from UI, keeping commented as requested
+  final String
+  serviceCoverImage; // UI me use nahi ho raha, details screen ke liye kept
   final String serviceReviewCount;
   final String serviceMrpPrice;
   final String serviceDiscountedPrice;
@@ -20,7 +21,8 @@ class VariationsNewCard extends StatefulWidget {
   final String serviceDescription;
   final String variantKey;
   final ServiceModel serviceModel;
-  final int taxAmount; // Kept for compatibility, current addToCart logic still uses hardcoded 79
+  final int
+  taxAmount; // Kept for compatibility, current addToCart logic still uses hardcoded 79
 
   const VariationsNewCard({
     super.key,
@@ -50,7 +52,6 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
   // String coverVariantImagePath =
   //     "https://panel.dofix.in/storage/service/variant/"; // Unused after removing image UI
 
-  // Format duration from "18:30" to "18 Hours 30 Mins"
   // String _formatDuration(String duration) {
   //   if (duration.contains(':')) {
   //     try {
@@ -89,6 +90,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
 
   void checkIfInCart() {
     bool foundInCart = false;
+
     if (dashboardController.cartModel.content?.cart?.data != null) {
       for (var item in dashboardController.cartModel.content!.cart!.data!) {
         if (item.serviceId == widget.serviceModel.id &&
@@ -109,6 +111,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
   Future<void> addToCart() async {
     final authController = Get.find<AuthController>();
     bool isGuest = await authController.returnIsGuest();
+
     if (isGuest) {
       authController.checkIfGuest();
     } else {
@@ -152,7 +155,14 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
   bool get _showMrp =>
       widget.serviceMrpPrice != "0.0" &&
           widget.serviceMrpPrice != "null" &&
-          widget.serviceMrpPrice != "0";
+          widget.serviceMrpPrice != "0" &&
+          widget.serviceMrpPrice.trim().isNotEmpty;
+
+  bool get _showDuration =>
+      widget.serviceTimeDuration != "0" &&
+          widget.serviceTimeDuration != "0:0" &&
+          widget.serviceTimeDuration != "null" &&
+          widget.serviceTimeDuration.trim().isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -180,22 +190,25 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
       child: Container(
         width: double.infinity,
         margin: EdgeInsets.symmetric(
-          vertical: Dimensions.paddingSize7,
-          horizontal: isTablet ? Dimensions.paddingSize10 : 0,
+          vertical: 6,
+          horizontal: isTablet ? 8 : 0,
         ),
-        padding: EdgeInsets.all(isTablet ? 18 : 14),
+        padding: EdgeInsets.symmetric(
+          horizontal: isTablet ? 16 : 12,
+          vertical: isTablet ? 14 : 12,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: const Color(0xFF207FA8).withOpacity(0.10),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
+              color: Colors.black.withOpacity(0.045),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -205,79 +218,49 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                /// Top Header
+                /// Top Row: Name + Rating
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Text(
                         widget.serviceVariationName,
-                        maxLines: isTablet ? 3 : 2,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: isTablet ? 17 : 15,
+                          fontSize: isTablet ? 16 : 14,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF111827),
-                          height: 1.3,
+                          height: 1.25,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallPhone ? 8 : 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF207FA8).withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                          color: const Color(0xFF207FA8).withOpacity(0.18),
-                        ),
-                      ),
-                      child: Text(
-                        "₹${widget.serviceDiscountedPrice}",
-                        style: TextStyle(
-                          fontSize: isTablet ? 16 : 14,
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFF207FA8),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                /// Rating + MRP + Duration chip space
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    if (_showRating)
+                    if (_showRating) ...[
+                      const SizedBox(width: 10),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFFFAC33).withOpacity(0.10),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(
                               Icons.star_rounded,
-                              size: 15,
+                              size: 14,
                               color: Color(0xFFFFAC33),
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 3),
                             Text(
                               widget.serviceRatings,
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF1F2937),
                               ),
@@ -285,45 +268,52 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                             Text(
                               " (${widget.serviceReviewCount})",
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 10,
                                 color: Colors.black.withOpacity(0.55),
                               ),
                             ),
                           ],
                         ),
                       ),
+                    ],
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                /// Actual Price + Discounted Price + Duration
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
                     if (_showMrp)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.04),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          "MRP ₹${widget.serviceMrpPrice}",
-                          style: TextStyle(
-                            fontSize: 11,
-                            decoration: TextDecoration.lineThrough,
-                            color: Colors.grey.shade700,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      Text(
+                        "₹${widget.serviceMrpPrice}",
+                        style: TextStyle(
+                          fontSize: isTablet ? 13 : 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                          decoration: TextDecoration.lineThrough,
                         ),
                       ),
-                    if (widget.serviceTimeDuration != "0" &&
-                        widget.serviceTimeDuration != "0:0" &&
-                        widget.serviceTimeDuration != "null" &&
-                        widget.serviceTimeDuration.trim().isNotEmpty)
+                    Text(
+                      "₹${widget.serviceDiscountedPrice}",
+                      style: TextStyle(
+                        fontSize: isTablet ? 16 : 14,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF207FA8),
+                      ),
+                    ),
+                    if (_showDuration)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFEEF6FA),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
                           widget.serviceTimeDuration,
@@ -337,38 +327,33 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
 
                 /// Description
                 Text(
                   HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
-                  maxLines: isTablet ? 3 : 2,
+                  maxLines: isTablet ? 2 : 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: isTablet ? 13 : 12,
-                    height: 1.5,
+                    fontSize: isTablet ? 12.5 : 11.5,
+                    height: 1.4,
                     color: Colors.black.withOpacity(0.60),
                   ),
                 ),
 
-                const SizedBox(height: 14),
+                const SizedBox(height: 10),
 
-                /// Bottom actions
-                compact
-                    ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                /// Bottom Buttons in same line
+                Row(
                   children: [
-                    _buildRateCardLink(),
-                    const SizedBox(height: 10),
-                    _buildCartButton(fullWidth: true),
-                  ],
-                )
-                    : Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(child: _buildRateCardLink()),
-                    const SizedBox(width: 12),
-                    _buildCartButton(),
+                    Expanded(
+                      child: _buildRateCardButton(compact: compact),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildCartButton(
+                      width: compact ? 82 : 90,
+                      height: 36,
+                    ),
                   ],
                 ),
               ],
@@ -379,7 +364,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     );
   }
 
-  Widget _buildRateCardLink() {
+  Widget _buildRateCardButton({required bool compact}) {
     return GestureDetector(
       onTap: () async {
         final Uri url = Uri.parse(
@@ -396,25 +381,33 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        height: 36,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: const Color(0xFF207FA8).withOpacity(0.22),
+          ),
+          color: const Color(0xFF207FA8).withOpacity(0.04),
+        ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(
               Icons.receipt_long_rounded,
-              size: 16,
-              color: Color(0xFF2B7EA5),
+              size: 15,
+              color: Color(0xFF207FA8),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 5),
             Flexible(
               child: Text(
                 "View Rate Card",
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TextStyle(
+                  fontSize: compact ? 11 : 12,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF2B7EA5),
-                  decoration: TextDecoration.underline,
+                  color: const Color(0xFF207FA8),
                 ),
               ),
             ),
@@ -424,11 +417,15 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     );
   }
 
-  Widget _buildCartButton({bool fullWidth = false}) {
+  Widget _buildCartButton({
+    required double width,
+    required double height,
+  }) {
     return GetBuilder<DashBoardController>(
       id: 'cart_${widget.serviceModel.id}_${widget.variantKey}',
       builder: (controller) {
         bool itemInCart = false;
+
         if (controller.cartModel.content?.cart?.data != null) {
           for (var item in controller.cartModel.content!.cart!.data!) {
             if (item.serviceId == widget.serviceModel.id &&
@@ -438,23 +435,23 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
             }
           }
         }
+
         isInCart = itemInCart;
 
         return GestureDetector(
           onTap: isInCart ? removeFromCart : addToCart,
           child: Container(
-            height: 42,
-            width: fullWidth ? double.infinity : 110,
+            width: width,
+            height: height,
             decoration: BoxDecoration(
-              color:
-              isInCart ? Colors.red.shade400 : const Color(0xFF207FA8),
-              borderRadius: BorderRadius.circular(12),
+              color: isInCart ? Colors.red.shade400 : const Color(0xFF207FA8),
+              borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
                   color: (isInCart ? Colors.red : const Color(0xFF207FA8))
-                      .withOpacity(0.18),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                      .withOpacity(0.14),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -462,7 +459,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
             child: Text(
               isInCart ? "Remove" : "Add",
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 11.5,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
               ),
@@ -473,8 +470,6 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     );
   }
 }
-
-
 
 // import 'package:do_fix/app/views/services/details_screen.dart';
 // import 'package:do_fix/controllers/auth_controller.dart';
