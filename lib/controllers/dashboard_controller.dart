@@ -110,12 +110,17 @@ class DashBoardController extends GetxController implements GetxService {
     // getAddressLists();
   }
 
+  bool isDashboardLocationInitialized = false;
+
   Future<void> loadDashboardData(BuildContext context) async {
+    if (isDashboardLocationInitialized) return;
+
+    isDashboardLocationInitialized = true;
+
     await handleLocationPermission(context);
     await getAddressLists();
     await _autoFetchLocation();
   }
-
   // @override
   // void onInit() {
   //   super.onInit();
