@@ -98,11 +98,31 @@ class DashBoardController extends GetxController implements GetxService {
   @override
   void onInit() {
     super.onInit();
-    // Auto location fetch
-    _autoFetchLocation();
-    // Initial calls for Dashboard
-    getAddressLists();
+
+    final token = authRepo.getUserToken();
+    if (token.isEmpty) {
+      debugPrint("DashBoardController onInit skipped: token not ready");
+      return;
+    }
+
+    // Sirf tabhi jab dashboard really open ho
+    // _autoFetchLocation();
+    // getAddressLists();
   }
+
+  Future<void> loadDashboardData(BuildContext context) async {
+    await handleLocationPermission(context);
+    await getAddressLists();
+  }
+
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   // Auto location fetch
+  //   _autoFetchLocation();
+  //   // Initial calls for Dashboard
+  //   getAddressLists();
+  // }
 
   void filterAddresses(String query) {
     if (query.isEmpty) {

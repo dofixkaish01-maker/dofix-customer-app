@@ -28,27 +28,41 @@ class DashboardScreenState extends State<DashboardScreen> {
   int _pageIndex = 0;
   DateTime? _lastBackPressed;
 
+
   @override
   void initState() {
     super.initState();
 
     _pageIndex = widget.pageIndex;
-
     _pageController = PageController(initialPage: widget.pageIndex);
-
     currentPage = widget.pageIndex;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.find<DashBoardController>().handleLocationPermission(context);
+      Get.find<DashBoardController>().loadDashboardData(context);
     });
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Get.find<DashBoardController>().handleLocationPermissionOnce(context);
-    // });
-
-    // Future.delayed(const Duration(seconds: 1), () {
-    //   setState(() {});
-    // });
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   _pageIndex = widget.pageIndex;
+  //
+  //   _pageController = PageController(initialPage: widget.pageIndex);
+  //
+  //   currentPage = widget.pageIndex;
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     Get.find<DashBoardController>().handleLocationPermission(context);
+  //   });
+  //   // WidgetsBinding.instance.addPostFrameCallback((_) {
+  //   //   Get.find<DashBoardController>().handleLocationPermissionOnce(context);
+  //   // });
+  //
+  //   // Future.delayed(const Duration(seconds: 1), () {
+  //   //   setState(() {});
+  //   // });
+  // }
 
   @override
   Widget build(BuildContext context) {
