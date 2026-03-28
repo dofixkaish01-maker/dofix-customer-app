@@ -2,11 +2,13 @@ import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/views/home/component/category_components.dart';
+import 'package:do_fix/app/views/home/refer%20screen/refer_earn_screen.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../controllers/auth_controller.dart';
 import '../../../model/service_model.dart';
 import '../dashboard/dashboard_screen.dart';
 import 'component/horizontal_view.dart';
@@ -175,6 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: RefreshIndicator(
                   onRefresh: _onRefresh,
                   child: ListView(
+                    padding: const EdgeInsets.only(bottom: 100),
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       InkWell(
@@ -735,9 +738,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
 
-                      // /// Refer & Earn
+                      /// Refer & Earn
                       // Padding(
-                      //   padding: const EdgeInsets.all(15),
+                      //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       //   child: GestureDetector(
                       //     onTap: () async {
                       //       final authController = Get.find<AuthController>();
@@ -750,29 +753,127 @@ class _HomeScreenState extends State<HomeScreen> {
                       //       }
                       //     },
                       //     child: Container(
-                      //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      //       height: 110, //bigger height
                       //       decoration: BoxDecoration(
-                      //         borderRadius: BorderRadius.circular(14),
+                      //         borderRadius: BorderRadius.circular(22),
                       //         gradient: const LinearGradient(
-                      //           begin: Alignment.topLeft,
-                      //           end: Alignment.bottomRight,
                       //           colors: [
-                      //             Color(0xff266a8a),
+                      //             Color(0xff1f7aa8),
                       //             Color(0xff125778),
                       //           ],
+                      //           begin: Alignment.topLeft,
+                      //           end: Alignment.bottomRight,
                       //         ),
-                      //       ...
+                      //         boxShadow: [
+                      //           BoxShadow(
+                      //             color: Colors.blue.withOpacity(0.25),
+                      //             blurRadius: 18,
+                      //             offset: const Offset(0, 8),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //
+                      //       child: Stack(
+                      //         children: [
+                      //
+                      //           /// Background decorative circle
+                      //           Positioned(
+                      //             right: -20,
+                      //             top: -20,
+                      //             child: Container(
+                      //               height: 120,
+                      //               width: 120,
+                      //               decoration: BoxDecoration(
+                      //                 color: Colors.white.withOpacity(0.08),
+                      //                 shape: BoxShape.circle,
+                      //               ),
+                      //             ),
+                      //           ),
+                      //
+                      //           Positioned(
+                      //             right: 20,
+                      //             bottom: -30,
+                      //             child: Container(
+                      //               height: 100,
+                      //               width: 100,
+                      //               decoration: BoxDecoration(
+                      //                 color: Colors.white.withOpacity(0.05),
+                      //                 shape: BoxShape.circle,
+                      //               ),
+                      //             ),
+                      //           ),
+                      //
+                      //           /// Main Content
+                      //           Padding(
+                      //             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                      //             child: Row(
+                      //               children: [
+                      //
+                      //                 /// ICON BIG
+                      //                 Container(
+                      //                   height: 60,
+                      //                   width: 60,
+                      //                   decoration: BoxDecoration(
+                      //                     color: Colors.white.withOpacity(0.15),
+                      //                     shape: BoxShape.circle,
+                      //                   ),
+                      //                   child: const Icon(
+                      //                     Icons.card_giftcard,
+                      //                     color: Colors.white,
+                      //                     size: 30,
+                      //                   ),
+                      //                 ),
+                      //
+                      //                 const SizedBox(width: 16),
+                      //
+                      //                 /// TEXT
+                      //                 Expanded(
+                      //                   child: Column(
+                      //                     crossAxisAlignment: CrossAxisAlignment.start,
+                      //                     mainAxisAlignment: MainAxisAlignment.center,
+                      //                     children: const [
+                      //                       Text(
+                      //                         "Refer & Earn",
+                      //                         style: TextStyle(
+                      //                           color: Colors.white,
+                      //                           fontSize: 18, // bigger
+                      //                           fontWeight: FontWeight.bold,
+                      //                         ),
+                      //                       ),
+                      //                       SizedBox(height: 6),
+                      //                       Text(
+                      //                         "Invite friends & get exciting rewards 🎁 ",
+                      //                         style: TextStyle(
+                      //                           color: Colors.white70,
+                      //                           fontSize: 13,
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                 ),
+                      //
+                      //                 /// BUTTON STYLE ARROW
+                      //                 Container(
+                      //                   padding: const EdgeInsets.all(8),
+                      //                   decoration: BoxDecoration(
+                      //                     color: Colors.white.withOpacity(0.15),
+                      //                     shape: BoxShape.circle,
+                      //                   ),
+                      //                   child: const Icon(
+                      //                     Icons.arrow_forward,
+                      //                     color: Colors.white,
+                      //                     size: 20,
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
                       //     ),
                       //   ),
                       // ),
-
-                      /// Footer (Full width feel even when centered)
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isTablet ? 0 : 0,
-                        ),
-                        child: buildDoFixFooter(),
-                      ),
+                      buildDoFixFooter(),
                     ],
                   ),
                 ),

@@ -4,12 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/dashboard_controller.dart';
+import '../../../expandable_fab_menu.dart';
 import '../../../utils/dimensions.dart';
 import '../../../utils/sizeboxes.dart';
 import '../../../utils/styles.dart';
 import '../../../utils/theme.dart';
 import '../HtmlPage/html_pages.dart';
 import '../helpSupport/help_and_support_screen.dart';
+import '../home/refer screen/refer_earn_screen.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -202,34 +204,7 @@ class _AccountScreenState extends State<AccountScreen> {
       return SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          floatingActionButton: LayoutBuilder(
-            builder: (context, constraints) {
-              final w = constraints.maxWidth;
-              final isTablet = w >= 600;
-
-              return Padding(
-                // bottom nav / safe spacing
-                padding: EdgeInsets.only(bottom: isTablet ? 80 : 65),
-                child: FloatingActionButton.extended(
-                  backgroundColor: const Color(0xFF207FA7),
-                  onPressed: () {
-                    Get.to(() => const HelpSupportScreen());
-                  },
-                  label: Row(
-                    children: [
-                      const Icon(Icons.support_agent_rounded,
-                          color: Colors.white),
-                      const SizedBox(width: 7),
-                      Text(
-                        'Help & Support',
-                        style: GoogleFonts.roboto(color: Colors.white),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
+          floatingActionButton: const ExpandableFabMenu(),
           body: LayoutBuilder(
             builder: (context, constraints) {
               final shortest = MediaQuery.of(context).size.shortestSide;
