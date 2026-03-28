@@ -793,51 +793,102 @@ class DashBoardController extends GetxController implements GetxService {
   List<Variation> variations = [];
 
   Future<void> getServicesDetails(String id) async {
-    // showLoading();
-    update();
     try {
+      showLoading();
+      update();
+
       Response response = await authRepo.serviceDetails(id);
-      var responseData = response.body;
+      final responseData = response.body;
+
       log("eeee Response data: $responseData");
+
       if (responseData == null) {
         throw Exception("Response data is null");
       }
-      log("Response data: $responseData");
 
-      if (response.statusCode == 200) {
-        if (responseData['message']
-            .toString()
-            .contains("Successfully data fetched")) {
-          serviceModel = sv.ServiceModel.fromJson(responseData['content']);
-          debugPrint("Service Model: ${serviceModel.variations?.length}");
-          hideLoading();
-          Get.to(() => ServiceDetails());
-          update();
-        } else {
-          hideLoading();
+      if (response.statusCode == 200 &&
+          responseData['message']
+              .toString()
+              .contains("Successfully data fetched")) {
 
-          closeSnackBarIfActive();
-          showCustomSnackBar(responseData['message'], isError: true);
-        }
-      } else {
+        serviceModel = sv.ServiceModel.fromJson(responseData['content']);
+
         hideLoading();
 
+        // thoda safe navigation
+        Future.microtask(() {
+          Get.to(() => ServiceDetails());
+        });
+
+        update();
+      } else {
+        hideLoading();
         closeSnackBarIfActive();
-        showCustomSnackBar(responseData['message'], isError: true);
+        showCustomSnackBar(
+          responseData['message'] ?? "Something went wrong",
+          isError: true,
+        );
       }
     } catch (e) {
       hideLoading();
-      showCustomSnackBar("Something went wrong. Please try again. $e",
-          isError: true);
-      debugPrint("Error fetching categories:6 $e");
       closeSnackBarIfActive();
+      // showCustomSnackBar(
+      //   "Something went wrong. Please try again.",
+      //   isError: true,
+      // );
+      debugPrint("Error fetching service details: $e");
     } finally {
       _isLoginLoading = false;
-      // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
-      // hideLoading();
-      // update();
+      update();
     }
   }
+
+  // Future<void> getServicesDetails(String id) async {
+  //   // showLoading();
+  //   // update();
+  //   try {
+  //     Response response = await authRepo.serviceDetails(id);
+  //     var responseData = response.body;
+  //     log("eeee Response data: $responseData");
+  //     if (responseData == null) {
+  //       throw Exception("Response data is null");
+  //     }
+  //     log("Response data: $responseData");
+  //
+  //     if (response.statusCode == 200) {
+  //       if (responseData['message']
+  //           .toString()
+  //           .contains("Successfully data fetched")) {
+  //         serviceModel = sv.ServiceModel.fromJson(responseData['content']);
+  //         // debugPrint("Service Model: ${serviceModel.variations?.length}");
+  //         hideLoading();
+  //         Get.to(() => ServiceDetails());
+  //         update();
+  //       } else {
+  //         hideLoading();
+  //
+  //         closeSnackBarIfActive();
+  //         showCustomSnackBar(responseData['message'], isError: true);
+  //       }
+  //     } else {
+  //       hideLoading();
+  //
+  //       closeSnackBarIfActive();
+  //       showCustomSnackBar(responseData['message'], isError: true);
+  //     }
+  //   } catch (e) {
+  //     hideLoading();
+  //     showCustomSnackBar("Something went wrong. Please try again. $e",
+  //         isError: true);
+  //     debugPrint("Error fetching categories:6 $e");
+  //     closeSnackBarIfActive();
+  //   } finally {
+  //     _isLoginLoading = false;
+  //     // showCustomSnackBar("Something went wrong. Please try again.", isError: true);
+  //     // hideLoading();
+  //     // update();
+  //   }
+  // }
 
 
   Future<void> getAddressLists() async {
@@ -1058,7 +1109,7 @@ class DashBoardController extends GetxController implements GetxService {
           hideLoading();
           update();
 
-          // ✅ Show Dialog with Booking Details
+          //  Show Dialog with Booking Details
           final booking = bookingResponse?.content;
 
           if (booking != null) {

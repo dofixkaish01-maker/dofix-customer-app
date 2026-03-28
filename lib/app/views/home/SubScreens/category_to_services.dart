@@ -9,6 +9,7 @@ import '../../../../model/category_model.dart';
 import '../../../../utils/dimensions.dart';
 import '../../../../utils/styles.dart';
 import '../../../widgets/custom_appbar.dart';
+import '../../services/service_details_screen.dart';
 
 class CategoryToServices extends StatelessWidget {
   const CategoryToServices({super.key});
@@ -190,17 +191,17 @@ class CategoryToServices extends StatelessWidget {
                             }
                             print(" DEBUG END ");
 
-                            if (controller.isServiceListingLoading) {
-                              return const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(40.0),
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Color(0xFF207FA7)),
-                                  ),
-                                ),
-                              );
-                            }
+                            // if (controller.isServiceListingLoading) {
+                            //   return const Center(
+                            //     child: Padding(
+                            //       padding: EdgeInsets.all(40.0),
+                            //       child: CircularProgressIndicator(
+                            //         valueColor: AlwaysStoppedAnimation<Color>(
+                            //             Color(0xFF207FA7)),
+                            //       ),
+                            //     ),
+                            //   );
+                            // }
 
                             final totalServices = services.length;
 
@@ -380,84 +381,84 @@ class CategoryToServices extends StatelessWidget {
                                                                 const SizedBox(
                                                                     height: 8),
                                                                 // Fixed
-                                                                // Container(
-                                                                //   padding: const EdgeInsets
-                                                                //       .symmetric(
-                                                                //       horizontal:
-                                                                //           12,
-                                                                //       vertical:
-                                                                //           6),
-                                                                //   decoration:
-                                                                //       BoxDecoration(
-                                                                //     gradient:
-                                                                //         LinearGradient(
-                                                                //       colors: [
-                                                                //         const Color(0xFF207FA7)
-                                                                //             .withOpacity(0.15),
-                                                                //         const Color(0xFF207FA7)
-                                                                //             .withOpacity(0.05),
-                                                                //       ],
-                                                                //       begin: Alignment
-                                                                //           .centerLeft,
-                                                                //       end: Alignment
-                                                                //           .centerRight,
-                                                                //     ),
-                                                                //     borderRadius:
-                                                                //         BorderRadius.circular(
-                                                                //             20),
-                                                                //     border:
-                                                                //         Border
-                                                                //             .all(
-                                                                //       color: const Color(
-                                                                //               0xFF207FA7)
-                                                                //           .withOpacity(
-                                                                //               0.3),
-                                                                //     ),
-                                                                //   ),
-                                                                //   child: Row(
-                                                                //     mainAxisSize:
-                                                                //         MainAxisSize
-                                                                //             .min,
-                                                                //     children: [
-                                                                //       Icon(
-                                                                //         Icons
-                                                                //             .trending_up_rounded,
-                                                                //         size:
-                                                                //             14,
-                                                                //         color: const Color(
-                                                                //             0xFF207FA7),
-                                                                //       ),
-                                                                //       const SizedBox(
-                                                                //           width:
-                                                                //               4),
-                                                                //       Text(
-                                                                //         "₹${service.startingPrice!.toStringAsFixed(0)}",
-                                                                //         // ✅ Safe access
-                                                                //         style:
-                                                                //             const TextStyle(
-                                                                //           fontSize:
-                                                                //               14,
-                                                                //           fontWeight:
-                                                                //               FontWeight.w700,
-                                                                //           color:
-                                                                //               Color(0xFF207FA7),
-                                                                //         ),
-                                                                //       ),
-                                                                //       Text(
-                                                                //         " onwards",
-                                                                //         style:
-                                                                //             TextStyle(
-                                                                //           fontSize:
-                                                                //               12,
-                                                                //           color:
-                                                                //               const Color(0xFF207FA7).withOpacity(0.8),
-                                                                //           fontWeight:
-                                                                //               FontWeight.w500,
-                                                                //         ),
-                                                                //       ),
-                                                                //     ],
-                                                                //   ),
-                                                                // ),
+                                                                Container(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          6),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      colors: [
+                                                                        const Color(0xFF207FA7)
+                                                                            .withOpacity(0.15),
+                                                                        const Color(0xFF207FA7)
+                                                                            .withOpacity(0.05),
+                                                                      ],
+                                                                      begin: Alignment
+                                                                          .centerLeft,
+                                                                      end: Alignment
+                                                                          .centerRight,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border:
+                                                                        Border
+                                                                            .all(
+                                                                      color: const Color(
+                                                                              0xFF207FA7)
+                                                                          .withOpacity(
+                                                                              0.3),
+                                                                    ),
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .trending_up_rounded,
+                                                                        size:
+                                                                            14,
+                                                                        color: const Color(
+                                                                            0xFF207FA7),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              4),
+                                                                      Text(
+                                                                        "₹${service.startingPrice!.toStringAsFixed(0)}",
+                                                                        //  Safe access
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              Color(0xFF207FA7),
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        " onwards",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              const Color(0xFF207FA7).withOpacity(0.8),
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
                                                               ],
                                                               const SizedBox(
                                                                   height: 10),
