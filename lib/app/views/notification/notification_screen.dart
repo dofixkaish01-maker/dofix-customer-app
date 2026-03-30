@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,6 +30,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final notifications =
+        controller.notificationModel.value.content ?? [];
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: CustomAppBar(
@@ -51,27 +55,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
             /// Empty State
             if (notifications.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(
-                      Icons.notifications_none_rounded,
-                      size: 60,
-                      color: Colors.grey,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'No notifications yet',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
+              if (notifications.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(
+                        Icons.notifications_none_rounded,
+                        size: 60,
+                        color: Colors.grey,
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }
+                      SizedBox(height: 12),
+                      Text(
+                        'No notifications yet',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }            }
 
             /// Notification List
             return RefreshIndicator(
