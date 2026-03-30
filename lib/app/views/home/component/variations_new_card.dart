@@ -236,7 +236,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// 🔹 Title + Rating
+                  ///  Title + Rating
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -297,7 +297,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
 
                   const SizedBox(height: 8),
 
-                  /// 🔹 Price + Duration Row
+                  ///  Price + Duration Row
                   Row(
                     children: [
                       if (_showMrp)
@@ -307,8 +307,8 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                             widget.serviceVariationName,
                           ),
                           style: TextStyle(
-                            fontSize: 11.5,
-                            color: Colors.grey.shade500,
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
                             decoration: TextDecoration.lineThrough,
                           ),
                         ),
