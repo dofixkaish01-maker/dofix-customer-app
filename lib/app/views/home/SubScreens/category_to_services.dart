@@ -9,7 +9,6 @@ import '../../../../model/category_model.dart';
 import '../../../../utils/dimensions.dart';
 import '../../../../utils/styles.dart';
 import '../../../widgets/custom_appbar.dart';
-import '../../services/service_details_screen.dart';
 
 class CategoryToServices extends StatelessWidget {
   const CategoryToServices({super.key});
@@ -83,15 +82,12 @@ class CategoryToServices extends StatelessWidget {
                               width: (Get.size.width - 16 * 2 - 10 * 2) / 3,
                               child: GestureDetector(
                                 onTap: () {
-                                  if (controller.isServiceListingLoading)
-                                    return;
+                                  if (controller.isServiceListingLoading) return;
 
-                                  print(
-                                      "Starting load for: ${subCategory.name}");
+                                  print("Starting load for: ${subCategory.name}");
 
                                   controller.selectedSubCategories.clear();
-                                  controller.selectedSubCategories
-                                      .add(subCategory);
+                                  controller.selectedSubCategories.add(subCategory);
 
                                   controller.getCategoriesToServices(
                                     id: subCategory.id.toString(),
@@ -191,17 +187,17 @@ class CategoryToServices extends StatelessWidget {
                             }
                             print(" DEBUG END ");
 
-                            // if (controller.isServiceListingLoading) {
-                            //   return const Center(
-                            //     child: Padding(
-                            //       padding: EdgeInsets.all(40.0),
-                            //       child: CircularProgressIndicator(
-                            //         valueColor: AlwaysStoppedAnimation<Color>(
-                            //             Color(0xFF207FA7)),
-                            //       ),
-                            //     ),
-                            //   );
-                            // }
+                            if (controller.isServiceListingLoading) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(40.0),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF207FA7)),
+                                  ),
+                                ),
+                              );
+                            }
 
                             final totalServices = services.length;
 
@@ -393,9 +389,11 @@ class CategoryToServices extends StatelessWidget {
                                                                     gradient:
                                                                         LinearGradient(
                                                                       colors: [
-                                                                        const Color(0xFF207FA7)
+                                                                        const Color(
+                                                                            0xFF8AD38F)
                                                                             .withOpacity(0.15),
-                                                                        const Color(0xFF207FA7)
+                                                                        const Color(
+                                                                            0xFF8AD38F)
                                                                             .withOpacity(0.05),
                                                                       ],
                                                                       begin: Alignment
@@ -410,7 +408,7 @@ class CategoryToServices extends StatelessWidget {
                                                                         Border
                                                                             .all(
                                                                       color: const Color(
-                                                                              0xFF207FA7)
+                                                                          0xFF669769)
                                                                           .withOpacity(
                                                                               0.3),
                                                                     ),
@@ -426,14 +424,14 @@ class CategoryToServices extends StatelessWidget {
                                                                         size:
                                                                             14,
                                                                         color: const Color(
-                                                                            0xFF207FA7),
+                                                                            0xFF8AD38F),
                                                                       ),
                                                                       const SizedBox(
                                                                           width:
                                                                               4),
                                                                       Text(
                                                                         "₹${service.startingPrice!.toStringAsFixed(0)}",
-                                                                        //  Safe access
+                                                                        // Safe access
                                                                         style:
                                                                             const TextStyle(
                                                                           fontSize:
@@ -441,17 +439,19 @@ class CategoryToServices extends StatelessWidget {
                                                                           fontWeight:
                                                                               FontWeight.w700,
                                                                           color:
-                                                                              Color(0xFF207FA7),
+                                                                              Color(
+                                                                                  0xFF20A746),
                                                                         ),
                                                                       ),
                                                                       Text(
-                                                                        " onwards",
+                                                                        " Starts at",
                                                                         style:
                                                                             TextStyle(
                                                                           fontSize:
                                                                               12,
                                                                           color:
-                                                                              const Color(0xFF207FA7).withOpacity(0.8),
+                                                                              const Color(
+                                                                                  0xFF008C0B).withOpacity(0.8),
                                                                           fontWeight:
                                                                               FontWeight.w500,
                                                                         ),

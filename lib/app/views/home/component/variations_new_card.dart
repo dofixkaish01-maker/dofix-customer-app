@@ -13,7 +13,7 @@ class VariationsNewCard extends StatefulWidget {
   final String serviceVariationName;
   final String serviceRatings;
   final String
-  serviceCoverImage; // UI me use nahi ho raha, details screen ke liye kept
+      serviceCoverImage; // UI me use nahi ho raha, details screen ke liye kept
   final String serviceReviewCount;
   final String serviceMrpPrice;
   final String serviceDiscountedPrice;
@@ -22,7 +22,7 @@ class VariationsNewCard extends StatefulWidget {
   final String variantKey;
   final ServiceModel serviceModel;
   final int
-  taxAmount; // Kept for compatibility, current addToCart logic still uses hardcoded 79
+      taxAmount; // Kept for compatibility, current addToCart logic still uses hardcoded 79
 
   const VariationsNewCard({
     super.key,
@@ -45,7 +45,7 @@ class VariationsNewCard extends StatefulWidget {
 
 class _VariationsNewCardState extends State<VariationsNewCard> {
   final DashBoardController dashboardController =
-  Get.find<DashBoardController>();
+      Get.find<DashBoardController>();
 
   bool isInCart = false;
 
@@ -86,6 +86,29 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkIfInCart();
     });
+  }
+
+  int getACCount(String name) {
+    final regex = RegExp(r'(\d+)-AC');
+    final match = regex.firstMatch(name);
+
+    if (match != null) {
+      return int.tryParse(match.group(1)!) ?? 1;
+    }
+    return 1; // default single AC
+  }
+
+  String getPricePerUnit(String price, String name) {
+    int totalPrice = int.tryParse(price.split('.').first) ?? 0;
+
+    int acCount = getACCount(name);
+
+    if (acCount > 1) {
+      int perUnit = (totalPrice / acCount).round();
+      return "₹$perUnit / AC";
+    }
+
+    return "₹$totalPrice";
   }
 
   void checkIfInCart() {
@@ -154,15 +177,15 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
 
   bool get _showMrp =>
       widget.serviceMrpPrice != "0.0" &&
-          widget.serviceMrpPrice != "null" &&
-          widget.serviceMrpPrice != "0" &&
-          widget.serviceMrpPrice.trim().isNotEmpty;
+      widget.serviceMrpPrice != "null" &&
+      widget.serviceMrpPrice != "0" &&
+      widget.serviceMrpPrice.trim().isNotEmpty;
 
   bool get _showDuration =>
       widget.serviceTimeDuration != "0" &&
-          widget.serviceTimeDuration != "0:0" &&
-          widget.serviceTimeDuration != "null" &&
-          widget.serviceTimeDuration.trim().isNotEmpty;
+      widget.serviceTimeDuration != "0:0" &&
+      widget.serviceTimeDuration != "null" &&
+      widget.serviceTimeDuration.trim().isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +196,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     return GestureDetector(
       onTap: () {
         Get.to(
-              () => DetailsScreen(
+          () => DetailsScreen(
             serviceModel: widget.serviceModel,
             variationName: widget.serviceVariationName,
             coverImage: widget.serviceCoverImage,
@@ -289,21 +312,42 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                   children: [
                     if (_showMrp)
                       Text(
-                        "₹${widget.serviceMrpPrice}",
+                        getPricePerUnit(
+                          widget.serviceMrpPrice,
+                          widget.serviceVariationName,
+                        ),
                         style: TextStyle(
                           fontSize: isTablet ? 13 : 12,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade700,
+                          color: Colors.green,
                           decoration: TextDecoration.lineThrough,
                         ),
                       ),
-                    Text(
-                      "₹${widget.serviceDiscountedPrice}",
-                      style: TextStyle(
-                        fontSize: isTablet ? 16 : 14,
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF207FA8),
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          getPricePerUnit(
+                            widget.serviceDiscountedPrice,
+                            widget.serviceVariationName,
+                          ),
+                          style: TextStyle(
+                            fontSize: isTablet ? 16 : 14,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF207FA8),
+                          ),
+                        ),
+
+                        ///Extra: show total price if multiple AC
+                        if (getACCount(widget.serviceVariationName) > 1)
+                          Text(
+                            "Total: ₹${widget.serviceDiscountedPrice}",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                      ],
                     ),
                     if (_showDuration)
                       Container(
