@@ -494,6 +494,8 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     );
   }
 }
+
+
 // import 'package:do_fix/app/views/services/details_screen.dart';
 // import 'package:do_fix/controllers/auth_controller.dart';
 // import 'package:flutter/material.dart';
