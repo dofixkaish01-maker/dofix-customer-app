@@ -224,10 +224,18 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
           ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: const Color(0xFFE8EDF2),
+              color: const Color(0xFF207FA8).withOpacity(0.10),
+              width: 1,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.045),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -321,7 +329,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                         style: TextStyle(
                           fontSize: isTablet ? 14.5 : 13.5,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade700,
+                          color: primaryColor,
                         ),
                       ),
                       if (getACCount(widget.serviceVariationName) > 1) ...[
@@ -330,7 +338,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                           "₹${widget.serviceDiscountedPrice}",
                           style: TextStyle(
                               fontSize: 14,
-                              color: primaryColor,
+                              color: Colors.green.shade700,
                               fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -359,7 +367,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
 
                   const SizedBox(height: 8),
 
-                  /// 🔹 Description
+                  ///  Description
                   Text(
                     HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
                     maxLines: 2,
@@ -373,24 +381,10 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
 
                   const SizedBox(height: 10),
 
-                  /// 🔹 Bottom Row
+                  ///  Bottom Row
                   Row(
                     children: [
                       Expanded(child: _buildRateCardButton(compact: compact)),
-                      // GestureDetector(
-                      //   onTap: () {
-                      //     // rate card
-                      //   },
-                      //   child: Text(
-                      //     "View Rate Card",
-                      //     style: TextStyle(
-                      //       fontSize: 11.5,
-                      //       fontWeight: FontWeight.w600,
-                      //       color: const Color(0xFF207FA8),
-                      //     ),
-                      //   ),
-                      // ),
-
                       const SizedBox(
                         width: 20,
                       ),
@@ -513,7 +507,6 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     );
   }
 }
-
 
 // import 'package:do_fix/app/views/services/details_screen.dart';
 // import 'package:do_fix/controllers/auth_controller.dart';
