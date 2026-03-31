@@ -27,131 +27,127 @@ class ReviewCard extends StatelessWidget {
     debugPrint("Final URL: $imageUrl");
     debugPrint("====================");
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// TOP ROW: Avatar + Name + Date + Rating
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// PROFILE AVATAR
-                CircleAvatar(
-                  radius: 22,
-                  backgroundColor: Colors.blue.shade50,
-                  backgroundImage: imageUrl.isNotEmpty
-                      ? NetworkImage(imageUrl)
-                      : null,
-                  child: imageUrl.isEmpty
-                      ? Icon(Icons.person_outline,
-                      color: Colors.grey.shade500, size: 24)
-                      : null,
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
 
-                const SizedBox(width: 12),
+          /// 🔹 TOP ROW
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
-                /// NAME + DATE
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${customer?.firstName ?? 'Anonymous'} ${customer?.lastName ?? ''}'.trim(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+              /// ❌ Avatar Disabled
+              // CircleAvatar(
+              //   radius: 18,
+              //   backgroundColor: Colors.grey.shade100,
+              //   backgroundImage:
+              //       imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+              //   child: imageUrl.isEmpty
+              //       ? Icon(Icons.person_outline,
+              //           size: 18, color: Colors.grey.shade500)
+              //       : null,
+              // ),
+
+              // const SizedBox(width: 10),
+
+              /// Name + Date
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${customer?.firstName ?? 'Anonymous'} ${customer?.lastName ?? ''}'
+                          .trim(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1F2937),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        review.updatedAt != null
-                            ? DateFormat('dd MMM yyyy').format(review.updatedAt!.toLocal())
-                            : 'Reviewed recently',
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                /// STAR RATING
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(
-                    5,
-                        (index) => Icon(
-                      index < (review.reviewRating ?? 0)
-                          ? Icons.star_rounded
-                          : Icons.star_border_rounded,
-                      color: ratingsOrange,
-                      size: 18,
                     ),
-                  ),
-                ),
-              ],
-            ),
 
-            const SizedBox(height: 12),
+                    const SizedBox(height: 2),
 
-            /// REVIEW COMMENT
-            Padding(
-              padding: const EdgeInsets.only(left: 74.0), // Align with avatar
-              child: Text(
-                review.reviewComment ?? 'No review comment provided',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.75),
-                  height: 1.4,
+                    Text(
+                      review.updatedAt != null
+                          ? DateFormat('dd MMM yyyy')
+                          .format(review.updatedAt!.toLocal())
+                          : 'Reviewed recently',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
                 ),
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
               ),
-            ),
 
-            /// REVIEW IMAGES (if any)
-            if ((review.reviewImages?.isNotEmpty ?? false) && review.reviewImages!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 12, left: 74),
-                child: SizedBox(
-                  height: 80,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: review.reviewImages!.length,
-                    itemBuilder: (context, index) {
-                      final img = review.reviewImages![index];
-                      final imgUrl = img.toString();
-                      return Container(
-                        margin: EdgeInsets.only(right: 8),
-                        width: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: imgUrl.isNotEmpty
-                              ? DecorationImage(
-                            image: NetworkImage(imgUrl),
-                            fit: BoxFit.cover,
-                          )
-                              : null,
-                          color: Colors.grey.shade200,
-                        ),
-                      );
-                    },
+              /// Rating
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(
+                  5,
+                      (index) => Icon(
+                    index < (review.reviewRating ?? 0)
+                        ? Icons.star_rounded
+                        : Icons.star_border_rounded,
+                    size: 16,
+                    color: const Color(0xFFFFB800),
                   ),
                 ),
               ),
-          ],
-        ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          /// 🔹 COMMENT
+          Text(
+            review.reviewComment ?? 'No review comment provided',
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.5,
+              color: Colors.black.withOpacity(0.7),
+            ),
+          ),
+
+          /// ❌ REVIEW IMAGES DISABLED
+          // if ((review.reviewImages?.isNotEmpty ?? false))
+          //   Padding(
+          //     padding: const EdgeInsets.only(top: 10),
+          //     child: SizedBox(
+          //       height: 70,
+          //       child: ListView.builder(
+          //         scrollDirection: Axis.horizontal,
+          //         itemCount: review.reviewImages!.length,
+          //         itemBuilder: (context, index) {
+          //           final imgUrl =
+          //               review.reviewImages![index].toString();
+          //
+          //           return Container(
+          //             margin: const EdgeInsets.only(right: 8),
+          //             width: 70,
+          //             decoration: BoxDecoration(
+          //               borderRadius: BorderRadius.circular(8),
+          //               color: Colors.grey.shade200,
+          //               image: imgUrl.isNotEmpty
+          //                   ? DecorationImage(
+          //                       image: NetworkImage(imgUrl),
+          //                       fit: BoxFit.cover,
+          //                     )
+          //                   : null,
+          //             ),
+          //           );
+          //         },
+          //       ),
+          //     ),
+          //   ),
+        ],
       ),
     );
   }
