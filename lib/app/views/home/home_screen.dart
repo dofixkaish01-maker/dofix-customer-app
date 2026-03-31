@@ -204,7 +204,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       /// Heading Row
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: horizontalPadding),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -215,14 +216,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-
                             InkWell(
                               borderRadius: BorderRadius.circular(20),
                               onTap: () {
-                                DashboardScreen.globalKey.currentState?.setPage(1);
+                                DashboardScreen.globalKey.currentState
+                                    ?.setPage(1);
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
                                 child: const Row(
                                   children: [
                                     Text(
@@ -257,31 +259,32 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Placeholder: 2 rows x 3/4 columns feel
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding,vertical: 12),
+                              horizontal: horizontalPadding, vertical: 12),
                           child: SizedBox(
                             height: placeholderHeight,
                             child: GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: categoryColumns,
-                                crossAxisSpacing: 8,
-                                mainAxisSpacing: 8,
-                                childAspectRatio: 0.75,
-                              ),
-                              itemCount: categoryColumns * 2,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: categoryColumns,
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 8,
+                                  childAspectRatio: 0.75,
+                                ),
+                                itemCount: categoryColumns * 2,
                                 itemBuilder: (context, index) {
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-
                                       /// CONTAINER
                                       Container(
                                         height: 110,
                                         width: double.infinity,
                                         decoration: BoxDecoration(
                                           color: Colors.grey.shade300,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
                                       ),
 
@@ -293,15 +296,90 @@ class _HomeScreenState extends State<HomeScreen> {
                                         width: double.infinity,
                                         decoration: BoxDecoration(
                                           color: Colors.grey.shade300,
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                         ),
                                       ),
                                     ],
                                   );
-                                }
+                                }),
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () async {
+                            // action
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            height: 150,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.12),
+                                  blurRadius: 14,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              children: [
+                                /// Image
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.asset(
+                                    'assets/banner/lottery.png',
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+
+                                /// Gradient
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.black.withOpacity(0.65),
+                                        Colors.transparent,
+                                      ],
+                                      begin: Alignment.bottomLeft,
+                                      end: Alignment.topRight,
+                                    ),
+                                  ),
+                                ),
+
+                                /// Content
+                                Positioned(
+                                  left: 16,
+                                  bottom: 16,
+                                  right: 16,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Lucky Win",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 21,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
 
                       /// Our Features
                       Padding(

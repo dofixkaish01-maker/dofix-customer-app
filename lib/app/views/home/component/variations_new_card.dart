@@ -1,5 +1,7 @@
+import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/views/services/details_screen.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
+import 'package:do_fix/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -194,218 +196,209 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     final bool isSmallPhone = screenWidth < 360;
 
     return GestureDetector(
-      onTap: () {
-        Get.to(
-          () => DetailsScreen(
-            serviceModel: widget.serviceModel,
-            variationName: widget.serviceVariationName,
-            coverImage: widget.serviceCoverImage,
-            rating: widget.serviceRatings,
-            reviewCount: widget.serviceReviewCount,
-            mrpPrice: widget.serviceMrpPrice,
-            discountedPrice: widget.serviceDiscountedPrice,
-            duration: widget.serviceTimeDuration,
-            description: widget.serviceDescription,
-            variantKey: widget.variantKey,
-          ),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        margin: EdgeInsets.symmetric(
-          vertical: 6,
-          horizontal: isTablet ? 8 : 0,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: isTablet ? 16 : 12,
-          vertical: isTablet ? 14 : 12,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: const Color(0xFF207FA8).withOpacity(0.10),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.045),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+        onTap: () {
+          Get.to(
+            () => DetailsScreen(
+              serviceModel: widget.serviceModel,
+              variationName: widget.serviceVariationName,
+              coverImage: widget.serviceCoverImage,
+              rating: widget.serviceRatings,
+              reviewCount: widget.serviceReviewCount,
+              mrpPrice: widget.serviceMrpPrice,
+              discountedPrice: widget.serviceDiscountedPrice,
+              duration: widget.serviceTimeDuration,
+              description: widget.serviceDescription,
+              variantKey: widget.variantKey,
             ),
-          ],
-        ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final bool compact = constraints.maxWidth < 340;
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          margin: EdgeInsets.symmetric(
+            vertical: 6,
+            horizontal: isTablet ? 8 : 0,
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 16 : 14,
+            vertical: isTablet ? 14 : 12,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xFF207FA8).withOpacity(0.10),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.045),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final bool compact = constraints.maxWidth < 340;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                /// Top Row: Name + Rating
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.serviceVariationName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: isTablet ? 16 : 14,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF111827),
-                          height: 1.25,
-                        ),
-                      ),
-                    ),
-                    if (_showRating) ...[
-                      const SizedBox(width: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFAC33).withOpacity(0.10),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.star_rounded,
-                              size: 14,
-                              color: Color(0xFFFFAC33),
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              widget.serviceRatings,
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1F2937),
-                              ),
-                            ),
-                            Text(
-                              " (${widget.serviceReviewCount})",
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.black.withOpacity(0.55),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-
-                /// Actual Price + Discounted Price + Duration
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 6,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    if (_showMrp)
-                      Text(
-                        getPricePerUnit(
-                          widget.serviceMrpPrice,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ///  Title + Rating
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
                           widget.serviceVariationName,
-                        ),
-                        style: TextStyle(
-                          fontSize: isTablet ? 13 : 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.green,
-                          decoration: TextDecoration.lineThrough,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: isTablet ? 15.5 : 14.5,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF1F2937),
+                            height: 1.3,
+                          ),
                         ),
                       ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      if (_showRating) ...[
+                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFAC33).withOpacity(0.10),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.star_rounded,
+                                size: 14,
+                                color: Color(0xFFFFAC33),
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                widget.serviceRatings,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF1F2937),
+                                ),
+                              ),
+                              Text(
+                                " (${widget.serviceReviewCount})",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.black.withOpacity(0.55),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  ///  Price + Duration Row
+                  Row(
+                    children: [
+                      if (_showMrp)
                         Text(
                           getPricePerUnit(
-                            widget.serviceDiscountedPrice,
+                            widget.serviceMrpPrice,
                             widget.serviceVariationName,
                           ),
                           style: TextStyle(
-                            fontSize: isTablet ? 16 : 14,
-                            fontWeight: FontWeight.w800,
-                            color: const Color(0xFF207FA8),
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                            decoration: TextDecoration.lineThrough,
                           ),
                         ),
-
-                        ///Extra: show total price if multiple AC
-                        if (getACCount(widget.serviceVariationName) > 1)
-                          Text(
-                            "Total: ₹${widget.serviceDiscountedPrice}",
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                      ],
-                    ),
-                    if (_showDuration)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                      if (_showMrp) const SizedBox(width: 6),
+                      Text(
+                        getPricePerUnit(
+                          widget.serviceDiscountedPrice,
+                          widget.serviceVariationName,
                         ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEEF6FA),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          widget.serviceTimeDuration,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2B7EA5),
-                          ),
+                        style: TextStyle(
+                          fontSize: isTablet ? 14.5 : 13.5,
+                          fontWeight: FontWeight.w500,
+                          color: primaryColor,
                         ),
                       ),
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-
-                /// Description
-                Text(
-                  HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
-                  maxLines: isTablet ? 2 : 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: isTablet ? 12.5 : 11.5,
-                    height: 1.4,
-                    color: Colors.black.withOpacity(0.60),
+                      if (getACCount(widget.serviceVariationName) > 1) ...[
+                        const SizedBox(width: 10),
+                        Text(
+                          "₹${widget.serviceDiscountedPrice}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green.shade700,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                      const Spacer(),
+                      if (_showDuration)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF4F8FB),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            widget.serviceTimeDuration,
+                            style: const TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF4B7EA8),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                ),
 
-                const SizedBox(height: 10),
+                  const SizedBox(height: 8),
 
-                /// Bottom Buttons in same line
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildRateCardButton(compact: compact),
+                  ///  Description
+                  Text(
+                    HtmlUtils.stripHtmlIfPresent(widget.serviceDescription),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      height: 1.4,
+                      color: Colors.black.withOpacity(0.6),
                     ),
-                    const SizedBox(width: 8),
-                    _buildCartButton(
-                      width: compact ? 82 : 90,
-                      height: 36,
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  ///  Bottom Row
+                  Row(
+                    children: [
+                      Expanded(child: _buildRateCardButton(compact: compact)),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      _buildCartButton(
+                        width: compact ? 78 : 86,
+                        height: 34,
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ));
   }
 
   Widget _buildRateCardButton({required bool compact}) {

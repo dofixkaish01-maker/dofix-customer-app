@@ -2390,13 +2390,12 @@ class _BookingScreenState extends State<BookingScreen> {
       ],
     );
   }
-
   Widget _buildBookingHeader(BuildContext context) {
     return Row(
       children: [
         GestureDetector(
           onTap: () {
-            Get.back();
+            Navigator.pop(context);
           },
           child: const Icon(
             Icons.arrow_back,
