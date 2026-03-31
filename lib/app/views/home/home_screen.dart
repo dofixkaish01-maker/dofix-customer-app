@@ -369,31 +369,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
-                                      const Text(
-                                        "Spin & win exciting prizes instantly!",
-                                        style: TextStyle(color: Colors.white70),
-                                      ),
-                                      const SizedBox(height: 10),
-
-                                      /// CTA BUTTON
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 14, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          color: Colors.orange,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: const Text(
-                                          "Play Now →",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      )
                                     ],
                                   ),
                                 ),
