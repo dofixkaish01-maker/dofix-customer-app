@@ -1,7 +1,6 @@
 import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/views/services/details_screen.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
-import 'package:do_fix/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -362,9 +361,21 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                             ),
                           ),
                         ),
+                      if (widget.serviceModel.labourCharge != null &&
+                          widget.serviceModel.labourCharge! > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6),
+                          child: Text(
+                            "+ ₹${widget.serviceModel.labourCharge!.toStringAsFixed(0)} labour charge",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.orange,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
-
                   const SizedBox(height: 8),
 
                   ///  Description

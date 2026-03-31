@@ -81,18 +81,24 @@ class _CartScreenState extends State<CartScreen> {
       double discount = 0.0;
       double couponDiscount = 0.0;
 
+      double totalLabourCharge = 0.0;
       /// API se tax
       double tax = (content?.taxAmount ?? 0).toDouble();
 
       if (cart != null && cart.data != null && cart.data!.isNotEmpty) {
         final items = cart.data!;
-
         for (var item in items) {
-          itemTotal +=
-              (item.serviceCost.toDouble() * item.quantity!.toDouble());
+          itemTotal += (item.serviceCost.toDouble() * item.quantity!.toDouble());
 
           discount += item.discountAmount.toDouble();
           couponDiscount += item.couponDiscount.toDouble();
+
+          // ADD THIS
+          if (item.service != null &&
+              item.service['labour_charge'] != null) {
+            totalLabourCharge +=
+                (item.service['labour_charge'] as num).toDouble();
+          }
         }
       }
 
@@ -429,6 +435,8 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                       const SizedBox(height: 6),
                                       priceRow("Tax & Fee", tax),
+                                      const SizedBox(height: 6),
+                                      priceRow("Labour Charge",totalLabourCharge),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 14),

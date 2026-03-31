@@ -12,6 +12,7 @@ class ServiceModel {
   final String? categoryId;
   final String? subCategoryId;
   final double? tax;
+  final double? labourCharge;
   final double? startingPrice;
   final int? orderCount;
   final int? isActive;
@@ -37,6 +38,7 @@ class ServiceModel {
     this.categoryId,
     this.subCategoryId,
     this.tax,
+    this.labourCharge,
     this.startingPrice,
     this.orderCount,
     this.isActive,
@@ -64,13 +66,14 @@ class ServiceModel {
         id: json['id']?.toString(),
         name: json['name']?.toString(),
         shortDescription: json['short_description']?.toString(),
-        serviceCost: json['service_cost']?.toString(),  // ✅ SAFE
+        serviceCost: json['service_cost']?.toString(),
         description: json['description']?.toString(),
         coverImage: json['cover_image']?.toString(),
         thumbnail: json['thumbnail']?.toString(),
         categoryId: json['category_id']?.toString(),
         subCategoryId: json['sub_category_id']?.toString(),
         tax: toDoubleOrNull(json['tax']),
+        labourCharge: toDoubleOrNull(json['labour_charge']),
         startingPrice: toDoubleOrNull(json['starting_price']),
         orderCount: json['order_count']?.toString().parseIntOrNull(),
         isActive: json['is_active']?.toString().parseIntOrNull(),
@@ -106,6 +109,7 @@ class ServiceModel {
       'category_id': categoryId,
       'sub_category_id': subCategoryId,
       'tax': tax,
+      'labour_charge': labourCharge,
       'starting_price': startingPrice,
       'order_count': orderCount,
       'is_active': isActive,
@@ -122,7 +126,7 @@ class ServiceModel {
   }
 }
 
-// ✅ HELPER EXTENSIONS
+// HELPER EXTENSIONS
 extension NumParsing on String {
   int? parseIntOrNull() {
     if (isEmpty) return null;
@@ -153,22 +157,22 @@ class Services {
 
   factory Services.fromJson(Map<String, dynamic> json) {
     try {
-      print("🔍 RAW JSON RECEIVED => ${json.toString().substring(0, 500)}..."); // Truncated log
+      print("RAW JSON RECEIVED => ${json.toString().substring(0, 500)}..."); // Truncated log
 
       // Handle different response structures
       var rawData = json['data'] ?? json;
 
-      print("📦 Raw Data Type: ${rawData.runtimeType}");
+      print("Raw Data Type: ${rawData.runtimeType}");
 
       // CASE 1: Nested data.data
       if (rawData is Map<String, dynamic> && rawData['data'] is List) {
-        print("✅ Nested data found");
+        print("Nested data found");
         rawData = rawData['data'];
       }
 
       // CASE 2: Direct list
       if (rawData is List) {
-        print("✅ Direct list found: ${rawData.length} items");
+        print("Direct list found: ${rawData.length} items");
         final services = <ServiceModel>[];
         for (var item in rawData) {
           try {
@@ -181,11 +185,11 @@ class Services {
       }
 
       // CASE 3: Empty or error response
-      print("⚠️ No valid data found. Returning empty list.");
+      print("No valid data found. Returning empty list.");
       return Services(data: []);
 
     } catch (e, stack) {
-      print("💥 SERVICES MODEL CRASH => $e");
+      print("SERVICES MODEL CRASH => $e");
       print("Stack: $stack");
       return Services(data: []);
     }

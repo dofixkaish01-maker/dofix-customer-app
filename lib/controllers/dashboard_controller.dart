@@ -18,7 +18,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import '../app/views/ProfileScreen/profile_screen.dart';
-import '../app/views/SuccessFullScreen/success_full_screen.dart';
 import '../app/views/account/account_screen.dart';
 import '../app/views/bookingScreen/booking_history_screen.dart';
 import '../app/views/cart_screen/cart_screen.dart';
