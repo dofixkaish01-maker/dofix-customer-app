@@ -178,7 +178,7 @@ class CategoryToServices extends StatelessWidget {
                             if (services.isNotEmpty) {
                               final firstService = services.first;
                               print(
-                                  "🏷 First Service Name: ${firstService.name}");
+                                  " First Service Name: ${firstService.name}");
                               print(
                                   " startingPrice: '${firstService.startingPrice}' (${firstService.startingPrice.runtimeType})");
                               print(
@@ -187,17 +187,17 @@ class CategoryToServices extends StatelessWidget {
                             }
                             print(" DEBUG END ");
 
-                            if (controller.isServiceListingLoading) {
-                              return const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(40.0),
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Color(0xFF207FA7)),
-                                  ),
-                                ),
-                              );
-                            }
+                            // if (controller.isServiceListingLoading) {
+                            //   return const Center(
+                            //     child: Padding(
+                            //       padding: EdgeInsets.all(40.0),
+                            //       child: CircularProgressIndicator(
+                            //         valueColor: AlwaysStoppedAnimation<Color>(
+                            //             Color(0xFF207FA7)),
+                            //       ),
+                            //     ),
+                            //   );
+                            // }
 
                             final totalServices = services.length;
 
