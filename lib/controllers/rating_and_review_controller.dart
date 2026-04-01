@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../helper/rating_and_review_service.dart';
 import '../widgets/common_loading.dart';
@@ -14,6 +15,7 @@ class RatingAndReviewController extends GetxController {
     required String token,
     required String zoneID,
     required Map<String, dynamic> payload,
+    required BuildContext context
   }) async {
     try {
       isLoading = true;
@@ -29,12 +31,21 @@ class RatingAndReviewController extends GetxController {
 
       if (result['success'] == true) {
         message = result['data']?['errors'] ?? "Review updated successfully";
-        Get.back();
-        Future.delayed(Duration(milliseconds: 200), () {
-          Get.snackbar("Success", message);
+
+        // Step 1: BottomSheet close
+        if (Get.isBottomSheetOpen ?? false) {
+          Navigator.pop(context, true);
+        }
+
+        // Step 2: Snackbar (NO closeAllSnackbars)
+        Future.delayed(const Duration(milliseconds: 300), () {
+          Get.snackbar(
+            "Success",
+            message,
+            snackPosition: SnackPosition.BOTTOM,
+          );
         });
-        // Get.find<BookingController>().getBookingReview(bookingId);
-      } else {
+      }else {
         message = result['message'] ?? "Something went wrong";
         Get.snackbar("Error", message);
       }

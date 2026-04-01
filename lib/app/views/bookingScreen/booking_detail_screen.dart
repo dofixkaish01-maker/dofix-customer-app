@@ -1562,7 +1562,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           ),
                           Spacer(),
                           IconButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 Get.put(RatingAndReviewController());
                                 final dashBoardController =
                                     Get.find<DashBoardController>();
@@ -1575,12 +1575,20 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                 final review = bookController.reviewRatingModel
                                     .value?.content?[0].reviews?[0];
 
-                                Get.bottomSheet(EditReviewBottomSheet(
-                                    initialRating: review?.reviewRating ?? 0,
-                                    initialComment: review?.reviewComment ?? "",
-                                    customerID: review!.id??"",
-                                    token: token,
-                                    zoneID: zoneID));
+                                final result = await Get.bottomSheet(
+                                  // backgroundColor: Colors.transparent,
+                                    EditReviewBottomSheet(
+                                        initialRating:
+                                            review?.reviewRating ?? 0,
+                                        initialComment:
+                                            review?.reviewComment ?? "",
+                                        customerID: review!.id ?? "",
+                                        token: token,
+                                        zoneID: zoneID),isScrollControlled: true);
+                                if(result==true){
+                                  // bookController.getReviewRating(widget.bookingId);
+                                  bookController.getBookingReview(widget.booking?.id);
+                                }
                               },
                               icon: Icon(
                                 Icons.edit,
