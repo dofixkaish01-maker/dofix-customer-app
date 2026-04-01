@@ -23,6 +23,7 @@ class CustomFloatingCartWidget extends StatelessWidget {
     }
 
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Color(0xFF207FA7),
         borderRadius: BorderRadius.circular(10),
