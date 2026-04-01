@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:do_fix/app/views/bookingScreen/widgets/custom_invoide_button.dart';
+import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:do_fix/app/widgets/custom_booking_details_items.dart';
 import 'package:do_fix/app/widgets/review_input_widget.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/booking_model.dart';
+import 'package:do_fix/model/review_rating_model.dart';
 import 'package:do_fix/utils/app_constants.dart';
 import 'package:do_fix/utils/string_extensions.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +61,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           serviceId: widget.booking?.servicemanId ?? "",
         ));
   }
+
   // void _showCancelBookingDialog() {
   //   Get.dialog(
   //     Dialog(
@@ -1555,6 +1558,29 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
+                          // Spacer(),
+                          // IconButton(
+                          //     onPressed: () {
+                          //       Get.off(() => ReviewScreen(
+                          //           bookingId: widget.booking?.id,
+                          //           serviceId: widget.booking?.servicemanId));
+                          //     },
+                          //     icon: Icon(
+                          //       Icons.edit,
+                          //       color: primaryColor,
+                          //       size: 18,
+                          //     ))
+                          // OutlinedButton(onPressed: () {
+                          //
+                          // }, child: Row(
+                          //   children: [
+                          //
+                          //     Text('Edit'),
+                          //     const SizedBox(width: 7,),
+                          //     Icon(Icons.edit,size: 16,),
+                          //
+                          //   ],
+                          // ))
                         ],
                       ),
                       SizedBox(height: 8),

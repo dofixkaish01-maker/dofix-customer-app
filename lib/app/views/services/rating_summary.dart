@@ -46,91 +46,131 @@ class RatingSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final starCounts = _generateStarCounts();
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isSmall = screenWidth < 360;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
 
-        /// TOP SUMMARY
-        Column(
+        ///  TOP SUMMARY
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              averageRating.toStringAsFixed(1),
-              style: const TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-              ),
+
+            /// Left: Rating Number
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  averageRating.toStringAsFixed(1),
+                  style: TextStyle(
+                    fontSize: isSmall ? 32 : 36,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1F2937),
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                buildStarRow(averageRating),
+
+                const SizedBox(height: 4),
+
+                Text(
+                  "$ratingCount Reviews",
+                  style: TextStyle(
+                    fontSize: isSmall ? 11 : 12,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ],
             ),
 
-            const SizedBox(height: 4),
+            const SizedBox(width: 20),
 
-            buildStarRow(averageRating),
+            /// Right: Distribution Bars
+            Expanded(
+              child: Column(
+                children: List.generate(5, (index) {
+                  int star = 5 - index;
+                  int count = starCounts[star] ?? 0;
 
-            const SizedBox(height: 6),
+                  double percent =
+                  ratingCount == 0 ? 0 : count / ratingCount;
 
-            Text(
-              "$ratingCount Reviews",
-              style: TextStyle(
-                color: Colors.grey.shade600,
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+
+                        /// Star + Number
+                        SizedBox(
+                          width: 30,
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.star,
+                                size: 14,
+                                color: ratingColor,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                "$star",
+                                style: const TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        /// Progress Bar
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: LinearProgressIndicator(
+                              value: percent,
+                              minHeight: 6,
+                              backgroundColor: Colors.grey.shade200,
+                              valueColor:
+                              const AlwaysStoppedAnimation(ratingColor),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        /// Count
+                        SizedBox(
+                          width: 30,
+                          child: Text(
+                            count.toString(),
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
               ),
             ),
           ],
         ),
 
-        const SizedBox(height: 20),
-
-        /// DISTRIBUTION CARD
-        Container(
-          padding: const EdgeInsets.all(1),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: List.generate(5, (index) {
-              int star = 5 - index;
-              int count = starCounts[star] ?? 0;
-
-              double percent =
-              ratingCount == 0 ? 0 : count / ratingCount;
-
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  children: [
-
-                    const Icon(
-                      Icons.star,
-                      size: 18,
-                      color: ratingColor,
-                    ),
-
-                    const SizedBox(width: 4),
-
-                    Text("$star"),
-
-                    const SizedBox(width: 8),
-
-                    Expanded(
-                      child: LinearProgressIndicator(
-                        value: percent,
-                        minHeight: 8,
-                        borderRadius: BorderRadius.circular(10),
-                        backgroundColor: Colors.grey.shade300,
-                        valueColor: const AlwaysStoppedAnimation(ratingColor),
-                      ),
-                    ),
-
-                    const SizedBox(width: 10),
-
-                    Text(count.toString()),
-                  ],
-                ),
-              );
-            }),
-          ),
-        ),
+        /// ❌ Old Card Container (kept for reference)
+        // Container(
+        //   padding: const EdgeInsets.all(1),
+        //   decoration: BoxDecoration(
+        //     color: Colors.grey.shade50,
+        //     borderRadius: BorderRadius.circular(16),
+        //   ),
+        // )
       ],
     );
   }

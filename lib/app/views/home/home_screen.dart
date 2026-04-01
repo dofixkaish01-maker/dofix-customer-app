@@ -306,6 +306,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       Padding(
+                        padding: EdgeInsets.only(
+                          left: horizontalPadding,
+                          right: horizontalPadding,
+                          bottom: 10
+                        ),
+                        child: const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Special Offer",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(20),
@@ -314,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
-                            height: 150,
+                            height: 170,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
@@ -333,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Image.asset(
                                     'assets/banner/lottery.png',
                                     width: double.infinity,
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.fill,
                                   ),
                                 ),
 
@@ -353,25 +370,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
 
                                 /// Content
-                                Positioned(
-                                  left: 16,
-                                  bottom: 16,
-                                  right: 16,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Lucky Win",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 21,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                // Positioned(
+                                //   left: 16,
+                                //   bottom: 16,
+                                //   right: 16,
+                                //   child: Column(
+                                //     crossAxisAlignment:
+                                //         CrossAxisAlignment.start,
+                                //     children: [
+                                //       const Text(
+                                //         "Lucky Win",
+                                //         style: TextStyle(
+                                //           color: Colors.white,
+                                //           fontSize: 21,
+                                //           fontWeight: FontWeight.bold,
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),

@@ -364,31 +364,16 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: isTablet ? 16 : 12,
-                                        vertical: isTablet ? 16 : 12,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(18),
-                                        border: Border.all(
-                                          color: const Color(0xFF207FA7)
-                                              .withOpacity(0.08),
-                                        ),
-                                      ),
-                                      child: RatingSummary(
-                                        averageRating:
-                                        controller.serviceModel.avgRating ??
-                                            0.0,
-                                        ratingCount:
-                                        controller.serviceModel.ratingCount ??
-                                            0,
-                                      ),
+                                    RatingSummary(
+                                      averageRating:
+                                      controller.serviceModel.avgRating ??
+                                          0.0,
+                                      ratingCount:
+                                      controller.serviceModel.ratingCount ??
+                                          0,
                                     ),
 
-                                    const SizedBox(height: 14),
+                                    const SizedBox(height: 16),
 
                                     if ((controller.serviceModel.ratingCount ??
                                         0) >
@@ -408,13 +393,14 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                     if (hasReviews) const SizedBox(height: 12),
 
                                     if (hasReviews)
+
                                       ListView.separated(
                                         physics:
                                         const NeverScrollableScrollPhysics(),
                                         shrinkWrap: true,
                                         itemCount: reviews.length,
                                         separatorBuilder: (_, __) =>
-                                        const SizedBox(height: 10),
+                                         Divider(thickness: 0.8,color: Colors.grey.shade300,),
                                         itemBuilder: (context, index) {
                                           final ServiceReview review =
                                           reviews[index];
