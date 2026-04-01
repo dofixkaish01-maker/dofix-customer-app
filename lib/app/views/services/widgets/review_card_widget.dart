@@ -33,12 +33,12 @@ class ReviewCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          /// 🔹 TOP ROW
+          ///  TOP ROW
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              /// ❌ Avatar Disabled
+              ///  Avatar Disabled
               // CircleAvatar(
               //   radius: 18,
               //   backgroundColor: Colors.grey.shade100,
@@ -104,7 +104,7 @@ class ReviewCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          /// 🔹 COMMENT
+          ///  COMMENT
           Text(
             review.reviewComment ?? 'No review comment provided',
             maxLines: 4,
@@ -116,7 +116,7 @@ class ReviewCard extends StatelessWidget {
             ),
           ),
 
-          /// ❌ REVIEW IMAGES DISABLED
+          ///  REVIEW IMAGES DISABLED
           // if ((review.reviewImages?.isNotEmpty ?? false))
           //   Padding(
           //     padding: const EdgeInsets.only(top: 10),
