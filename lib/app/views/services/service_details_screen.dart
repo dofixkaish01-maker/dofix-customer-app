@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:do_fix/app/views/services/rating_summary.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:do_fix/app/widgets/custom_floating_cart_widget.dart';
@@ -174,12 +173,15 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     // _controller.dispose();
     super.dispose();
   }
-
+  double parse(dynamic val) {
+    if (val is num) return val.toDouble();
+    if (val is String) return double.tryParse(val) ?? 0.0;
+    return 0.0;
+  }
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isTablet = screenWidth >= 700;
-
     return GetBuilder<DashBoardController>(
       id: 'service_details',
       builder: (controller) {
@@ -284,7 +286,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                             .toString(),
                                         serviceMrpPrice:
                                         variation?.mrpPrice.toString() ?? "",
-                                        serviceDiscountedPrice:
+                                        labourCharge: controller.serviceModel.labourCharge?.toDouble() ?? 0.0,                                        serviceDiscountedPrice:
                                         variation?.price.toString() ?? "",
                                         serviceTimeDuration:
                                         (variation?.durationHour != "0" &&
@@ -659,7 +661,7 @@ void showReviewFilterBottomSheet(
   );
 }
 
-void ShowAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
+void showAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
   showModalBottomSheet(
     context: context,
     isDismissible: true,

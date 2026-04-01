@@ -1,7 +1,6 @@
 import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/views/services/details_screen.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
-import 'package:do_fix/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
@@ -12,6 +11,7 @@ import '../../../../utils/dimensions.dart';
 // import 'get_rate_card_screen.dart'; // Unused
 
 class VariationsNewCard extends StatefulWidget {
+  final double labourCharge;
   final String serviceVariationName;
   final String serviceRatings;
   final String
@@ -38,7 +38,8 @@ class VariationsNewCard extends StatefulWidget {
     required this.serviceTimeDuration,
     required this.variantKey,
     required this.serviceModel,
-    required this.taxAmount,
+    required this.taxAmount, // Unused
+    required this.labourCharge,
   });
 
   @override
@@ -209,6 +210,7 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
               duration: widget.serviceTimeDuration,
               description: widget.serviceDescription,
               variantKey: widget.variantKey,
+              labourCharge: widget.labourCharge.toString(),
             ),
           );
         },
@@ -362,9 +364,19 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                             ),
                           ),
                         ),
+                      if (widget.labourCharge > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6),
+                          child: Text("+ ₹${widget.labourCharge.toStringAsFixed(0)} labour charge",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.orange,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
-
                   const SizedBox(height: 8),
 
                   ///  Description

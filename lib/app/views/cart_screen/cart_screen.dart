@@ -72,7 +72,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DashBoardController>(builder: (controller) {
+    return GetBuilder<DashBoardController>(builder: (controller){
       final cartModel = controller.cartModel;
       final content = cartModel.content;
       final cart = content?.cart;
@@ -81,59 +81,68 @@ class _CartScreenState extends State<CartScreen> {
       double discount = 0.0;
       double couponDiscount = 0.0;
 
+      double totalLabourCharge = 0.0;
       /// API se tax
       double tax = (content?.taxAmount ?? 0).toDouble();
 
       if (cart != null && cart.data != null && cart.data!.isNotEmpty) {
         final items = cart.data!;
-
-        for (var item in items) {
-          itemTotal +=
-              (item.serviceCost.toDouble() * item.quantity!.toDouble());
-
-          discount += item.discountAmount.toDouble();
-          couponDiscount += item.couponDiscount.toDouble();
+        double parse(dynamic val) {
+          if (val is num) return val.toDouble();
+          if (val is String) return double.tryParse(val) ?? 0.0;
+          return 0.0;
         }
-      }
+        for (var item in items) {
+          itemTotal += parse(item.serviceCost) * parse(item.quantity);
+          discount += parse(item.discountAmount);
+          couponDiscount += parse(item.couponDiscount);
 
-      final double grandTotal = (content?.totalCost ?? 0).toDouble() + tax;
+          //Labour charge safe
+          final labour = item.service?['labour_charge'];
+          totalLabourCharge += parse(labour);
+        }
+        }
+        // final double grandTotal = (content?.totalCost ?? 0).toDouble() + tax;
+      final double grandTotal =
+          (content?.totalCost ?? 0).toDouble() + tax + totalLabourCharge;
+
       final double wallet = (content?.walletBalance ?? 0).toDouble();
       final double referral = (content?.referralAmount ?? 0).toDouble();
       final int itemCount = cart?.data?.length ?? 0;
 
-      final media = MediaQuery.of(context);
-      final shortest = media.size.shortestSide;
-      final isTablet = shortest >= 600;
-      final horizontalPadding = isTablet ? 24.0 : 16.0;
-      final maxContentWidth = isTablet ? 760.0 : double.infinity;
+        final media = MediaQuery.of(context);
+        final shortest = media.size.shortestSide;
+        final isTablet = shortest >= 600;
+        final horizontalPadding = isTablet ? 24.0 : 16.0;
+        final maxContentWidth = isTablet ? 760.0 : double.infinity;
 
-      Widget priceRow(String title, double amount,
-          {bool isBold = false, Color? color}) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                  color: Colors.black87,
+        Widget priceRow(String title, double amount,
+            {bool isBold = false, Color? color}) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                "₹ ${amount.toStringAsFixed(0)}",
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                  color: color ?? Colors.black,
+                const Spacer(),
+                Text(
+                  "₹ ${amount.toStringAsFixed(0)}",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                    color: color ?? Colors.black,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }
+              ],
+            ),
+          );
+        }
 
       final bool showBottomBar = _items.isNotEmpty;
 
@@ -242,7 +251,7 @@ class _CartScreenState extends State<CartScreen> {
                                     letterSpacing: 0.2,
                                   ),
                                 ),
-                              ),
+                                ),
                             ),
                           ),
                         ),
@@ -429,7 +438,9 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                       const SizedBox(height: 6),
                                       priceRow("Tax & Fee", tax),
-                                      Padding(
+                                      const SizedBox(height: 6),
+                                      if (totalLabourCharge > 0)
+                                        priceRow("Labour Charge", totalLabourCharge),                                      Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 14),
                                         child: DottedBorder(

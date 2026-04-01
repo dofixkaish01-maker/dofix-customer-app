@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
-
 import '../../utils/sizeboxes.dart';
 import '../../utils/styles.dart';
+import '../../widgets/awtar_magic/magicial_awatar.dart';
 import '../views/notification/notification_details_screen.dart';
 
 class NotificationCard extends StatelessWidget {
@@ -14,7 +14,6 @@ class NotificationCard extends StatelessWidget {
     super.key,
     required this.item,
   });
-
   /// Time formatter (human readable)
   String formatNotificationTime(String? date) {
     if (date == null || date.isEmpty) return '';
@@ -43,6 +42,8 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String text = item.title ?? item.body ?? "";
+    // final bool isUnread = item.isRead == false;
     return InkWell(
       borderRadius: BorderRadius.circular(16),
 
@@ -75,13 +76,18 @@ class NotificationCard extends StatelessWidget {
               height: 42,
               width: 42,
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.12),
+                color:
+                getAvatarColor(item.title ?? item.body).withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.notifications_rounded,
-                color: Color(0xff227FA8),
-                size: 22,
+              alignment: Alignment.center,
+              child: Text(
+                getInitial(item.title ?? item.body),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: getAvatarColor(item.title ?? ""),
+                ),
               ),
             ),
             const SizedBox(width: 12),
