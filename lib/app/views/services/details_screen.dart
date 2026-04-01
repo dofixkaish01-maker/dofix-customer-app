@@ -19,11 +19,12 @@ class DetailsScreen extends StatefulWidget {
   final String reviewCount;
   final String mrpPrice;
   final String discountedPrice;
+  final String labourCharge;
   final String duration;
   final String description;
   final String variantKey;
 
-  DetailsScreen({
+  const DetailsScreen({
     super.key,
     required this.serviceModel,
     required this.variationName,
@@ -35,6 +36,7 @@ class DetailsScreen extends StatefulWidget {
     required this.duration,
     required this.description,
     required this.variantKey,
+    required this.labourCharge,
   });
 
   @override
@@ -43,6 +45,7 @@ class DetailsScreen extends StatefulWidget {
 
 class _DetailsScreenState extends State<DetailsScreen> {
   final bookController = Get.find<BookingController>();
+
   String coverVariantImagePath =
       "https://panel.dofix.in/storage/service/variant/";
 
@@ -72,6 +75,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   @override
   Widget build(BuildContext context) {
     /// Percentage Calculation (KEEP)
+    double labour = double.tryParse(widget.labourCharge) ?? 0.0;
     double mrp = double.tryParse(widget.mrpPrice) ?? 0;
     double discountPrice = double.tryParse(widget.discountedPrice) ?? 0;
 
@@ -114,10 +118,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
               builder: (context, c) {
                 final w = c.maxWidth;
 
-                // ✅ only for max width center (tablet/desktop)
+                // only for max width center (tablet/desktop)
                 final double maxW = w >= 900 ? 860 : double.infinity;
 
-                // ✅ typography + colors (responsive)
+                // typography + colors (responsive)
                 final double titleSize = isTablet ? 22 : 20;
                 final double priceSize = isTablet ? 26 : 24;
                 final double mrpSize = isTablet ? 15 : 14;
@@ -196,7 +200,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   ),
                                 ),
 
-                                /// 🔥 Rating chip bottom-left
+                                /// Rating chip bottom-left
                                 if (widget.rating != "0")
                                   Positioned(
                                     left: 12,
@@ -352,6 +356,21 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                             fontWeight: FontWeight.w700,
                                           ),
                                         ),
+                                  if (labour > 0) ...[
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "+ ₹${labour.toStringAsFixed(0)} labour charge",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.orange.shade700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                   const SizedBox(width: 10),
                                   if (percentOff > 0)
                                     Text(

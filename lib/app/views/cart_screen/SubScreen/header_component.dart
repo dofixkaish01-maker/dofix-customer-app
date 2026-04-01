@@ -28,6 +28,13 @@ class _HeaderComponentState extends State<HeaderComponent> {
     quantity =
         int.tryParse((widget.serviceModel?.quantity ?? "0").toString()) ?? 0;
   }
+  double parse(dynamic val) {
+    if (val is num) return val.toDouble();
+    if (val is String) return double.tryParse(val) ?? 0.0;
+    return 0.0;
+  }
+
+  late final labourCharge = parse(widget.serviceModel?.service?['labour_charge']);
 
   @override
   Widget build(BuildContext context) {
@@ -116,13 +123,37 @@ class _HeaderComponentState extends State<HeaderComponent> {
                         const SizedBox(height: 8),
 
                         /// PRICE
-                        Text(
-                          "₹${(double.tryParse((widget.serviceModel?.serviceCost ?? "0").toString())?.toInt() ?? 0)}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF207FA7),
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "₹${(double.tryParse((widget.serviceModel?.serviceCost ?? "0").toString())?.toInt() ?? 0)}",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF207FA7),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            /// Labour Charge (only if exists)
+                            if (labourCharge > 0)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  "+ ₹${labourCharge.toStringAsFixed(0)} labour charge",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.orange.shade700,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),

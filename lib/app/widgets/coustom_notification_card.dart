@@ -43,7 +43,7 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String text = item.title ?? item.body ?? "";
-    final bool isUnread = item.isRead == false;
+    // final bool isUnread = item.isRead == false;
     return InkWell(
       borderRadius: BorderRadius.circular(16),
 
