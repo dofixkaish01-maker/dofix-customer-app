@@ -32,12 +32,10 @@ class RatingAndReviewController extends GetxController {
       if (result['success'] == true) {
         message = result['data']?['errors'] ?? "Review updated successfully";
 
-        // Step 1: BottomSheet close
         if (Get.isBottomSheetOpen ?? false) {
           Navigator.pop(context, true);
         }
 
-        // Step 2: Snackbar (NO closeAllSnackbars)
         Future.delayed(const Duration(milliseconds: 300), () {
           Get.snackbar(
             "Success",
