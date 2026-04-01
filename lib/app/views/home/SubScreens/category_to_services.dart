@@ -504,8 +504,7 @@ class CategoryToServices extends StatelessWidget {
                                                                   ),
                                                                 ],
                                                               ),
-                                                              const SizedBox(
-                                                                  height: 4),
+                                                              const SizedBox(height: 4),
 
                                                               if ((service.variations
                                                                           ?.length ??
@@ -556,8 +555,7 @@ class CategoryToServices extends StatelessWidget {
                                                                   ),
                                                                 ),
 
-                                                              const SizedBox(
-                                                                  height: 4),
+                                                              const SizedBox(height: 4),
 
                                                               /// CTA Row
                                                               Row(
