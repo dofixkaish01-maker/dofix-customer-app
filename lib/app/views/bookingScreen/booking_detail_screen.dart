@@ -11,9 +11,11 @@ import 'package:do_fix/model/booking_model.dart';
 import 'package:do_fix/model/review_rating_model.dart';
 import 'package:do_fix/utils/app_constants.dart';
 import 'package:do_fix/utils/string_extensions.dart';
+import 'package:do_fix/widgets/custom_edit_review_bottomsheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../controllers/rating_and_review_controller.dart';
 import '../../../utils/date_converter.dart';
 import '../../../utils/dimensions.dart';
 import '../../../utils/theme.dart';
@@ -1558,18 +1560,41 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          // Spacer(),
-                          // IconButton(
-                          //     onPressed: () {
-                          //       Get.off(() => ReviewScreen(
-                          //           bookingId: widget.booking?.id,
-                          //           serviceId: widget.booking?.servicemanId));
-                          //     },
-                          //     icon: Icon(
-                          //       Icons.edit,
-                          //       color: primaryColor,
-                          //       size: 18,
-                          //     ))
+                          Spacer(),
+                          IconButton(
+                              onPressed: () async {
+                                Get.put(RatingAndReviewController());
+                                final dashBoardController =
+                                    Get.find<DashBoardController>();
+
+                                final token = dashBoardController
+                                        .authRepo.apiClient.token ??
+                                    "";
+                                final zoneID =
+                                    dashBoardController.zoneIdForBooking;
+                                final review = bookController.reviewRatingModel
+                                    .value?.content?[0].reviews?[0];
+
+                                final result = await Get.bottomSheet(
+                                  // backgroundColor: Colors.transparent,
+                                    EditReviewBottomSheet(
+                                        initialRating:
+                                            review?.reviewRating ?? 0,
+                                        initialComment:
+                                            review?.reviewComment ?? "",
+                                        customerID: review!.id ?? "",
+                                        token: token,
+                                        zoneID: zoneID),isScrollControlled: true);
+                                if(result==true){
+                                  // bookController.getReviewRating(widget.bookingId);
+                                  bookController.getBookingReview(widget.booking?.id);
+                                }
+                              },
+                              icon: Icon(
+                                Icons.edit,
+                                color: primaryColor,
+                                size: 18,
+                              ))
                           // OutlinedButton(onPressed: () {
                           //
                           // }, child: Row(

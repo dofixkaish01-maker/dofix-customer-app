@@ -163,7 +163,7 @@ class RatingSummary extends StatelessWidget {
           ],
         ),
 
-        /// ❌ Old Card Container (kept for reference)
+        ///  Old Card Container (kept for reference)
         // Container(
         //   padding: const EdgeInsets.all(1),
         //   decoration: BoxDecoration(
