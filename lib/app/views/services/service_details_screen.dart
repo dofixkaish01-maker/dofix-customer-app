@@ -173,11 +173,13 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     // _controller.dispose();
     super.dispose();
   }
+
   double parse(dynamic val) {
     if (val is num) return val.toDouble();
     if (val is String) return double.tryParse(val) ?? 0.0;
     return 0.0;
   }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -251,57 +253,63 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                 builder: (dashController) {
                                   return ListView.separated(
                                     physics:
-                                    const NeverScrollableScrollPhysics(),
+                                        const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     itemCount: controller
-                                        .serviceModel.variations?.length ??
+                                            .serviceModel.variations?.length ??
                                         0,
                                     separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 8),
+                                        const SizedBox(height: 8),
                                     itemBuilder: (context, index) {
                                       final variation = controller
                                           .serviceModel.variations?[index];
 
                                       return VariationsNewCard(
                                         serviceDescription:
-                                        (variation?.varDescription !=
-                                            null &&
-                                            variation?.varDescription !=
-                                                "0")
-                                            ? variation?.varDescription
-                                            : HtmlUtils.stripHtmlIfPresent(
-                                          controller.serviceModel
-                                              .description ??
-                                              "",
-                                        ),
+                                            (variation?.varDescription !=
+                                                        null &&
+                                                    variation?.varDescription !=
+                                                        "0")
+                                                ? variation?.varDescription
+                                                : HtmlUtils.stripHtmlIfPresent(
+                                                    controller.serviceModel
+                                                            .description ??
+                                                        "",
+                                                  ),
                                         serviceVariationName:
-                                        variation?.variant ?? "",
+                                            variation?.variant ?? "",
                                         serviceRatings: (controller
-                                            .serviceModel.avgRating ??
-                                            0.0)
+                                                    .serviceModel.avgRating ??
+                                                0.0)
                                             .toString(),
                                         serviceReviewCount: (controller
-                                            .serviceModel.ratingCount ??
-                                            0)
+                                                    .serviceModel.ratingCount ??
+                                                0)
                                             .toString(),
                                         serviceMrpPrice:
-                                        variation?.mrpPrice.toString() ?? "",
-                                        labourCharge: controller.serviceModel.labourCharge?.toDouble() ?? 0.0,                                        serviceDiscountedPrice:
-                                        variation?.price.toString() ?? "",
-                                        serviceTimeDuration:
-                                        (variation?.durationHour != "0" &&
-                                            variation?.durationMinute !=
-                                                "0" &&
-                                            variation?.durationHour !=
-                                                null &&
-                                            variation?.durationMinute !=
-                                                null)
+                                            variation?.mrpPrice.toString() ??
+                                                "",
+                                        labourCharge: controller
+                                                .serviceModel.labourCharge
+                                                ?.toDouble() ??
+                                            0.0,
+                                        serviceDiscountedPrice:
+                                            variation?.price.toString() ?? "",
+                                        serviceTimeDuration: (variation
+                                                        ?.durationHour !=
+                                                    "0" &&
+                                                variation?.durationMinute !=
+                                                    "0" &&
+                                                variation?.durationHour !=
+                                                    null &&
+                                                variation?.durationMinute !=
+                                                    null)
                                             ? "${variation?.durationHour}:${variation?.durationMinute}"
                                             : "",
                                         variantKey: variation?.variantKey ?? "",
                                         serviceModel: controller.serviceModel,
                                         serviceCoverImage:
-                                        variation?.coverImage ?? "",
+                                            variation?.coverImage ?? "",
                                         taxAmount: 79,
                                       );
                                     },
@@ -325,27 +333,26 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                   ),
                                 ),
                                 child: controller.serviceModel.description !=
-                                    null &&
-                                    HtmlUtils.containsHtml(
-                                      controller.serviceModel.description!,
-                                    )
+                                            null &&
+                                        HtmlUtils.containsHtml(
+                                          controller.serviceModel.description!,
+                                        )
                                     ? HtmlToFlutter(
-                                  htmlText:
-                                  controller.serviceModel.description ??
-                                      "",
-                                )
+                                        htmlText: controller
+                                                .serviceModel.description ??
+                                            "",
+                                      )
                                     : Text(
-                                  HtmlUtils.stripHtmlIfPresent(
-                                    controller.serviceModel.description ??
-                                        "",
-                                  ),
-                                  style: TextStyle(
-                                    color:
-                                    Colors.black.withOpacity(0.68),
-                                    fontSize: isTablet ? 14.5 : 13.2,
-                                    height: 1.6,
-                                  ),
-                                ),
+                                        HtmlUtils.stripHtmlIfPresent(
+                                          controller.serviceModel.description ??
+                                              "",
+                                        ),
+                                        style: TextStyle(
+                                          color: Colors.black.withOpacity(0.68),
+                                          fontSize: isTablet ? 14.5 : 13.2,
+                                          height: 1.6,
+                                        ),
+                                      ),
                               ),
 
                               const SizedBox(height: 20),
@@ -356,7 +363,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               Obx(() {
                                 final List<ServiceReview> reviews =
                                     bookingController.serviceReviewsModel.value
-                                        ?.content?.reviews?.data ??
+                                            ?.content?.reviews?.data ??
                                         [];
 
                                 final bool hasReviews = reviews.isNotEmpty;
@@ -366,17 +373,16 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                   children: [
                                     RatingSummary(
                                       averageRating:
-                                      controller.serviceModel.avgRating ??
-                                          0.0,
+                                          controller.serviceModel.avgRating ??
+                                              0.0,
                                       ratingCount:
-                                      controller.serviceModel.ratingCount ??
-                                          0,
+                                          controller.serviceModel.ratingCount ??
+                                              0,
                                     ),
 
                                     const SizedBox(height: 16),
-
                                     if ((controller.serviceModel.ratingCount ??
-                                        0) >
+                                            0) >
                                         0)
                                       const Padding(
                                         padding: EdgeInsets.only(left: 2),
@@ -393,36 +399,61 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                     if (hasReviews) const SizedBox(height: 12),
 
                                     if (hasReviews)
+                                      Builder(
+                                        builder: (context) {
+                                          //  Filter 4+ rating
+                                          final filteredReviews = reviews
+                                              .where((r) =>
+                                                  (r.reviewRating ?? 0) >= 4)
+                                              .toList();
 
-                                      ListView.separated(
-                                        physics:
-                                        const NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: reviews.length,
-                                        separatorBuilder: (_, __) =>
-                                         Divider(thickness: 0.8,color: Colors.grey.shade300,),
-                                        itemBuilder: (context, index) {
-                                          final ServiceReview review =
-                                          reviews[index];
-                                          return ReviewCard(review: review);
+                                          //  Limit to 10
+                                          final int displayCount =
+                                              filteredReviews.length > 10
+                                                  ? 10
+                                                  : filteredReviews.length;
+
+                                          final bool hasMore =
+                                              filteredReviews.length > 10;
+
+                                          return Column(
+                                            children: [
+                                              ListView.separated(
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: displayCount,
+                                                //  updated
+                                                separatorBuilder: (_, __) =>
+                                                    Divider(
+                                                  thickness: 0.8,
+                                                  color: Colors.grey.shade300,
+                                                ),
+                                                itemBuilder: (context, index) {
+                                                  final ServiceReview review =
+                                                      filteredReviews[
+                                                          index]; //  updated
+                                                  return ReviewCard(
+                                                      review: review);
+                                                },
+                                              ),
+
+                                              //  See More
+                                              if (hasMore)
+                                                TextButton(
+                                                  onPressed: () {
+                                                    // TODO: Navigate or expand list
+                                                  },
+                                                  child: const Text("See More"),
+                                                ),
+                                            ],
+                                          );
                                         },
                                       )
                                     else
-                                      Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 28,
-                                          horizontal: 16,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                          BorderRadius.circular(16),
-                                          border: Border.all(
-                                            color: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                        child: const Center(
+                                      const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(top: 40),
                                           child: Text(
                                             "No reviews yet",
                                             style: TextStyle(
@@ -433,6 +464,66 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                           ),
                                         ),
                                       ),
+                                    //
+                                    // if ((controller.serviceModel.ratingCount ??
+                                    //     0) >
+                                    //     0)
+                                    //   const Padding(
+                                    //     padding: EdgeInsets.only(left: 2),
+                                    //     child: Text(
+                                    //       'Reviews',
+                                    //       style: TextStyle(
+                                    //         fontSize: 16,
+                                    //         fontWeight: FontWeight.w700,
+                                    //         color: Color(0xFF111827),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    //
+                                    // if (hasReviews) const SizedBox(height: 12),
+                                    //
+                                    // if (hasReviews)
+                                    //
+                                    //   ListView.separated(
+                                    //     physics:
+                                    //     const NeverScrollableScrollPhysics(),
+                                    //     shrinkWrap: true,
+                                    //     itemCount: reviews.length,
+                                    //     separatorBuilder: (_, __) =>
+                                    //      Divider(thickness: 0.8,color: Colors.grey.shade300,),
+                                    //     itemBuilder: (context, index) {
+                                    //       final ServiceReview review =
+                                    //       reviews[index];
+                                    //       return ReviewCard(review: review);
+                                    //     },
+                                    //   )
+                                    //
+                                    // else
+                                    //   Container(
+                                    //     width: double.infinity,
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //       vertical: 28,
+                                    //       horizontal: 16,
+                                    //     ),
+                                    //     decoration: BoxDecoration(
+                                    //       color: Colors.white,
+                                    //       borderRadius:
+                                    //       BorderRadius.circular(16),
+                                    //       border: Border.all(
+                                    //         color: Colors.grey.shade200,
+                                    //       ),
+                                    //     ),
+                                    //     child: const Center(
+                                    //       child: Text(
+                                    //         "No reviews yet",
+                                    //         style: TextStyle(
+                                    //           fontSize: 15,
+                                    //           color: Colors.grey,
+                                    //           fontWeight: FontWeight.w500,
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
 
                                     sizedBox65(),
                                   ],
@@ -457,11 +548,11 @@ class _ServiceDetailsState extends State<ServiceDetails> {
 
                           if (controller.cartModel.content?.cart?.data !=
                               null) {
-                            itemCount =
-                                controller.cartModel.content!.cart!.data!.length;
+                            itemCount = controller
+                                .cartModel.content!.cart!.data!.length;
 
                             for (final item
-                            in controller.cartModel.content!.cart!.data!) {
+                                in controller.cartModel.content!.cart!.data!) {
                               totalAmount += (item.totalCost ?? 0);
                             }
                           }
@@ -561,11 +652,11 @@ void showBookingSheet(BuildContext context) {
 }
 
 void showReviewFilterBottomSheet(
-    BuildContext context, {
-      int? selectedRating,
-      bool recentlyAdded = false,
-      required Function(int? rating, bool recentlyAdded) onApply,
-    }) {
+  BuildContext context, {
+  int? selectedRating,
+  bool recentlyAdded = false,
+  required Function(int? rating, bool recentlyAdded) onApply,
+}) {
   int? selectedRating0 = selectedRating;
   bool recentlyAdded0 = recentlyAdded;
 
@@ -673,13 +764,13 @@ void showAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
     builder: (context) {
       return StatefulBuilder(
         builder: (
-            BuildContext context,
-            void Function(void Function()) setState,
-            ) {
+          BuildContext context,
+          void Function(void Function()) setState,
+        ) {
           String? selectedVariation =
-          Get.find<DashBoardController>().selectedVariations.isNotEmpty
-              ? Get.find<DashBoardController>().selectedVariations.first
-              : null;
+              Get.find<DashBoardController>().selectedVariations.isNotEmpty
+                  ? Get.find<DashBoardController>().selectedVariations.first
+                  : null;
 
           return SafeArea(
             child: Padding(
@@ -793,31 +884,31 @@ void showAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
                           onPressed: () async {
                             final authController = Get.find<AuthController>();
                             final bool isGuest =
-                            await authController.returnIsGuest();
+                                await authController.returnIsGuest();
 
                             if (isGuest) {
                               authController.checkIfGuest();
                             } else {
                               final data = Get.find<DashBoardController>()
-                                  .cartModel
-                                  .content
-                                  ?.cart
-                                  ?.data ??
+                                      .cartModel
+                                      .content
+                                      ?.cart
+                                      ?.data ??
                                   [];
 
                               if (data.isNotEmpty) {
                                 final selectedVariation =
-                                Get.find<DashBoardController>()
-                                    .selectedVariations
-                                    .isNotEmpty
-                                    ? Get.find<DashBoardController>()
-                                    .selectedVariations
-                                    .first
-                                    : null;
+                                    Get.find<DashBoardController>()
+                                            .selectedVariations
+                                            .isNotEmpty
+                                        ? Get.find<DashBoardController>()
+                                            .selectedVariations
+                                            .first
+                                        : null;
 
                                 final existingService = data.firstWhere(
-                                      (item) =>
-                                  item.serviceId == serviceModel.id &&
+                                  (item) =>
+                                      item.serviceId == serviceModel.id &&
                                       item.categoryId ==
                                           serviceModel.categoryId &&
                                       item.subCategoryId ==
@@ -852,7 +943,7 @@ void showAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
                                     "service_id": serviceModel.id,
                                     "category_id": serviceModel.categoryId,
                                     "sub_category_id":
-                                    serviceModel.subCategoryId,
+                                        serviceModel.subCategoryId,
                                   },
                                   Get.find<DashBoardController>()
                                       .selectedVariations,
@@ -896,7 +987,7 @@ void showAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
 String formatTimeOfDay24Hour(TimeOfDay time) {
   final now = DateTime.now();
   final dateTime =
-  DateTime(now.year, now.month, now.day, time.hour, time.minute);
+      DateTime(now.year, now.month, now.day, time.hour, time.minute);
   return DateFormat('HH:mm').format(dateTime);
 }
 
