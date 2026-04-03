@@ -22,7 +22,6 @@ import '../../../utils/theme.dart';
 import '../../../widgets/custom_snack_bar.dart';
 import '../cart_screen/SubScreen/final_screen.dart';
 
-// import '../home/component/variations_new_card.dart';
 import '../services/service_details_screen.dart';
 
 //use for open razor pay payment getway
@@ -64,324 +63,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
         ));
   }
 
-  // void _showCancelBookingDialog() {
-  //   Get.dialog(
-  //     Dialog(
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(16),
-  //       ),
-  //       child: Container(
-  //         padding: EdgeInsets.all(20),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             Icon(
-  //               Icons.warning_amber_rounded,
-  //               color: Colors.orange,
-  //               size: 48,
-  //             ),
-  //             SizedBox(height: 16),
-  //             Text(
-  //               'Cancel Booking',
-  //               style: TextStyle(
-  //                 fontSize: 18,
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Colors.black,
-  //               ),
-  //             ),
-  //             SizedBox(height: 12),
-  //             Text(
-  //               'Are you sure you want to cancel this booking? You will be charged ${bookController.cancellationChargesPercentage.value}% of the booking amount as cancellation fee.',
-  //               textAlign: TextAlign.center,
-  //               style: TextStyle(
-  //                 fontSize: Dimensions.fontSize14,
-  //                 color: Colors.black54,
-  //                 height: 1.4,
-  //               ),
-  //             ),
-  //             SizedBox(height: 24),
-  //             Row(
-  //               children: [
-  //                 Expanded(
-  //                   child: OutlinedButton(
-  //                     onPressed: () {
-  //                       Get.back();
-  //                     },
-  //                     style: OutlinedButton.styleFrom(
-  //                       side: BorderSide(color: Colors.grey),
-  //                       shape: RoundedRectangleBorder(
-  //                         borderRadius: BorderRadius.circular(8),
-  //                       ),
-  //                       padding: EdgeInsets.symmetric(vertical: 12),
-  //                     ),
-  //                     child: Text(
-  //                       'No',
-  //                       style: TextStyle(
-  //                         color: Colors.grey[700],
-  //                         fontWeight: FontWeight.w500,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 SizedBox(width: 12),
-  //                 Expanded(
-  //                   child: ElevatedButton(
-  //                     onPressed: () async {
-  //                       Get.back();
-  //                       await bookController
-  //                           .cancelBookingController(widget.booking?.id);
-  //                       await Get.find<DashBoardController>()
-  //                           .getBookingDetails(widget.booking?.id ?? "");
-  //                       await Get.find<BookingController>()
-  //                           .getBookingReview(widget.booking?.id ?? "");
-  //                       Get.back();
-  //                     },
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor: Colors.red,
-  //                       shape: RoundedRectangleBorder(
-  //                         borderRadius: BorderRadius.circular(8),
-  //                       ),
-  //                       padding: EdgeInsets.symmetric(vertical: 12),
-  //                     ),
-  //                     child: Text(
-  //                       'Yes',
-  //                       style: TextStyle(
-  //                         color: Colors.white,
-  //                         fontWeight: FontWeight.w500,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // void _showStaticQrDialog() {
-  //   Get.bottomSheet(
-  //     Container(
-  //       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-  //       decoration: const BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //       ),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           Container(
-  //             width: 40,
-  //             height: 4,
-  //             margin: const EdgeInsets.only(bottom: 12),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey.shade300,
-  //               borderRadius: BorderRadius.circular(2),
-  //             ),
-  //           ),
-  //           const Text(
-  //             "Scan & Pay",
-  //             style: TextStyle(
-  //               fontSize: 18,
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //           ),
-  //           const SizedBox(height: 16),
-  //           ClipRRect(
-  //             borderRadius: BorderRadius.circular(12),
-  //             child: Image.asset(
-  //               "assets/images/dofix_qr.jpeg",
-  //               height: 220,
-  //               width: 220,
-  //               fit: BoxFit.cover,
-  //             ),
-  //           ),
-  //           const SizedBox(height: 16),
-  //           Text(
-  //             "Scan this QR code to complete your payment.",
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(
-  //               fontSize: Dimensions.fontSize14,
-  //               color: Colors.black.withOpacity(0.7),
-  //             ),
-  //           ),
-  //           const SizedBox(height: 10),
-  //           SizedBox(
-  //             width: double.infinity,
-  //             child: ElevatedButton(
-  //               onPressed: () => Get.back(),
-  //               style: ElevatedButton.styleFrom(
-  //                 backgroundColor: const Color(0xFF207FA8),
-  //                 shape: RoundedRectangleBorder(
-  //                   borderRadius: BorderRadius.circular(10),
-  //                 ),
-  //               ),
-  //               child: const Text(
-  //                 "Done",
-  //                 style: TextStyle(color: Colors.white),
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //     isScrollControlled: true,
-  //   );
-  // }
-
-  // void _showStaticQrDialog() {
-  //   const supportNumber = "8383849293";
-  //   final bookingId = widget.booking?.id ?? "N/A";
-  //
-  //   Get.bottomSheet(
-  //     Container(
-  //       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-  //       decoration: const BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //       ),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           Container(
-  //             width: 40,
-  //             height: 4,
-  //             margin: const EdgeInsets.only(bottom: 12),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey.shade300,
-  //               borderRadius: BorderRadius.circular(2),
-  //             ),
-  //           ),
-  //           const Text(
-  //             "Scan & Pay",
-  //             style: TextStyle(
-  //               fontSize: 18,
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //           ),
-  //           const SizedBox(height: 16),
-  //           ClipRRect(
-  //             borderRadius: BorderRadius.circular(12),
-  //             child: Image.asset(
-  //               "assets/images/dofix_qr.jpeg",
-  //               height: 220,
-  //               width: 220,
-  //               fit: BoxFit.cover,
-  //             ),
-  //           ),
-  //           const SizedBox(height: 16),
-  //           Text(
-  //             "Scan this QR code to complete your payment.",
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(
-  //               fontSize: Dimensions.fontSize14,
-  //               color: Colors.black.withOpacity(0.7),
-  //             ),
-  //           ),
-  //           const SizedBox(height: 8),
-  //           Text(
-  //             "After successful payment, please share the payment screenshot with our support team for confirmation.",
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(
-  //               fontSize: Dimensions.fontSize12,
-  //               color: Colors.black54,
-  //               height: 1.4,
-  //             ),
-  //           ),
-  //           const SizedBox(height: 16),
-  //
-  //           /// Share Screenshot on WhatsApp
-  //           SizedBox(
-  //             width: double.infinity,
-  //             child: OutlinedButton.icon(
-  //               onPressed: () async {
-  //                 final Uri uri = Uri.parse(
-  //                   "https://wa.me/91$supportNumber?text="
-  //                   "Hi, I have completed the payment for Booking ID: $bookingId. "
-  //                   "I am sharing the payment screenshot for confirmation.",
-  //                 );
-  //
-  //                 if (await canLaunchUrl(uri)) {
-  //                   await launchUrl(
-  //                     uri,
-  //                     mode: LaunchMode.externalApplication,
-  //                   );
-  //                 }
-  //               },
-  //               icon: const Icon(
-  //                 Icons.share,
-  //                 color: Color(0xFF207FA8),
-  //               ),
-  //               label: const Text(
-  //                 "Share Screenshot",
-  //                 style: TextStyle(
-  //                   color: Color(0xFF207FA8),
-  //                   fontWeight: FontWeight.w600,
-  //                 ),
-  //               ),
-  //               style: OutlinedButton.styleFrom(
-  //                 side: const BorderSide(color: Color(0xFF207FA8)),
-  //                 shape: RoundedRectangleBorder(
-  //                   borderRadius: BorderRadius.circular(10),
-  //                 ),
-  //                 padding: const EdgeInsets.symmetric(vertical: 14),
-  //               ),
-  //             ),
-  //           ),
-  //
-  //           const SizedBox(height: 10),
-  //
-  //           SizedBox(
-  //             width: double.infinity,
-  //             child: ElevatedButton(
-  //               onPressed: () => Get.back(),
-  //               style: ElevatedButton.styleFrom(
-  //                 backgroundColor: const Color(0xFF207FA8),
-  //                 shape: RoundedRectangleBorder(
-  //                   borderRadius: BorderRadius.circular(10),
-  //                 ),
-  //               ),
-  //               child: const Text(
-  //                 "Done",
-  //                 style: TextStyle(color: Colors.white),
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //     isScrollControlled: true,
-  //   );
-  // }
-
-  // Map<String, dynamic> _buildPaymentData() {
-  //   final booking = widget.booking!;
-  //   final dashController = Get.find<DashBoardController>();
-  //   final address = booking.serviceAddress;
-  //
-  //   return {
-  //     "service_address_id": booking.serviceAddressId,
-  //     "contact_person_name": address?.contactPersonName ??
-  //         "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
-  //     "contact_person_number":
-  //     address?.contactPersonNumber ?? dashController.userModel.phone,
-  //     "name": address?.contactPersonName ??
-  //         "${dashController.userModel.firstName} ${dashController.userModel.lastName}",
-  //     "mobile_number": address?.contactPersonNumber?.replaceAll("+91", "") ??
-  //         dashController.userModel.phone.replaceAll("+91", ""),
-  //     "email": dashController.userModel.email,
-  //     "address_label": address?.addressLabel,
-  //     "address": address?.address,
-  //     "lat": address?.lat,
-  //     "lon": address?.lon,
-  //     "zone_id": booking.zoneId,
-  //     "message": booking.message,
-  //     "date": widget.formattedDate ?? "",
-  //     "time": widget.formattedTime ?? "",
-  //   };
-  // }
   Map<String, dynamic> _buildPaymentData() {
     final booking = widget.booking!;
     final dashController = Get.find<DashBoardController>();
@@ -1494,74 +1175,61 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 SizedBox(
                   height: 16,
                 ),
-                if (bookController.reviewRatingModel.value != null &&
-                    bookController.reviewRatingModel.value!.content != null &&
-                    bookController
-                        .reviewRatingModel.value!.content!.isNotEmpty &&
-                    bookController
-                            .reviewRatingModel.value!.content![0].reviews !=
-                        null &&
-                    bookController.reviewRatingModel.value!.content![0].reviews!
-                        .isNotEmpty &&
-                    widget.booking?.bookingStatus == 'completed')
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'Ratings & Review',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: Dimensions.fontSizeDefault,
-                              fontFamily: 'Albert Sans',
-                              fontWeight: FontWeight.bold,
+                Obx(() {
+                  final reviewModel = bookController.reviewRatingModel.value;
+
+                  if (reviewModel != null &&
+                      reviewModel.content != null &&
+                      reviewModel.content!.isNotEmpty &&
+                      reviewModel.content![0].reviews != null &&
+                      reviewModel.content![0].reviews!.isNotEmpty &&
+                      widget.booking?.bookingStatus == 'completed') {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Ratings & Review',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: Dimensions.fontSizeDefault,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Container(
-                              height: 1,
-                              color: Colors.black.withOpacity(0.15),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: Colors.black.withOpacity(0.15),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        children: [
-                          ...List.generate(
-                            5,
-                            (index) => Icon(
-                              index <
-                                      (bookController
-                                              .reviewRatingModel
-                                              .value
-                                              ?.content?[0]
-                                              .reviews?[0]
-                                              .reviewRating ??
-                                          0)
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              color: Colors.amber,
-                              size: 20,
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            ...List.generate(
+                              5,
+                              (index) => Icon(
+                                index <
+                                        (reviewModel.content?[0].reviews?[0]
+                                                .reviewRating ??
+                                            0)
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.amber,
+                                size: 20,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            bookController.reviewRatingModel.value?.content?[0]
-                                        .reviews?[0].reviewRating !=
-                                    null
-                                ? "${bookController.reviewRatingModel.value?.content?[0].reviews?[0].reviewRating} stars"
-                                : "No rating",
-                            style: TextStyle(
-                              fontSize: Dimensions.fontSize14,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w500,
+                            SizedBox(width: 8),
+                            Text(
+                              "${reviewModel.content?[0].reviews?[0].reviewRating ?? 0} stars",
                             ),
-                          ),
-                          Spacer(),
-                          IconButton(
+                            Spacer(),
+
+                            /// EDIT BUTTON (same as yours)
+                            IconButton(
                               onPressed: () async {
                                 Get.put(RatingAndReviewController());
                                 final dashBoardController =
@@ -1572,56 +1240,41 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                     "";
                                 final zoneID =
                                     dashBoardController.zoneIdForBooking;
-                                final review = bookController.reviewRatingModel
-                                    .value?.content?[0].reviews?[0];
+
+                                final review =
+                                    reviewModel.content?[0].reviews?[0];
 
                                 final result = await Get.bottomSheet(
-                                  // backgroundColor: Colors.transparent,
-                                    EditReviewBottomSheet(
-                                        initialRating:
-                                            review?.reviewRating ?? 0,
-                                        initialComment:
-                                            review?.reviewComment ?? "",
-                                        customerID: review!.id ?? "",
-                                        token: token,
-                                        zoneID: zoneID),isScrollControlled: true);
-                                if(result==true){
-                                  // bookController.getReviewRating(widget.bookingId);
-                                  bookController.getBookingReview(widget.booking?.id);
+                                  EditReviewBottomSheet(
+                                    initialRating: review?.reviewRating ?? 0,
+                                    initialComment: review?.reviewComment ?? "",
+                                    customerID: review!.id ?? "",
+                                    token: token,
+                                    zoneID: zoneID,
+                                  ),
+                                  isScrollControlled: true,
+                                );
+
+                                if (result == true) {
+                                  await bookController
+                                      .getBookingReview(widget.booking?.id);
                                 }
                               },
-                              icon: Icon(
-                                Icons.edit,
-                                color: primaryColor,
-                                size: 18,
-                              ))
-                          // OutlinedButton(onPressed: () {
-                          //
-                          // }, child: Row(
-                          //   children: [
-                          //
-                          //     Text('Edit'),
-                          //     const SizedBox(width: 7,),
-                          //     Icon(Icons.edit,size: 16,),
-                          //
-                          //   ],
-                          // ))
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        bookController.reviewRatingModel.value?.content?[0]
-                                    .reviews?[0].reviewComment !=
-                                null
-                            ? "Review : ${bookController.reviewRatingModel.value?.content?[0].reviews?[0].reviewComment}"
-                            : "No review provided.",
-                        style: TextStyle(
-                          fontSize: Dimensions.fontSize14,
-                          color: Colors.black54,
+                              icon: Icon(Icons.edit,
+                                  color: primaryColor, size: 18),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
+                        SizedBox(height: 8),
+                        Text(
+                          "Review : ${reviewModel.content?[0].reviews?[0].reviewComment ?? "No review"}",
+                        ),
+                      ],
+                    );
+                  }
+
+                  return SizedBox.shrink();
+                }),
                 if ((bookController.reviewRatingModel.value == null ||
                         bookController.reviewRatingModel.value!.content ==
                             null ||

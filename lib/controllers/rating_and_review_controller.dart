@@ -19,7 +19,7 @@ class RatingAndReviewController extends GetxController {
   }) async {
     try {
       isLoading = true;
-      showLoading("edit review");
+      // showLoading("edit review");
       update();
 
       final result = await _service.editReviewService(
@@ -55,7 +55,7 @@ class RatingAndReviewController extends GetxController {
       print("Edit Review Error: $e");
     } finally {
       isLoading = false;
-      hideLoading("edit review");
+      // hideLoading("edit review");
       update();
     }
   }
