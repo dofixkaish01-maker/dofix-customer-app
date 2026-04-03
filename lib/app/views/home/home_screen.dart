@@ -305,98 +305,98 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }),
                           ),
                         ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: horizontalPadding,
-                          right: horizontalPadding,
-                          bottom: 10
-                        ),
-                        child: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Special Offer",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          onTap: () async {
-                            // action
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            height: 170,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.12),
-                                  blurRadius: 14,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: Stack(
-                              children: [
-                                /// Image
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.asset(
-                                    'assets/banner/lottery.png',
-                                    width: double.infinity,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-
-                                /// Gradient
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.black.withOpacity(0.65),
-                                        Colors.transparent,
-                                      ],
-                                      begin: Alignment.bottomLeft,
-                                      end: Alignment.topRight,
-                                    ),
-                                  ),
-                                ),
-
-                                /// Content
-                                // Positioned(
-                                //   left: 16,
-                                //   bottom: 16,
-                                //   right: 16,
-                                //   child: Column(
-                                //     crossAxisAlignment:
-                                //         CrossAxisAlignment.start,
-                                //     children: [
-                                //       const Text(
-                                //         "Lucky Win",
-                                //         style: TextStyle(
-                                //           color: Colors.white,
-                                //           fontSize: 21,
-                                //           fontWeight: FontWeight.bold,
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      // // Padding(
+                      // //   padding: EdgeInsets.only(
+                      // //     left: horizontalPadding,
+                      // //     right: horizontalPadding,
+                      // //     bottom: 10
+                      // //   ),
+                      // //   child: const Align(
+                      // //     alignment: Alignment.centerLeft,
+                      // //     child: Text(
+                      // //       "Special Offer",
+                      // //       style: TextStyle(
+                      // //         fontSize: 18,
+                      // //         fontWeight: FontWeight.bold,
+                      // //       ),
+                      // //     ),
+                      // //   ),
+                      // // ),
+                      // // Padding(
+                      // //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      // //   child: InkWell(
+                      // //     borderRadius: BorderRadius.circular(20),
+                      // //     onTap: () async {
+                      // //       // action
+                      // //     },
+                      // //     child: AnimatedContainer(
+                      // //       duration: const Duration(milliseconds: 200),
+                      // //       height: 170,
+                      // //       decoration: BoxDecoration(
+                      // //         borderRadius: BorderRadius.circular(20),
+                      // //         boxShadow: [
+                      // //           BoxShadow(
+                      // //             color: Colors.black.withOpacity(0.12),
+                      // //             blurRadius: 14,
+                      // //             offset: const Offset(0, 6),
+                      // //           ),
+                      // //         ],
+                      // //       ),
+                      // //       child: Stack(
+                      // //         children: [
+                      // //           /// Image
+                      // //           ClipRRect(
+                      // //             borderRadius: BorderRadius.circular(20),
+                      // //             child: Image.asset(
+                      // //               'assets/banner/lottery.png',
+                      // //               width: double.infinity,
+                      // //               fit: BoxFit.fill,
+                      // //             ),
+                      // //           ),
+                      // //
+                      // //           /// Gradient
+                      // //           Container(
+                      // //             decoration: BoxDecoration(
+                      // //               borderRadius: BorderRadius.circular(20),
+                      // //               gradient: LinearGradient(
+                      // //                 colors: [
+                      // //                   Colors.black.withOpacity(0.65),
+                      // //                   Colors.transparent,
+                      // //                 ],
+                      // //                 begin: Alignment.bottomLeft,
+                      // //                 end: Alignment.topRight,
+                      // //               ),
+                      // //             ),
+                      // //           ),
+                      //
+                      //           /// Content
+                      //           // Positioned(
+                      //           //   left: 16,
+                      //           //   bottom: 16,
+                      //           //   right: 16,
+                      //           //   child: Column(
+                      //           //     crossAxisAlignment:
+                      //           //         CrossAxisAlignment.start,
+                      //           //     children: [
+                      //           //       const Text(
+                      //           //         "Lucky Win",
+                      //           //         style: TextStyle(
+                      //           //           color: Colors.white,
+                      //           //           fontSize: 21,
+                      //           //           fontWeight: FontWeight.bold,
+                      //           //         ),
+                      //           //       ),
+                      //           //     ],
+                      //           //   ),
+                      //           // ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 20,
+                      // ),
 
                       /// Our Features
                       Padding(
