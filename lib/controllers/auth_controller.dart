@@ -675,10 +675,10 @@ class AuthController extends GetxController implements GetxService {
   //   }
   // }
 
-  // RxString verifyOtpErrorMessage = ''.obs;
-  Future<void> VerifyOtp(String phone, String otp) async {
+  RxString verifyOtpErrorMessage = ''.obs;
 
-    // otpErrorMessage.value = '';
+  Future<void> VerifyOtp(String phone, String otp) async {
+    verifyOtpErrorMessage.value = '';
     if (otp.length != 4) {
       showCustomSnackBar("Please enter a valid 4-digit OTP", isError: true);
       return;
@@ -700,10 +700,11 @@ class AuthController extends GetxController implements GetxService {
       final errorText = responseData['error']?.toString().toLowerCase() ?? "";
       if (errorText.isNotEmpty) {
         hideLoading('error case');
-        showCustomSnackBar(
-          responseData['error']?.toString() ?? "Invalid or expired OTP",
-          isError: true,
-        );
+        verifyOtpErrorMessage.value = 'Invalid or Expire OTP';
+        // showCustomSnackBar(
+        //   responseData['error']?.toString() ?? "Invalid or expired OTP",
+        //   isError: true,
+        // );
         return;
       }
       // if (errorText.contains('invalid') || errorText.contains('expired')) {

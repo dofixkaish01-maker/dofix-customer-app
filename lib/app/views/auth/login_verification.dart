@@ -11,6 +11,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 class LoginVerificationScreen extends StatefulWidget {
   final String? phoneNo;
+
   const LoginVerificationScreen({super.key, this.phoneNo});
 
   @override
@@ -64,15 +65,12 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
       fieldWidth: 50,
       borderRadius: BorderRadius.circular(Dimensions.radius10),
       borderWidth: 1,
-
       activeColor: primaryBlue,
       selectedColor: primaryBlue,
       inactiveColor: primaryBlue,
-
       activeFillColor: Colors.white,
       selectedFillColor: primaryBlue.withOpacity(0.08),
       inactiveFillColor: Colors.white,
-
       errorBorderColor: Colors.red,
     );
 
@@ -109,17 +107,15 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
                       decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                          topLeft:
-                          Radius.circular(Dimensions.radius40),
+                          topLeft: Radius.circular(Dimensions.radius40),
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(
-                            Dimensions.paddingSizeDefault),
+                        padding:
+                            const EdgeInsets.all(Dimensions.paddingSizeDefault),
                         child: Column(
                           children: [
                             sizedBox50(),
-
                             Text(
                               "OTP Verification",
                               style: albertSansBold.copyWith(
@@ -127,21 +123,15 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
                                 color: primaryBlue,
                               ),
                             ),
-
                             sizedBox8(),
-
                             Text(
                               "Please enter OTP shared on your mobile number",
-                              style:
-                              albertSansBold.copyWith(
-                                fontSize:
-                                Dimensions.fontSize12,
+                              style: albertSansBold.copyWith(
+                                fontSize: Dimensions.fontSize12,
                                 color: Colors.black,
                               ),
                             ),
-
                             sizedBox30(),
-
                             PinCodeTextField(
                               appContext: context,
                               length: 4,
@@ -149,30 +139,30 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
                               keyboardType: TextInputType.number,
                               animationType: AnimationType.slide,
                               enableActiveFill: true,
-
                               textStyle: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600,
                               ),
-
                               pinTheme: otpPinTheme,
-
                               backgroundColor: Colors.transparent,
                               animationDuration:
-                              const Duration(milliseconds: 300),
-
+                                  const Duration(milliseconds: 300),
                               validator: (value) {
                                 if (value == null || value.length != 4) {
                                   return "Enter valid 4 digit OTP";
                                 }
                                 return null;
                               },
-
                               beforeTextPaste: (text) => true,
                             ),
-
+                            sizedBox10(),
+                            Align(
+                                alignment: AlignmentGeometry.topLeft,
+                                child: Text(
+                                  controller.verifyOtpErrorMessage.value,
+                                  style: TextStyle(color: Colors.red),
+                                )),
                             sizedBox20(),
-
                             CustomButtonWidget(
                               buttonText: "VERIFY",
                               onPressed: () {
@@ -184,33 +174,25 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
                                 }
                               },
                             ),
-
                             sizedBox20(),
-
                             TextButton(
-                              onPressed:
-                              _isResendEnabled ? _resendOtp : null,
+                              onPressed: _isResendEnabled ? _resendOtp : null,
                               child: RichText(
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text:
-                                      "Didn’t receive a code? ",
-                                      style:
-                                  albertSansBold.copyWith(
-                                  fontSize:
-                                  Dimensions.fontSize12,
-                                  color: Colors.black,
-                                ),
-                              ),
+                                      text: "Didn’t receive a code? ",
+                                      style: albertSansBold.copyWith(
+                                        fontSize: Dimensions.fontSize12,
+                                        color: Colors.black,
+                                      ),
+                                    ),
                                     TextSpan(
                                       text: _isResendEnabled
                                           ? "Resend"
                                           : "Resend in $_remainingTime sec",
-                                      style:
-                                      albertSansBold.copyWith(
-                                        fontSize:
-                                        Dimensions.fontSize12,
+                                      style: albertSansBold.copyWith(
+                                        fontSize: Dimensions.fontSize12,
                                         color: primaryBlue,
                                       ),
                                     ),
@@ -231,11 +213,11 @@ class _LoginVerificationScreenState extends State<LoginVerificationScreen> {
       },
     );
   }
+
   @override
   void dispose() {
     _timer?.cancel();
     _otpController.dispose();
     super.dispose();
   }
-
 }
