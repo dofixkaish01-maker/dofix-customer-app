@@ -7,7 +7,6 @@ import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/service_model.dart';
 import 'package:do_fix/utils/html_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../utils/dimensions.dart';
 // import 'get_rate_card_screen.dart'; // Unused
 
 class VariationsNewCard extends StatefulWidget {
@@ -49,6 +48,16 @@ class VariationsNewCard extends StatefulWidget {
 class _VariationsNewCardState extends State<VariationsNewCard> {
   final DashBoardController dashboardController =
       Get.find<DashBoardController>();
+
+  // bool isACService() {
+  //   final name = widget.serviceModel.name?.toLowerCase().trim() ?? "";
+  //   return name.startsWith("ac") || name.startsWith("air");
+  // }
+
+  bool isACService() {
+    return widget.serviceModel.categoryId ==
+        "40dfb6c2-df7b-4708-acc0-e096a1e0ff8e";
+  }
 
   bool isInCart = false;
 
@@ -195,6 +204,8 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isTablet = screenWidth >= 600;
     final bool isSmallPhone = screenWidth < 360;
+    print("Category ID: ${widget.serviceModel.categoryId}");
+    print("Category Name: ${widget.serviceModel.category?.name}");
 
     return GestureDetector(
         onTap: () {
@@ -367,7 +378,8 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                       if (widget.labourCharge > 0)
                         Padding(
                           padding: const EdgeInsets.only(left: 6),
-                          child: Text("+ ₹${widget.labourCharge.toStringAsFixed(0)} labour charge",
+                          child: Text(
+                            "+ ₹${widget.labourCharge.toStringAsFixed(0)} labour charge",
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.orange,
@@ -396,16 +408,28 @@ class _VariationsNewCardState extends State<VariationsNewCard> {
                   ///  Bottom Row
                   Row(
                     children: [
-                      Expanded(child: _buildRateCardButton(compact: compact)),
-                      const SizedBox(
-                        width: 20,
-                      ),
+                      if (isACService()) ...[
+                        Expanded(child: _buildRateCardButton(compact: compact)),
+                        const SizedBox(width: 20),
+                      ],
                       _buildCartButton(
                         width: compact ? 78 : 86,
                         height: 34,
                       ),
                     ],
-                  ),
+                  )
+                  // Row(
+                  //   children: [
+                  //     Expanded(child: _buildRateCardButton(compact: compact)),
+                  //     const SizedBox(
+                  //       width: 20,
+                  //     ),
+                  //     _buildCartButton(
+                  //       width: compact ? 78 : 86,
+                  //       height: 34,
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               );
             },
