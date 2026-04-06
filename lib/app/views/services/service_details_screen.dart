@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:do_fix/app/views/services/rating_summary.dart';
+import 'package:do_fix/app/views/services/ratting%20screen/rating_summary.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:do_fix/app/widgets/custom_floating_cart_widget.dart';
 import 'package:do_fix/app/widgets/service_container.dart';
@@ -19,7 +19,7 @@ import '../../../controllers/booking_controller.dart';
 import '../../../widgets/HtmlToFlutter.dart';
 import '../cart_screen/SubScreen/final_screen.dart';
 import '../home/component/variations_new_card.dart';
-import 'widgets/review_card_widget.dart';
+import 'ratting screen/review_card_widget.dart';
 
 class ServiceDetails extends StatefulWidget {
   const ServiceDetails({super.key});
@@ -389,20 +389,22 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                     if (hasReviews)
                                       Builder(
                                         builder: (context) {
-                                          //  Filter 4+ rating
-                                          final filteredReviews = reviews
-                                              .where((r) =>
-                                                  (r.reviewRating ?? 0) >= 4)
+                                          /// STEP 1: SORT (5 top)
+                                          final sortedReviews = [...reviews];
+                                          sortedReviews.sort((a, b) =>
+                                              (b.reviewRating ?? 0).compareTo(a.reviewRating ?? 0));
+
+                                          /// STEP 2: FILTER (optional - negative hata sakti ho)
+                                          final filteredReviews = sortedReviews
+                                              .where((r) => (r.reviewRating ?? 0) >= 3)
                                               .toList();
 
-                                          //  Limit to 10
+                                          /// STEP 3: LIMIT (max 10)
                                           final int displayCount =
-                                              filteredReviews.length > 10
-                                                  ? 10
-                                                  : filteredReviews.length;
+                                          filteredReviews.length > 10 ? 10 : filteredReviews.length;
 
-                                          final bool hasMore =
-                                              filteredReviews.length > 10;
+                                          /// STEP 4: SEE MORE CHECK
+                                          final bool hasMore = filteredReviews.length > 10;
 
                                           return Column(
                                             children: [
@@ -806,7 +808,6 @@ void showAddToCartSheet(BuildContext context, ServiceModel serviceModel) {
                         final String price =
                             serviceModel.variations?[index].price.toString() ??
                                 "";
-
                         return Row(
                           children: [
                             Expanded(

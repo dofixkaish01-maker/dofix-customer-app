@@ -4,7 +4,7 @@ import 'package:do_fix/app/views/bookingScreen/widgets/custom_invoide_button.dar
 import 'package:do_fix/app/views/helpSupport/faq_support_screen.dart';
 import 'package:do_fix/app/widgets/custom_appbar.dart';
 import 'package:do_fix/app/widgets/custom_booking_details_items.dart';
-import 'package:do_fix/app/widgets/review_input_widget.dart';
+import 'package:do_fix/app/views/services/ratting%20screen/review_input_widget.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/booking_model.dart';
