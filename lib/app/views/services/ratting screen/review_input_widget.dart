@@ -3,7 +3,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/utils/theme.dart';
-import '../views/helpSupport/faq_support_screen.dart';
+import '../../helpSupport/faq_support_screen.dart';
 
 class ReviewScreen extends StatefulWidget {
   final String bookingId;
