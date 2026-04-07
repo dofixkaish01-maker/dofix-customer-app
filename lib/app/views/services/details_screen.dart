@@ -72,6 +72,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return h * 0.30;
   }
 
+  bool isACService() {
+    return widget.serviceModel.categoryId ==
+        "40dfb6c2-df7b-4708-acc0-e096a1e0ff8e";
+  }
+
   @override
   Widget build(BuildContext context) {
     /// Percentage Calculation (KEEP)
@@ -738,577 +743,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
               },
             ),
           ),
-          // SingleChildScrollView(
-          //   physics: const BouncingScrollPhysics(),
-          //   padding: const EdgeInsets.only(bottom: 130),
-          //   child: LayoutBuilder(
-          //     builder: (context, c) {
-          //       // final w = c.maxWidth;
-          //       // final bool isTablet = w >= 600;
-          //       // final bool isWide = w >= 900;
-          //       //
-          //       // final double pagePad = isWide ? 24 : (isTablet ? 18 : 16);
-          //       // final double maxW = isWide ? 860 : double.infinity;
-          //       // final double titleSize = isTablet ? 22 : 20;
-          //       // final double priceSize = isTablet ? 26 : 24;
-          //       // final double bodySize  = isTablet ? 14 : 13;
-          //       //
-          //       // final Color primaryText   = Colors.black.withOpacity(0.90);
-          //       // final Color secondaryText = Colors.black.withOpacity(0.60);
-          //       //
-          //       final double headerH = isWide
-          //           ? MediaQuery.of(context).size.height * 0.40
-          //           : (isTablet
-          //           ? MediaQuery.of(context).size.height * 0.34
-          //           : MediaQuery.of(context).size.height * 0.30);
-          //       final w = c.maxWidth;
-          //       final bool isTabletL = w >= 600;
-          //       final bool isWideL = w >= 900;
-          //
-          //       final double pagePadL = isWideL ? 24 : (isTabletL ? 18 : 16);
-          //       final double headerHL = isWideL
-          //           ? MediaQuery.of(context).size.height * 0.40
-          //           : (isTabletL
-          //           ? MediaQuery.of(context).size.height * 0.34
-          //           : MediaQuery.of(context).size.height * 0.30);
-          //
-          //       final double titleSize = isTabletL ? 22 : 20;
-          //       final double priceSize = isTabletL ? 26 : 24;
-          //       final double bodySize  = isTabletL ? 14 : 13;
-          //
-          //       final Color primaryText   = Colors.black.withOpacity(0.90);
-          //       final Color secondaryText = Colors.black.withOpacity(0.60);
-          //
-          //       Widget sectionTitle(String t) => Padding(
-          //         padding: const EdgeInsets.only(bottom: 10),
-          //         child: Text(
-          //           t,
-          //           style: TextStyle(
-          //             fontSize: isTablet ? 18 : 17,
-          //             fontWeight: FontWeight.w800,
-          //             color: Colors.black.withOpacity(0.92),
-          //           ),
-          //         ),
-          //       );
-          //
-          //       Widget card({required Widget child}) => Container(
-          //         padding: EdgeInsets.all(isTablet ? 18 : 14),
-          //         decoration: BoxDecoration(
-          //           color: Colors.white,
-          //           borderRadius: BorderRadius.circular(20),
-          //           border: Border.all(color: Colors.black.withOpacity(0.06)),
-          //           boxShadow: [
-          //             BoxShadow(
-          //               color: Colors.black.withOpacity(0.05),
-          //               blurRadius: 16,
-          //               offset: const Offset(0, 10),
-          //             ),
-          //           ],
-          //         ),
-          //         child: child,
-          //       );
-          //
-          //       Widget chip({
-          //         required Widget child,
-          //         Color? bg,
-          //         Border? border,
-          //       }) =>
-          //           Container(
-          //             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          //             decoration: BoxDecoration(
-          //               color: bg ?? Colors.white.withOpacity(0.92),
-          //               borderRadius: BorderRadius.circular(999),
-          //               border: border,
-          //             ),
-          //             child: child,
-          //           );
-          //
-          //       return Center(
-          //         child: ConstrainedBox(
-          //           constraints: BoxConstraints(maxWidth: w),
-          //           child: Column(
-          //             crossAxisAlignment: CrossAxisAlignment.start,
-          //             children: [
-          //               /// ===================== PREMIUM HERO HEADER =====================
-          //               Padding(
-          //                 padding: EdgeInsets.fromLTRB(pagePad, 12, pagePad, 0),
-          //                 child: ClipRRect(
-          //                   borderRadius: BorderRadius.circular(isTablet ? 22 : 18),
-          //                   child: Stack(
-          //                     children: [
-          //                       SizedBox(
-          //                         height: headerH,
-          //                         width: double.infinity,
-          //                         child: Image.network(
-          //                           coverVariantImagePath + widget.coverImage,
-          //                           fit: BoxFit.cover,
-          //                           errorBuilder: (_, __, ___) => Container(
-          //                             color: Colors.grey.shade200,
-          //                             child: const Center(child: Icon(Icons.image, size: 40)),
-          //                           ),
-          //                         ),
-          //                       ),
-          //
-          //                       /// 🔥 Rating bottom-left (Urban style)
-          //                       if (widget.rating != "0")
-          //                         Positioned(
-          //                           left: 14,
-          //                           bottom: 14,
-          //                           child: Container(
-          //                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          //                             decoration: BoxDecoration(
-          //                               color: Colors.black.withOpacity(0.65),
-          //                               borderRadius: BorderRadius.circular(8),
-          //                             ),
-          //                             child: Row(
-          //                               mainAxisSize: MainAxisSize.min,
-          //                               children: [
-          //                                 const Icon(Icons.star, size: 14, color: Colors.amber),
-          //                                 const SizedBox(width: 4),
-          //                                 Text(
-          //                                   widget.rating,
-          //                                   style: const TextStyle(
-          //                                     color: Colors.white,
-          //                                     fontWeight: FontWeight.w700,
-          //                                     fontSize: 12,
-          //                                   ),
-          //                                 ),
-          //                                 const SizedBox(width: 6),
-          //                                 Text(
-          //                                   "(${widget.reviewCount})",
-          //                                   style: const TextStyle(
-          //                                     color: Colors.white70,
-          //                                     fontSize: 12,
-          //                                   ),
-          //                                 ),
-          //                               ],
-          //                             ),
-          //                           ),
-          //                         ),
-          //                     ],
-          //                   ),
-          //                 ),
-          //               ),
-          //               SizedBox(height: 16),
-          //
-          //               Padding(
-          //                 padding: EdgeInsets.symmetric(horizontal: pagePad),
-          //                 child: Text(
-          //                   widget.variationName,
-          //                   style: TextStyle(
-          //                     fontSize: titleSize,
-          //                     fontWeight: FontWeight.w800,
-          //                     color: primaryText,
-          //                     height: 1.3,
-          //                   ),
-          //                 ),
-          //               ),
-          //
-          //               const SizedBox(height: 16),
-          //
-          //               /// ===================== CONTENT =====================
-          //               Padding(
-          //                 padding: EdgeInsets.symmetric(horizontal: pagePad),
-          //                 child: Column(
-          //                   crossAxisAlignment: CrossAxisAlignment.start,
-          //                   children: [
-          //                     /// ===== Rating detail card (KEEP condition)
-          //                     // if (rating != "0") ...[
-          //                     //   card(
-          //                     //     child: Row(
-          //                     //       children: [
-          //                     //         // stars (KEEP same logic)
-          //                     //         Row(
-          //                     //           children: List.generate(5, (index) {
-          //                     //             double ratingValue =
-          //                     //                 double.tryParse(rating) ?? 0.0;
-          //                     //
-          //                     //             if (index < ratingValue.floor()) {
-          //                     //               return const Icon(Icons.star,
-          //                     //                   color: Colors.amber, size: 20);
-          //                     //             } else if (index < ratingValue &&
-          //                     //                 index + 1 > ratingValue) {
-          //                     //               return const Icon(Icons.star_half,
-          //                     //                   color: Colors.amber, size: 20);
-          //                     //             } else {
-          //                     //               return const Icon(Icons.star_border,
-          //                     //                   color: Colors.amber, size: 20);
-          //                     //             }
-          //                     //           }),
-          //                     //         ),
-          //                     //         const SizedBox(width: 10),
-          //                     //         Text(
-          //                     //           rating,
-          //                     //           style: TextStyle(
-          //                     //             fontSize: isTablet ? 16 : 15,
-          //                     //             fontWeight: FontWeight.w900,
-          //                     //           ),
-          //                     //         ),
-          //                     //         const SizedBox(width: 8),
-          //                     //         Container(
-          //                     //           padding: const EdgeInsets.symmetric(
-          //                     //               horizontal: 10, vertical: 6),
-          //                     //           decoration: BoxDecoration(
-          //                     //             color: Colors.grey.shade100,
-          //                     //             borderRadius: BorderRadius.circular(12),
-          //                     //           ),
-          //                     //           child: Text(
-          //                     //             "$reviewCount Reviews",
-          //                     //             style: TextStyle(
-          //                     //               fontSize: 12,
-          //                     //               color: Colors.grey.shade700,
-          //                     //               fontWeight: FontWeight.w700,
-          //                     //             ),
-          //                     //           ),
-          //                     //         ),
-          //                     //         const Spacer(),
-          //                     //         const Icon(Icons.verified,
-          //                     //             color: Colors.green, size: 18),
-          //                     //       ],
-          //                     //     ),
-          //                     //   ),
-          //                     //   const SizedBox(height: 14),
-          //                     // ],
-          //
-          //                     /// ===== Price card (PREMIUM + You save included )
-          //                     SizedBox(height: 14),
-          //
-          //                     Column(
-          //                       crossAxisAlignment: CrossAxisAlignment.start,
-          //                       children: [
-          //                         Row(
-          //                           crossAxisAlignment: CrossAxisAlignment.end,
-          //                           children: [
-          //                             Text(
-          //                               "₹${widget.discountedPrice}",
-          //                               style: TextStyle(
-          //                                 fontSize: isTablet ? 26 : 24,
-          //                                 fontWeight: FontWeight.w900,
-          //                               ),
-          //                             ),
-          //                             const SizedBox(width: 10),
-          //                             Text(
-          //                               "₹${widget.mrpPrice}",
-          //                               style: const TextStyle(
-          //                                 decoration: TextDecoration.lineThrough,
-          //                                 color: Colors.grey,
-          //                                 fontSize: 15,
-          //                                 fontWeight: FontWeight.w600,
-          //                               ),
-          //                             ),
-          //                             const SizedBox(width: 10),
-          //                             if (percentOff > 0)
-          //                               Text(
-          //                                 "$percentOff% OFF",
-          //                                 style: const TextStyle(
-          //                                   color: Colors.green,
-          //                                   fontSize: 14,
-          //                                   fontWeight: FontWeight.w800,
-          //                                 ),
-          //                               ),
-          //                           ],
-          //                         ),
-          //
-          //                         if (widget.duration.isNotEmpty) ...[
-          //                           const SizedBox(height: 6),
-          //                           Row(
-          //                             children: [
-          //                               const Icon(Icons.access_time, size: 16, color: Colors.grey),
-          //                               const SizedBox(width: 6),
-          //                               Text(
-          //                                 widget.duration,
-          //                                 style: const TextStyle(
-          //                                   color: Colors.grey,
-          //                                   fontWeight: FontWeight.w600,
-          //                                 ),
-          //                               ),
-          //                             ],
-          //                           ),
-          //                         ],
-          //
-          //                         if (percentOff > 0) ...[
-          //                           const SizedBox(height: 6),
-          //                           Text(
-          //                             "You save ₹${(mrp - discountPrice).toStringAsFixed(0)}",
-          //                             style: const TextStyle(
-          //                               color: Colors.green,
-          //                               fontWeight: FontWeight.w700,
-          //                               fontSize: 13,
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       ],
-          //                     ),
-          //
-          //                     const SizedBox(height: 18),
-          //
-          //                     /// ===== About
-          //                     sectionTitle("About this service"),
-          //                      Text(
-          //                         widget.description,
-          //                         style: TextStyle(
-          //                           height: 1.65,
-          //                           fontSize: isTablet ? 14 : 13,
-          //                           color: Colors.black.withOpacity(0.78),
-          //                           fontWeight: FontWeight.w500,
-          //                         ),
-          //                       ),
-          //
-          //                     const SizedBox(height: 18),
-          //
-          //                     /// ===== Helpful info / trust row (UI only)
-          //                     card(
-          //                       child: Row(
-          //                         children: [
-          //                           Expanded(
-          //                             child: Row(
-          //                               children: [
-          //                                 Container(
-          //                                   height: 36,
-          //                                   width: 36,
-          //                                   decoration: BoxDecoration(
-          //                                     color:
-          //                                     const Color(0xff3683ab).withOpacity(0.10),
-          //                                     borderRadius: BorderRadius.circular(12),
-          //                                   ),
-          //                                   child: const Icon(Icons.security_rounded,
-          //                                       color: Color(0xff3683ab), size: 20),
-          //                                 ),
-          //                                 const SizedBox(width: 10),
-          //                                 Expanded(
-          //                                   child: Text(
-          //                                     "Verified professionals & quality service",
-          //                                     style: TextStyle(
-          //                                       fontWeight: FontWeight.w700,
-          //                                       color: Colors.black.withOpacity(0.85),
-          //                                     ),
-          //                                   ),
-          //                                 ),
-          //                               ],
-          //                             ),
-          //                           ),
-          //                           const SizedBox(width: 12),
-          //                           Expanded(
-          //                             child: Row(
-          //                               children: [
-          //                                 Container(
-          //                                   height: 36,
-          //                                   width: 36,
-          //                                   decoration: BoxDecoration(
-          //                                     color: Colors.green.withOpacity(0.10),
-          //                                     borderRadius: BorderRadius.circular(12),
-          //                                   ),
-          //                                   child: const Icon(Icons.timer_rounded,
-          //                                       color: Colors.green, size: 20),
-          //                                 ),
-          //                                 const SizedBox(width: 10),
-          //                                 Expanded(
-          //                                   child: Text(
-          //                                     "On-time service updates",
-          //                                     style: TextStyle(
-          //                                       fontWeight: FontWeight.w700,
-          //                                       color: Colors.black.withOpacity(0.85),
-          //                                     ),
-          //                                   ),
-          //                                 ),
-          //                               ],
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       ),
-          //                     ),
-          //                     const SizedBox(height: 18),
-          //
-          //                     sectionTitle("Reviews"),
-          //                     const SizedBox(height: 12),
-          //
-          //                     Obx(() {
-          //                       final reviewList =
-          //                           bookController.reviewRatingModel.value?.content?[0].reviews ?? [];
-          //
-          //                       if (reviewList.isEmpty) {
-          //                         return Text(
-          //                           "No reviews available",
-          //                           style: TextStyle(color: Colors.grey.shade600),
-          //                         );
-          //                       }
-          //
-          //                       final limitedReviews =
-          //                       reviewList.length > 10 ? reviewList.sublist(0, 10) : reviewList;
-          //
-          //                       String safeUserLabel(dynamic r) {
-          //                         final readable = (r.readableId ?? "").toString().trim();
-          //                         if (readable.isNotEmpty) return readable;
-          //
-          //                         final cid = (r.customerId ?? "").toString().trim();
-          //                         if (cid.isNotEmpty) {
-          //                           return cid.length > 8 ? "User • ${cid.substring(0, 8)}" : "User • $cid";
-          //                         }
-          //                         return "User";
-          //                       }
-          //
-          //                       String safeInitial(String label) {
-          //                         final t = label.trim();
-          //                         if (t.isEmpty) return "U";
-          //                         return t[0].toUpperCase();
-          //                       }
-          //
-          //                       String formatDate(dynamic d) {
-          //                         if (d == null) return "";
-          //                         try {
-          //                           final dt = d as DateTime;
-          //                           return "${dt.day.toString().padLeft(2, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.year}";
-          //                         } catch (_) {
-          //                           return "";
-          //                         }
-          //                       }
-          //
-          //                       return Container(
-          //                         decoration: BoxDecoration(
-          //                           color: Colors.white,
-          //                           borderRadius: BorderRadius.circular(16),
-          //                           border: Border.all(color: Colors.black.withOpacity(0.06)),
-          //                         ),
-          //                         child: Column(
-          //                           children: List.generate(limitedReviews.length, (index) {
-          //                             final review = limitedReviews[index];
-          //
-          //                             final label = safeUserLabel(review);
-          //                             final initial = safeInitial(label);
-          //
-          //                             final int ratingValue = (review.reviewRating is int)
-          //                                 ? (review.reviewRating as int)
-          //                                 : int.tryParse(review.reviewRating?.toString() ?? "0") ?? 0;
-          //
-          //                             final comment = (review.reviewComment ?? "").toString();
-          //                             final dateText = formatDate(review.createdAt);
-          //
-          //                             return Column(
-          //                               children: [
-          //                                 Padding(
-          //                                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          //                                   child: Column(
-          //                                     crossAxisAlignment: CrossAxisAlignment.start,
-          //                                     children: [
-          //                                       /// Top row: avatar + name/date + rating
-          //                                       Row(
-          //                                         crossAxisAlignment: CrossAxisAlignment.start,
-          //                                         children: [
-          //                                           CircleAvatar(
-          //                                             radius: 18,
-          //                                             backgroundColor:
-          //                                             const Color(0xff3683ab).withOpacity(0.12),
-          //                                             child: Text(
-          //                                               initial,
-          //                                               style: const TextStyle(
-          //                                                 fontWeight: FontWeight.w800,
-          //                                                 color: Color(0xff3683ab),
-          //                                               ),
-          //                                             ),
-          //                                           ),
-          //                                           const SizedBox(width: 10),
-          //
-          //                                           Expanded(
-          //                                             child: Column(
-          //                                               crossAxisAlignment: CrossAxisAlignment.start,
-          //                                               children: [
-          //                                                 Text(
-          //                                                   label,
-          //                                                   maxLines: 1,
-          //                                                   overflow: TextOverflow.ellipsis,
-          //                                                   style: const TextStyle(
-          //                                                     fontWeight: FontWeight.w700,
-          //                                                     fontSize: 14,
-          //                                                   ),
-          //                                                 ),
-          //                                                 if (dateText.isNotEmpty)
-          //                                                   Padding(
-          //                                                     padding: const EdgeInsets.only(top: 2),
-          //                                                     child: Text(
-          //                                                       dateText,
-          //                                                       style: TextStyle(
-          //                                                         fontSize: 12,
-          //                                                         color: Colors.black.withOpacity(0.55),
-          //                                                         fontWeight: FontWeight.w500,
-          //                                                       ),
-          //                                                     ),
-          //                                                   ),
-          //                                               ],
-          //                                             ),
-          //                                           ),
-          //
-          //                                           /// Rating pill (Urban type)
-          //                                           Container(
-          //                                             padding: const EdgeInsets.symmetric(
-          //                                                 horizontal: 8, vertical: 4),
-          //                                             decoration: BoxDecoration(
-          //                                               color: Colors.green.withOpacity(0.10),
-          //                                               borderRadius: BorderRadius.circular(10),
-          //                                               border: Border.all(
-          //                                                 color: Colors.green.withOpacity(0.25),
-          //                                               ),
-          //                                             ),
-          //                                             child: Row(
-          //                                               mainAxisSize: MainAxisSize.min,
-          //                                               children: [
-          //                                                 const Icon(Icons.star,
-          //                                                     size: 14, color: Colors.green),
-          //                                                 const SizedBox(width: 4),
-          //                                                 Text(
-          //                                                   ratingValue.toString(),
-          //                                                   style: const TextStyle(
-          //                                                     fontWeight: FontWeight.w800,
-          //                                                     color: Colors.green,
-          //                                                     fontSize: 12,
-          //                                                   ),
-          //                                                 ),
-          //                                               ],
-          //                                             ),
-          //                                           ),
-          //                                         ],
-          //                                       ),
-          //
-          //                                       /// Comment
-          //                                       const SizedBox(height: 10),
-          //                                       Text(
-          //                                         comment.isNotEmpty ? comment : "No comment",
-          //                                         style: TextStyle(
-          //                                           height: 1.5,
-          //                                           fontSize: 13,
-          //                                           color: Colors.black.withOpacity(
-          //                                               comment.isNotEmpty ? 0.78 : 0.45),
-          //                                           fontWeight: FontWeight.w500,
-          //                                         ),
-          //                                       ),
-          //                                     ],
-          //                                   ),
-          //                                 ),
-          //
-          //                                 /// Divider between items (Urban style)
-          //                                 if (index != limitedReviews.length - 1)
-          //                                   Divider(
-          //                                     height: 1,
-          //                                     thickness: 1,
-          //                                     color: Colors.black.withOpacity(0.06),
-          //                                   ),
-          //                               ],
-          //                             );
-          //                           }),
-          //                         ),
-          //                       );
-          //                     }),
-          //
-          //                     const SizedBox(height: 40),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ],
-          //           ),
-          //         ),
-          //       );
-          //     },
-          //   ),
-          // ),
 
           /// BOTTOM ADD / REMOVE BUTTON (KEEP logic/conditions)
           Positioned(
@@ -1420,62 +854,63 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             ),
 
                             const SizedBox(height: 10),
+                            if (isACService()) ...[
+                              InkWell(
+                                borderRadius: BorderRadius.circular(14),
+                                onTap: () async {
+                                  final Uri url = Uri.parse(
+                                    "https://ac-repair-landing-page.dofix.in/rateCard.html",
+                                  );
 
-                            InkWell(
-                              borderRadius: BorderRadius.circular(14),
-                              onTap: () async {
-                                final Uri url = Uri.parse(
-                                  "https://ac-repair-landing-page.dofix.in/rateCard.html",
-                                );
+                                  final launched = await launchUrl(
+                                    url,
+                                    mode: LaunchMode.inAppWebView,
+                                  );
 
-                                final launched = await launchUrl(
-                                  url,
-                                  mode: LaunchMode.inAppWebView,
-                                );
-
-                                if (!launched) {
-                                  debugPrint("Could not launch $url");
-                                }
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 14),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color(0xff3683ab).withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: const Color(0xff3683ab)
-                                        .withOpacity(0.30),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(
-                                      Icons.receipt_long_rounded,
-                                      size: 18,
-                                      color: Color(0xff3683ab),
+                                  if (!launched) {
+                                    debugPrint("Could not launch $url");
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 14),
+                                  decoration: BoxDecoration(
+                                    color:
+                                    const Color(0xff3683ab).withOpacity(0.08),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color: const Color(0xff3683ab)
+                                          .withOpacity(0.30),
                                     ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      "View Rate Card",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Icon(
+                                        Icons.receipt_long_rounded,
+                                        size: 18,
                                         color: Color(0xff3683ab),
                                       ),
-                                    ),
-                                    SizedBox(width: 6),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 14,
-                                      color: Color(0xff3683ab),
-                                    ),
-                                  ],
+                                      SizedBox(width: 8),
+                                      Text(
+                                        "View Rate Card",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xff3683ab),
+                                        ),
+                                      ),
+                                      SizedBox(width: 6),
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 14,
+                                        color: Color(0xff3683ab),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                            ]
                           ],
                         );
                       },
