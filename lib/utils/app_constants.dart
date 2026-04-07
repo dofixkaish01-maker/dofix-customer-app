@@ -75,4 +75,6 @@ class AppConstants {
 
   // user register complete kiya hai ye nhi shared_pref me save
   static const String registerCompleteKey = 'register_complete';
+  static const String getCustomerReviews = 'api/v1/customer/review/user-reviews';
+
 }

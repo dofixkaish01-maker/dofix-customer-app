@@ -5,7 +5,7 @@ import 'package:do_fix/app/widgets/custom_floating_cart_widget.dart';
 import 'package:do_fix/app/widgets/service_container.dart';
 import 'package:do_fix/controllers/auth_controller.dart';
 import 'package:do_fix/model/service_model.dart';
-import 'package:do_fix/model/service_reviews_model.dart' hide RatingSummary;
+import 'package:do_fix/model/retting%20&%20review%20model/service_reviews_model.dart' hide RatingSummary;
 import 'package:do_fix/utils/html_utils.dart';
 import 'package:do_fix/utils/sizeboxes.dart';
 import 'package:do_fix/widgets/custom_snack_bar.dart';
