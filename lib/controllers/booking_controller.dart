@@ -92,11 +92,61 @@ class BookingController extends GetxController implements GetxService {
     selectedImages.remove(image);
   }
 
+  // Future<void> saveBookingReview() async {
+  //   isSubmittingReview.value = true;
+  //   // API call here
+  //   await Future.delayed(const Duration(seconds: 2));
+  //   isSubmittingReview.value = false;
+  // }
+
   Future<void> saveBookingReview() async {
+    if (bookingId.isEmpty || serviceId.isEmpty) {
+      showCustomSnackBar("Booking or service details are missing", isError: true);
+      return;
+    }
+
+    if (userRating <= 0) {
+      showCustomSnackBar("Please select a rating", isError: true);
+      return;
+    }
+
     isSubmittingReview.value = true;
-    // API call here
-    await Future.delayed(const Duration(seconds: 2));
-    isSubmittingReview.value = false;
+    update();
+
+    try {
+      final Response response = await bookingRepo.saveBookingReview(
+        bookingId: bookingId,
+        serviceId: serviceId,
+        reviewRating: userRating.toString(),
+        reviewComment: reviewController.text.trim(),
+      );
+
+      log("Save Review API Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        showCustomSnackBar(
+          "Review submitted successfully",
+          isSuccess: true,
+          isError: false,
+        );
+
+        reviewController.clear();
+        selectedRating = null;
+        userRating.value = 0;
+
+        update();
+      } else {
+        final body = _parseResponseBody(response.body);
+        final message = body?['message'] ?? "Failed to submit review";
+        showCustomSnackBar(message, isError: true);
+      }
+    } catch (e, stackTrace) {
+      log("Error in saveBookingReview: $e", stackTrace: stackTrace);
+      showCustomSnackBar("Error submitting review: $e", isError: true);
+    } finally {
+      isSubmittingReview.value = false;
+      update();
+    }
   }
 
   void setSelectedRating(int? rating) {

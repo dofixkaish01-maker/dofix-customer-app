@@ -289,7 +289,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   List<TimeOfDay> _generateTimeSlots(DateTime date) {
     List<TimeOfDay> slots = [];
-    int startHour = 10;
+    int startHour = 9;
     int endHour = 20;
     for (int hour = startHour; hour <= endHour; hour++) {
       slots.add(TimeOfDay(hour: hour, minute: 0));
