@@ -289,7 +289,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   List<TimeOfDay> _generateTimeSlots(DateTime date) {
     List<TimeOfDay> slots = [];
-    int startHour = 9;
+    int startHour = 10;
     int endHour = 20;
     for (int hour = startHour; hour <= endHour; hour++) {
       slots.add(TimeOfDay(hour: hour, minute: 0));
@@ -2390,6 +2390,7 @@ class _BookingScreenState extends State<BookingScreen> {
       ],
     );
   }
+
   Widget _buildBookingHeader(BuildContext context) {
     return Row(
       children: [
