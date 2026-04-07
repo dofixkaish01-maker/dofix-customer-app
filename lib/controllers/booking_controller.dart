@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
-import 'package:camera/camera.dart';
 import 'package:do_fix/data/repo/booking_repo.dart';
 import 'package:do_fix/model/booking_setup_model.dart';
 import 'package:do_fix/model/cancel_booking_model.dart';
@@ -13,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../model/booking_model.dart';
 
 class BookingController extends GetxController implements GetxService {
@@ -61,23 +58,19 @@ class BookingController extends GetxController implements GetxService {
   /// Pick multiple images (maxImages optional)
   Future<void> pickImages({int maxImages = 5}) async {
     try {
-      final List<XFile>? images =
-          await _picker.pickMultiImage(imageQuality: 70);
-      if (images != null) {
-        // Limit total images to maxImages
-        final availableSlots = maxImages - selectedImages.length;
-        if (availableSlots <= 0) {
-          Get.snackbar(
-            "Limit Reached",
-            "You can select up to $maxImages images only.",
-            snackPosition: SnackPosition.BOTTOM,
-          );
-          return;
-        }
-
-        // Add only available number of images
-        selectedImages.addAll(images.take(availableSlots));
+      final List<XFile> images = await _picker.pickMultiImage(imageQuality: 70);
+      // Limit total images to maxImages
+      final availableSlots = maxImages - selectedImages.length;
+      if (availableSlots <= 0) {
+        Get.snackbar(
+          "Limit Reached",
+          "You can select up to $maxImages images only.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
       }
+      // Add only available number of images
+      selectedImages.addAll(images.take(availableSlots));
     } catch (e) {
       Get.snackbar(
         "Error",
@@ -93,10 +86,34 @@ class BookingController extends GetxController implements GetxService {
   }
 
   Future<void> saveBookingReview() async {
-    isSubmittingReview.value = true;
-    // API call here
-    await Future.delayed(const Duration(seconds: 2));
-    isSubmittingReview.value = false;
+    try {
+      isSubmittingReview.value = true;
+
+      final response = await bookingRepo.saveBookingReview(
+        bookingId: bookingId,
+        serviceId: serviceId,
+        reviewRating: '${userRating.value}',
+        reviewComment: reviewController.text.trim(),
+      );
+
+      log("Review API Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        showCustomSnackBar("Review submitted successfully", isSuccess: true);
+
+        // Reset after success
+        userRating.value = 0;
+        reviewController.clear();
+        selectedImages.clear();
+      } else {
+        showCustomSnackBar("Failed to submit review", isError: true);
+      }
+    } catch (e) {
+      log("Error in saveBookingReview: $e");
+      showCustomSnackBar("Something went wrong", isError: true);
+    } finally {
+      isSubmittingReview.value = false;
+    }
   }
 
   void setSelectedRating(int? rating) {

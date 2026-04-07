@@ -8,7 +8,6 @@ import 'package:do_fix/app/views/services/ratting%20screen/review_input_widget.d
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/controllers/dashboard_controller.dart';
 import 'package:do_fix/model/booking_model.dart';
-import 'package:do_fix/model/review_rating_model.dart';
 import 'package:do_fix/utils/app_constants.dart';
 import 'package:do_fix/utils/string_extensions.dart';
 import 'package:do_fix/widgets/custom_edit_review_bottomsheet.dart';
@@ -21,7 +20,6 @@ import '../../../utils/dimensions.dart';
 import '../../../utils/theme.dart';
 import '../../../widgets/custom_snack_bar.dart';
 import '../cart_screen/SubScreen/final_screen.dart';
-
 import '../services/service_details_screen.dart';
 
 //use for open razor pay payment getway

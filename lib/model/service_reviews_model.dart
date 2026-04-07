@@ -181,7 +181,6 @@ class Customer {
     if (profileImageFullPath?.isNotEmpty == true) {
       return profileImageFullPath!;
     }
-
     // Construct from filename (Review API)
     if (profileImage?.isNotEmpty == true) {
       return "https://panel.dofix.in/customer/profile_img/$profileImage";
