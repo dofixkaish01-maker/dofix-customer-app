@@ -322,38 +322,26 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               /// About Service
                               _buildSectionHeader("About the Service"),
                               const SizedBox(height: 10),
-                              Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(isTablet ? 18 : 14),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(18),
-                                  border: Border.all(
-                                    color: Colors.black.withOpacity(0.05),
-                                  ),
-                                ),
-                                child: controller.serviceModel.description !=
-                                            null &&
-                                        HtmlUtils.containsHtml(
-                                          controller.serviceModel.description!,
-                                        )
-                                    ? HtmlToFlutter(
-                                        htmlText: controller
-                                                .serviceModel.description ??
-                                            "",
+                              controller.serviceModel.description != null &&
+                                      HtmlUtils.containsHtml(
+                                        controller.serviceModel.description!,
                                       )
-                                    : Text(
-                                        HtmlUtils.stripHtmlIfPresent(
+                                  ? HtmlToFlutter(
+                                      htmlText:
                                           controller.serviceModel.description ??
                                               "",
-                                        ),
-                                        style: TextStyle(
-                                          color: Colors.black.withOpacity(0.68),
-                                          fontSize: isTablet ? 14.5 : 13.2,
-                                          height: 1.6,
-                                        ),
+                                    )
+                                  : Text(
+                                      HtmlUtils.stripHtmlIfPresent(
+                                        controller.serviceModel.description ??
+                                            "",
                                       ),
-                              ),
+                                      style: TextStyle(
+                                        color: Colors.black.withOpacity(0.68),
+                                        fontSize: isTablet ? 14.5 : 13.2,
+                                        height: 1.6,
+                                      ),
+                                    ),
 
                               const SizedBox(height: 20),
 

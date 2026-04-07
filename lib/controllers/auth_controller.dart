@@ -151,7 +151,6 @@ class AuthController extends GetxController implements GetxService {
   //   }
   // }
 
-
   RxString otpErrorMessage = ''.obs;
 
   Future<void> sendOtpApi(String phone) async {
@@ -189,9 +188,9 @@ class AuthController extends GetxController implements GetxService {
       }
 
       final String message =
-      responseData["message"]?.toString().trim().isNotEmpty == true
-          ? responseData["message"].toString().trim()
-          : "Something went wrong. Please try again.";
+          responseData["message"]?.toString().trim().isNotEmpty == true
+              ? responseData["message"].toString().trim()
+              : "Something went wrong. Please try again.";
 
       debugPrint("Parsed message: $message");
 
@@ -225,7 +224,6 @@ class AuthController extends GetxController implements GetxService {
       update();
     }
   }
-
 
 //   Future<void> sendOtpApi(String phone) async {
 //     if (phone.trim().length != 10) {
@@ -582,7 +580,6 @@ class AuthController extends GetxController implements GetxService {
     }
   }
 
-
   // Future<void> verifyOtp(String phone, String otp) async {
   //   ApiClient apiClient = ApiClient(
   //     appBaseUrl: AppConstants.baseUrl,
@@ -678,7 +675,10 @@ class AuthController extends GetxController implements GetxService {
   //   }
   // }
 
+  RxString verifyOtpErrorMessage = ''.obs;
+
   Future<void> VerifyOtp(String phone, String otp) async {
+    verifyOtpErrorMessage.value = '';
     if (otp.length != 4) {
       showCustomSnackBar("Please enter a valid 4-digit OTP", isError: true);
       return;
@@ -692,16 +692,25 @@ class AuthController extends GetxController implements GetxService {
       debugPrint("FCM Token while verify: $fcmToken");
 
       Response response =
-      await authRepo.verifyOtp(phone.trim(), otp.trim(), fcmToken ?? "");
+          await authRepo.verifyOtp(phone.trim(), otp.trim(), fcmToken ?? "");
 
       final responseData = jsonDecode(response.body);
       debugPrint("Verify OTP Response: $responseData");
 
       final errorText = responseData['error']?.toString().toLowerCase() ?? "";
-      if (errorText.contains('invalid') || errorText.contains('expired')) {
-        showCustomSnackBar("Invalid or expired OTP", isError: true);
+      if (errorText.isNotEmpty) {
+        hideLoading('error case');
+        verifyOtpErrorMessage.value = 'Invalid or Expire OTP';
+        // showCustomSnackBar(
+        //   responseData['error']?.toString() ?? "Invalid or expired OTP",
+        //   isError: true,
+        // );
         return;
       }
+      // if (errorText.contains('invalid') || errorText.contains('expired')) {
+      //   showCustomSnackBar("Invalid or expired OTP", isError: true);
+      //   return;
+      // }
 
       if (response.statusCode == 200 &&
           responseData["message"]
