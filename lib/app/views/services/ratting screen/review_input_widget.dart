@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:do_fix/utils/sizeboxes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
@@ -104,6 +105,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
               const SizedBox(height: 20),
 
+              Text(
+                "${bookingController.selectedImages.length}/5 images selected",
+                style: TextStyle(color: Colors.grey),
+              ),
+              sizedBox10(),
               /// Images Grid
               GridView.builder(
                 shrinkWrap: true,
@@ -191,9 +197,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       bookingController.isSubmittingReview.value
                       ? null
                       : () async {
-                    bookingController.isSubmittingReview.value = true;
+
                     await bookingController.saveBookingReview();
-                    bookingController.isSubmittingReview.value = false;
+
+                    if (bookingController.userRating.value == 0) return;
 
                     Get.bottomSheet(
                       Container(
@@ -222,11 +229,50 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     );
 
                     await bookingController.getBookingReview(widget.bookingId);
+
                     Future.delayed(const Duration(seconds: 2), () {
-                      Get.back();
-                      Get.back();
+                      Navigator.pop(context);
                     });
                   },
+                  // onPressed: bookingController.userRating.value == 0 ||
+                  //     bookingController.isSubmittingReview.value
+                  //     ? null
+                  //     : () async {
+                  //   bookingController.isSubmittingReview.value = true;
+                  //   await bookingController.saveBookingReview();
+                  //   bookingController.isSubmittingReview.value = false;
+                  //
+                  //   Get.bottomSheet(
+                  //     Container(
+                  //       padding: const EdgeInsets.all(20),
+                  //       decoration: const BoxDecoration(
+                  //         color: Colors.white,
+                  //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  //       ),
+                  //       child: Column(
+                  //         mainAxisSize: MainAxisSize.min,
+                  //         children: const [
+                  //           Icon(Icons.check_circle, color: Colors.green, size: 60),
+                  //           SizedBox(height: 10),
+                  //           Text(
+                  //             "Thank You!",
+                  //             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  //           ),
+                  //           SizedBox(height: 5),
+                  //           Text(
+                  //             "Your review has been submitted successfully 😊",
+                  //             textAlign: TextAlign.center,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   );
+                  //
+                  //   await bookingController.getBookingReview(widget.bookingId);
+                  //   Future.delayed(const Duration(seconds: 2), () {
+                  //     Navigator.pop(context);
+                  //   });
+                  // },
                   child: bookingController.isSubmittingReview.value
                       ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,

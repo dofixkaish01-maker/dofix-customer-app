@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:do_fix/data/repo/booking_repo.dart';
@@ -14,6 +15,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/api/api.dart';
 import '../model/booking_model.dart';
 
 class BookingController extends GetxController implements GetxService {
@@ -114,14 +116,31 @@ class BookingController extends GetxController implements GetxService {
     update();
 
     try {
+      //  STEP: Convert images to Multipart
+      List<MultipartBody> multipartImages = [];
+
+      for (var image in selectedImages) {
+        print("IMAGE PATH: ${image.path}");
+        multipartImages.add(
+          MultipartBody(
+            'review_images[]', //  backend key
+            image, //  directly XFile pass karo
+          ),
+        );
+      }
+
       final Response response = await bookingRepo.saveBookingReview(
         bookingId: bookingId,
         serviceId: serviceId,
         reviewRating: userRating.toString(),
         reviewComment: reviewController.text.trim(),
+        images: multipartImages, //  pass here
       );
 
       log("Save Review API Response: ${response.body}");
+      log("Save Review API statusCode: ${response.statusCode}");
+      log("Save Review API ReqHeader: ${response.request?.headers}");
+      log("Status Text: ${response.statusText}");
 
       if (response.statusCode == 200) {
         showCustomSnackBar(
@@ -133,6 +152,8 @@ class BookingController extends GetxController implements GetxService {
         reviewController.clear();
         selectedRating = null;
         userRating.value = 0;
+
+        selectedImages.clear(); //  IMPORTANT reset images
 
         update();
       } else {
@@ -148,6 +169,56 @@ class BookingController extends GetxController implements GetxService {
       update();
     }
   }
+
+  // Future<void> saveBookingReview() async {
+  //   if (bookingId.isEmpty || serviceId.isEmpty) {
+  //     showCustomSnackBar("Booking or service details are missing", isError: true);
+  //     return;
+  //   }
+  //
+  //   if (userRating <= 0) {
+  //     showCustomSnackBar("Please select a rating", isError: true);
+  //     return;
+  //   }
+  //
+  //   isSubmittingReview.value = true;
+  //   update();
+  //
+  //   try {
+  //     final Response response = await bookingRepo.saveBookingReview(
+  //       bookingId: bookingId,
+  //       serviceId: serviceId,
+  //       reviewRating: userRating.toString(),
+  //       reviewComment: reviewController.text.trim(),
+  //     );
+  //
+  //     log("Save Review API Response: ${response.body}");
+  //
+  //     if (response.statusCode == 200) {
+  //       showCustomSnackBar(
+  //         "Review submitted successfully",
+  //         isSuccess: true,
+  //         isError: false,
+  //       );
+  //
+  //       reviewController.clear();
+  //       selectedRating = null;
+  //       userRating.value = 0;
+  //
+  //       update();
+  //     } else {
+  //       final body = _parseResponseBody(response.body);
+  //       final message = body?['message'] ?? "Failed to submit review";
+  //       showCustomSnackBar(message, isError: true);
+  //     }
+  //   } catch (e, stackTrace) {
+  //     log("Error in saveBookingReview: $e", stackTrace: stackTrace);
+  //     showCustomSnackBar("Error submitting review: $e", isError: true);
+  //   } finally {
+  //     isSubmittingReview.value = false;
+  //     update();
+  //   }
+  // }
 
   void setSelectedRating(int? rating) {
     selectedRating = rating;
