@@ -80,7 +80,7 @@ class ServiceModel {
         ratingCount: json['rating_count']?.toString().parseIntOrNull(),
         avgRating: toDoubleOrNull(json['avg_rating']),
         minBiddingPrice: json['min_bidding_price']?.toString(),
-        quantity: json['quantity']?.toString(),  // ✅ SAFE
+        quantity: json['quantity']?.toString(),  //  SAFE
         isFavorite: json['is_favorite']?.toString().parseIntOrNull(),
         thumbnailFullPath: json['thumbnail_full_path']?.toString(),
         coverImageFullPath: json['cover_image_full_path']?.toString(),
@@ -91,8 +91,8 @@ class ServiceModel {
             : [],
       );
     } catch (e) {
-      print("❌ ServiceModel.fromJson ERROR: $e");
-      print("❌ JSON: $json");
+      print(" ServiceModel.fromJson ERROR: $e");
+      print(" JSON: $json");
       // Return empty model instead of crashing
       return ServiceModel();
     }
@@ -178,7 +178,7 @@ class Services {
           try {
             services.add(ServiceModel.fromJson(item));
           } catch (e) {
-            print("⚠️ Failed to parse item: $e");
+            print("Failed to parse item: $e");
           }
         }
         return Services(data: services);

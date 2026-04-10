@@ -70,6 +70,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   FocusNode focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

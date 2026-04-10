@@ -2390,6 +2390,7 @@ class _BookingScreenState extends State<BookingScreen> {
       ],
     );
   }
+
   Widget _buildBookingHeader(BuildContext context) {
     return Row(
       children: [

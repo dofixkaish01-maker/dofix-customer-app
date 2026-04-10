@@ -1,9 +1,7 @@
 import 'dart:developer';
-
 import 'package:do_fix/data/api/api.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../utils/app_constants.dart';
 
 class BookingRepo {
@@ -54,8 +52,8 @@ class BookingRepo {
     required String serviceId,
     required String reviewRating,
     String? reviewComment,
+    List<MultipartBody>? images, // add this
   }) async {
-
     Map<String, String> body = {
       'booking_id': bookingId,
       'service_id': serviceId,
@@ -66,11 +64,32 @@ class BookingRepo {
       body['review_comment'] = reviewComment;
     }
 
-    return await apiClient.postData(
-      AppConstants.saveCustomerReview,
-      body,
-    );
+    return await apiClient.postMultipartData(
+        AppConstants.saveCustomerReview, body, images ?? [], []);
   }
+
+  // Future<Response> saveBookingReview({
+  //   required String bookingId,
+  //   required String serviceId,
+  //   required String reviewRating,
+  //   String? reviewComment,
+  // }) async {
+  //
+  //   Map<String, String> body = {
+  //     'booking_id': bookingId,
+  //     'service_id': serviceId,
+  //     'review_rating': reviewRating,
+  //   };
+  //
+  //   if (reviewComment != null && reviewComment.isNotEmpty) {
+  //     body['review_comment'] = reviewComment;
+  //   }
+  //
+  //   return await apiClient.postData(
+  //     AppConstants.saveCustomerReview,
+  //     body,
+  //   );
+  // }
 
   Future<Response> fetchServiceReview({
     required String serviceId,
@@ -98,8 +117,6 @@ class BookingRepo {
     );
   }
 }
-
-
 
 // import 'package:do_fix/data/api/api.dart';
 // import 'package:get/get.dart';

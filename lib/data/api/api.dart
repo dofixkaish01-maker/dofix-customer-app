@@ -185,12 +185,13 @@ class ApiClient extends GetxController implements GetxService {
             request.files.add(part);
           } else {
             File file = File(multipart.file!.path);
-            request.files.add(http.MultipartFile(
-              multipart.key,
-              file.readAsBytes().asStream(),
-              file.lengthSync(),
-              filename: file.path.split('/').last,
-            ));
+
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                multipart.key,
+                file.path,
+              ),
+            );
           }
         }
       }
