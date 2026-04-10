@@ -1,9 +1,7 @@
 import 'dart:developer';
-
 import 'package:do_fix/data/api/api.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../utils/app_constants.dart';
 
 class BookingRepo {
@@ -67,11 +65,7 @@ class BookingRepo {
     }
 
     return await apiClient.postMultipartData(
-      AppConstants.saveCustomerReview,
-      body,
-      images ?? [],
-      []
-    );
+        AppConstants.saveCustomerReview, body, images ?? [], []);
   }
 
   // Future<Response> saveBookingReview({
@@ -123,8 +117,6 @@ class BookingRepo {
     );
   }
 }
-
-
 
 // import 'package:do_fix/data/api/api.dart';
 // import 'package:get/get.dart';
