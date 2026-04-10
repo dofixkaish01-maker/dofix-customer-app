@@ -22,12 +22,12 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
 
   //  extra flag so first time hi hard loader ho
   bool _hasLoadedOnce = false;
-
+  final ScrollController _scrollController = ScrollController();
   late List<GlobalKey<AnimatedListState>> _listKeys;
   final List<Booking?> _items = [];
   late TabController _tabController;
   bool _isLoading = false;
-  final int _selectedIndex = 0;
+  int _selectedIndex = 0;
 
   final List<String> statusList = [
     "all",
@@ -61,6 +61,11 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
     _tabController = TabController(length: statusList.length, vsync: this);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) return;
+
+      setState(() {
+        _selectedIndex = _tabController.index;
+      });
+      _scrollController.jumpTo(0);
       fetchDataForTab(statusList[_tabController.index]);
     });
     _listKeys =
@@ -225,6 +230,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: _items.length,
+      controller: _scrollController,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -254,10 +260,17 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             child: Container(
-              height: 45,
+              height: 50,
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: TabBar(
                 controller: _tabController,
@@ -268,6 +281,8 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
                 ),
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.black54,
+                splashBorderRadius: BorderRadius.circular(25),
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
                 labelStyle: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
