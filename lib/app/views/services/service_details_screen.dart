@@ -344,7 +344,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                     ),
 
                               const SizedBox(height: 20),
-
+//
                               /// Ratings & Reviews
                               _buildSectionHeader("Ratings & Reviews"),
                               const SizedBox(height: 10),

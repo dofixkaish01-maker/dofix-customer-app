@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../helper/rating_and_review_service.dart';
-import '../model/retting & review model/special_user_reviews.dart';
-import '../widgets/common_loading.dart';
-import 'booking_controller.dart';
+import '../model/retting & review model/special_user_reviews_model.dart';
 
 class RatingAndReviewController extends GetxController {
   final CustomerReviewService _service = CustomerReviewService();

@@ -1,4 +1,4 @@
-  import 'package:do_fix/app/views/services/ratting%20screen/user_profile_screen.dart';
+  import 'package:do_fix/app/views/services/ratting%20screen/specail_user_rating_profile.dart';
   import 'package:flutter/material.dart';
   import 'package:intl/intl.dart';
   import '../../../../model/retting & review model/service_reviews_model.dart';
@@ -43,7 +43,7 @@
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => UserProfileScreen(),
+                      builder: (_) => SpecailUserRatttingProfile(),
                     ),
                   );
                 }
