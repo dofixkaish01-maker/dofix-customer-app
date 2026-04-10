@@ -1,14 +1,52 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../helper/rating_and_review_service.dart';
-import '../widgets/common_loading.dart';
-import 'booking_controller.dart';
+import '../model/retting & review model/special_user_reviews_model.dart';
 
 class RatingAndReviewController extends GetxController {
   final CustomerReviewService _service = CustomerReviewService();
 
+  SpecialUserReviews? userReviewsModel;
+  List<Review> reviewList = [];
   bool isLoading = false;
   String message = "";
+
+  Future<void> getUserReviews({
+    required String customerID,
+    required String token,
+    required String zoneID,
+  }) async {
+    try {
+      isLoading = true;
+      update();
+
+      final result = await _service.getUserReviewsService(
+        customerID,
+        token,
+        zoneID,
+      );
+
+      if (result['response_code'] == "default_200") {
+
+        // Model parsing
+        userReviewsModel = SpecialUserReviews.fromJson(result);
+
+        // List extract
+        reviewList = userReviewsModel?.content.reviews ?? [];
+
+      } else {
+        message = result['message'] ?? "Something went wrong";
+        Get.snackbar("Error", message);
+      }
+
+    } catch (e) {
+      print("Get Reviews Error: $e");
+      Get.snackbar("Error", "Something went wrong");
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
 
   Future<void> editReview({
     required String customerID,

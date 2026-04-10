@@ -29,6 +29,7 @@ import '../app/views/services/services.dart';
 import '../data/api/api.dart';
 import '../data/repo/auth_repo.dart';
 import '../helper/gi_dart.dart';
+import '../helper/rating_and_review_service.dart';
 import '../model/address_model.dart';
 import '../model/all_category_model.dart';
 import '../model/booking_response.dart';
@@ -207,6 +208,66 @@ class DashBoardController extends GetxController implements GetxService {
 
     debugPrint("AUTO FETCH END");
   }
+  /// ================= REVIEW =================
+
+  final String userId = '';
+
+  bool isReviewLoading = false;
+
+  String customerName = "";
+  String? customerImage;
+
+  List<dynamic> reviewList = [];
+
+  double averageRating = 0.0; // ADD THIS
+
+  final CustomerReviewService reviewService = CustomerReviewService();
+
+  Future<void> getUserReviews() async {
+    try {
+      isReviewLoading = true;
+      update();
+
+      final response = await reviewService.getUserReviewsService(
+        customerId.isNotEmpty ? customerId : userId,
+        token ?? "",
+        "e8554d44-dcf2-47c7-8cf9-400d05a1340f",
+      );
+
+      if (response["response_code"] == "default_200") {
+        final content = response["content"];
+
+        customerName = content["customer_name"] ?? "";
+        customerImage = content["customer_image"];
+
+        /// Duplicate remove
+        final rawList = content["reviews"] ?? [];
+        reviewList = {
+          for (var item in rawList) item["id"]: item
+        }.values.toList();
+
+        /// Average Rating Calculate
+        if (reviewList.isNotEmpty) {
+          double total = 0;
+          for (var item in reviewList) {
+            total += (item["review_rating"] ?? 0);
+          }
+          averageRating = total / reviewList.length;
+        } else {
+          averageRating = 0.0;
+        }
+
+      } else {
+        showCustomSnackBar(response["message"], isError: true);
+      }
+    } catch (e) {
+      print("Review Error: $e");
+      showCustomSnackBar("Something went wrong", isError: true);
+    } finally {
+      isReviewLoading = false;
+      update();
+    }
+  }
 
   // Future<void> _autoFetchLocation() async {
   //   LocationPermission permission = await Geolocator.checkPermission();
@@ -263,7 +324,6 @@ class DashBoardController extends GetxController implements GetxService {
   var notificationModel = NotificationModel(null, null, []).obs;
   late String? token = authRepo.apiClient.token;
 
-// final String userId = 'b5cedeb1-a30f-4e3d-b2bd-74af244505ed';
   String get customerId {
     return cartModel.content?.cart?.data?.isNotEmpty == true
         ? cartModel.content!.cart!.data!.first.customerId ?? ""

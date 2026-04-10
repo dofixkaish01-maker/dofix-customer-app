@@ -1,21 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
-
-import 'package:camera/camera.dart';
 import 'package:do_fix/data/repo/booking_repo.dart';
 import 'package:do_fix/model/booking_setup_model.dart';
 import 'package:do_fix/model/cancel_booking_model.dart';
-import 'package:do_fix/model/review_rating_model.dart';
-import 'package:do_fix/model/service_reviews_model.dart';
+import 'package:do_fix/model/retting%20&%20review%20model/review_rating_model.dart';
+import 'package:do_fix/model/retting%20&%20review%20model/service_reviews_model.dart';
 import 'package:do_fix/widgets/common_loading.dart';
 import 'package:do_fix/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../data/api/api.dart';
 import '../model/booking_model.dart';
 
 class BookingController extends GetxController implements GetxService {
@@ -63,23 +58,19 @@ class BookingController extends GetxController implements GetxService {
   /// Pick multiple images (maxImages optional)
   Future<void> pickImages({int maxImages = 5}) async {
     try {
-      final List<XFile>? images =
-          await _picker.pickMultiImage(imageQuality: 70);
-      if (images != null) {
-        // Limit total images to maxImages
-        final availableSlots = maxImages - selectedImages.length;
-        if (availableSlots <= 0) {
-          Get.snackbar(
-            "Limit Reached",
-            "You can select up to $maxImages images only.",
-            snackPosition: SnackPosition.BOTTOM,
-          );
-          return;
-        }
-
-        // Add only available number of images
-        selectedImages.addAll(images.take(availableSlots));
+      final List<XFile> images = await _picker.pickMultiImage(imageQuality: 70);
+      // Limit total images to maxImages
+      final availableSlots = maxImages - selectedImages.length;
+      if (availableSlots <= 0) {
+        Get.snackbar(
+          "Limit Reached",
+          "You can select up to $maxImages images only.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
       }
+      // Add only available number of images
+      selectedImages.addAll(images.take(availableSlots));
     } catch (e) {
       Get.snackbar(
         "Error",
@@ -94,132 +85,36 @@ class BookingController extends GetxController implements GetxService {
     selectedImages.remove(image);
   }
 
-  // Future<void> saveBookingReview() async {
-  //   isSubmittingReview.value = true;
-  //   // API call here
-  //   await Future.delayed(const Duration(seconds: 2));
-  //   isSubmittingReview.value = false;
-  // }
-
   Future<void> saveBookingReview() async {
-    if (bookingId.isEmpty || serviceId.isEmpty) {
-      showCustomSnackBar("Booking or service details are missing",
-          isError: true);
-      return;
-    }
-
-    if (userRating <= 0) {
-      showCustomSnackBar("Please select a rating", isError: true);
-      return;
-    }
-
-    isSubmittingReview.value = true;
-    update();
-
     try {
-      //  STEP: Convert images to Multipart
-      List<MultipartBody> multipartImages = [];
+      isSubmittingReview.value = true;
 
-      for (var image in selectedImages) {
-        print("IMAGE PATH: ${image.path}");
-        multipartImages.add(
-          MultipartBody(
-            'images[]', //  backend key
-            image, //  directly XFile pass karo
-          ),
-        );
-      }
-
-      final Response response = await bookingRepo.saveBookingReview(
+      final response = await bookingRepo.saveBookingReview(
         bookingId: bookingId,
         serviceId: serviceId,
-        reviewRating: userRating.toString(),
+        reviewRating: '${userRating.value}',
         reviewComment: reviewController.text.trim(),
-        images: multipartImages, //  pass here
       );
 
-      log("Save Review API Response: ${response.body}");
-      log("Save Review API statusCode: ${response.statusCode}");
-      log("Save Review API ReqHeader: ${response.request?.headers}");
-      log("Status Text: ${response.statusText}");
+      log("Review API Response: ${response.body}");
 
       if (response.statusCode == 200) {
-        showCustomSnackBar(
-          "Review submitted successfully",
-          isSuccess: true,
-          isError: false,
-        );
+        showCustomSnackBar("Review submitted successfully", isSuccess: true);
 
-        reviewController.clear();
-        selectedRating = null;
+        // Reset after success
         userRating.value = 0;
-
-        selectedImages.clear(); //  IMPORTANT reset images
-
-        update();
+        reviewController.clear();
+        selectedImages.clear();
       } else {
-        final body = _parseResponseBody(response.body);
-        final message = body?['message'] ?? "Failed to submit review";
-        showCustomSnackBar(message, isError: true);
+        showCustomSnackBar("Failed to submit review", isError: true);
       }
-    } catch (e, stackTrace) {
-      log("Error in saveBookingReview: $e", stackTrace: stackTrace);
-      showCustomSnackBar("Error submitting review: $e", isError: true);
+    } catch (e) {
+      log("Error in saveBookingReview: $e");
+      showCustomSnackBar("Something went wrong", isError: true);
     } finally {
       isSubmittingReview.value = false;
-      update();
     }
   }
-
-  // Future<void> saveBookingReview() async {
-  //   if (bookingId.isEmpty || serviceId.isEmpty) {
-  //     showCustomSnackBar("Booking or service details are missing", isError: true);
-  //     return;
-  //   }
-  //
-  //   if (userRating <= 0) {
-  //     showCustomSnackBar("Please select a rating", isError: true);
-  //     return;
-  //   }
-  //
-  //   isSubmittingReview.value = true;
-  //   update();
-  //
-  //   try {
-  //     final Response response = await bookingRepo.saveBookingReview(
-  //       bookingId: bookingId,
-  //       serviceId: serviceId,
-  //       reviewRating: userRating.toString(),
-  //       reviewComment: reviewController.text.trim(),
-  //     );
-  //
-  //     log("Save Review API Response: ${response.body}");
-  //
-  //     if (response.statusCode == 200) {
-  //       showCustomSnackBar(
-  //         "Review submitted successfully",
-  //         isSuccess: true,
-  //         isError: false,
-  //       );
-  //
-  //       reviewController.clear();
-  //       selectedRating = null;
-  //       userRating.value = 0;
-  //
-  //       update();
-  //     } else {
-  //       final body = _parseResponseBody(response.body);
-  //       final message = body?['message'] ?? "Failed to submit review";
-  //       showCustomSnackBar(message, isError: true);
-  //     }
-  //   } catch (e, stackTrace) {
-  //     log("Error in saveBookingReview: $e", stackTrace: stackTrace);
-  //     showCustomSnackBar("Error submitting review: $e", isError: true);
-  //   } finally {
-  //     isSubmittingReview.value = false;
-  //     update();
-  //   }
-  // }
 
   void setSelectedRating(int? rating) {
     selectedRating = rating;

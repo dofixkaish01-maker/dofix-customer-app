@@ -22,9 +22,9 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
 
   //  extra flag so first time hi hard loader ho
   bool _hasLoadedOnce = false;
-
+  final ScrollController _scrollController = ScrollController();
   late List<GlobalKey<AnimatedListState>> _listKeys;
-  List<Booking?> _items = [];
+  final List<Booking?> _items = [];
   late TabController _tabController;
   bool _isLoading = false;
   int _selectedIndex = 0;
@@ -61,6 +61,11 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
     _tabController = TabController(length: statusList.length, vsync: this);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) return;
+
+      setState(() {
+        _selectedIndex = _tabController.index;
+      });
+      _scrollController.jumpTo(0);
       fetchDataForTab(statusList[_tabController.index]);
     });
     _listKeys =
@@ -225,6 +230,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: _items.length,
+      controller: _scrollController,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -251,133 +257,54 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
     return Scaffold(
       body: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const SizedBox(width: 16),
-              Text(
-                "Apply Filters",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'Albert Sans',
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                indicator: BoxDecoration(
+                  color: primaryBlue,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.black54,
+                splashBorderRadius: BorderRadius.circular(25),
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                labelStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
-              ),
-              Spacer(),
-              Theme(
-                data: Theme.of(context).copyWith(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent
-                ),
-                  child: DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: _selectedIndex,
-                    elevation: 0,dropdownColor: Colors.grey.shade100,
-                    icon: SizedBox.shrink(),
-                    style: const TextStyle(
-                      color: primaryBlue,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                indicatorPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                tabs: statusList.map((status) {
+                  return Tab(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        status[0].toUpperCase() + status.substring(1),
+                      ),
                     ),
-                    items: List.generate(
-                      statusList.length,
-                      (index) {
-                        return DropdownMenuItem<int>(
-                          alignment: Alignment.centerLeft,
-                          value: index,
-                          child: Text(
-                            statusList[index][0].toUpperCase() +
-                                statusList[index].substring(1),
-                            style: const TextStyle(
-                              color: primaryBlue,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    selectedItemBuilder: (context) {
-                      return List.generate(
-                        statusList.length,
-                        (index) => Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              statusList[index][0].toUpperCase() +
-                                  statusList[index].substring(1),
-                              style: const TextStyle(
-                                color: primaryBlue,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              color: primaryBlue,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    onChanged: (int? newIndex) {
-                      if (newIndex != null) {
-                        setState(() {
-                          _selectedIndex = newIndex;
-                        });
-                        fetchDataForTab(statusList[newIndex]);
-                      }
-                    },
-                  ),
-                ),
+                  );
+                }).toList(),
               ),
-              // DropdownButton<int>(
-              //   value: _selectedIndex,
-              //   elevation: 0,
-              //   icon: Icon(
-              //     Icons.keyboard_arrow_down_rounded,
-              //     color: primaryBlue,
-              //   ),
-              //   style: const TextStyle(
-              //     color: primaryBlue,
-              //     fontSize: 14,
-              //     fontWeight: FontWeight.w500,
-              //   ),
-              //   underline: SizedBox(),
-              //   items: List.generate(
-              //     statusList.length,
-              //     (index) {
-              //       return DropdownMenuItem<int>(
-              //         alignment: Alignment.centerRight,
-              //         value: index,
-              //         child: Text(
-              //           statusList[index][0].toUpperCase() +
-              //               statusList[index].substring(1),
-              //           style: const TextStyle(
-              //             color: primaryBlue,
-              //           ),
-              //         ),
-              //       );
-              //     },
-              //   ),
-              //   onChanged: (int? newIndex) {
-              //     if (newIndex != null) {
-              //       setState(() {
-              //         _selectedIndex = newIndex;
-              //       });
-              //       fetchDataForTab(statusList[newIndex]);
-              //     }
-              //   },
-              // ),
-            ],
+            ),
           ),
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: Colors.black.withOpacity(0.12),
-          ),
-          const SizedBox(height: 8),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -387,7 +314,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
                 child: buildListView(_selectedIndex),
               ),
             ),
@@ -396,5 +323,4 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
       ),
     );
   }
-
 }
