@@ -62,12 +62,12 @@ class ApiClient extends GetxController implements GetxService {
 
   //
   Future<Response> getData(
-      String uri, {
-        Map<String, dynamic>? query,
-        Map<String, String>? headers,
-        String method = 'POST',
-        dynamic body,
-      }) async {
+    String uri, {
+    Map<String, dynamic>? query,
+    Map<String, String>? headers,
+    String method = 'POST',
+    dynamic body,
+  }) async {
     try {
       final uriWithQuery = query != null
           ? Uri.parse('$appBaseUrl$uri').replace(queryParameters: query)
@@ -94,15 +94,13 @@ class ApiClient extends GetxController implements GetxService {
 
         case 'POST':
           response = await http
-              .post(uriWithQuery,
-              headers: headers ?? mainHeaders, body: body)
+              .post(uriWithQuery, headers: headers ?? mainHeaders, body: body)
               .timeout(Duration(seconds: timeoutInSeconds));
           break;
 
         case 'PUT':
           response = await http
-              .put(uriWithQuery,
-              headers: headers ?? mainHeaders, body: body)
+              .put(uriWithQuery, headers: headers ?? mainHeaders, body: body)
               .timeout(Duration(seconds: timeoutInSeconds));
           break;
 
@@ -123,9 +121,7 @@ class ApiClient extends GetxController implements GetxService {
       log("==================================================");
 
       return handleResponse(response, uri);
-
     } catch (e, stackTrace) {
-
       log("==================================================");
       log(" API ERROR OCCURRED");
       log("Error: $e");
@@ -217,6 +213,49 @@ class ApiClient extends GetxController implements GetxService {
     }
   }
 
+  Future<Response> postMultipartData2(String uri, Map<String, String> body,
+      List<MultipartBody> multipartBody, List<MultipartDocument> otherFile,
+      {Map<String, String>? headers}) async {
+    try {
+      http.MultipartRequest request =
+          http.MultipartRequest('POST', Uri.parse(appBaseUrl + uri));
+
+      print("FINAL HEADERS: ${request.headers}");
+      print("FINAL URL: ${appBaseUrl + uri}");
+
+      // ✅ YAHI ADD KARNA HAI (IMPORTANT)
+      request.headers.addAll(mainHeaders);
+
+      // (optional: agar headers pass ho rahe ho)
+      if (headers != null) {
+        request.headers.addAll(headers);
+      }
+
+      // 🔽 Files add
+      for (MultipartBody multipart in multipartBody) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            multipart.key,
+            multipart.file!.path,
+          ),
+        );
+      }
+
+      // 🔽 Body add
+      request.fields.addAll(body);
+
+      // 🔽 Send request
+      http.Response response =
+          await http.Response.fromStream(await request.send());
+
+      return handleResponse(response, uri);
+    } catch (e, s) {
+      print("❌ MULTIPART ERROR: $e");
+      print("❌ STACK: $s");
+      return Response(statusCode: 1, statusText: e.toString());
+    }
+  }
+
   Future<Response> putData(String uri, dynamic body,
       {Map<String, String>? headers}) async {
     try {
@@ -266,22 +305,37 @@ class ApiClient extends GetxController implements GetxService {
     if (response0.statusCode != 200 &&
         response0.body != null &&
         response0.body is! String) {
+      dynamic errorMessage = "Something went wrong";
+
+      if (response0.body != null && response0.body is Map) {
+        var errors = response0.body['errors'];
+
+        if (errors is Map && errors['message'] != null) {
+          errorMessage = errors['message'];
+        } else if (errors is String) {
+          errorMessage = errors;
+        } else if (errors is List && errors.isNotEmpty) {
+          errorMessage = errors[0].toString();
+        }
+      }
+
       response0 = Response(
-          statusCode: response0.statusCode,
-          body: response0.body,
-          statusText: response0.body['errors']['message']);
+        statusCode: response0.statusCode,
+        body: response0.body,
+        statusText: errorMessage,
+      );
     } else if (response0.statusCode != 200 && response0.body == null) {
       response0 = const Response(statusCode: 0, statusText: noInternetMessage);
     }
     //log('====> API Response: [${response0.statusCode}] $uri\n${response.body}');
     return response0;
   }
-  //
-  // Future<dynamic> getTrendingService() async {
-  //
-  // }
-  //
-  // Future<dynamic> getCategoryList() async {}
+//
+// Future<dynamic> getTrendingService() async {
+//
+// }
+//
+// Future<dynamic> getCategoryList() async {}
 }
 
 class MultipartBody {
@@ -294,5 +348,6 @@ class MultipartBody {
 class MultipartDocument {
   String key;
   FilePickerResult? file;
+
   MultipartDocument(this.key, this.file);
 }

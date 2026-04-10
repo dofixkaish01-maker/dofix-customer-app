@@ -103,7 +103,8 @@ class BookingController extends GetxController implements GetxService {
 
   Future<void> saveBookingReview() async {
     if (bookingId.isEmpty || serviceId.isEmpty) {
-      showCustomSnackBar("Booking or service details are missing", isError: true);
+      showCustomSnackBar("Booking or service details are missing",
+          isError: true);
       return;
     }
 
@@ -123,7 +124,7 @@ class BookingController extends GetxController implements GetxService {
         print("IMAGE PATH: ${image.path}");
         multipartImages.add(
           MultipartBody(
-            'review_images[]', //  backend key
+            'images[]', //  backend key
             image, //  directly XFile pass karo
           ),
         );

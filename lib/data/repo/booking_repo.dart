@@ -64,8 +64,9 @@ class BookingRepo {
       body['review_comment'] = reviewComment;
     }
 
-    return await apiClient.postMultipartData(
-        AppConstants.saveCustomerReview, body, images ?? [], []);
+    return await apiClient.postMultipartData2(AppConstants.saveCustomerReview, body, images??[], []);
+    // postMultipartData(
+    //     AppConstants.saveCustomerReview, body, images ?? [], []);
   }
 
   // Future<Response> saveBookingReview({
