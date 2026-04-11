@@ -6,29 +6,31 @@ import 'package:get/get.dart';
 import '../../../controllers/dashboard_controller.dart';
 import '../../../model/booking_model.dart';
 
-class BookingHostoryScreen extends StatefulWidget {
+class BookingHistoryScreen extends StatefulWidget {
   final VoidCallback? onRefreshNeeded;
 
-  const BookingHostoryScreen({super.key, this.onRefreshNeeded});
+  const BookingHistoryScreen({super.key, this.onRefreshNeeded});
 
   @override
-  State<BookingHostoryScreen> createState() => _BookingHostoryScreenState();
+  State<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
 }
 
-class _BookingHostoryScreenState extends State<BookingHostoryScreen>
-    with TickerProviderStateMixin, RouteAware, AutomaticKeepAliveClientMixin  {
+class _BookingHistoryScreenState extends State<BookingHistoryScreen>
+    with TickerProviderStateMixin, RouteAware, AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   //  extra flag so first time hi hard loader ho
   bool _hasLoadedOnce = false;
-  final ScrollController _scrollController = ScrollController();
+  final PageController _pageController = PageController();
+  final Map<int, ScrollController> _scrollControllers = {};
   late List<GlobalKey<AnimatedListState>> _listKeys;
-  final List<Booking?> _items = [];
+  // final List<Booking?> _items = [];
+  Map<String, List<Booking?>> _tabData = {};
   late TabController _tabController;
   bool _isLoading = false;
   int _selectedIndex = 0;
-
+  Set<String> _loadingTabs = {};
   final List<String> statusList = [
     "all",
     "pending",
@@ -65,8 +67,17 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
       setState(() {
         _selectedIndex = _tabController.index;
       });
-      _scrollController.jumpTo(0);
-      fetchDataForTab(statusList[_tabController.index]);
+
+      final controller = _scrollControllers[_selectedIndex];
+      if (controller != null && controller.hasClients) {
+        controller.jumpTo(0);
+      }
+      _pageController.jumpToPage(_tabController.index);
+
+      fetchDataForTab(
+        statusList[_tabController.index],
+        isRefresh: false,
+      );
     });
     _listKeys =
         List.generate(statusList.length, (_) => GlobalKey<AnimatedListState>());
@@ -149,45 +160,20 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
   //   }
   // }
   Future<void> fetchDataForTab(String status, {bool isRefresh = false}) async {
-
     if (status.toLowerCase() == "cancelled") {
       status = "canceled";
     }
 
-    final controller = Get.find<DashBoardController>();
-
-    //  START LOADING
-    setState(() {
-      _isLoading = true;
-    });
-
-    if (isRefresh) {
-      //  FAST refresh – no animation drama
-      _items.clear();
-      _listKeys[_tabController.index].currentState?.setState(() {});
-    } else {
-      //  normal tab change animation (as it is)
-      int toggle = 0;
-      for (int i = _items.length - 1; i >= 0; i--) {
-        final removedItem = _items.removeAt(i);
-        final removeToRight = toggle % 2 == 0;
-        toggle++;
-
-        _listKeys[_tabController.index].currentState?.removeItem(
-          i,
-              (context, animation) => SlideTransition(
-            position: Tween<Offset>(
-              begin: Offset.zero,
-              end: Offset(removeToRight ? 1.0 : -1.0, 0.0),
-            ).animate(animation),
-            child: BookingContainer(booking: removedItem),
-          ),
-          duration: const Duration(milliseconds: 200),
-        );
-      }
+    if (!isRefresh && _tabData.containsKey(status)) {
+      return;
     }
 
-    //  API CALL
+    final controller = Get.find<DashBoardController>();
+
+    setState(() {
+      _loadingTabs.add(status);
+    });
+
     await controller.getBooking({
       "limit": "100",
       "offset": "1",
@@ -197,40 +183,34 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
 
     final data = controller.bookingModel.data ?? [];
 
-    //  ADD NEW ITEMS WITH ANIMATION
-    int toggle = 0;
-    for (int i = 0; i < data.length; i++) {
-      final addFromRight = toggle % 2 == 0;
-      toggle++;
+    _tabData[status] = data;
 
-      _items.insert(i, data[i]);
+    setState(() {
+      _loadingTabs.remove(status);
+    });
+  }
+  Widget buildListView(int tabIndex) {
+    final status = statusList[tabIndex];
+    final items = _tabData[status] ?? [];
 
-      _listKeys[_tabController.index].currentState?.insertItem(
-        i,
-        duration: const Duration(milliseconds: 300),
+    if (items.isEmpty && _isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
       );
     }
 
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  Widget buildListView(int selectedIndex) {
-    if (_items.isEmpty && _isLoading) {
-      return const SizedBox(); // loader overlay handle karega
-    }
-
-    if (_items.isEmpty) {
+    if (items.isEmpty) {
       return const Center(
-        child: Text("Oops! No Booking is there"),
+        child: Text("No Booking Found"),
       );
     }
 
     return ListView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: _items.length,
-      controller: _scrollController,
+      controller: _scrollControllers.putIfAbsent(
+        tabIndex,
+        () => ScrollController(),
+      ),
+      itemCount: items.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -243,7 +223,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: BookingContainer(
-                booking: _items[index],
+                booking: items[index],
               ),
             ),
           ),
@@ -251,6 +231,7 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -291,7 +272,8 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
-                indicatorPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                indicatorPadding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 tabs: statusList.map((status) {
                   return Tab(
                     child: Padding(
@@ -315,7 +297,20 @@ class _BookingHostoryScreenState extends State<BookingHostoryScreen>
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5.0),
-                child: buildListView(_selectedIndex),
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: statusList.length,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+
+                    _tabController.animateTo(index);
+                  },
+                  itemBuilder: (context, index) {
+                    return buildListView(index);
+                  },
+                ),
               ),
             ),
           ),

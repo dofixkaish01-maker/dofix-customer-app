@@ -2475,7 +2475,7 @@ class DashBoardController extends GetxController implements GetxService {
   List<Widget> screens = [
     HomeScreen(),
     const ServiceScreens(),
-    const BookingHostoryScreen(),
+    const BookingHistoryScreen(),
     const AccountScreen(),
   ];
 
