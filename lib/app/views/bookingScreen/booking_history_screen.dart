@@ -22,9 +22,9 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
 
   //  extra flag so first time hi hard loader ho
   bool _hasLoadedOnce = false;
-  final ScrollController _scrollController = ScrollController();
+
   late List<GlobalKey<AnimatedListState>> _listKeys;
-  late List<List<Booking?>> _tabItems;
+  List<Booking?> _items = [];
   late TabController _tabController;
   bool _isLoading = false;
   int _selectedIndex = 0;
@@ -59,14 +59,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: statusList.length, vsync: this);
-    _tabItems = List.generate(statusList.length, (_) => []);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) return;
-
-      setState(() {
-        _selectedIndex = _tabController.index;
-      });
-      _scrollController.jumpTo(0);
       fetchDataForTab(statusList[_tabController.index]);
     });
     _listKeys =
@@ -163,29 +157,27 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
 
     if (isRefresh) {
       //  FAST refresh – no animation drama
-      _tabItems[_tabController.index].clear();
+      _items.clear();
       _listKeys[_tabController.index].currentState?.setState(() {});
     } else {
       //  normal tab change animation (as it is)
       int toggle = 0;
-
-      for (int i = _tabItems[_tabController.index].length - 1; i >= 0; i--) {
-        final removedItem = _tabItems[_tabController.index].removeAt(i);
-
+      for (int i = _items.length - 1; i >= 0; i--) {
+        final removedItem = _items.removeAt(i);
         final removeToRight = toggle % 2 == 0;
         toggle++;
 
         _listKeys[_tabController.index].currentState?.removeItem(
-          i,
+              i,
               (context, animation) => SlideTransition(
-            position: Tween<Offset>(
-              begin: Offset.zero,
-              end: Offset(removeToRight ? 1.0 : -1.0, 0.0),
-            ).animate(animation),
-            child: BookingContainer(booking: removedItem),
-          ),
-          duration: const Duration(milliseconds: 200),
-        );
+                position: Tween<Offset>(
+                  begin: Offset.zero,
+                  end: Offset(removeToRight ? 1.0 : -1.0, 0.0),
+                ).animate(animation),
+                child: BookingContainer(booking: removedItem),
+              ),
+              duration: const Duration(milliseconds: 200),
+            );
       }
     }
 
@@ -205,7 +197,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
       final addFromRight = toggle % 2 == 0;
       toggle++;
 
-      _tabItems[_tabController.index].insert(i, data[i]);
+      _items.insert(i, data[i]);
 
       _listKeys[_tabController.index].currentState?.insertItem(
             i,
@@ -219,13 +211,11 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
   }
 
   Widget buildListView(int selectedIndex) {
-    final items = _tabItems[selectedIndex];
-
-    if (items.isEmpty && _isLoading) {
-      return const SizedBox();
+    if (_items.isEmpty && _isLoading) {
+      return const SizedBox(); // loader overlay handle karega
     }
 
-    if (items.isEmpty) {
+    if (_items.isEmpty) {
       return const Center(
         child: Text("Oops! No Booking is there"),
       );
@@ -233,15 +223,21 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
 
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: items.length,
-      controller: _scrollController,
+      itemCount: _items.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Card(
             elevation: 4,
-            child: BookingContainer(
-              booking: items[index],
+            shadowColor: Colors.black.withOpacity(0.15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: BookingContainer(
+                booking: _items[index],
+              ),
             ),
           ),
         );
@@ -255,55 +251,133 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
     return Scaffold(
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                indicator: BoxDecoration(
-                  color: primaryBlue,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black54,
-                splashBorderRadius: BorderRadius.circular(25),
-                overlayColor: MaterialStateProperty.all(Colors.transparent),
-                labelStyle: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-                unselectedLabelStyle: const TextStyle(
-                  fontSize: 13,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const SizedBox(width: 16),
+              Text(
+                "Apply Filters",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Albert Sans',
                   fontWeight: FontWeight.w500,
                 ),
-                indicatorPadding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                tabs: statusList.map((status) {
-                  return Tab(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        status[0].toUpperCase() + status.substring(1),
-                      ),
-                    ),
-                  );
-                }).toList(),
               ),
-            ),
+              Spacer(),
+              Theme(
+                data: Theme.of(context).copyWith(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    hoverColor: Colors.transparent),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: _selectedIndex,
+                    elevation: 0,
+                    dropdownColor: Colors.grey.shade100,
+                    icon: SizedBox.shrink(),
+                    style: const TextStyle(
+                      color: primaryBlue,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    items: List.generate(
+                      statusList.length,
+                      (index) {
+                        return DropdownMenuItem<int>(
+                          alignment: Alignment.centerLeft,
+                          value: index,
+                          child: Text(
+                            statusList[index][0].toUpperCase() +
+                                statusList[index].substring(1),
+                            style: const TextStyle(
+                              color: primaryBlue,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    selectedItemBuilder: (context) {
+                      return List.generate(
+                        statusList.length,
+                        (index) => Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              statusList[index][0].toUpperCase() +
+                                  statusList[index].substring(1),
+                              style: const TextStyle(
+                                color: primaryBlue,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: primaryBlue,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    onChanged: (int? newIndex) {
+                      if (newIndex != null) {
+                        setState(() {
+                          _selectedIndex = newIndex;
+                        });
+                        fetchDataForTab(statusList[newIndex]);
+                      }
+                    },
+                  ),
+                ),
+              ),
+              // DropdownButton<int>(
+              //   value: _selectedIndex,
+              //   elevation: 0,
+              //   icon: Icon(
+              //     Icons.keyboard_arrow_down_rounded,
+              //     color: primaryBlue,
+              //   ),
+              //   style: const TextStyle(
+              //     color: primaryBlue,
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              //   underline: SizedBox(),
+              //   items: List.generate(
+              //     statusList.length,
+              //     (index) {
+              //       return DropdownMenuItem<int>(
+              //         alignment: Alignment.centerRight,
+              //         value: index,
+              //         child: Text(
+              //           statusList[index][0].toUpperCase() +
+              //               statusList[index].substring(1),
+              //           style: const TextStyle(
+              //             color: primaryBlue,
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //   ),
+              //   onChanged: (int? newIndex) {
+              //     if (newIndex != null) {
+              //       setState(() {
+              //         _selectedIndex = newIndex;
+              //       });
+              //       fetchDataForTab(statusList[newIndex]);
+              //     }
+              //   },
+              // ),
+            ],
           ),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.black.withOpacity(0.12),
+          ),
+          const SizedBox(height: 8),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -313,7 +387,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: buildListView(_selectedIndex),
               ),
             ),
