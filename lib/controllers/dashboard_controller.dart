@@ -121,6 +121,7 @@ class DashBoardController extends GetxController implements GetxService {
     await getAddressLists();
     await _autoFetchLocation();
   }
+
   // @override
   // void onInit() {
   //   super.onInit();
@@ -208,6 +209,7 @@ class DashBoardController extends GetxController implements GetxService {
 
     debugPrint("AUTO FETCH END");
   }
+
   /// ================= REVIEW =================
 
   final String userId = '';
@@ -242,9 +244,8 @@ class DashBoardController extends GetxController implements GetxService {
 
         /// Duplicate remove
         final rawList = content["reviews"] ?? [];
-        reviewList = {
-          for (var item in rawList) item["id"]: item
-        }.values.toList();
+        reviewList =
+            {for (var item in rawList) item["id"]: item}.values.toList();
 
         /// Average Rating Calculate
         if (reviewList.isNotEmpty) {
@@ -256,7 +257,6 @@ class DashBoardController extends GetxController implements GetxService {
         } else {
           averageRating = 0.0;
         }
-
       } else {
         showCustomSnackBar(response["message"], isError: true);
       }
@@ -618,17 +618,22 @@ class DashBoardController extends GetxController implements GetxService {
   RxBool isAllCategoryLoading = false.obs;
   AllCategoryModel? allCategoryModel;
 
-  Future<void> fetchAllCategories({String limit = "50", String offset = "1"}) async {
+  Future<void> fetchAllCategories(
+      {String limit = "50", String offset = "1"}) async {
     isAllCategoryLoading.value = true;
 
     try {
-      Response response = await authRepo.getAllCategories(limit: limit, offset: offset);
+      Response response =
+          await authRepo.getAllCategories(limit: limit, offset: offset);
 
-      if (response.statusCode == 200 && response.body['response_code'] == "default_200") {
+      if (response.statusCode == 200 &&
+          response.body['response_code'] == "default_200") {
         allCategoryModel = AllCategoryModel.fromJson(response.body);
-        debugPrint("Total categories fetched: ${allCategoryModel?.content?.data?.length}");
+        debugPrint(
+            "Total categories fetched: ${allCategoryModel?.content?.data?.length}");
       } else {
-        Get.snackbar("Error", response.body['message'] ?? "Something went wrong");
+        Get.snackbar(
+            "Error", response.body['message'] ?? "Something went wrong");
       }
     } catch (e) {
       Get.snackbar("Error", e.toString());
@@ -869,7 +874,6 @@ class DashBoardController extends GetxController implements GetxService {
           responseData['message']
               .toString()
               .contains("Successfully data fetched")) {
-
         serviceModel = sv.ServiceModel.fromJson(responseData['content']);
 
         hideLoading();
@@ -948,7 +952,6 @@ class DashBoardController extends GetxController implements GetxService {
   //     // update();
   //   }
   // }
-
 
   Future<void> getAddressLists() async {
     showLoading('get address loading..');
@@ -1763,7 +1766,7 @@ class DashBoardController extends GetxController implements GetxService {
   Future<void> getZone() async {
     try {
       Response response =
-      await authRepo.zones(latitude.toString(), longitude.toString());
+          await authRepo.zones(latitude.toString(), longitude.toString());
 
       final responseData = response.body;
 
@@ -1780,7 +1783,8 @@ class DashBoardController extends GetxController implements GetxService {
         log("Zone success: $responseData");
 
         final token = sharedPreferences.getString(AppConstants.token) ?? "";
-        final zoneId = responseData['content']?['zone']?['id']?.toString() ?? "";
+        final zoneId =
+            responseData['content']?['zone']?['id']?.toString() ?? "";
 
         if (token.isNotEmpty && zoneId.isNotEmpty) {
           authRepo.apiClient.updateHeader(token, zoneId);
