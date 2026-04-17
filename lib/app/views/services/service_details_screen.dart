@@ -386,74 +386,174 @@ class _ServiceDetailsState extends State<ServiceDetails> {
 
                                     if (hasReviews) const SizedBox(height: 12),
 
-                                    if (hasReviews)
-                                      Builder(
-                                        builder: (context) {
-                                          /// STEP 1: SORT (5 top)
-                                          final sortedReviews = [...reviews];
-                                          sortedReviews.sort((a, b) =>
-                                              (b.reviewRating ?? 0).compareTo(a.reviewRating ?? 0));
-
-                                          /// STEP 2: FILTER (optional - negative hata sakti ho)
-                                          final filteredReviews = sortedReviews
-                                              .where((r) => (r.reviewRating ?? 0) >= 3)
-                                              .toList();
-
-                                          /// STEP 3: LIMIT (max 10)
-                                          final int displayCount =
-                                          filteredReviews.length > 10 ? 10 : filteredReviews.length;
-
-                                          /// STEP 4: SEE MORE CHECK
-                                          final bool hasMore = filteredReviews.length > 10;
-
-                                          return Column(
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.all(18),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(18),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color(0xFFFFFFFF).withOpacity(0.7),
+                                            Color(0xFFF1F5F9).withOpacity(0.6),
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.6),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.04),
+                                            blurRadius: 20,
+                                            offset: Offset(0, 8),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
                                             children: [
-                                              ListView.separated(
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: displayCount,
-                                                //  updated
-                                                separatorBuilder: (_, __) =>
-                                                    Divider(
-                                                  thickness: 0.8,
-                                                  color: Colors.grey.shade300,
+                                              Container(
+                                                padding: const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      Color(0xFF6366F1),
+                                                      Color(0xFF8B5CF6),
+                                                    ],
+                                                  ),
                                                 ),
-                                                itemBuilder: (context, index) {
-                                                  final ServiceReview review =
-                                                      filteredReviews[
-                                                          index]; //  updated
-                                                  return ReviewCard(
-                                                      review: review);
-                                                },
+                                                child: Icon(
+                                                  Icons.auto_awesome,
+                                                  color: Colors.white,
+                                                  size: 18,
+                                                ),
                                               ),
+                                              const SizedBox(width: 12),
 
-                                              //  See More
-                                              if (hasMore)
-                                                TextButton(
-                                                  onPressed: () {
-                                                    // TODO: Navigate or expand list
-                                                  },
-                                                  child: const Text("See More"),
+                                              Expanded(
+                                                child: Text(
+                                                  "Something Awesome is Coming ✨",
+                                                  style: TextStyle(
+                                                    fontSize: 15.5,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFF0F172A),
+                                                  ),
                                                 ),
+                                              ),
                                             ],
-                                          );
-                                        },
-                                      )
-                                    else
-                                      const Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: 40),
-                                          child: Text(
-                                            "No reviews yet",
+                                          ),
+
+                                          const SizedBox(height: 14),
+
+                                          Text(
+                                            "We're crafting a smarter and more helpful review experience just for you. "
+                                                "Very soon, you'll be able to explore genuine feedback, ratings, and insights "
+                                                "from real users to make better decisions.",
                                             style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.w500,
+                                              fontSize: 13.5,
+                                              color: Color(0xFF475569),
+                                              height: 1.5,
                                             ),
                                           ),
-                                        ),
+
+                                          const SizedBox(height: 16),
+
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFF6366F1).withOpacity(0.08),
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.rocket_launch, size: 16, color: Color(0xFF6366F1)),
+                                                const SizedBox(width: 6),
+                                                Text(
+                                                  "Launching very soon",
+                                                  style: TextStyle(
+                                                    fontSize: 12.5,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xFF6366F1),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
+                                    ),                                    // if (hasReviews)
+                                    //   Builder(
+                                    //     builder: (context) {
+                                    //       /// STEP 1: SORT (5 top)
+                                    //       final sortedReviews = [...reviews];
+                                    //       sortedReviews.sort((a, b) =>
+                                    //           (b.reviewRating ?? 0).compareTo(a.reviewRating ?? 0));
+                                    //
+                                    //       /// STEP 2: FILTER (optional - negative hata sakti ho)
+                                    //       final filteredReviews = sortedReviews
+                                    //           .where((r) => (r.reviewRating ?? 0) >= 3)
+                                    //           .toList();
+                                    //
+                                    //       /// STEP 3: LIMIT (max 10)
+                                    //       final int displayCount =
+                                    //       filteredReviews.length > 10 ? 10 : filteredReviews.length;
+                                    //
+                                    //       /// STEP 4: SEE MORE CHECK
+                                    //       final bool hasMore = filteredReviews.length > 10;
+                                    //
+                                    //       return Column(
+                                    //         children: [
+                                    //           ListView.separated(
+                                    //             physics:
+                                    //                 const NeverScrollableScrollPhysics(),
+                                    //             shrinkWrap: true,
+                                    //             itemCount: displayCount,
+                                    //             //  updated
+                                    //             separatorBuilder: (_, __) =>
+                                    //                 Divider(
+                                    //               thickness: 0.8,
+                                    //               color: Colors.grey.shade300,
+                                    //             ),
+                                    //             itemBuilder: (context, index) {
+                                    //               final ServiceReview review =
+                                    //                   filteredReviews[
+                                    //                       index]; //  updated
+                                    //               return ReviewCard(
+                                    //                   review: review);
+                                    //             },
+                                    //           ),
+                                    //
+                                    //           //  See More
+                                    //           if (hasMore)
+                                    //             TextButton(
+                                    //               onPressed: () {
+                                    //                 // TODO: Navigate or expand list
+                                    //               },
+                                    //               child: const Text("See More"),
+                                    //             ),
+                                    //         ],
+                                    //       );
+                                    //     },
+                                    //   )
+                                    // else
+                                    //   const Center(
+                                    //     child: Padding(
+                                    //       padding: EdgeInsets.only(top: 40),
+                                    //       child: Text(
+                                    //         "No reviews yet",
+                                    //         style: TextStyle(
+                                    //           fontSize: 15,
+                                    //           color: Colors.grey,
+                                    //           fontWeight: FontWeight.w500,
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
                                     //
                                     // if ((controller.serviceModel.ratingCount ??
                                     //     0) >
