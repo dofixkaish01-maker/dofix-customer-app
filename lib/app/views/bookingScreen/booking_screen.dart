@@ -3376,7 +3376,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               const Spacer(),
               Text(
-                "₹ ${widget.cartTotalPrice}",
+                "₹ ${widget.cartTotalPrice.toInt()}",
                 style: const TextStyle(
                   fontSize: 20,
                   color: Color(0xFF207FA7),
