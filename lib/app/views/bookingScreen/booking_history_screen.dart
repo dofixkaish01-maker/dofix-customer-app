@@ -17,20 +17,21 @@ class BookingHistoryScreen extends StatefulWidget {
 
 class _BookingHistoryScreenState extends State<BookingHistoryScreen>
     with TickerProviderStateMixin, RouteAware, AutomaticKeepAliveClientMixin {
+
   @override
   bool get wantKeepAlive => true;
 
-  //  extra flag so first time hi hard loader ho
-  bool _hasLoadedOnce = false;
   final PageController _pageController = PageController();
   final Map<int, ScrollController> _scrollControllers = {};
-  late List<GlobalKey<AnimatedListState>> _listKeys;
-  // final List<Booking?> _items = [];
-  Map<String, List<Booking?>> _tabData = {};
-  late TabController _tabController;
-  bool _isLoading = false;
-  int _selectedIndex = 0;
+
+  Map<String, List<Booking?>> _bookingsByStatus = {};
   Set<String> _loadingTabs = {};
+
+  late TabController _tabController;
+
+  int _selectedIndex = 0;
+  bool _hasLoadedOnce = false;
+
   final List<String> statusList = [
     "all",
     "pending",
@@ -42,7 +43,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
 
   @override
   void didPopNext() {
-    fetchDataForTab(statusList[_selectedIndex]);
+    fetchDataForTab(statusList[_selectedIndex], isRefresh: true);
   }
 
   @override
@@ -54,13 +55,17 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+    _pageController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: statusList.length, vsync: this);
+
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) return;
 
@@ -72,21 +77,13 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
       if (controller != null && controller.hasClients) {
         controller.jumpTo(0);
       }
+
       _pageController.jumpToPage(_tabController.index);
 
-      fetchDataForTab(
-        statusList[_tabController.index],
-        isRefresh: false,
-      );
+      fetchDataForTab(statusList[_selectedIndex]);
     });
-    _listKeys =
-        List.generate(statusList.length, (_) => GlobalKey<AnimatedListState>());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      //  OLD (comment)
-      // fetchDataForTab("all");
-
-      //  NEW: first time only
       if (!_hasLoadedOnce) {
         _hasLoadedOnce = true;
         fetchDataForTab("all");
@@ -94,124 +91,79 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
     });
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _tabController = TabController(length: statusList.length, vsync: this);
-  //   _tabController.addListener(() {
-  //     if (_tabController.indexIsChanging) return;
-  //     fetchDataForTab(statusList[_tabController.index]);
-  //   });
-  //   _listKeys =
-  //       List.generate(statusList.length, (_) => GlobalKey<AnimatedListState>());
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     fetchDataForTab("all");
-  //   });
-  // }
-
-  // Future<void> fetchDataForTab(String status, {bool isRefresh = false}) async {
-  //   if (status.toLowerCase() == "cancelled") {
-  //     status = "canceled";
-  //   }
-  //
-  //   final controller = Get.find<DashBoardController>();
-  //
-  //   if (isRefresh) {
-  //     //  FAST refresh – no animation drama
-  //     _items.clear();
-  //     _listKeys[_tabController.index].currentState?.setState(() {});
-  //   } else {
-  //     //  normal tab change animation (as it is)
-  //     int toggle = 0;
-  //     for (int i = _items.length - 1; i >= 0; i--) {
-  //       final removedItem = _items.removeAt(i);
-  //       final removeToRight = toggle % 2 == 0;
-  //       toggle++;
-  //
-  //       _listKeys[_tabController.index].currentState?.removeItem(
-  //         i,
-  //             (context, animation) => SlideTransition(
-  //           position: Tween<Offset>(
-  //             begin: Offset.zero,
-  //             end: Offset(removeToRight ? 1.0 : -1.0, 0.0),
-  //           ).animate(animation),
-  //           child: BookingContainer(booking: removedItem),
-  //         ),
-  //         duration: const Duration(milliseconds: 200), // ⬅ shorter
-  //       );
-  //     }
-  //   }
-  //
-  //   await controller.getBooking({
-  //     "limit": "100",
-  //     "offset": "1",
-  //     "booking_status": status,
-  //     "service_type": "all"
-  //   });
-  //
-  //   final data = controller.bookingModel.data ?? [];
-  //
-  //   for (int i = 0; i < data.length; i++) {
-  //     _items.insert(i, data[i]);
-  //     _listKeys[_tabController.index].currentState?.insertItem(
-  //       i,
-  //       duration: const Duration(milliseconds: 150), // ⬅ faster
-  //     );
-  //   }
-  // }
   Future<void> fetchDataForTab(String status, {bool isRefresh = false}) async {
     if (status.toLowerCase() == "cancelled") {
       status = "canceled";
     }
 
-    if (!isRefresh && _tabData.containsKey(status)) {
-      return;
-    }
-
     final controller = Get.find<DashBoardController>();
 
-    setState(() {
-      _loadingTabs.add(status);
-    });
+    // prevent unnecessary API calls
+    if (!isRefresh && _bookingsByStatus.containsKey(status)) return;
 
-    await controller.getBooking({
-      "limit": "100",
-      "offset": "1",
-      "booking_status": status,
-      "service_type": "all"
-    });
+    // show loader only if no cached data
+    if (!_bookingsByStatus.containsKey(status)) {
+      setState(() {
+        _loadingTabs.add(status);
+      });
+    }
 
-    final data = controller.bookingModel.data ?? [];
+    try {
+      await controller.getBooking({
+        "limit": "100",
+        "offset": "1",
+        "booking_status": status,
+        "service_type": "all"
+      });
 
-    _tabData[status] = data;
+      if (!mounted) return;
 
-    setState(() {
-      _loadingTabs.remove(status);
-    });
+      final data = controller.bookingModel.data ?? [];
+      _bookingsByStatus[status] = data;
+
+    } catch (e) {
+      debugPrint("Booking fetch error: $e");
+    } finally {
+      if (!mounted) return;
+
+      setState(() {
+        _loadingTabs.remove(status);
+      });
+    }
   }
+
   Widget buildListView(int tabIndex) {
     final status = statusList[tabIndex];
-    final items = _tabData[status] ?? [];
+    final items = _bookingsByStatus[status] ?? [];
 
-    if (items.isEmpty && _isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
+    // 1. Skeleton loader (first load)
+    if (_loadingTabs.contains(status) && !_bookingsByStatus.containsKey(status)) {
+      return ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: 5,
+        itemBuilder: (_, __) => const BookingContainer(isLoading: true),
       );
     }
 
+    // 2. No data + not loading
+    if (!_bookingsByStatus.containsKey(status)) {
+      return _buildEmptyState();
+    }
+
+    // 3. Empty list
     if (items.isEmpty) {
-      return const Center(
-        child: Text("No Booking Found"),
-      );
+      return _buildEmptyState();
     }
 
+    // 4. Data list
     return ListView.builder(
       controller: _scrollControllers.putIfAbsent(
         tabIndex,
-        () => ScrollController(),
+            () => ScrollController(),
       ),
+      physics: const BouncingScrollPhysics(),
       itemCount: items.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (_, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Card(
@@ -232,9 +184,26 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
     );
   }
 
+  Widget _buildEmptyState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inbox, size: 50, color: Colors.grey),
+          SizedBox(height: 10),
+          Text(
+            "No Bookings Found",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return Scaffold(
       body: Column(
         children: [
@@ -264,16 +233,8 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
                 unselectedLabelColor: Colors.black54,
                 splashBorderRadius: BorderRadius.circular(25),
                 overlayColor: MaterialStateProperty.all(Colors.transparent),
-                labelStyle: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-                unselectedLabelStyle: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
                 indicatorPadding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 tabs: statusList.map((status) {
                   return Tab(
                     child: Padding(
@@ -295,22 +256,18 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
                   isRefresh: true,
                 );
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: statusList.length,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-
-                    _tabController.animateTo(index);
-                  },
-                  itemBuilder: (context, index) {
-                    return buildListView(index);
-                  },
-                ),
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: statusList.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                  _tabController.animateTo(index);
+                },
+                itemBuilder: (_, index) {
+                  return buildListView(index);
+                },
               ),
             ),
           ),
