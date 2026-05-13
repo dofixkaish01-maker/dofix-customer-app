@@ -443,10 +443,12 @@ class LoadingDialog {
 
 class BookingContainer extends StatefulWidget {
   final Booking? booking;
+  final bool isLoading;
 
   const BookingContainer({
     super.key,
     this.booking,
+    this.isLoading=false
   });
 
   @override
