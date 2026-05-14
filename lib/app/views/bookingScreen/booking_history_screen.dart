@@ -59,16 +59,36 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: statusList.length, vsync: this);
+    // _tabController.addListener(() {
+    //   if (_tabController.indexIsChanging) return;
+    //
+    //   setState(() {
+    //     _selectedIndex = _tabController.index;
+    //   });
+    //
+    //   final controller = _scrollControllers[_selectedIndex];
+    //   if (controller != null && controller.hasClients) {
+    //     controller.jumpTo(0);
+    //   }
+    // });
     _tabController.addListener(() {
-      if (_tabController.indexIsChanging) return;
+      if (_tabController.indexIsChanging) {
+        final index = _tabController.index;
 
-      setState(() {
-        _selectedIndex = _tabController.index;
-      });
+        setState(() {
+          _selectedIndex = index;
+        });
 
-      final controller = _scrollControllers[_selectedIndex];
-      if (controller != null && controller.hasClients) {
-        controller.jumpTo(0);
+        _pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+
+        fetchDataForTab(
+          statusList[index],
+          isRefresh: false,
+        );
       }
     });
     _listKeys =
@@ -201,6 +221,18 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
               child: TabBar(
                 controller: _tabController,
                 isScrollable: true,
+
+
+                onTap: (index) {
+                  _pageController.jumpToPage(index);
+
+                  fetchDataForTab(
+                    statusList[index],
+                    isRefresh: false,
+                  );
+                },
+
+
                 indicator: BoxDecoration(
                   color: primaryBlue,
                   borderRadius: BorderRadius.circular(25),

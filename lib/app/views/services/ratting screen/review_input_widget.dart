@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:do_fix/controllers/booking_controller.dart';
 import 'package:do_fix/utils/theme.dart';
 
+import '../../../../controllers/rating_and_review_controller.dart';
+
 class ReviewScreen extends StatefulWidget {
   final String bookingId;
   final String serviceId;
@@ -13,7 +15,22 @@ class ReviewScreen extends StatefulWidget {
     super.key,
     required this.bookingId,
     required this.serviceId,
+    required this.isEdit,
+    this.initialRating,
+    this.initialComment,
+    required this.customerID,
+    required this.token,
+    required this.zoneID,
+    this.initialImage,
   });
+
+  final bool isEdit;
+  final int? initialRating;
+  final String? initialComment;
+  final dynamic initialImage;
+  final String customerID;
+  final String token;
+  final String zoneID;
 
   @override
   State<ReviewScreen> createState() => _ReviewScreenState();
@@ -21,6 +38,7 @@ class ReviewScreen extends StatefulWidget {
 
 class _ReviewScreenState extends State<ReviewScreen> {
   final bookingController = Get.find<BookingController>();
+  final ratingController = Get.find<RatingAndReviewController>();
 
   final Map<int, String> emojiMap = {
     1: "😡",
@@ -41,18 +59,35 @@ class _ReviewScreenState extends State<ReviewScreen> {
   @override
   void initState() {
     super.initState();
-    bookingController.userRating.value = 0;
-    bookingController.reviewController.clear();
+    //for dabble option provide
     bookingController.isSubmittingReview.value = false;
     bookingController.selectedImages ??= <XFile>[].obs;
+
+    if (widget.isEdit) {
+      bookingController.userRating.value =
+          widget.initialRating ?? 0;
+
+      bookingController.reviewController.text =
+          widget.initialComment ?? "";
+    } else {
+      bookingController.userRating.value = 0;
+      bookingController.reviewController.clear();
+    }
+    //for only taken review
+    // bookingController.userRating.value = 0;
+    // bookingController.reviewController.clear();
+    // bookingController.isSubmittingReview.value = false;
+    // bookingController.selectedImages ??= <XFile>[].obs;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: const Color(0xE21C6791),
-        title: const Text("Write a Review"),
+        toolbarHeight: widget.isEdit?85:60,
+        title: Text(widget.isEdit ? "Edit Review" : "Write a Review"),
       ),
       body: SafeArea(
         child: Obx(() => SingleChildScrollView(
@@ -192,7 +227,30 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       ? null
                       : () async {
                     bookingController.isSubmittingReview.value = true;
-                    await bookingController.saveBookingReview();
+                    //single option
+                    // await bookingController.saveBookingReview();
+                    //given both option
+                    if (widget.isEdit) {
+
+                      await ratingController.editReview(
+                        customerID: widget.customerID,
+                        token: widget.token,
+                        zoneID: widget.zoneID,
+                        payload: {
+                          "rating":
+                          bookingController.userRating.value.toString(),
+
+                          "comment":
+                          bookingController.reviewController.text.trim(),
+                        },
+                        context: context,
+                      );
+
+                    } else {
+
+                      await bookingController.saveBookingReview();
+
+                    }
                     bookingController.isSubmittingReview.value = false;
 
                     Get.bottomSheet(
@@ -243,9 +301,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       Text("Submitting..."),
                     ],
                   )
-                      : const Text(
-                    "Submit Review",
-                    style: TextStyle(fontSize: 16),
+                    : Text(
+                    widget.isEdit
+                        ? "Update Review"//both option provide edit and give review
+                        : "Submit Review",
+                    style: const TextStyle(fontSize: 16),
+                  //for one take review
+                  //   const Text(
+                    // "Submit Review",
+                    // style: TextStyle(fontSize: 16),
                   ),
                 ),
               ),

@@ -53,12 +53,25 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   TimeOfDay? selectedTime;
   final bookingController = Get.find<BookingController>();
   late String comment = widget.booking?.message ?? "";
+  // _showReviewDialog() {
+  //   Get.to(() => ReviewScreen(
+  //     bookingId: widget.booking?.id ?? "",
+  //     serviceId: widget.booking?.servicemanId ?? "",
+  //   ));
+  // }
 
   _showReviewDialog() {
+
+    Get.put(RatingAndReviewController());
+
     Get.to(() => ReviewScreen(
-          bookingId: widget.booking?.id ?? "",
-          serviceId: widget.booking?.servicemanId ?? "",
-        ));
+      bookingId: widget.booking?.id ?? "",
+      serviceId: widget.booking?.servicemanId ?? "",
+      isEdit: false,
+      customerID: widget.booking?.categoryId ?? "",
+      token: dashBoardController.token ?? "",
+      zoneID: widget.booking?.zoneId ?? "",
+    ));
   }
 
   Map<String, dynamic> _buildPaymentData() {
@@ -1243,12 +1256,23 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                     reviewModel.content?[0].reviews?[0];
 
                                 final result = await Get.bottomSheet(
-                                  EditReviewBottomSheet(
-                                    initialRating: review?.reviewRating ?? 0,
-                                    initialComment: review?.reviewComment ?? "",
-                                    customerID: review!.id ?? "",
-                                    token: token,
-                                    zoneID: zoneID,
+                                  // EditReviewBottomSheet(
+                                  //   initialRating: review?.reviewRating ?? 0,
+                                  //   initialComment: review?.reviewComment ?? "",
+                                  //   customerID: review!.id ?? "",
+                                  //   token: token,
+                                  //   zoneID: zoneID,
+                                  // ),
+                                  ReviewScreen(
+                                      bookingId: review!.bookingId??"",
+                                      serviceId: review.serviceId??"",
+                                      isEdit: true,
+                                      initialRating: review.reviewRating ?? 0,
+                                      initialComment: review.reviewComment ?? "",
+                                      initialImage: review.reviewImages ??"",
+                                      customerID: review.id??"",
+                                      token: token,
+                                      zoneID: zoneID
                                   ),
                                   isScrollControlled: true,
                                 );
